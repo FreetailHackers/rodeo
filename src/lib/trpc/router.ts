@@ -1,8 +1,12 @@
-import type { Context } from '$lib/trpc/context';
-import { initTRPC } from '@trpc/server';
+import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
 import { z } from 'zod';
 import prisma from '$lib/trpc/db';
+import type { RequestEvent } from '@sveltejs/kit';
 
+export async function createContext(event: RequestEvent) {
+	return {};
+}
+type Context = inferAsyncReturnType<typeof createContext>;
 export const t = initTRPC.context<Context>().create();
 
 const MAGIC_LINK_LENGTH = 32;
@@ -50,5 +54,9 @@ export const router = t.router({
 		return `We sent a magic login link to ${email}.`;
 	}),
 });
+
+export function trpc() {
+	return router.createCaller({});
+}
 
 export type Router = typeof router;

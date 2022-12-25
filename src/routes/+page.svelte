@@ -20,7 +20,7 @@
 		<input bind:value={email} type="email" name="email" placeholder="Email" />
 		<button>Register</button>
 	</form>
-	{#if form?.status}
-		<p>{form.status}</p>
+	{#if form}
+		<p>{form}</p>
 	{/if}
 {/if}
