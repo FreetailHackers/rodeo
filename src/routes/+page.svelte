@@ -21,6 +21,6 @@
 		<button>Register</button>
 	</form>
 	{#if form?.status}
-		<p>{form?.status}</p>
+		<p>{form.status}</p>
 	{/if}
 {/if}

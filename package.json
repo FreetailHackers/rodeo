@@ -34,6 +34,10 @@
 	"type": "module",
 	"dependencies": {
 		"@prisma/client": "^4.7.1",
-		"prisma": "^4.7.1"
+		"@trpc/client": "^10.7.0",
+		"@trpc/server": "^10.7.0",
+		"prisma": "^4.7.1",
+		"trpc-sveltekit": "^3.2.2",
+		"zod": "^3.20.2"
 	}
 }

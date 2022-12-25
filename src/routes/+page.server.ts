@@ -1,22 +1,22 @@
+import { createContext } from '$lib/trpc/context';
+import { router } from '$lib/trpc/router';
 import type { Actions, PageServerLoad } from './$types';
 
-export const load = (async ({ fetch }) => {
-	const user = await fetch('/api/user');
-	if (user.status === 401) {
-		return { user: null };
-	}
+export const load = (async (event) => {
+	const magicLink = event.cookies.get('magicLink');
 	return {
-		user: await user.json(),
+		user: await router.createCaller(await createContext(event)).getUser(magicLink),
 	};
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-	login: async ({ fetch, request }) => {
-		const response = await fetch('/api/user', {
-			method: 'POST',
-			body: String(await (await request.formData()).get('email')),
-		});
-		return { status: await response.text() };
+	login: async (event) => {
+		const email = (await event.request.formData()).get('email');
+		if (typeof email !== 'string') {
+			return { status: 'Please enter a valid email address.' };
+		}
+		const res = await router.createCaller(await createContext(event)).generateMagicLink(email);
+		return { status: res };
 	},
 
 	logout: ({ cookies }) => {
