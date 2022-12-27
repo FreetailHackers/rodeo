@@ -15,7 +15,6 @@ const CHARSET = 'abcdefghijklmnopqrstuvwxyz';
 export const router = t.router({
 	getUser: t.procedure.input(z.string().optional()).query(async (req) => {
 		const magicLink = req.input;
-
 		if (magicLink === undefined) {
 			return null;
 		}
@@ -25,6 +24,22 @@ export const router = t.router({
 			},
 		});
 	}),
+
+	setUser: t.procedure
+		.input(
+			z.object({
+				magicLink: z.string(),
+				data: z.object({ name: z.string().optional() }),
+			})
+		)
+		.mutation(async (req) => {
+			await prisma.user.update({
+				where: {
+					magicLink: req.input.magicLink,
+				},
+				data: req.input.data,
+			});
+		}),
 
 	generateMagicLink: t.procedure.input(z.string()).mutation(async (req) => {
 		const email = req.input;
