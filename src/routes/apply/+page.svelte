@@ -16,6 +16,7 @@
 		};
 	}}
 >
+	<p>Personal Information</p>
 	<label for="name">Name </label>
 	<input bind:value={name} type="name" name="name" placeholder="John Doe" />
 	<button>Save</button>
