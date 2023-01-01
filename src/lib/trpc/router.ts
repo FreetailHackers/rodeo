@@ -54,13 +54,12 @@ export const router = t.router({
 			.map((n) => CHARSET[n % CHARSET.length])
 			.join('');
 
+		// Create user if not already registered with this email
 		await prisma.user.upsert({
 			where: {
 				email: email,
 			},
-			update: {
-				magicLink: magicLink,
-			},
+			update: {},
 			create: {
 				email: email,
 				magicLink: magicLink,
