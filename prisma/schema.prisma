@@ -12,4 +12,10 @@ model User {
   email       String   @unique
   name        String?
   magicLink   String   @unique
+  role        Role     @default(HACKER)
+}
+
+enum Role {
+  HACKER
+  ADMIN
 }

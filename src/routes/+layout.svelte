@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Role } from '@prisma/client';
 	import type { LayoutData } from './$types';
 	import './global.css';
 
@@ -8,11 +9,13 @@
 <nav>
 	<a href="/">Home</a>
 	<a href="/schedule">Schedule</a>
-	{#if data.authenticated}
+	{#if data.user?.role === Role.HACKER}
 		<a href="/apply">Apply</a>
 		<a href="/help">Help Queue</a>
 		<a href="/team">Team Matching</a>
 		<a href="/id">My Hacker ID</a>
+	{:else if data.user?.role === Role.ADMIN}
+		<a href="admin">Admin</a>
 	{/if}
 </nav>
 
