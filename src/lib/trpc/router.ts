@@ -67,6 +67,10 @@ export const router = t.router({
 		});
 		return `We sent a magic login link to ${email}.`;
 	}),
+
+	getAnnouncements: t.procedure.query(async (req) => {
+		return await prisma.announcement.findMany();
+	}),
 });
 
 export function trpc() {

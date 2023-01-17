@@ -5,6 +5,7 @@ export const load = (async ({ cookies }) => {
 	const magicLink = cookies.get('magicLink');
 	return {
 		user: trpc().getUser(magicLink),
+		announcements: trpc().getAnnouncements(),
 	};
 }) satisfies PageServerLoad;
 

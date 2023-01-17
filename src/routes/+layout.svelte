@@ -11,8 +11,6 @@
 	<a href="/schedule">Schedule</a>
 	{#if data.user?.role === Role.HACKER}
 		<a href="/apply">Apply</a>
-		<a href="/help">Help Queue</a>
-		<a href="/team">Team Matching</a>
 		<a href="/id">My Hacker ID</a>
 	{:else if data.user?.role === Role.ADMIN}
 		<a href="admin">Admin</a>
