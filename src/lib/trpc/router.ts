@@ -1,9 +1,8 @@
 import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
 import { z } from 'zod';
 import prisma from '$lib/trpc/db';
-import type { RequestEvent } from '@sveltejs/kit';
 
-export async function createContext(event: RequestEvent) {
+export async function createContext() {
 	return {};
 }
 type Context = inferAsyncReturnType<typeof createContext>;
@@ -68,7 +67,7 @@ export const router = t.router({
 		return `We sent a magic login link to ${email}.`;
 	}),
 
-	getAnnouncements: t.procedure.query(async (req) => {
+	getAnnouncements: t.procedure.query(async () => {
 		return await prisma.announcement.findMany();
 	}),
 });
