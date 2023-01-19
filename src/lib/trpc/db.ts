@@ -1,5 +1,8 @@
 import { PrismaClient } from '@prisma/client';
+import { building } from '$app/environment';
 
 const prisma = new PrismaClient();
-await prisma.$connect();
+if (!building) {
+	await prisma.$connect();
+}
 export default prisma;
