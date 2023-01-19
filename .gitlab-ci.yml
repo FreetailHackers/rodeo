@@ -15,6 +15,7 @@ build-job:
 unit-test-job:
   stage: test
   script:
+    - mv $STAGING_ENV .env
     - npm ci
     - npm run test:unit
     - npm run test
