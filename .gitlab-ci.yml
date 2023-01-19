@@ -26,6 +26,7 @@ stages:          # List of stages for jobs, and their order of execution
 
 build-job:       # This job runs in the build stage, which runs first.
   before_script:
+    - echo $STAGING_ENV
     - echo $STAGING_ENV > .env
   stage: build
   script:
