@@ -9,18 +9,20 @@ stages:
 build-job:
   stage: build
   script:
-    - npm install
+    - npm ci
     - npm run build
 
 unit-test-job:
   stage: test
   script:
+    - npm ci
     - npm run test:unit
     - npm run test
 
 lint-test-job:
   stage: test
   script:
+    - npm ci
     - npm run lint
 
 deploy-job:
