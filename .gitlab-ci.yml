@@ -2,15 +2,8 @@ default:
   image: node
 
 stages:
-  - build
   - test
   - deploy
-
-build-job:
-  stage: build
-  script:
-    - npm ci
-    - npm run build
 
 unit-test-job:
   stage: test
@@ -32,8 +25,8 @@ deploy_preview:
   script:
     - npm install --global vercel
     - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
-    - vercel build --token=$VERCEL_TOKEN
-    - vercel deploy --prebuilt --token=$VERCEL_TOKEN
+    # - vercel build --token=$VERCEL_TOKEN
+    # - vercel deploy --prebuilt --token=$VERCEL_TOKEN
     - cp .vercel/.env.preview.local .env
     - npx prisma migrate reset
 
@@ -44,7 +37,7 @@ deploy_production:
   script:
     - npm install --global vercel
     - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-    - vercel build --prod --token=$VERCEL_TOKEN
-    - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+    # - vercel build --prod --token=$VERCEL_TOKEN
+    # - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
     - cp .vercel/.env.production.local .env
     - npx prisma migrate deploy
