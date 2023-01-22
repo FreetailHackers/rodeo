@@ -5,18 +5,14 @@ stages:
   - test
   - deploy
 
-unit-test-job:
+test-job:
   stage: test
   script:
     - npm ci
+    - npm run check
+    - npm run lint
     - npm run test:unit
 #   - npm run test # For some reason, Playwright segfaults so skip E2E tests for now
-
-lint-test-job:
-  stage: test
-  script:
-    - npm ci
-    - npm run lint
 
 deploy_preview:
   stage: deploy
@@ -28,7 +24,7 @@ deploy_preview:
     # - vercel build --token=$VERCEL_TOKEN
     # - vercel deploy --prebuilt --token=$VERCEL_TOKEN
     - cp .vercel/.env.preview.local .env
-    - npx prisma migrate reset
+    - npx prisma migrate reset --force
 
 deploy_production:
   stage: deploy
