@@ -25,9 +25,26 @@ lint-test-job:
     - npm ci
     - npm run lint
 
-deploy-job:
+deploy_preview:
   stage: deploy
-  environment: production
+  except:
+    - production
   script:
-    - echo "Deploying application..."
-    - echo "Application successfully deployed."
+    - npm install --global vercel
+    - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+    - vercel build --token=$VERCEL_TOKEN
+    - vercel deploy --prebuilt --token=$VERCEL_TOKEN
+    - cp .vercel/.env.preview.local .env
+    - npx prisma migrate reset
+
+deploy_production:
+  stage: deploy
+  only:
+    - production
+  script:
+    - npm install --global vercel
+    - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+    - vercel build --prod --token=$VERCEL_TOKEN
+    - vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
+    - cp .vercel/.env.production.local .env
+    - npx prisma migrate deploy
