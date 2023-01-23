@@ -21,6 +21,7 @@
 		</ul>
 	{:else}
 		<p>There are no announcements at this time.</p>
+		<br />
 	{/if}
 	<form method="POST" action="?/logout" use:enhance>
 		<button>Logout</button>

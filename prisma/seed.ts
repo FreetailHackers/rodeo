@@ -13,7 +13,7 @@ async function main() {
 	await prisma.announcement.create({
 		data: {
 			title: 'Applications are open!',
-			body: 'We are now accepting applications for Hack the Future! The submission deadline is Friday, February 10th on 11:59 PM.',
+			body: 'We are now accepting applications for Hack the Future! The submission deadline is Friday, February 10th at 11:59 PM.',
 		},
 	});
 }
