@@ -6,7 +6,7 @@ async function main() {
 	await prisma.user.create({
 		data: {
 			email: 'email@example.com',
-			magicLink: 'magicLink',
+			magicLink: '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8', // SHA-256 hash of 'password'
 		},
 	});
 	// Create example announcement

@@ -15,7 +15,7 @@ export const actions: Actions = {
 		if (typeof email !== 'string') {
 			return 'Please enter a valid email address.';
 		}
-		return trpc().generateMagicLink(email);
+		return trpc().createUser(email);
 	},
 
 	logout: ({ cookies }) => {
