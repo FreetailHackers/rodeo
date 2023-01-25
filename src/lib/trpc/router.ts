@@ -1,3 +1,4 @@
+import sgMail from '@sendgrid/mail';
 import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
 import { z } from 'zod';
 import prisma from '$lib/trpc/db';
@@ -11,6 +12,8 @@ export const t = initTRPC.context<Context>().create();
 
 const MAGIC_LINK_LENGTH = 32;
 const CHARSET = 'abcdefghijklmnopqrstuvwxyz';
+
+sgMail.setApiKey(process.env.SENDGRID_KEY as string);
 
 async function hash(input: string): Promise<string> {
 	const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
@@ -60,34 +63,52 @@ export const router = t.router({
 	 * Create a new user with the given email. Returns the success
 	 * status as a string.
 	 */
-	createUser: t.procedure.input(z.string()).mutation(async (req) => {
-		const email = req.input;
+	createUser: t.procedure
+		.input(z.string())
+		.mutation(
+			async (req): Promise<'EMAIL_INVALID' | 'EMAIL_TAKEN' | 'EMAIL_FAILURE' | 'EMAIL_SENT'> => {
+				const email = req.input;
 
-		if (!email.match(/^\S+@\S+\.\S+$/)) {
-			return 'Please enter a valid email address.';
-		}
+				if (!email.match(/^\S+@\S+\.\S+$/)) {
+					return 'EMAIL_INVALID';
+				}
 
-		// Generate a magic link
-		const chars = new Uint8Array(MAGIC_LINK_LENGTH);
-		crypto.getRandomValues(chars);
-		const magicLink = Array.from(chars)
-			.map((n) => CHARSET[n % CHARSET.length])
-			.join('');
+				// Generate a magic link
+				const chars = new Uint8Array(MAGIC_LINK_LENGTH);
+				crypto.getRandomValues(chars);
+				const magicLink = Array.from(chars)
+					.map((n) => CHARSET[n % CHARSET.length])
+					.join('');
 
-		// Create user if not already registered with this email
-		await prisma.user.upsert({
-			where: {
-				email: email,
-			},
-			update: {},
-			create: {
-				email: email,
-				magicLink: await hash(magicLink),
-			},
-		});
-		console.log(magicLink);
-		return `We sent a magic login link to ${email}.`;
-	}),
+				// Send email with magic link
+				const link = `${process.env.DOMAIN_NAME}/login/${magicLink}`;
+				const msg = {
+					to: email,
+					from: 'hello@freetailhackers.com',
+					subject: 'Welcome to Rodeo!',
+					text: `Please click on this link to log in to Rodeo: ${link}`,
+					html: `<p>Please click on this link to log in to Rodeo: <a href="${link}">${link}</a></p>`,
+				};
+				// Create user and email magic link only if not already registered with this email
+				const user = await prisma.user.findUnique({ where: { email: email } });
+				if (user === null) {
+					try {
+						await sgMail.send(msg);
+						await prisma.user.create({
+							data: {
+								email: email,
+								magicLink: await hash(magicLink),
+							},
+						});
+						return 'EMAIL_SENT';
+					} catch (error) {
+						return 'EMAIL_FAILURE';
+					}
+				} else {
+					return 'EMAIL_TAKEN';
+				}
+			}
+		),
 
 	getAnnouncements: t.procedure.query(async () => {
 		return await prisma.announcement.findMany();

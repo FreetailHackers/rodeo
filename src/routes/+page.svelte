@@ -33,8 +33,19 @@
 		<input bind:value={email} type="email" name="email" placeholder="student@example.edu" />
 		<button>Register</button>
 	</form>
-	{#if form}
-		<p>{form}</p>
+	{#if form === 'EMAIL_SENT'}
+		<p>We sent a magic login link to your email!</p>
+	{:else if form != null}
+		{#if form === 'EMAIL_INVALID'}
+			<p>Please enter a valid email.</p>
+		{:else if form === 'EMAIL_TAKEN'}
+			<p>This email is already taken.</p>
+		{:else if form === 'EMAIL_FAILURE'}
+			<p>Failed to send login email; please try again later.</p>
+		{/if}
+		<p>
+			For help, contact <a href="mailto:tech@freetailhackers.com">tech@freetailhackers.com</a>.
+		</p>
 	{/if}
 {/if}
 
