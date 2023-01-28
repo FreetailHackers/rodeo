@@ -21,4 +21,16 @@ export const actions: Actions = {
 	logout: ({ cookies }) => {
 		cookies.delete('magicLink');
 	},
+
+	announce: async ({ cookies, request }) => {
+		const formData = await request.formData();
+		const magicLink = cookies.get('magicLink');
+		const title = formData.get('announcement-title') as string;
+		const body = formData.get('announcement-body') as string;
+		if (title.trim() === '' || body.trim() === '' || magicLink === undefined) {
+			return 'Please enter a valid title and body.';
+		}
+		await trpc().createAnnouncement({ magicLink, announcement: { title, body } });
+		return 'Created announcement!';
+	},
 };

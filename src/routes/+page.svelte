@@ -10,6 +10,20 @@
 
 {#if data.user}
 	<p>Welcome to Rodeo, {data.user.name}!</p>
+	{#if data.user.role === 'ADMIN'}
+		<br />
+		<form method="POST" action="?/announce" use:enhance>
+			<label for="announcement-title">Title</label>
+			<input type="text" name="announcement-title" placeholder="Summary here!" />
+			<label for="announcement-body">Body</label>
+			<input type="text" name="announcement-body" placeholder="More details here!" />
+			<button>Announce</button>
+		</form>
+		<br />
+		{#if form}
+			{form}
+		{/if}
+	{/if}
 	{#if data.announcements.length > 0}
 		<ul>
 			{#each data.announcements as announcement}
@@ -52,8 +66,13 @@
 <style>
 	ul {
 		list-style: none;
+		padding-left: 0;
+	}
+
+	li {
 		border: 1px solid black;
 		padding: 1rem;
+		margin-bottom: 1rem;
 	}
 
 	h4 {
@@ -62,5 +81,14 @@
 
 	p {
 		margin-bottom: 0;
+	}
+
+	form {
+		display: flex;
+		flex-direction: column;
+	}
+
+	input {
+		margin-bottom: 1rem;
 	}
 </style>

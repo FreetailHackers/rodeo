@@ -2,7 +2,7 @@ import sgMail from '@sendgrid/mail';
 import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
 import { z } from 'zod';
 import prisma from '$lib/trpc/db';
-import type { User } from '@prisma/client';
+import { Role, type User } from '@prisma/client';
 
 export async function createContext() {
 	return {};
@@ -118,6 +118,27 @@ export const router = t.router({
 	getAnnouncements: t.procedure.query(async () => {
 		return await prisma.announcement.findMany();
 	}),
+
+	createAnnouncement: t.procedure
+		.input(
+			z.object({
+				magicLink: z.string(),
+				announcement: z.object({ title: z.string().min(1), body: z.string().min(1) }),
+			})
+		)
+		.mutation(async (req) => {
+			const user = await prisma.user.findUnique({
+				where: {
+					magicLink: await hash(req.input.magicLink),
+				},
+			});
+			if (user === null || user.role !== Role.ADMIN) {
+				throw new Error('User is not an admin');
+			}
+			await prisma.announcement.create({
+				data: req.input.announcement,
+			});
+		}),
 });
 
 export function trpc() {
