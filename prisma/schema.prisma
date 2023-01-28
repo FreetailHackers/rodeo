@@ -10,9 +10,10 @@ generator client {
 model User {
   id          Int      @id @default(autoincrement())
   email       String   @unique
-  name        String?
   magicLink   String   @unique
   role        Role     @default(HACKER)
+  name        String?
+  major       String?
 }
 
 model Announcement {

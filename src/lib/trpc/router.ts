@@ -23,6 +23,11 @@ async function hash(input: string): Promise<string> {
 	return hashHex;
 }
 
+const userSchema = z.object({
+	name: z.string().optional(),
+	major: z.string().optional(),
+});
+
 export const router = t.router({
 	/**
 	 * Gets the user with the given magic link. Returns null if no user
@@ -47,7 +52,7 @@ export const router = t.router({
 		.input(
 			z.object({
 				magicLink: z.string(),
-				data: z.object({ name: z.string().optional() }),
+				data: userSchema,
 			})
 		)
 		.mutation(async (req): Promise<void> => {
