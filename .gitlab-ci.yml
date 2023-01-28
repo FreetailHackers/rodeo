@@ -7,6 +7,8 @@ stages:
 
 test-job:
   stage: test
+  except:
+    - production
   script:
     - npm ci
     - npm run check
@@ -14,22 +16,22 @@ test-job:
     - npm run test:unit
 #   - npm run test # For some reason, Playwright segfaults so skip E2E tests for now
 
-deploy_preview:
-  stage: deploy
-  only:
-    - master
-  script:
-    - npm install --global vercel
-    - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
-    - cp .vercel/.env.preview.local .env
-    - npx prisma migrate deploy
+# deploy_preview:
+#   stage: deploy
+#   only:
+#     - master
+#   script:
+#     - npm install --global vercel
+#     - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+#     - cp .vercel/.env.preview.local .env
+#     - npx prisma migrate deploy
 
-deploy_production:
-  stage: deploy
-  only:
-    - production
-  script:
-    - npm install --global vercel
-    - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-    - cp .vercel/.env.production.local .env
-    - npx prisma migrate deploy
+# deploy_production:
+#   stage: deploy
+#   only:
+#     - production
+#   script:
+#     - npm install --global vercel
+#     - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+#     - cp .vercel/.env.production.local .env
+#     - npx prisma migrate deploy
