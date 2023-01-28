@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build",
+		"build": "npx prisma generate && npx prisma migrate deploy && vite build",
 		"preview": "vite preview",
 		"test": "playwright test",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -12,13 +12,11 @@
 		"test:unit": "vitest",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
-		"database": "prisma migrate diff --from-schema-datasource ./prisma/schema.prisma --to-schema-datamodel ./prisma/schema.prisma --exit-code",
-		"vercel-build": "vite build && npx prisma generate && npx prisma migrate deploy"
+		"database": "prisma migrate diff --from-schema-datasource ./prisma/schema.prisma --to-schema-datamodel ./prisma/schema.prisma --exit-code"
 	},
 	"pre-commit": [
 		"check",
-		"lint",
-		"database"
+		"lint"
 	],
 	"prisma": {
 		"seed": "node --loader ts-node/esm prisma/seed.ts"
