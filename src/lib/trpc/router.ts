@@ -58,7 +58,7 @@ export const router = t.router({
 		.mutation(async (req): Promise<void> => {
 			await prisma.user.update({
 				where: {
-					magicLink: req.input.magicLink,
+					magicLink: await hash(req.input.magicLink),
 				},
 				data: req.input.data,
 			});
