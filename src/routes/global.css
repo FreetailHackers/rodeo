@@ -4,3 +4,23 @@ body {
 	margin: 0 auto;
 	padding: 1rem;
 }
+
+nav {
+	margin: 1rem 0;
+}
+
+label {
+	margin: 0 0 0.2rem 0;
+}
+
+form > input {
+	margin-bottom: 1rem;
+}
+
+button {
+	height: 2.5rem;
+}
+
+input {
+	height: 2rem;
+}

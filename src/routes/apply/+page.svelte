@@ -32,17 +32,7 @@
 		flex-direction: column;
 	}
 
-	label {
-		margin: 1rem 0 0.2rem 0;
-	}
-
 	input {
-		height: 2rem;
 		padding-left: 0.5rem;
-	}
-
-	button {
-		margin-top: 1rem;
-		height: 2.5rem;
 	}
 </style>

@@ -25,12 +25,11 @@ export const actions: Actions = {
 	announce: async ({ cookies, request }) => {
 		const formData = await request.formData();
 		const magicLink = cookies.get('magicLink');
-		const title = formData.get('announcement-title') as string;
-		const body = formData.get('announcement-body') as string;
-		if (title.trim() === '' || body.trim() === '' || magicLink === undefined) {
-			return 'Please enter a valid title and body.';
+		const body = formData.get('announcement') as string;
+		if (body.trim() === '' || magicLink === undefined) {
+			return 'Please enter a valid body.';
 		}
-		await trpc().createAnnouncement({ magicLink, announcement: { title, body } });
+		await trpc().createAnnouncement({ magicLink, body });
 		return 'Created announcement!';
 	},
 };

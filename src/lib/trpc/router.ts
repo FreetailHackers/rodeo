@@ -123,7 +123,7 @@ export const router = t.router({
 		.input(
 			z.object({
 				magicLink: z.string(),
-				announcement: z.object({ title: z.string().min(1), body: z.string().min(1) }),
+				body: z.string().min(1),
 			})
 		)
 		.mutation(async (req) => {
@@ -136,7 +136,9 @@ export const router = t.router({
 				throw new Error('User is not an admin');
 			}
 			await prisma.announcement.create({
-				data: req.input.announcement,
+				data: {
+					body: req.input.body,
+				},
 			});
 		}),
 });

@@ -8,19 +8,18 @@ generator client {
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  email       String   @unique
-  magicLink   String   @unique
-  role        Role     @default(HACKER)
-  name        String?
-  major       String?
+  id        Int     @id @default(autoincrement())
+  email     String  @unique
+  magicLink String  @unique
+  role      Role    @default(HACKER)
+  name      String?
+  major     String?
 }
 
 model Announcement {
-  id          Int      @id @default(autoincrement())
-  title       String
-  body        String
-  published   DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  body      String
+  published DateTime @default(now())
 }
 
 enum Role {

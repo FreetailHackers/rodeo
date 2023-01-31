@@ -13,10 +13,8 @@
 	{#if data.user.role === 'ADMIN'}
 		<br />
 		<form method="POST" action="?/announce" use:enhance>
-			<label for="announcement-title">Title</label>
-			<input type="text" name="announcement-title" placeholder="Summary here!" />
-			<label for="announcement-body">Body</label>
-			<input type="text" name="announcement-body" placeholder="More details here!" />
+			<label for="announcement">Make an announcement</label>
+			<input type="text" name="announcement" placeholder="Write your announcement here..." />
 			<button>Announce</button>
 		</form>
 		<br />
@@ -28,7 +26,6 @@
 		<ul>
 			{#each data.announcements as announcement}
 				<li>
-					<h4>{announcement.title}</h4>
 					<p>{announcement.body}</p>
 				</li>
 			{/each}
@@ -75,20 +72,12 @@
 		margin-bottom: 1rem;
 	}
 
-	h4 {
-		margin: 0;
-	}
-
 	p {
-		margin-bottom: 0;
+		margin: 0;
 	}
 
 	form {
 		display: flex;
 		flex-direction: column;
-	}
-
-	input {
-		margin-bottom: 1rem;
 	}
 </style>
