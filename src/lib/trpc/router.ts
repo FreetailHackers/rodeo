@@ -65,7 +65,7 @@ export const router = t.router({
 		}),
 
 	/**
-	 * Create a new user with the given email. Returns the success
+	 * Creates a new user with the given email. Returns the success
 	 * status as a string.
 	 */
 	createUser: t.procedure
@@ -115,10 +115,18 @@ export const router = t.router({
 			}
 		),
 
+	/**
+	 * Gets all announcements.
+	 */
 	getAnnouncements: t.procedure.query(async () => {
-		return await prisma.announcement.findMany();
+		return await prisma.announcement.findMany({
+			orderBy: [{ published: 'desc' }],
+		});
 	}),
 
+	/**
+	 * Creates a new announcement. User must be an admin.
+	 */
 	createAnnouncement: t.procedure
 		.input(
 			z.object({
