@@ -13,8 +13,7 @@
 	{#if data.user.role === 'ADMIN'}
 		<br />
 		<form method="POST" action="?/announce" use:enhance>
-			<label for="announcement">Make an announcement</label>
-			<input type="text" name="announcement" placeholder="Write your announcement here..." />
+			<textarea name="announcement" placeholder="Make an announcement here..." />
 			<button>Announce</button>
 		</form>
 		<br />
@@ -39,11 +38,16 @@
 	</form>
 {:else}
 	<h1>Welcome to Rodeo</h1>
+	<p>
+		Rodeo is Freetail Hackers' registration platform and information board for hackathon attendees.
+	</p>
+	<br />
 	<form method="POST" action="?/login" use:enhance>
 		<label for="email">To get started, enter your email: </label>
 		<input bind:value={email} type="email" name="email" placeholder="student@example.edu" />
 		<button>Register</button>
 	</form>
+	<br />
 	{#if form === 'EMAIL_SENT'}
 		<p>We sent a magic login link to your email!</p>
 	{:else if form != null}
@@ -67,7 +71,7 @@
 	}
 
 	li {
-		border: 1px solid black;
+		border: 2px solid black;
 		padding: 1rem;
 		margin-bottom: 1rem;
 	}
@@ -79,5 +83,9 @@
 	form {
 		display: flex;
 		flex-direction: column;
+	}
+
+	textarea {
+		margin-bottom: 1rem;
 	}
 </style>

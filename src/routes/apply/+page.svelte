@@ -31,8 +31,4 @@
 		display: flex;
 		flex-direction: column;
 	}
-
-	input {
-		padding-left: 0.5rem;
-	}
 </style>

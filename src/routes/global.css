@@ -1,5 +1,12 @@
+:root {
+	--font-family: 'Helvetica Neue', 'Arial', sans-serif;
+	--font-size: 16px;
+	--primary-accent: #bf5700;
+}
+
 body {
-	font-family: 'Helvetica Neue', 'Arial', sans-serif;
+	font-family: var(--font-family);
+	font-size: var(--font-size);
 	max-width: 50rem;
 	margin: 0 auto;
 	padding: 1rem;
@@ -10,17 +17,39 @@ nav {
 }
 
 label {
-	margin: 0 0 0.2rem 0;
-}
-
-form > input {
-	margin-bottom: 1rem;
+	margin: 0 0 0.5rem 0;
 }
 
 button {
 	height: 2.5rem;
+	font-size: var(--font-size);
+	color: white;
+	background-color: var(--primary-accent);
+	border: none;
 }
 
 input {
+	font-family: var(--font-family);
+	font-size: var(--font-size);
 	height: 2rem;
+	padding-left: 0.5rem;
+	margin-bottom: 1rem;
+	border: 2px solid gray;
+}
+
+textarea {
+	font-family: var(--font-family);
+	font-size: var(--font-size);
+	padding: 1rem;
+	resize: none;
+	border: 2px solid gray;
+}
+
+a {
+	color: var(--primary-accent);
+}
+
+::selection {
+	background: var(--primary-accent);
+	color: white;
 }
