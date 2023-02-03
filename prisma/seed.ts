@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-	// Create example user and admin
+	// Create example hacker and admin
 	await prisma.user.deleteMany();
 	await prisma.user.create({
 		data: {
@@ -25,6 +25,23 @@ async function main() {
 	await prisma.announcement.create({
 		data: {
 			body: 'We are now accepting applications for Hack the Future! The submission deadline is Friday, February 10th at 11:59 PM.',
+		},
+	});
+	// More example hackers. All of these are hashed with their email as the magic link.
+	await prisma.user.create({
+		data: {
+			email: 'kennethsvickers@example.com',
+			magicLink: '386c340644a7ae29a334762afbbb79c370fb0c78b31b8c1aa5987729763937ed',
+			name: 'Kenneth S. Vickers',
+			major: 'Liberal Arts',
+		},
+	});
+	await prisma.user.create({
+		data: {
+			email: 'marvinrriley@example.com',
+			magicLink: 'b283871b0feba2c00d5beb48e57acbbbe206ed1c6f84980250e8822b808bebbd',
+			name: 'Marvin R. Riley',
+			major: 'Engineering',
 		},
 	});
 }

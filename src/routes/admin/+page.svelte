@@ -1,12 +1,35 @@
 <script lang="ts">
+	import type { User } from '@prisma/client';
+	import fuzzysort from 'fuzzysort';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+	export let search: string;
+	export let filtered: User[] = data.users;
+
+	function searchUsers() {
+		if (search === '') {
+			filtered = data.users;
+		} else {
+			filtered = fuzzysort.go(search, data.users, { key: 'name' }).map((user) => user.obj);
+		}
+	}
 </script>
 
 <h1>Master Database</h1>
+<form>
+	<input
+		type="text"
+		name="search"
+		bind:value={search}
+		on:input={searchUsers}
+		placeholder="Search"
+		autocomplete="off"
+	/>
+	<button>Search</button>
+</form>
 <ul>
-	{#each data.users as user}
+	{#each filtered as user}
 		<li>
 			<details>
 				<summary>{user.name}</summary>
@@ -39,5 +62,14 @@
 
 	details > div {
 		padding: 0 1rem 0 1rem;
+	}
+
+	form {
+		display: flex;
+	}
+
+	input {
+		flex-grow: 1;
+		margin-right: 0.5rem;
 	}
 </style>

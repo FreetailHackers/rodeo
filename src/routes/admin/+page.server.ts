@@ -1,13 +1,16 @@
+import fuzzysort from 'fuzzysort';
 import authenticate from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import { Role } from '@prisma/client';
-import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
-export const load = (async ({ cookies }) => {
-	const user = await authenticate(cookies);
-	if (user.role !== Role.ADMIN) {
-		throw error(403, 'Forbidden');
+export const load = (async ({ cookies, url }) => {
+	const { magicLink } = await authenticate(cookies.get('magicLink'), Role.ADMIN);
+	const users = await trpc().getUsers(magicLink);
+	const search = url.searchParams.get('search');
+	if (search === null) {
+		return { users };
 	}
-	return { users: trpc().getUsers(cookies.get('magicLink') as string) };
+	const results = fuzzysort.go(search, users, { key: 'name' });
+	return { users: results.map((user) => user.obj) };
 }) satisfies PageServerLoad;
