@@ -116,6 +116,21 @@ export const router = t.router({
 		),
 
 	/**
+	 * Gets all users. User must be an admin.
+	 */
+	getUsers: t.procedure.input(z.string()).query(async (req) => {
+		const user = await prisma.user.findUnique({
+			where: {
+				magicLink: await hash(req.input),
+			},
+		});
+		if (user === null || user.role !== Role.ADMIN) {
+			throw new Error('User is not an admin');
+		}
+		return await prisma.user.findMany();
+	}),
+
+	/**
 	 * Gets all announcements.
 	 */
 	getAnnouncements: t.procedure.query(async () => {
