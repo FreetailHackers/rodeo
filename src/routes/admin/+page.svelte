@@ -1,11 +1,12 @@
 <script lang="ts">
-	import type { User } from '@prisma/client';
 	import fuzzysort from 'fuzzysort';
+	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	export let search: string;
-	export let filtered: User[] = data.users;
+
+	let search = data.search ?? '';
+	$: filtered = data.users;
 
 	function searchUsers() {
 		if (search === '') {
@@ -14,10 +15,17 @@
 			filtered = fuzzysort.go(search, data.users, { key: 'name' }).map((user) => user.obj);
 		}
 	}
+
+	onMount(async () => {
+		// Disable search form submission when JavaScript is enabled as it automatically searches incrementally
+		document.getElementById('search')?.addEventListener('submit', (e) => {
+			e.preventDefault();
+		});
+	});
 </script>
 
 <h1>Master Database</h1>
-<form>
+<form id="search">
 	<input
 		type="text"
 		name="search"
@@ -26,8 +34,9 @@
 		placeholder="Search"
 		autocomplete="off"
 	/>
-	<button>Search</button>
+	<noscript><button>Search</button></noscript>
 </form>
+Found {filtered.length} results{#if search !== ''}&nbsp;for {search}{/if}:
 <ul>
 	{#each filtered as user}
 		<li>
@@ -52,7 +61,6 @@
 	li {
 		border: 2px solid black;
 		/* simulate border-collapse */
-		margin-left: -2px;
 		margin-top: -2px;
 	}
 
@@ -70,6 +78,10 @@
 
 	input {
 		flex-grow: 1;
-		margin-right: 0.5rem;
+	}
+
+	button {
+		padding: 0 1rem;
+		margin-left: 0.5rem;
 	}
 </style>
