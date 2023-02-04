@@ -21,6 +21,10 @@
 		document.getElementById('search')?.addEventListener('submit', (e) => {
 			e.preventDefault();
 		});
+		// Remove query parameters
+		if (new URLSearchParams(location.search).get('search') !== null) {
+			location.href = '/admin';
+		}
 	});
 </script>
 

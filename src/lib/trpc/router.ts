@@ -1,3 +1,4 @@
+import { hash } from '../hash';
 import sgMail from '@sendgrid/mail';
 import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
 import { z } from 'zod';
@@ -14,14 +15,6 @@ const MAGIC_LINK_LENGTH = 32;
 const CHARSET = 'abcdefghijklmnopqrstuvwxyz';
 
 sgMail.setApiKey(process.env.SENDGRID_KEY as string);
-
-async function hash(input: string): Promise<string> {
-	const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(input));
-	const hashHex = Array.from(new Uint8Array(hashBuffer))
-		.map((b) => b.toString(16).padStart(2, '0'))
-		.join('');
-	return hashHex;
-}
 
 const userSchema = z.object({
 	name: z.string().optional(),
