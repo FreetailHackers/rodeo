@@ -6,6 +6,7 @@
 
 html {
 	box-sizing: border-box;
+	overflow-y: scroll; /* prevent scrollbar from shifting layout */
 }
 *,
 *:before,

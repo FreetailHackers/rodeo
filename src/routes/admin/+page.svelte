@@ -5,6 +5,8 @@
 
 	export let data: PageData;
 
+	const DISPLAY_LIMIT = 100;
+
 	let search = data.search ?? '';
 	$: filtered = data.users;
 
@@ -40,9 +42,11 @@
 	/>
 	<noscript><button>Search</button></noscript>
 </form>
-Found {filtered.length} results{#if search !== ''}&nbsp;for {search}{/if}:
+<!-- Sorry for this monstrosity, couldn't figure out how to break each part onto its own line without spacing bugs -->
+Found {filtered.length} results{#if search !== ''}&nbsp;for {search}{/if}{#if filtered.length > DISPLAY_LIMIT}&nbsp;(showing
+	first {DISPLAY_LIMIT}){/if}:
 <ul>
-	{#each filtered as user}
+	{#each filtered.slice(0, DISPLAY_LIMIT) as user}
 		<li>
 			<details>
 				<summary>{user.name}</summary>
