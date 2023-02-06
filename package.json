@@ -19,7 +19,7 @@
 		"lint"
 	],
 	"prisma": {
-		"seed": "node --loader ts-node/esm --experimental-specifier-resolution=node prisma/seed.ts"
+		"seed": "npx esno prisma/seed.ts"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
