@@ -20,13 +20,11 @@ deploy_staging:
   only:
     - master
   script:
+    - npm ci
+    - npm run build
     - npm install --global vercel
     - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
     - cp .vercel/.env.preview.local .env
-    - mkdir .svelte-kit && cp tsconfig.json .svelte-kit # Satisfy prisma db seed
-    - pwd
-    - cat .svelte-kit/tsconfig.json
-    - ls -l .svelte-kit
     - npx prisma migrate reset --force
     - vercel deploy
 
