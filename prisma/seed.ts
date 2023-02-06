@@ -10,10 +10,14 @@ const prisma = new PrismaClient();
  */
 async function main() {
 	// Create example hacker and admin
-	console.log('Seeding database...');
+	console.log('SEEDING le DATABASE:');
+	console.log('WTF?');
 	console.log(await prisma.user.findMany());
+	console.log('bruh');
 	await prisma.user.deleteMany();
+	console.log('Hi');
 	console.log(await prisma.user.findMany());
+	console.log('Bye');
 	await prisma.user.create({
 		data: {
 			id: 0,
@@ -32,7 +36,9 @@ async function main() {
 			role: 'ADMIN',
 		},
 	});
+	console.log('1');
 	console.log(await prisma.user.findMany());
+	console.log('2');
 
 	// Create example announcement
 	await prisma.announcement.deleteMany();
