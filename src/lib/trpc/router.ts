@@ -173,7 +173,7 @@ export const router = t.router({
 	 * Returns whether applications are open.
 	 */
 	getApplicationOpen: t.procedure.query(async (): Promise<boolean> => {
-		const settings = await prisma.settings.findUniqueOrThrow({ where: { id: 0 } });
+		const settings = (await prisma.settings.findUnique({ where: { id: 0 } })) ?? defaultSettings;
 		return settings.applicationOpen;
 	}),
 
@@ -189,12 +189,7 @@ export const router = t.router({
 		if (user === null || user.role !== Role.ADMIN) {
 			throw new Error('User is not an admin');
 		}
-		await prisma.settings.upsert({
-			where: { id: 0 },
-			update: {},
-			create: defaultSettings,
-		});
-		return await prisma.settings.findUniqueOrThrow({ where: { id: 0 } });
+		return (await prisma.settings.findUnique({ where: { id: 0 } })) ?? defaultSettings;
 	}),
 
 	/**
