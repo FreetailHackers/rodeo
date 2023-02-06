@@ -12,8 +12,12 @@ async function main() {
 	// Create example hacker and admin
 	console.log('SEEDING le DATABASE:');
 	console.log('WTF?');
-	console.log(await prisma.user.findMany());
-	console.log('bruh');
+	try {
+		console.log(await prisma.user.findMany());
+	} catch (e) {
+		console.log('bruh');
+		console.log(e);
+	}
 	await prisma.user.deleteMany();
 	console.log('Hi');
 	console.log(await prisma.user.findMany());
