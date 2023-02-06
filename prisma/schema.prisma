@@ -12,6 +12,7 @@ model User {
   email     String  @unique
   magicLink String  @unique
   role      Role    @default(HACKER)
+  status    Status  @default(CREATED)
   name      String?
   major     String?
 }
@@ -22,7 +23,24 @@ model Announcement {
   published DateTime @default(now())
 }
 
+// Store settings in a table with a single row
+model Settings {
+  id              Int     @id @default(autoincrement()) // Dummy ID is to satisfy Prisma
+  applicationOpen Boolean @default(true)
+}
+
 enum Role {
   HACKER
   ADMIN
+}
+
+enum Status {
+  CREATED // User has entered email but has not opened their magic link
+  VERIFIED // User has opened magic link
+  APPLIED // User has finished application
+  ACCEPTED // User has been accepted but has not yet confirmed
+  REJECTED // User has been rejected
+  WAITLISTED // User has been waitlisted
+  CONFIRMED // User has confirmed their attendance
+  DECLINED // User has declined their attendance
 }

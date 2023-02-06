@@ -3,7 +3,7 @@ import sgMail from '@sendgrid/mail';
 import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
 import { z } from 'zod';
 import prisma from '$lib/trpc/db';
-import { Role, type User } from '@prisma/client';
+import { Role, type Announcement, type Settings, type User } from '@prisma/client';
 
 export async function createContext() {
 	return {};
@@ -16,10 +16,21 @@ const CHARSET = 'abcdefghijklmnopqrstuvwxyz';
 
 sgMail.setApiKey(process.env.SENDGRID_KEY as string);
 
-const userSchema = z.object({
-	name: z.string().optional(),
-	major: z.string().optional(),
-});
+const userSchema = z
+	.object({
+		name: z.string().optional(),
+		major: z.string().optional(),
+	})
+	.strict();
+const settingsSchema = z
+	.object({
+		applicationOpen: z.boolean().optional(),
+	})
+	.strict();
+const defaultSettings: Settings = {
+	id: 0,
+	applicationOpen: true,
+};
 
 export const router = t.router({
 	/**
@@ -111,7 +122,7 @@ export const router = t.router({
 	/**
 	 * Gets all users. User must be an admin.
 	 */
-	getUsers: t.procedure.input(z.string()).query(async (req) => {
+	getUsers: t.procedure.input(z.string()).query(async (req): Promise<User[]> => {
 		const user = await prisma.user.findUnique({
 			where: {
 				magicLink: await hash(req.input),
@@ -126,7 +137,7 @@ export const router = t.router({
 	/**
 	 * Gets all announcements.
 	 */
-	getAnnouncements: t.procedure.query(async () => {
+	getAnnouncements: t.procedure.query(async (): Promise<Announcement[]> => {
 		return await prisma.announcement.findMany({
 			orderBy: [{ published: 'desc' }],
 		});
@@ -142,7 +153,7 @@ export const router = t.router({
 				body: z.string().min(1),
 			})
 		)
-		.mutation(async (req) => {
+		.mutation(async (req): Promise<void> => {
 			const user = await prisma.user.findUnique({
 				where: {
 					magicLink: await hash(req.input.magicLink),
@@ -155,6 +166,55 @@ export const router = t.router({
 				data: {
 					body: req.input.body,
 				},
+			});
+		}),
+
+	/**
+	 * Returns whether applications are open.
+	 */
+	getApplicationOpen: t.procedure.query(async (): Promise<boolean> => {
+		const settings = await prisma.settings.findUniqueOrThrow({ where: { id: 0 } });
+		return settings.applicationOpen;
+	}),
+
+	/**
+	 * Get all settings. User must be an admin.
+	 */
+	getSettings: t.procedure.input(z.string()).query(async (req): Promise<Settings> => {
+		const user = await prisma.user.findUnique({
+			where: {
+				magicLink: await hash(req.input),
+			},
+		});
+		if (user === null || user.role !== Role.ADMIN) {
+			throw new Error('User is not an admin');
+		}
+		await prisma.settings.upsert({
+			where: { id: 0 },
+			update: {},
+			create: defaultSettings,
+		});
+		return await prisma.settings.findUniqueOrThrow({ where: { id: 0 } });
+	}),
+
+	/**
+	 * Sets the given settings to the given values. User must be an admin.
+	 */
+	setSettings: t.procedure
+		.input(z.object({ magicLink: z.string(), settings: settingsSchema }))
+		.mutation(async (req): Promise<void> => {
+			const user = await prisma.user.findUnique({
+				where: {
+					magicLink: await hash(req.input.magicLink),
+				},
+			});
+			if (user === null || user.role !== Role.ADMIN) {
+				throw new Error('User is not an admin');
+			}
+			await prisma.settings.upsert({
+				where: { id: 0 },
+				update: req.input.settings,
+				create: defaultSettings,
 			});
 		}),
 });

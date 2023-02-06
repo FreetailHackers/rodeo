@@ -4,7 +4,10 @@ import { trpc } from '$lib/trpc/router';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load = (async ({ cookies }) => {
-	return { user: (await authenticate(cookies.get('magicLink'))).user };
+	return {
+		user: (await authenticate(cookies.get('magicLink'))).user,
+		applicationOpen: trpc().getApplicationOpen(),
+	};
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {

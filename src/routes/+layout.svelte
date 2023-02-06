@@ -13,6 +13,7 @@
 		<a href="/apply">Apply</a>
 		<a href="/id">My Hacker ID</a>
 	{:else if data.user?.role === Role.ADMIN}
+		<a href="users">Users</a>
 		<a href="admin">Admin</a>
 	{/if}
 </nav>

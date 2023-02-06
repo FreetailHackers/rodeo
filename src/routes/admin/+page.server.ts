@@ -1,20 +1,19 @@
-import fuzzysort from 'fuzzysort';
 import authenticate from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import { Role } from '@prisma/client';
-import type { PageServerLoad } from './$types';
-import { redirect } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
 
-export const load = (async ({ cookies, url }) => {
-	const { magicLink } = await authenticate(cookies.get('magicLink'), Role.ADMIN);
-	const users = await trpc().getUsers(magicLink);
-	const search = url.searchParams.get('search');
-	if (search === null) {
-		return { users };
-	}
-	if (search == '') {
-		throw redirect(301, '/admin');
-	}
-	const results = fuzzysort.go(search, users, { key: 'name' });
-	return { users: results.map((user) => user.obj), search };
+export const load = (async ({ cookies }) => {
+	const magicLink = (await authenticate(cookies.get('magicLink'), Role.ADMIN)).magicLink;
+	return trpc().getSettings(magicLink);
 }) satisfies PageServerLoad;
+
+export const actions: Actions = {
+	default: async ({ cookies, request }) => {
+		const magicLink = (await authenticate(cookies.get('magicLink'), Role.ADMIN)).magicLink;
+		const formData = await request.formData();
+		const applicationOpen = formData.get('applicationOpen') === 'on';
+		await trpc().setSettings({ magicLink, settings: { applicationOpen } });
+		return 'Updated!';
+	},
+};

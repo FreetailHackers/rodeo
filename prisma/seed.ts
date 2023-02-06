@@ -51,6 +51,7 @@ async function main() {
 			name: `${firstName} ${lastName}`,
 			major,
 			role: 'HACKER',
+			status: 'CREATED',
 		});
 	}
 	await prisma.user.createMany({ data: users });

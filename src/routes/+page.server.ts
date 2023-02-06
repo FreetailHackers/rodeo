@@ -1,4 +1,6 @@
+import authenticate from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
+import { Role } from '@prisma/client';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load = (async ({ cookies }) => {
@@ -24,9 +26,9 @@ export const actions: Actions = {
 
 	announce: async ({ cookies, request }) => {
 		const formData = await request.formData();
-		const magicLink = cookies.get('magicLink');
-		const body = formData.get('announcement') as string;
-		if (body.trim() === '' || magicLink === undefined) {
+		const magicLink = (await authenticate(cookies.get('magicLink'), Role.ADMIN)).magicLink;
+		const body = formData.get('announcement');
+		if (typeof body !== 'string' || body.trim() === '') {
 			return 'Please enter a valid body.';
 		}
 		await trpc().createAnnouncement({ magicLink, body });
