@@ -22,11 +22,12 @@ deploy_staging:
   script:
     - npm ci
     - npm run build
-    - npm install --global vercel
+    - npm install --global vercel prisma
     - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
     - cp .vercel/.env.preview.local .env
-    - npx prisma migrate deploy
-    - npx prisma db seed
+    - prisma migrate deploy
+    - prisma generate
+    - prisma db seed
     - vercel deploy --token=$VERCEL_TOKEN
 
 deploy_production:
@@ -34,8 +35,8 @@ deploy_production:
   only:
     - production
   script:
-    - npm install --global vercel
+    - npm install --global vercel prisma
     - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
     - cp .vercel/.env.production.local .env
-    - npx prisma migrate deploy
+    - prisma migrate deploy
     - vercel deploy --prod --token=$VERCEL_TOKEN
