@@ -4,9 +4,10 @@ import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
 import { z } from 'zod';
 import prisma from '$lib/trpc/db';
 import { Role, type Announcement, type Settings, type User } from '@prisma/client';
+import type { Cookies } from '@sveltejs/kit';
 
-export async function createContext() {
-	return {};
+export function createContext(cookies: Cookies) {
+	return { magicLink: cookies.get('magicLink') ?? '' };
 }
 type Context = inferAsyncReturnType<typeof createContext>;
 export const t = initTRPC.context<Context>().create();
@@ -34,17 +35,12 @@ const defaultSettings: Settings = {
 
 export const router = t.router({
 	/**
-	 * Gets the user with the given magic link. Returns null if no user
-	 * with the given magic link exists.
+	 * Gets the user with the given magic link.
 	 */
-	getUser: t.procedure.input(z.string().optional()).query(async (req): Promise<User | null> => {
-		const magicLink = req.input;
-		if (magicLink === undefined) {
-			return null;
-		}
+	getUser: t.procedure.query(async (req): Promise<User | null> => {
 		return await prisma.user.findUnique({
 			where: {
-				magicLink: await hash(magicLink),
+				magicLink: await hash(req.ctx.magicLink),
 			},
 		});
 	}),
@@ -52,21 +48,14 @@ export const router = t.router({
 	/**
 	 * Sets the user with the given magic link to the given data.
 	 */
-	setUser: t.procedure
-		.input(
-			z.object({
-				magicLink: z.string(),
-				data: userSchema,
-			})
-		)
-		.mutation(async (req): Promise<void> => {
-			await prisma.user.update({
-				where: {
-					magicLink: await hash(req.input.magicLink),
-				},
-				data: req.input.data,
-			});
-		}),
+	setUser: t.procedure.input(userSchema).mutation(async (req): Promise<void> => {
+		await prisma.user.update({
+			where: {
+				magicLink: await hash(req.ctx.magicLink),
+			},
+			data: req.input,
+		});
+	}),
 
 	/**
 	 * Creates a new user with the given email. Returns the success
@@ -122,10 +111,10 @@ export const router = t.router({
 	/**
 	 * Gets all users. User must be an admin.
 	 */
-	getUsers: t.procedure.input(z.string()).query(async (req): Promise<User[]> => {
+	getUsers: t.procedure.query(async (req): Promise<User[]> => {
 		const user = await prisma.user.findUnique({
 			where: {
-				magicLink: await hash(req.input),
+				magicLink: await hash(req.ctx.magicLink),
 			},
 		});
 		if (user === null || user.role !== Role.ADMIN) {
@@ -146,28 +135,21 @@ export const router = t.router({
 	/**
 	 * Creates a new announcement. User must be an admin.
 	 */
-	createAnnouncement: t.procedure
-		.input(
-			z.object({
-				magicLink: z.string(),
-				body: z.string().min(1),
-			})
-		)
-		.mutation(async (req): Promise<void> => {
-			const user = await prisma.user.findUnique({
-				where: {
-					magicLink: await hash(req.input.magicLink),
-				},
-			});
-			if (user === null || user.role !== Role.ADMIN) {
-				throw new Error('User is not an admin');
-			}
-			await prisma.announcement.create({
-				data: {
-					body: req.input.body,
-				},
-			});
-		}),
+	createAnnouncement: t.procedure.input(z.string().min(1)).mutation(async (req): Promise<void> => {
+		const user = await prisma.user.findUnique({
+			where: {
+				magicLink: await hash(req.ctx.magicLink),
+			},
+		});
+		if (user === null || user.role !== Role.ADMIN) {
+			throw new Error('User is not an admin');
+		}
+		await prisma.announcement.create({
+			data: {
+				body: req.input,
+			},
+		});
+	}),
 
 	/**
 	 * Returns whether applications are open.
@@ -180,10 +162,10 @@ export const router = t.router({
 	/**
 	 * Get all settings. User must be an admin.
 	 */
-	getSettings: t.procedure.input(z.string()).query(async (req): Promise<Settings> => {
+	getSettings: t.procedure.query(async (req): Promise<Settings> => {
 		const user = await prisma.user.findUnique({
 			where: {
-				magicLink: await hash(req.input),
+				magicLink: await hash(req.ctx.magicLink),
 			},
 		});
 		if (user === null || user.role !== Role.ADMIN) {
@@ -195,27 +177,25 @@ export const router = t.router({
 	/**
 	 * Sets the given settings to the given values. User must be an admin.
 	 */
-	setSettings: t.procedure
-		.input(z.object({ magicLink: z.string(), settings: settingsSchema }))
-		.mutation(async (req): Promise<void> => {
-			const user = await prisma.user.findUnique({
-				where: {
-					magicLink: await hash(req.input.magicLink),
-				},
-			});
-			if (user === null || user.role !== Role.ADMIN) {
-				throw new Error('User is not an admin');
-			}
-			await prisma.settings.upsert({
-				where: { id: 0 },
-				update: req.input.settings,
-				create: defaultSettings,
-			});
-		}),
+	setSettings: t.procedure.input(settingsSchema).mutation(async (req): Promise<void> => {
+		const user = await prisma.user.findUnique({
+			where: {
+				magicLink: await hash(req.ctx.magicLink),
+			},
+		});
+		if (user === null || user.role !== Role.ADMIN) {
+			throw new Error('User is not an admin');
+		}
+		await prisma.settings.upsert({
+			where: { id: 0 },
+			update: req.input,
+			create: { id: 0, ...req.input },
+		});
+	}),
 });
 
-export function trpc() {
-	return router.createCaller({});
+export function trpc(cookies: Cookies) {
+	return router.createCaller(createContext(cookies));
 }
 
 export type Router = typeof router;

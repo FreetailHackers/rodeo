@@ -6,8 +6,8 @@ import type { PageServerLoad } from './$types';
 import { redirect } from '@sveltejs/kit';
 
 export const load = (async ({ cookies, url }) => {
-	const { magicLink } = await authenticate(cookies.get('magicLink'), Role.ADMIN);
-	const users = await trpc().getUsers(magicLink);
+	await authenticate(cookies, Role.ADMIN);
+	const users = await trpc(cookies).getUsers();
 	const search = url.searchParams.get('search');
 	if (search === null) {
 		return { users };

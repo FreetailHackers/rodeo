@@ -38,6 +38,10 @@ button {
 	border: none;
 }
 
+button[disabled] {
+	opacity: 0.5;
+}
+
 input {
 	font-family: var(--font-family);
 	font-size: var(--font-size);
