@@ -21,7 +21,7 @@
 			<p>{form.message}</p>
 		{/if}
 	{/if}
-	<Announcements announcements={data.announcements} />
+	<Announcements announcements={data.announcements} action="?/unannounce" />
 	<form method="POST" action="?/logout" use:enhance>
 		<button>Logout</button>
 	</form>
@@ -50,7 +50,7 @@
 		{/if}
 	{/if}
 	<h1>Announcements</h1>
-	<Announcements announcements={data.announcements} />
+	<Announcements announcements={data.announcements} action="?/unannounce" />
 {/if}
 
 <style>

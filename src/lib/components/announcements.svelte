@@ -1,5 +1,8 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import type { Announcement } from '@prisma/client';
+
+	export let action: string;
 
 	export let announcements: Announcement[];
 </script>
@@ -8,17 +11,23 @@
 	<ul>
 		{#each announcements as announcement}
 			<li>
-				<p>
-					{announcement.published.toLocaleTimeString('en-us', {
-						hour: 'numeric',
-						minute: 'numeric',
-					})}
-					on
-					{announcement.published.toLocaleDateString('en-us', {
-						month: 'long',
-						day: 'numeric',
-					})}
-				</p>
+				<span>
+					<p>
+						{announcement.published.toLocaleTimeString('en-us', {
+							hour: 'numeric',
+							minute: 'numeric',
+						})}
+						on
+						{announcement.published.toLocaleDateString('en-us', {
+							month: 'long',
+							day: 'numeric',
+						})}
+					</p>
+					<form method="POST" {action} use:enhance>
+						<input type="hidden" name="id" value={announcement.id} />
+						<button>X</button>
+					</form>
+				</span>
 				<br />
 				<p>{announcement.body}</p>
 			</li>
@@ -43,5 +52,17 @@
 
 	p {
 		margin: 0;
+		flex-grow: 1;
+	}
+
+	span {
+		display: flex;
+	}
+
+	button {
+		display: inline;
+		height: initial;
+		background-color: transparent;
+		color: gray;
 	}
 </style>

@@ -185,7 +185,7 @@ export const router = t.router({
 		if (user.role !== Role.ADMIN) {
 			throw new Error('You have insufficient permissions to perform this action.');
 		}
-		return await prisma.user.findMany();
+		return await prisma.user.findMany({ orderBy: [{ id: 'asc' }] });
 	}),
 
 	/**
@@ -210,6 +210,21 @@ export const router = t.router({
 			throw new Error('You have insufficient permissions to perform this action.');
 		}
 		await prisma.announcement.create({ data: { body: req.input } });
+	}),
+
+	/**
+	 * Deletes an announcement by ID. User must be an admin.
+	 */
+	deleteAnnouncement: t.procedure.input(z.number()).mutation(async (req): Promise<void> => {
+		const user = await prisma.user.findUniqueOrThrow({
+			where: {
+				magicLink: await hash(req.ctx.magicLink),
+			},
+		});
+		if (user.role !== Role.ADMIN) {
+			throw new Error('You have insufficient permissions to perform this action.');
+		}
+		await prisma.announcement.delete({ where: { id: req.input } });
 	}),
 
 	/**

@@ -30,4 +30,13 @@ export const actions: Actions = {
 		await trpc(cookies).createAnnouncement(body);
 		return { success: true, message: 'Created announcement!' };
 	},
+
+	unannounce: async ({ cookies, request }) => {
+		const formData = await request.formData();
+		const id = formData.get('id');
+		if (typeof id !== 'string') {
+			throw new Error('Invalid announcement ID.');
+		}
+		await trpc(cookies).deleteAnnouncement(Number(id));
+	},
 };
