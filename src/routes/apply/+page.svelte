@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { trpc } from '$lib/trpc/client';
+	import { Status } from '@prisma/client';
 	import type { ActionData, PageData } from './$types';
 
 	export let data: PageData;
@@ -20,39 +21,87 @@
 </script>
 
 {#if data.applicationOpen}
-	<form
-		method="POST"
-		use:enhance={() => {
-			return async ({ update }) => {
-				update({ reset: false });
-			};
-		}}
-		on:input={() => {
-			submitButton.disabled = true;
-			submitButton.textContent = 'Autosaving...';
-			if (debounceTimer !== undefined) {
-				clearTimeout(debounceTimer);
-			}
-			debounceTimer = setTimeout(async () => {
-				debounceTimer = undefined;
-				await trpc().setUser.mutate(nullToUndefined(user));
-				submitButton.disabled = false;
-				submitButton.textContent = 'Saved!';
-			}, 1000);
-		}}
-		autocomplete="off"
-	>
-		<label for="name">Name </label>
-		<input bind:value={name} type="name" name="name" placeholder="John Doe" />
-		<label for="major">Major</label>
-		<input bind:value={major} type="major" name="major" placeholder="Underwater Basket Weaving" />
-		<button bind:this={submitButton}>Save</button>
-	</form>
-	<noscript>
-		{#if form}
-			<p>{form}</p>
+	<!-- Application status dialog -->
+	<div id="status">
+		<p>Your application status is:</p>
+		{#if data.user.status === Status.VERIFIED}
+			<h1>INCOMPLETE</h1>
+			<p>You must complete your application to be considered for admission.</p>
+		{:else if data.user.status === Status.APPLIED}
+			<h1>SUBMITTED</h1>
+			<p>
+				Thanks for applying! The team will review your application soon. Until then, you may
+				withdraw and edit your application if you'd like.
+			</p>
+			<form method="POST" action="?/withdraw" use:enhance>
+				<button>Withdraw and Edit</button>
+			</form>
+		{:else if data.user.status === Status.REJECTED}
+			<h1>REJECTED</h1>
+			<p>Unfortunately, we do not have the space to offer you admission this year.</p>
+		{:else}
+			<h1>ACCEPTED</h1>
+			<p>
+				Congratulations! We were impressed by your application and would like to extend an
+				invitation to you. You must confirm your attendance.
+			</p>
 		{/if}
-	</noscript>
+	</div>
+
+	<!-- The actual application -->
+	{#if data.user.status === Status.VERIFIED}
+		<form
+			method="POST"
+			action="?/save"
+			use:enhance={() => {
+				return async ({ update }) => {
+					update({ reset: false });
+				};
+			}}
+			on:input={() => {
+				submitButton.disabled = true;
+				submitButton.textContent = 'Autosaving...';
+				if (debounceTimer !== undefined) {
+					clearTimeout(debounceTimer);
+				}
+				debounceTimer = setTimeout(async () => {
+					debounceTimer = undefined;
+					await trpc().setUser.mutate(nullToUndefined(user));
+					submitButton.disabled = false;
+					submitButton.textContent = 'Saved!';
+				}, 1000);
+			}}
+			autocomplete="off"
+		>
+			<label for="name">Name </label>
+			<input bind:value={name} type="name" name="name" placeholder="John Doe" required />
+			<label for="major">Major</label>
+			<input
+				bind:value={major}
+				type="major"
+				name="major"
+				placeholder="Underwater Basket Weaving"
+				required
+			/>
+			<button bind:this={submitButton}>Save</button>
+			<button id="submit" formaction="?/finish">Submit Application</button>
+		</form>
+
+		<!-- Feedback -->
+		{#if typeof form === 'string'}
+			<noscript>
+				<p>{form}</p>
+			</noscript>
+		{:else if form !== null}
+			<p>Please fix the following problems before submitting your application:</p>
+			{#each Object.entries(form) as [key, value]}
+				<p>
+					<b class="error">{key}</b>
+					{value}
+				</p>
+			{/each}
+		{/if}
+	{/if}
 {:else}
 	<p>Sorry, applications have closed.</p>
 {/if}
@@ -61,5 +110,24 @@
 	form {
 		display: flex;
 		flex-direction: column;
+	}
+
+	button {
+		margin-bottom: 1rem;
+	}
+
+	#submit {
+		margin: 0;
+	}
+
+	.error {
+		text-transform: uppercase;
+	}
+
+	#status {
+		border: 1px solid black;
+		padding: 0 1rem;
+		text-align: center;
+		margin-bottom: 1rem;
 	}
 </style>

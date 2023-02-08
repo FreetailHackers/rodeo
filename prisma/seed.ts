@@ -1,6 +1,6 @@
 import { firstNames, lastNames, majors } from './data';
 import { hash } from '../src/lib/hash';
-import { PrismaClient, type User } from '@prisma/client';
+import { PrismaClient, Role, Status, type User } from '@prisma/client';
 const prisma = new PrismaClient();
 
 /**
@@ -14,7 +14,7 @@ async function main() {
 	await prisma.user.create({
 		data: {
 			id: 0,
-			email: 'email@example.com',
+			email: 'hacker@example.com',
 			magicLink: await hash('hacker'),
 			name: 'Example Hacker',
 			major: 'Computer Science',
@@ -26,7 +26,7 @@ async function main() {
 			email: 'admin@freetailhackers.com',
 			magicLink: await hash('admin'),
 			name: 'Example Administrator',
-			role: 'ADMIN',
+			role: Role.ADMIN,
 		},
 	});
 
@@ -50,8 +50,8 @@ async function main() {
 			magicLink: await hash('' + i + 2),
 			name: `${firstName} ${lastName}`,
 			major,
-			role: 'HACKER',
-			status: 'CREATED',
+			role: Role.HACKER,
+			status: Status.CREATED,
 		});
 	}
 	await prisma.user.createMany({ data: users });

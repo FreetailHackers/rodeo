@@ -12,8 +12,17 @@ export const load = (async ({ cookies }) => {
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
-	default: async ({ cookies, request }) => {
+	save: async ({ cookies, request }) => {
 		await trpc(cookies).setUser(Object.fromEntries(await request.formData()));
 		return 'Saved!';
+	},
+
+	finish: async ({ cookies, request }) => {
+		await trpc(cookies).setUser(Object.fromEntries(await request.formData()));
+		return await trpc(cookies).submitApplication();
+	},
+
+	withdraw: async ({ cookies }) => {
+		return await trpc(cookies).setUser({});
 	},
 };

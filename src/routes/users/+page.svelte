@@ -25,7 +25,7 @@
 		});
 		// Remove query parameters
 		if (new URLSearchParams(location.search).get('search') !== null) {
-			location.href = '/admin';
+			location.href = location.pathname;
 		}
 	});
 </script>

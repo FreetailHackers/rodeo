@@ -12,9 +12,9 @@ export const actions: Actions = {
 	login: async ({ cookies, request }) => {
 		const email = (await request.formData()).get('email');
 		if (typeof email !== 'string') {
-			return 'Please enter a valid email address.';
+			return { success: false, message: 'Please enter a valid email address.' };
 		}
-		return trpc(cookies).createUser(email);
+		return await trpc(cookies).createUser(email);
 	},
 
 	logout: ({ cookies }) => {
@@ -25,9 +25,9 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const body = formData.get('announcement');
 		if (typeof body !== 'string' || body.trim() === '') {
-			return 'Please enter a valid body.';
+			return { success: false, message: 'Please enter a valid announcement.' };
 		}
 		await trpc(cookies).createAnnouncement(body);
-		return 'Created announcement!';
+		return { success: true, message: 'Created announcement!' };
 	},
 };

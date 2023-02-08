@@ -13,7 +13,7 @@ export const load = (async ({ cookies, url }) => {
 		return { users };
 	}
 	if (search == '') {
-		throw redirect(301, '/admin');
+		throw redirect(301, url.pathname);
 	}
 	const results = fuzzysort.go(search, users, { key: 'name' });
 	return { users: results.map((user) => user.obj), search };

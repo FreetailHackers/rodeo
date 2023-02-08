@@ -46,3 +46,10 @@ To get acquainted with the codebase, here's how to add a field to the hacker app
 4. In the backend `src/lib/trpc/router.ts`, update the Zod schema for users to include your new field. Refer to the [Zod documentation](https://zod.dev/?id=basic-usage) to see what validators are available.
 5. Restart the development server by sending CTRL-C to the process and running `npm run dev` again. This is very important: the development server can usually pick up changes and automatically hot reload, but after performing a Prisma migration is a case where you must restart the server manually.
 6. On the application frontend `src/routes/apply/+page.svelte`, add a `<label>` and `<input>` for your new question. The key part is to make sure the new `<input>` has a `name` attribute that matches the name in the Prisma schema.
+
+# Conventions
+
+- Use the `import/export` ESM syntax instead of `require` CommonJS syntax
+- Prefer `async/await` over Promises
+- Always comment and annotate return type for all TRPC endpoints
+- Compare enums to enums instead of string

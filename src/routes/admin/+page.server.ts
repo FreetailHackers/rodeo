@@ -5,7 +5,7 @@ import type { Actions, PageServerLoad } from './$types';
 
 export const load = (async ({ cookies }) => {
 	await authenticate(cookies, Role.ADMIN);
-	return trpc(cookies).getSettings();
+	return await trpc(cookies).getSettings();
 }) satisfies PageServerLoad;
 
 export const actions: Actions = {
@@ -13,6 +13,6 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const applicationOpen = formData.get('applicationOpen') === 'on';
 		await trpc(cookies).setSettings({ applicationOpen });
-		return 'Updated!';
+		return 'Your changes have been saved!';
 	},
 };
