@@ -17,39 +17,41 @@
 	$: user = { name, major };
 
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
-	let submitButton: HTMLButtonElement;
+	let saveButton: HTMLButtonElement;
+	let saveButtonText = typeof form === 'string' ? form : 'Save';
 </script>
 
-{#if data.applicationOpen}
-	<!-- Application status dialog -->
-	<div id="status">
-		<p>Your application status is:</p>
-		{#if data.user.status === Status.VERIFIED}
-			<h1>INCOMPLETE</h1>
-			<p>You must complete your application to be considered for admission.</p>
-		{:else if data.user.status === Status.APPLIED}
-			<h1>SUBMITTED</h1>
-			<p>
-				Thanks for applying! The team will review your application soon. Until then, you may
-				withdraw and edit your application if you'd like.
-			</p>
-			<form method="POST" action="?/withdraw" use:enhance>
-				<button>Withdraw and Edit</button>
-			</form>
-		{:else if data.user.status === Status.REJECTED}
-			<h1>REJECTED</h1>
-			<p>Unfortunately, we do not have the space to offer you admission this year.</p>
-		{:else}
-			<h1>ACCEPTED</h1>
-			<p>
-				Congratulations! We were impressed by your application and would like to extend an
-				invitation to you. You must confirm your attendance.
-			</p>
-		{/if}
-	</div>
-
-	<!-- The actual application -->
+<!-- Application status dialog -->
+<div id="status">
+	<p>Your application status is:</p>
 	{#if data.user.status === Status.VERIFIED}
+		<h1>INCOMPLETE</h1>
+		<p>You must complete your application to be considered for admission.</p>
+	{:else if data.user.status === Status.APPLIED}
+		<h1>SUBMITTED</h1>
+		<p>Thanks for applying! The team will review your application soon.</p>
+		<form method="POST" action="?/withdraw" use:enhance>
+			{#if data.applicationOpen}
+				<button>Withdraw and Edit</button>
+			{:else}
+				<button disabled>Cannot edit because applications are closed.</button>
+			{/if}
+		</form>
+	{:else if data.user.status === Status.REJECTED}
+		<h1>REJECTED</h1>
+		<p>Unfortunately, we do not have the space to offer you admission this year.</p>
+	{:else}
+		<h1>ACCEPTED</h1>
+		<p>
+			Congratulations! We were impressed by your application and would like to extend an invitation
+			to you. You must confirm your attendance.
+		</p>
+	{/if}
+</div>
+
+<!-- The actual application -->
+{#if data.user.status === Status.VERIFIED}
+	{#if data.applicationOpen}
 		<form
 			method="POST"
 			action="?/save"
@@ -59,16 +61,16 @@
 				};
 			}}
 			on:input={() => {
-				submitButton.disabled = true;
-				submitButton.textContent = 'Autosaving...';
+				saveButton.disabled = true;
+				saveButtonText = 'Autosaving...';
 				if (debounceTimer !== undefined) {
 					clearTimeout(debounceTimer);
 				}
 				debounceTimer = setTimeout(async () => {
 					debounceTimer = undefined;
 					await trpc().setUser.mutate(nullToUndefined(user));
-					submitButton.disabled = false;
-					submitButton.textContent = 'Saved!';
+					saveButton.disabled = false;
+					saveButtonText = 'Saved!';
 				}, 1000);
 			}}
 			autocomplete="off"
@@ -83,16 +85,12 @@
 				placeholder="Underwater Basket Weaving"
 				required
 			/>
-			<button bind:this={submitButton}>Save</button>
+			<button bind:this={saveButton}>{saveButtonText}</button>
 			<button id="submit" formaction="?/finish">Submit Application</button>
 		</form>
 
 		<!-- Feedback -->
-		{#if typeof form === 'string'}
-			<noscript>
-				<p>{form}</p>
-			</noscript>
-		{:else if form !== null}
+		{#if form !== null && typeof form === 'object'}
 			<p>Please fix the following problems before submitting your application:</p>
 			{#each Object.entries(form) as [key, value]}
 				<p>
@@ -101,9 +99,9 @@
 				</p>
 			{/each}
 		{/if}
+	{:else}
+		<p>Sorry, applications have closed.</p>
 	{/if}
-{:else}
-	<p>Sorry, applications have closed.</p>
 {/if}
 
 <style>

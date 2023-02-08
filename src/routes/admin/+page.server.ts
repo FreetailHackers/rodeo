@@ -13,6 +13,6 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const applicationOpen = formData.get('applicationOpen') === 'on';
 		await trpc(cookies).setSettings({ applicationOpen });
-		return 'Your changes have been saved!';
+		return 'Saved!';
 	},
 };

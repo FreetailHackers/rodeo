@@ -24,11 +24,11 @@ export const actions: Actions = {
 	announce: async ({ cookies, request }) => {
 		const formData = await request.formData();
 		const body = formData.get('announcement');
-		if (typeof body !== 'string' || body.trim() === '') {
-			return { success: false, message: 'Please enter a valid announcement.' };
+		if (typeof body !== 'string') {
+			throw new Error('Invalid announcement body.');
 		}
 		await trpc(cookies).createAnnouncement(body);
-		return { success: true, message: 'Created announcement!' };
+		return 'Created announcement!';
 	},
 
 	unannounce: async ({ cookies, request }) => {

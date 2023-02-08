@@ -7,25 +7,27 @@
 	export let data: PageData;
 	export let form: ActionData;
 
+	$: announceButtonText = form ?? 'Announce';
+
 	let email: string;
 </script>
 
 {#if data.user}
 	<p>Welcome to Rodeo, {data.user.name}!</p>
+
+	<!-- Admin announcements panel -->
 	{#if data.user.role === Role.ADMIN}
 		<form method="POST" action="?/announce" use:enhance>
 			<textarea name="announcement" placeholder="Make an announcement here..." required />
-			<button>Announce</button>
+			<button>{announceButtonText}</button>
 		</form>
-		{#if form}
-			<p>{form.message}</p>
-		{/if}
 	{/if}
 	<Announcements announcements={data.announcements} action="?/unannounce" />
 	<form method="POST" action="?/logout" use:enhance>
 		<button>Logout</button>
 	</form>
 {:else}
+	<!-- Signup page -->
 	<h1>Welcome to Rodeo</h1>
 	<p>
 		Rodeo is Freetail Hackers' registration platform and information board for hackathon attendees.
@@ -42,12 +44,10 @@
 		<button>Register</button>
 	</form>
 	{#if form}
-		<p>{form.message}</p>
-		{#if !form.success}
-			<p>
-				For help, contact <a href="mailto:tech@freetailhackers.com">tech@freetailhackers.com</a>.
-			</p>
-		{/if}
+		<p>{form}</p>
+		<p>
+			For help, contact <a href="mailto:tech@freetailhackers.com">tech@freetailhackers.com</a>.
+		</p>
 	{/if}
 	<h1>Announcements</h1>
 	<Announcements announcements={data.announcements} action="?/unannounce" />

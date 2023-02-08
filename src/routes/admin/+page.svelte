@@ -6,7 +6,7 @@
 	export let data: PageData;
 	export let form: ActionData;
 
-	let buttonText = 'Save';
+	let buttonText = form ?? 'Save';
 </script>
 
 <h1>Admin Panel</h1>
@@ -26,11 +26,6 @@
 	<Toggle name="applicationOpen" label="Accept new applications" checked={data.applicationOpen} />
 	<button type="submit">{buttonText}</button>
 </form>
-<noscript>
-	{#if form}
-		<p>{form}</p>
-	{/if}
-</noscript>
 
 <style>
 	button {

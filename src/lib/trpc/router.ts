@@ -56,6 +56,9 @@ export const router = t.router({
 		const user = await prisma.user.findUniqueOrThrow({
 			where: { magicLink: await hash(req.ctx.magicLink) },
 		});
+		if (!(await getSettings()).applicationOpen) {
+			throw new Error('Sorry, applications are closed.');
+		}
 		// Only let verified users that haven't received a decision update their info
 		if (user.status === Status.VERIFIED || user.status === Status.APPLIED) {
 			await prisma.user.update({
@@ -107,50 +110,48 @@ export const router = t.router({
 	 * Creates a new user with the given email. Returns the success
 	 * status as a string.
 	 */
-	createUser: t.procedure
-		.input(z.string())
-		.mutation(async (req): Promise<{ success: boolean; message: string }> => {
-			const email = req.input;
+	createUser: t.procedure.input(z.string()).mutation(async (req): Promise<string> => {
+		const email = req.input;
 
-			if (!email.match(/^\S+@\S+\.\S+$/)) {
-				return { success: false, message: 'Please enter a valid email address.' };
+		if (!email.match(/^\S+@\S+\.\S+$/)) {
+			return 'Please enter a valid email address.';
+		}
+
+		// Generate a magic link
+		const chars = new Uint8Array(MAGIC_LINK_LENGTH);
+		crypto.getRandomValues(chars);
+		const magicLink = Array.from(chars)
+			.map((n) => CHARSET[n % CHARSET.length])
+			.join('');
+
+		// Send email with magic link
+		const link = `${process.env.DOMAIN_NAME}/login/${magicLink}`;
+		const msg = {
+			to: email,
+			from: 'hello@freetailhackers.com',
+			subject: 'Welcome to Rodeo!',
+			text: `Please click on this link to log in to Rodeo: ${link}`,
+			html: `<p>Please click on this link to log in to Rodeo: <a href="${link}">${link}</a></p>`,
+		};
+
+		// Create user and email magic link only if not already registered with this email
+		const user = await prisma.user.findUnique({ where: { email: email } });
+		if (user === null) {
+			try {
+				await sgMail.send(msg);
+				await prisma.user.create({
+					data: {
+						email: email,
+						magicLink: await hash(magicLink),
+					},
+				});
+				return 'We sent a magic login link to your email!';
+			} catch (error) {
+				return 'Could not send email. Please try again later.';
 			}
-
-			// Generate a magic link
-			const chars = new Uint8Array(MAGIC_LINK_LENGTH);
-			crypto.getRandomValues(chars);
-			const magicLink = Array.from(chars)
-				.map((n) => CHARSET[n % CHARSET.length])
-				.join('');
-
-			// Send email with magic link
-			const link = `${process.env.DOMAIN_NAME}/login/${magicLink}`;
-			const msg = {
-				to: email,
-				from: 'hello@freetailhackers.com',
-				subject: 'Welcome to Rodeo!',
-				text: `Please click on this link to log in to Rodeo: ${link}`,
-				html: `<p>Please click on this link to log in to Rodeo: <a href="${link}">${link}</a></p>`,
-			};
-
-			// Create user and email magic link only if not already registered with this email
-			const user = await prisma.user.findUnique({ where: { email: email } });
-			if (user === null) {
-				try {
-					await sgMail.send(msg);
-					await prisma.user.create({
-						data: {
-							email: email,
-							magicLink: await hash(magicLink),
-						},
-					});
-					return { success: true, message: 'We sent a magic login link to your email!' };
-				} catch (error) {
-					return { success: false, message: 'Could not send email. Please try again later.' };
-				}
-			}
-			return { success: false, message: 'You are already registered with this email.' };
-		}),
+		}
+		return 'You are already registered with this email.';
+	}),
 
 	/**
 	 * Verify a user.
