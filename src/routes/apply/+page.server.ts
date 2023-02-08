@@ -2,6 +2,7 @@ import authenticate from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import type { Actions, PageServerLoad } from './$types';
 import { Role } from '@prisma/client';
+import { redirect } from '@sveltejs/kit';
 
 export const load = (async ({ cookies }) => {
 	const user = await authenticate(cookies, Role.HACKER);
@@ -18,11 +19,17 @@ export const actions: Actions = {
 	},
 
 	finish: async ({ cookies, request }) => {
+		if (!(await trpc(cookies).getApplicationOpen())) {
+			throw redirect(301, '/apply');
+		}
 		await trpc(cookies).setUser(Object.fromEntries(await request.formData()));
 		return await trpc(cookies).submitApplication();
 	},
 
 	withdraw: async ({ cookies }) => {
-		return await trpc(cookies).setUser({});
+		if (!(await trpc(cookies).getApplicationOpen())) {
+			throw redirect(301, '/apply');
+		}
+		await trpc(cookies).setUser({});
 	},
 };
