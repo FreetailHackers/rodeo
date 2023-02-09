@@ -40,11 +40,17 @@
 	{:else if data.user.status === Status.REJECTED}
 		<h1>REJECTED</h1>
 		<p>Unfortunately, we do not have the space to offer you admission this year.</p>
+	{:else if data.user.status === Status.WAITLISTED}
+		<h1>WAITLISTED</h1>
+		<p>
+			Unfortunately, we do not have the space to offer you admission at this time. We will contact
+			you should this situation change.
+		</p>
 	{:else}
 		<h1>ACCEPTED</h1>
 		<p>
-			Congratulations! We were impressed by your application and would like to extend an invitation
-			to you. You must confirm your attendance.
+			Congratulations! We were impressed by your application and would like to invite you to this
+			year's hackathon.
 		</p>
 	{/if}
 </div>

@@ -51,7 +51,7 @@ async function main() {
 			name: `${firstName} ${lastName}`,
 			major,
 			role: Role.HACKER,
-			status: Status.CREATED,
+			status: Status[Object.keys(Status)[Math.floor(random() * Object.keys(Status).length)]],
 		});
 	}
 	await prisma.user.createMany({ data: users });
