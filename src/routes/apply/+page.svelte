@@ -105,11 +105,6 @@
 {/if}
 
 <style>
-	form {
-		display: flex;
-		flex-direction: column;
-	}
-
 	button {
 		margin-bottom: 1rem;
 	}

@@ -2,11 +2,17 @@
 	import { enhance } from '$app/forms';
 	import type { Announcement } from '@prisma/client';
 
-	export let action: string;
+	export let admin: boolean;
 
 	export let announcements: Announcement[];
 </script>
 
+{#if admin}
+	<form method="POST" action="?/announce" use:enhance>
+		<textarea name="announcement" placeholder="Make an announcement here..." required />
+		<button>Announce</button>
+	</form>
+{/if}
 {#if announcements.length > 0}
 	<ul>
 		{#each announcements as announcement}
@@ -23,10 +29,12 @@
 							day: 'numeric',
 						})}
 					</p>
-					<form method="POST" {action} use:enhance>
-						<input type="hidden" name="id" value={announcement.id} />
-						<button>X</button>
-					</form>
+					{#if admin}
+						<form method="POST" action="?/unannounce" use:enhance>
+							<input type="hidden" name="id" value={announcement.id} />
+							<button class="deleteButton">X</button>
+						</form>
+					{/if}
 				</span>
 				<br />
 				<p>{announcement.body}</p>
@@ -39,6 +47,10 @@
 {/if}
 
 <style>
+	textarea {
+		margin-bottom: 1rem;
+	}
+
 	ul {
 		list-style: none;
 		padding-left: 0;
@@ -59,7 +71,7 @@
 		display: flex;
 	}
 
-	button {
+	.deleteButton {
 		display: inline;
 		height: initial;
 		background-color: transparent;

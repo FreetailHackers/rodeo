@@ -65,6 +65,11 @@ textarea {
 	height: 10rem;
 }
 
+form {
+	display: flex;
+	flex-direction: column;
+}
+
 a {
 	color: var(--primary-accent);
 }

@@ -7,8 +7,6 @@
 	export let data: PageData;
 	export let form: ActionData;
 
-	$: announceButtonText = form ?? 'Announce';
-
 	let email: string;
 </script>
 
@@ -16,13 +14,7 @@
 	<p>Welcome to Rodeo, {data.user.name}!</p>
 
 	<!-- Admin announcements panel -->
-	{#if data.user.role === Role.ADMIN}
-		<form method="POST" action="?/announce" use:enhance>
-			<textarea name="announcement" placeholder="Make an announcement here..." required />
-			<button>{announceButtonText}</button>
-		</form>
-	{/if}
-	<Announcements announcements={data.announcements} action="?/unannounce" />
+	<Announcements announcements={data.announcements} admin={data.user.role === Role.ADMIN} />
 	<form method="POST" action="?/logout" use:enhance>
 		<button>Logout</button>
 	</form>
@@ -50,16 +42,5 @@
 		</p>
 	{/if}
 	<h1>Announcements</h1>
-	<Announcements announcements={data.announcements} action="?/unannounce" />
+	<Announcements announcements={data.announcements} admin={false} />
 {/if}
-
-<style>
-	form {
-		display: flex;
-		flex-direction: column;
-	}
-
-	textarea {
-		margin-bottom: 1rem;
-	}
-</style>

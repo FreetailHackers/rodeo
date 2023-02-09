@@ -62,6 +62,10 @@ Found {filtered.length} results{#if search !== ''}&nbsp;for {search}{/if}{#if fi
 </ul>
 
 <style>
+	form {
+		flex-direction: row;
+	}
+
 	ul {
 		list-style: none;
 		padding: 0;
@@ -79,10 +83,6 @@ Found {filtered.length} results{#if search !== ''}&nbsp;for {search}{/if}{#if fi
 
 	details > div {
 		padding: 0 1rem 0 1rem;
-	}
-
-	form {
-		display: flex;
 	}
 
 	input {
