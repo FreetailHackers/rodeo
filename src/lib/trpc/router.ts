@@ -292,8 +292,8 @@ export const router = t.router({
 	}),
 
 	/**
-	 * Bulk releases a list of user IDs with pending decisions. User
-	 * must be an admin. This will send out email notifications.
+	 * Bulk releases a list of pending decisions by user ID. User must
+	 * be an admin. This will send out email notifications.
 	 */
 	releaseDecisions: t.procedure.input(z.array(z.number())).mutation(async (req): Promise<void> => {
 		const user = await prisma.user.findUniqueOrThrow({
@@ -329,6 +329,26 @@ export const router = t.router({
 	}),
 
 	/**
+	 * Bulk removes a list of pending decisions by user ID. User must be
+	 * an admin.
+	 */
+	removeDecisions: t.procedure.input(z.array(z.number())).mutation(async (req): Promise<void> => {
+		const user = await prisma.user.findUniqueOrThrow({
+			where: {
+				magicLink: await hash(req.ctx.magicLink),
+			},
+		});
+		if (user.role !== Role.ADMIN) {
+			throw new Error('You have insufficient permissions to perform this action.');
+		}
+		await prisma.decision.deleteMany({
+			where: {
+				userId: { in: req.input },
+			},
+		});
+	}),
+
+	/**
 	 * Gets all users. User must be an admin.
 	 */
 	getUsers: t.procedure.query(
@@ -348,21 +368,25 @@ export const router = t.router({
 	/**
 	 * Gets one user that has submitted their application. User must be an admin.
 	 */
-	getAppliedUser: t.procedure.query(async (req): Promise<User | null> => {
-		const user = await prisma.user.findUniqueOrThrow({
-			where: {
-				magicLink: await hash(req.ctx.magicLink),
-			},
-		});
-		if (user.role !== Role.ADMIN) {
-			throw new Error('You have insufficient permissions to perform this action.');
+	getAppliedUser: t.procedure.query(
+		async (req): Promise<Prisma.UserGetPayload<{ include: { decision: true } }> | null> => {
+			const user = await prisma.user.findUniqueOrThrow({
+				where: {
+					magicLink: await hash(req.ctx.magicLink),
+				},
+			});
+			if (user.role !== Role.ADMIN) {
+				throw new Error('You have insufficient permissions to perform this action.');
+			}
+			return await prisma.user.findFirst({
+				where: {
+					status: { in: [Status.APPLIED, Status.WAITLISTED] },
+					decision: null,
+				},
+				include: { decision: true },
+			});
 		}
-		return await prisma.user.findFirst({
-			where: {
-				status: Status.APPLIED,
-			},
-		});
-	}),
+	),
 
 	/**
 	 * Gets all announcements.

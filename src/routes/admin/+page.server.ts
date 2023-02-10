@@ -25,6 +25,12 @@ export const actions: Actions = {
 		return 'Released!';
 	},
 
+	remove: async ({ cookies, request }) => {
+		const ids = [...(await request.formData()).keys()].map((id) => Number(id));
+		await trpc(cookies).removeDecisions(ids);
+		return 'Removed!';
+	},
+
 	releaseAll: async ({ cookies }) => {
 		await trpc(cookies).releaseAllDecisions();
 		return 'Released!';

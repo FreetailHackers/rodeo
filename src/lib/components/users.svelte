@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import type { Prisma } from '@prisma/client';
 	import fuzzysort from 'fuzzysort';
+	import User from './user.svelte';
 
 	export let users: Prisma.UserGetPayload<{ include: { decision: true } }>[];
 	export let actions: string[];
@@ -38,7 +39,12 @@
 	Found {filtered.length} results{#if filtered.length > DISPLAY_LIMIT}&nbsp;(showing first {DISPLAY_LIMIT}){/if}:
 </p>
 
-<form method="POST" use:enhance>
+<form
+	method="POST"
+	use:enhance={() => {
+		selectAll.indeterminate = false;
+	}}
+>
 	<ul>
 		<!-- Actions -->
 		<li>
@@ -80,14 +86,8 @@
 						/>
 						<label for={'' + user.id}>{user.name}</label>
 					</summary>
-					<div>
-						<p>Email: {user.email}</p>
-						<p>Major: {user.major}</p>
-						<p>Role: {user.role}</p>
-						<p>
-							Status: {user.status}
-							{#if user.decision}(Pending {user.decision.status}){/if}
-						</p>
+					<div class="user">
+						<User {user} />
 					</div>
 				</details>
 			</li>
@@ -159,5 +159,9 @@
 		padding: 0 1rem;
 		margin-left: 0.5rem;
 		text-transform: capitalize;
+	}
+
+	.user {
+		padding-left: 1rem;
 	}
 </style>

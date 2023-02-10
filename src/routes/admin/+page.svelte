@@ -8,7 +8,7 @@
 	export let form: ActionData;
 
 	let saveButtonText = form ?? 'Save';
-	let releaseButtonText = 'Release All Pending Decisions';
+	let releaseConfirm = false;
 </script>
 
 <h1>Admin Panel</h1>
@@ -35,24 +35,42 @@
 </form>
 
 <h1>Pending Decisions</h1>
-<form method="POST" action="?/releaseAll" use:enhance>
-	<button type="submit" id="release">{releaseButtonText}</button>
+<form
+	method="POST"
+	action="?/releaseAll"
+	use:enhance={({ cancel }) => {
+		if (!releaseConfirm) {
+			cancel();
+			releaseConfirm = true;
+		} else {
+			releaseConfirm = false;
+		}
+	}}
+>
+	{#if releaseConfirm}
+		<button type="submit" id="release">Are you sure? This is irreversible!</button>
+	{:else}
+		<button type="submit" id="release"
+			>Release all {Object.values(data.decisions).reduce((sum, array) => sum + array.length, 0)} pending
+			decisions</button
+		>
+	{/if}
 </form>
 
 <h2>Accepted</h2>
 <Users
 	users={data.decisions.accepted.map((decision) => ({ decision, ...decision.user }))}
-	actions={['release']}
+	actions={['remove', 'release']}
 />
 <h2>Rejected</h2>
 <Users
 	users={data.decisions.rejected.map((decision) => ({ decision, ...decision.user }))}
-	actions={['release']}
+	actions={['remove', 'release']}
 />
 <h2>Waitlisted</h2>
 <Users
 	users={data.decisions.waitlisted.map((decision) => ({ decision, ...decision.user }))}
-	actions={['release']}
+	actions={['remove', 'release']}
 />
 
 <style>
