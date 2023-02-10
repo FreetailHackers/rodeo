@@ -19,6 +19,9 @@ deploy_staging:
   stage: deploy
   only:
     - master
+  environment:
+    name: preview
+    url: https://rodeo-staging.freetailhackers.com/
   script:
     - npm install --global vercel
     - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
@@ -30,6 +33,9 @@ deploy_production:
   stage: deploy
   only:
     - production
+  environment:
+    name: production
+    url: https://rodeo.freetailhackers.com/
   script:
     - npm install --global vercel
     - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
