@@ -1,6 +1,6 @@
 import { firstNames, lastNames, majors } from './data';
 import { hash } from '../src/lib/hash';
-import { PrismaClient, Role, Status, type User } from '@prisma/client';
+import { PrismaClient, Role, Status, type User, type Decision } from '@prisma/client';
 const prisma = new PrismaClient();
 
 /**
@@ -9,8 +9,13 @@ const prisma = new PrismaClient();
  * To use it, run `prisma db seed`
  */
 async function main() {
-	// Create example hacker and admin
+	// Reset database
+	await prisma.decision.deleteMany();
+	await prisma.announcement.deleteMany();
+	await prisma.settings.deleteMany();
 	await prisma.user.deleteMany();
+
+	// Create example hacker and admin
 	await prisma.user.create({
 		data: {
 			id: 0,
@@ -55,6 +60,19 @@ async function main() {
 		});
 	}
 	await prisma.user.createMany({ data: users });
+
+	// Generate up to 100 random decisions
+	const decisions: Decision[] = [];
+	for (let i = 0; i < 100; i++) {
+		// Only decide on hackers with status APPLIED or WAITLISTED
+		if (users[i].status !== Status.APPLIED && users[i].status !== Status.WAITLISTED) continue;
+		decisions.push({
+			id: i,
+			userId: i + 2,
+			status: [Status.ACCEPTED, Status.REJECTED, Status.WAITLISTED][Math.floor(random() * 3)],
+		});
+	}
+	await prisma.decision.createMany({ data: decisions });
 }
 
 // Quick and dirty seedable random number generator taken from https://stackoverflow.com/a/19303725/16458492

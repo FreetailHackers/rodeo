@@ -4,15 +4,17 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["extendedWhereUnique"]
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
-  email     String  @unique
-  magicLink String  @unique
-  role      Role    @default(HACKER)
-  status    Status  @default(CREATED)
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  magicLink String    @unique
+  role      Role      @default(HACKER)
+  status    Status    @default(CREATED)
+  decision  Decision?
   name      String?
   major     String?
 }
@@ -23,10 +25,22 @@ model Announcement {
   published DateTime @default(now())
 }
 
+// Store unreleased decisions in their own table
+model Decision {
+  id     Int    @id @default(autoincrement())
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int    @unique
+  status Status
+}
+
 // Store settings in a table with a single row
 model Settings {
-  id              Int     @id @default(autoincrement()) // Dummy ID is to satisfy Prisma
-  applicationOpen Boolean @default(true)
+  id                Int     @id @default(autoincrement()) // Dummy ID is to satisfy Prisma
+  // TODO: Separate public and private settings into separate tables
+  // PUBLIC SETTINGS (all users must be able to see these)
+  applicationOpen   Boolean @default(true)
+  // PRIVATE SETTINGS (settings that non-admins do not need)
+  rollingAdmissions Boolean @default(false)
 }
 
 enum Role {

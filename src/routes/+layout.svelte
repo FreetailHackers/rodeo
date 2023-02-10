@@ -15,6 +15,7 @@
 	{:else if data.user?.role === Role.ADMIN}
 		<a href="users">Users</a>
 		<a href="admin">Admin</a>
+		<a href="admissions">Admissions</a>
 	{/if}
 </nav>
 

@@ -3,7 +3,7 @@ import sgMail from '@sendgrid/mail';
 import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
 import { z } from 'zod';
 import prisma from '$lib/trpc/db';
-import { Role, Status, type Announcement, type Settings, type User } from '@prisma/client';
+import { Prisma, Role, Status, type Announcement, type Settings, type User } from '@prisma/client';
 import type { Cookies } from '@sveltejs/kit';
 
 export function createContext(cookies: Cookies) {
@@ -26,11 +26,13 @@ const userSchema = z
 const settingsSchema = z
 	.object({
 		applicationOpen: z.boolean().optional(),
+		rollingAdmissions: z.boolean().optional(),
 	})
 	.strict();
 const defaultSettings: Settings = {
 	id: 0,
 	applicationOpen: true,
+	rollingAdmissions: false,
 };
 
 const getSettings = async (): Promise<Settings> => {
@@ -50,7 +52,8 @@ export const router = t.router({
 	}),
 
 	/**
-	 * Sets the logged in user to the given data.
+	 * Sets the logged in user to the given data. If the user has finished
+	 * their application, they will be un-applied.
 	 */
 	setUser: t.procedure.input(userSchema).mutation(async (req): Promise<void> => {
 		const user = await prisma.user.findUniqueOrThrow({
@@ -175,9 +178,90 @@ export const router = t.router({
 	}),
 
 	/**
-	 * Bulk accepts a list of IDs of users with submitted applications. User must be an admin.
+	 * Bulk accepts, rejects, or waitlists a list of IDs of users with
+	 * submitted applications. User must be an admin.
 	 */
-	acceptUsers: t.procedure.input(z.array(z.number())).mutation(async (req): Promise<void> => {
+	decideUsers: t.procedure
+		.input(
+			z.object({
+				decision: z.enum(['ACCEPTED', 'REJECTED', 'WAITLISTED']),
+				ids: z.array(z.number()),
+			})
+		)
+		.mutation(async (req): Promise<void> => {
+			const user = await prisma.user.findUniqueOrThrow({
+				where: {
+					magicLink: await hash(req.ctx.magicLink),
+				},
+			});
+			if (user.role !== Role.ADMIN) {
+				throw new Error('You have insufficient permissions to perform this action.');
+			}
+			for (const id of req.input.ids) {
+				const user = await prisma.user.findUniqueOrThrow({
+					where: {
+						id: id,
+					},
+				});
+				if (user.status === Status.APPLIED || user.status === Status.WAITLISTED) {
+					await prisma.decision.upsert({
+						where: {
+							userId: id,
+						},
+						create: {
+							userId: id,
+							status: req.input.decision,
+						},
+						update: {
+							status: req.input.decision,
+						},
+					});
+				}
+			}
+		}),
+
+	/**
+	 * Gets all decisions. User must be an admin.
+	 */
+	getDecisions: t.procedure.query(
+		async (
+			req
+		): Promise<{
+			accepted: Prisma.DecisionGetPayload<{ include: { user: true } }>[];
+			rejected: Prisma.DecisionGetPayload<{ include: { user: true } }>[];
+			waitlisted: Prisma.DecisionGetPayload<{ include: { user: true } }>[];
+		}> => {
+			const user = await prisma.user.findUniqueOrThrow({
+				where: {
+					magicLink: await hash(req.ctx.magicLink),
+				},
+			});
+			if (user.role !== Role.ADMIN) {
+				throw new Error('You have insufficient permissions to perform this action.');
+			}
+			return {
+				accepted: await prisma.decision.findMany({
+					where: { status: Status.ACCEPTED },
+					include: { user: true },
+				}),
+				rejected: await prisma.decision.findMany({
+					where: { status: Status.REJECTED },
+					include: { user: true },
+				}),
+				waitlisted: await prisma.decision.findMany({
+					where: { status: Status.WAITLISTED },
+					include: { user: true },
+				}),
+			};
+		}
+	),
+
+	/**
+	 * Releases all decisions. User must be an admin. This will empty
+	 * the decisions table, apply all pending decisions to the users
+	 * table, and send out email notifications.
+	 */
+	releaseAllDecisions: t.procedure.mutation(async (req): Promise<void> => {
 		const user = await prisma.user.findUniqueOrThrow({
 			where: {
 				magicLink: await hash(req.ctx.magicLink),
@@ -186,21 +270,31 @@ export const router = t.router({
 		if (user.role !== Role.ADMIN) {
 			throw new Error('You have insufficient permissions to perform this action.');
 		}
-		await prisma.user.updateMany({
-			where: {
-				id: { in: req.input },
-				status: Status.APPLIED,
-			},
-			data: {
-				status: Status.ACCEPTED,
-			},
-		});
+		const decisions = await prisma.decision.findMany();
+		for (const decision of decisions) {
+			const updateStatus = prisma.user.update({
+				where: {
+					id: decision.userId,
+					status: { in: [Status.APPLIED, Status.WAITLISTED] },
+				},
+				data: {
+					status: decision.status,
+				},
+			});
+			const deleteDecision = prisma.decision.delete({
+				where: {
+					id: decision.id,
+				},
+			});
+			await prisma.$transaction([updateStatus, deleteDecision]);
+		}
 	}),
 
 	/**
-	 * Bulk rejects a list of IDs of users with submitted applications. User must be an admin.
+	 * Bulk releases a list of user IDs with pending decisions. User
+	 * must be an admin. This will send out email notifications.
 	 */
-	rejectUsers: t.procedure.input(z.array(z.number())).mutation(async (req): Promise<void> => {
+	releaseDecisions: t.procedure.input(z.array(z.number())).mutation(async (req): Promise<void> => {
 		const user = await prisma.user.findUniqueOrThrow({
 			where: {
 				magicLink: await hash(req.ctx.magicLink),
@@ -209,54 +303,46 @@ export const router = t.router({
 		if (user.role !== Role.ADMIN) {
 			throw new Error('You have insufficient permissions to perform this action.');
 		}
-		await prisma.user.updateMany({
-			where: {
-				id: { in: req.input },
-				status: Status.APPLIED,
-			},
-			data: {
-				status: Status.REJECTED,
-			},
-		});
-	}),
-
-	/**
-	 * Bulk waitlists a list of IDs of users with submitted applications. User must be an admin.
-	 */
-	waitlistUsers: t.procedure.input(z.array(z.number())).mutation(async (req): Promise<void> => {
-		const user = await prisma.user.findUniqueOrThrow({
-			where: {
-				magicLink: await hash(req.ctx.magicLink),
-			},
-		});
-		if (user.role !== Role.ADMIN) {
-			throw new Error('You have insufficient permissions to perform this action.');
+		for (const id of req.input) {
+			const decision = await prisma.decision.findUniqueOrThrow({
+				where: {
+					userId: id,
+				},
+			});
+			const updateStatus = prisma.user.update({
+				where: {
+					id: decision.userId,
+					status: { in: [Status.APPLIED, Status.WAITLISTED] },
+				},
+				data: {
+					status: decision.status,
+				},
+			});
+			const deleteDecision = prisma.decision.delete({
+				where: {
+					id: decision.id,
+				},
+			});
+			await prisma.$transaction([updateStatus, deleteDecision]);
 		}
-		await prisma.user.updateMany({
-			where: {
-				id: { in: req.input },
-				status: Status.APPLIED,
-			},
-			data: {
-				status: Status.WAITLISTED,
-			},
-		});
 	}),
 
 	/**
 	 * Gets all users. User must be an admin.
 	 */
-	getUsers: t.procedure.query(async (req): Promise<User[]> => {
-		const user = await prisma.user.findUniqueOrThrow({
-			where: {
-				magicLink: await hash(req.ctx.magicLink),
-			},
-		});
-		if (user.role !== Role.ADMIN) {
-			throw new Error('You have insufficient permissions to perform this action.');
+	getUsers: t.procedure.query(
+		async (req): Promise<Prisma.UserGetPayload<{ include: { decision: true } }>[]> => {
+			const user = await prisma.user.findUniqueOrThrow({
+				where: {
+					magicLink: await hash(req.ctx.magicLink),
+				},
+			});
+			if (user.role !== Role.ADMIN) {
+				throw new Error('You have insufficient permissions to perform this action.');
+			}
+			return await prisma.user.findMany({ orderBy: [{ id: 'asc' }], include: { decision: true } });
 		}
-		return await prisma.user.findMany({ orderBy: [{ id: 'asc' }] });
-	}),
+	),
 
 	/**
 	 * Gets one user that has submitted their application. User must be an admin.
