@@ -18,7 +18,6 @@ async function main() {
 	// Create example hacker and admin
 	await prisma.user.create({
 		data: {
-			id: 0,
 			email: 'hacker@example.com',
 			magicLink: await hash('hacker'),
 			name: 'Example Hacker',
@@ -27,7 +26,6 @@ async function main() {
 	});
 	await prisma.user.create({
 		data: {
-			id: 1,
 			email: 'admin@freetailhackers.com',
 			magicLink: await hash('admin'),
 			name: 'Example Administrator',
@@ -44,31 +42,31 @@ async function main() {
 	});
 
 	// Generate 1000 random hackers with a seeded random number generator for reproducibility
-	const users: User[] = [];
+	const hackers: Omit<User, 'id'>[] = [];
 	for (let i = 0; i < 1000; i++) {
 		const firstName = firstNames[Math.floor(random() * firstNames.length)];
 		const lastName = lastNames[Math.floor(random() * lastNames.length)];
 		const major = majors[Math.floor(random() * majors.length)];
-		users.push({
-			id: i + 2,
+		hackers.push({
 			email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}.${i + 2}@example.com`,
-			magicLink: await hash('' + i + 2),
+			magicLink: await hash('hacker' + i),
 			name: `${firstName} ${lastName}`,
 			major,
 			role: Role.HACKER,
 			status: Status[Object.keys(Status)[Math.floor(random() * Object.keys(Status).length)]],
 		});
 	}
-	await prisma.user.createMany({ data: users });
+	await prisma.user.createMany({ data: hackers });
 
-	// Generate up to 100 random decisions
-	const decisions: Decision[] = [];
+	// Generate up to 100 decisions (not randomized so I don't have to worry about duplicates)
+	const decisions: Omit<Decision, 'id'>[] = [];
 	for (let i = 0; i < 100; i++) {
 		// Only decide on hackers with status APPLIED or WAITLISTED
-		if (users[i].status !== Status.APPLIED && users[i].status !== Status.WAITLISTED) continue;
+		if (hackers[i].status !== Status.APPLIED && hackers[i].status !== Status.WAITLISTED) {
+			continue;
+		}
 		decisions.push({
-			id: i,
-			userId: i + 2,
+			userId: (await prisma.user.findUniqueOrThrow({ where: { email: hackers[i].email } })).id,
 			status: [Status.ACCEPTED, Status.REJECTED, Status.WAITLISTED][Math.floor(random() * 3)],
 		});
 	}

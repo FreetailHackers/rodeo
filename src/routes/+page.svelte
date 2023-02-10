@@ -11,7 +11,9 @@
 </script>
 
 {#if data.user}
-	<p>Welcome to Rodeo, {data.user.name}!</p>
+	<p>
+		Welcome to Rodeo{#if data.user.name !== null}, {data.user.name}{/if}!
+	</p>
 
 	<!-- Admin announcements panel -->
 	<Announcements announcements={data.announcements} admin={data.user.role === Role.ADMIN} />

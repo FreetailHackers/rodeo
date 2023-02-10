@@ -141,16 +141,17 @@ export const router = t.router({
 		const user = await prisma.user.findUnique({ where: { email: email } });
 		if (user === null) {
 			try {
-				await sgMail.send(msg);
 				await prisma.user.create({
 					data: {
 						email: email,
 						magicLink: await hash(magicLink),
 					},
 				});
+				await sgMail.send(msg);
 				return 'We sent a magic login link to your email!';
 			} catch (error) {
-				return 'Could not send email. Please try again later.';
+				console.error(error);
+				return 'An unknown error occurred. Please try again later.';
 			}
 		}
 		return 'You are already registered with this email.';
