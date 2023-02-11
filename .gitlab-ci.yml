@@ -18,19 +18,19 @@ test-job:
 deploy_staging:
   stage: deploy
   variables:
-    PREVIEW_URL: rodeo-staging.freetailhackers.com
+    STAGING_URL: rodeo-staging.freetailhackers.com
   only:
     - master
   environment:
-    name: preview
-    url: $PREVIEW_URL
+    name: staging
+    url: $STAGING_URL
   script:
     - npm install --global vercel
     - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
     - cp .vercel/.env.preview.local .env
     - npx prisma migrate deploy
     - vercel deploy --token=$VERCEL_TOKEN
-    - vercel alias --token=$VERCEL_TOKEN set https://rodeo-freetail-hackers.vercel.app/ $PREVIEW_URL
+    - vercel alias --token=$VERCEL_TOKEN set https://rodeo-freetail-hackers.vercel.app/ $STAGING_URL
 
 deploy_production:
   stage: deploy
