@@ -263,7 +263,7 @@
 				placeholder="I'm excited to..."
 				required
 			/>
-			<label for="resume">Resume</label>
+			<label for="resume">Resume (last uploaded: {resume?.split('/')[5]})</label>
 			<input type="file" name="resume" accept=".pdf" />
 			<label for="github">GitHub</label>
 			<input

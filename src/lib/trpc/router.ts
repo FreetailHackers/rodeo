@@ -1,3 +1,4 @@
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { hash } from '../hash';
 import sgMail from '@sendgrid/mail';
 import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
@@ -28,6 +29,7 @@ const MAGIC_LINK_LENGTH = 32;
 const CHARSET = 'abcdefghijklmnopqrstuvwxyz';
 
 sgMail.setApiKey(process.env.SENDGRID_KEY as string);
+const client = new S3Client({ region: 'us-east-1' });
 
 const userSchema = z
 	.object({
@@ -48,7 +50,7 @@ const userSchema = z
 		workshops: z.array(z.string()).optional(),
 		referrer: z.string().optional(),
 		excitedAbout: z.string().optional(),
-		resume: z.string().optional(),
+		resume: z.any(),
 		github: z.string().optional(),
 		linkedin: z.string().optional(),
 		website: z.string().optional(),
@@ -97,6 +99,17 @@ export const router = t.router({
 		});
 		if (!(await getSettings()).applicationOpen) {
 			throw new Error('Sorry, applications are closed.');
+		}
+		// Upload resume to S3
+		if (req.input.resume instanceof Blob) {
+			await client.send(
+				new PutObjectCommand({
+					Bucket: process.env.S3_BUCKET,
+					Key: `${user.id}/${req.input.resume.name}`,
+					Body: Buffer.from(await req.input.resume.arrayBuffer()),
+				})
+			);
+			req.input.resume = `https://s3.amazonaws.com/${process.env.S3_BUCKET}/${user.id}/${req.input.resume.name}`;
 		}
 		// Only let verified users that haven't received a decision update their info
 		if (user.status === Status.VERIFIED || user.status === Status.APPLIED) {

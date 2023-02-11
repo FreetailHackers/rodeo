@@ -25,7 +25,6 @@ export const actions: Actions = {
 			hackathonsAttended: Number(data.hackathonsAttended),
 			workshops: formData.getAll('workshops').map((x) => x as string),
 			lunch: data.lunch === 'on',
-			resume: '',
 		};
 		await trpc(cookies).setUser(user);
 		return 'Saved!';
@@ -46,7 +45,6 @@ export const actions: Actions = {
 			hackathonsAttended: Number(data.hackathonsAttended),
 			workshops: formData.getAll('workshops').map((x) => x as string),
 			lunch: data.lunch === 'on',
-			resume: '',
 		};
 		await trpc(cookies).setUser(user);
 		return await trpc(cookies).submitApplication();

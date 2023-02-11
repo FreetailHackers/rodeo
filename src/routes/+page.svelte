@@ -11,11 +11,27 @@
 </script>
 
 {#if data.user}
+	<h1>
+		Welcome to Rodeo{#if data.user.preferredName !== null && data.user.preferredName !== ''}, {data
+				.user.preferredName}{/if}!
+	</h1>
 	<p>
-		Welcome to Rodeo{#if data.user.preferredName !== null}, {data.user.preferredName}{/if}!
+		Thanks for your interest in our upcoming hackathon! <b>Hack The Future</b> will occur from
+		<b>March 3rd, Friday evening until March 4th, Saturday evening</b>. Check our
+		<a href="https://freetailhackers.com">website</a>
+		and <a href="schedule">schedule</a> for more details!
+	</p>
+	<p>
+		Please make sure to fill out the <a href="apply">application</a> as early as possible. Admission
+		will operate on a <b>first-come, first-serve basis</b>. Spots are limited.
+	</p>
+	<p>
+		If you have any questions or concerns, please contact
+		<a href="mailto:hello@freetailhackers.com">hello@freetailhackers.com</a>.
 	</p>
 
 	<!-- Admin announcements panel -->
+	<h2>Announcements</h2>
 	<Announcements announcements={data.announcements} admin={data.user.role === Role.ADMIN} />
 	<form method="POST" action="?/logout" use:enhance>
 		<button>Logout</button>
@@ -43,6 +59,6 @@
 			For help, contact <a href="mailto:tech@freetailhackers.com">tech@freetailhackers.com</a>.
 		</p>
 	{/if}
-	<h1>Announcements</h1>
+	<h2>Announcements</h2>
 	<Announcements announcements={data.announcements} admin={false} />
 {/if}
