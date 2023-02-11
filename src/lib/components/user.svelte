@@ -4,7 +4,7 @@
 	export let user: Prisma.UserGetPayload<{ include: { decision: true } }>;
 </script>
 
-<p><b>EMAIL</b> {user.email}</p>
+<p><b>EMAIL</b> <a href="mailto:{user.email}">{user.email}</a></p>
 <p><b>ROLE</b> {user.role}</p>
 <p>
 	<b>STATUS</b>
@@ -23,10 +23,10 @@
 <p><b>WORKSHOPS</b> {user.workshops}</p>
 <p><b>REFERRER</b> {user.referrer}</p>
 <p><b>EXCITED ABOUT</b> {user.excitedAbout}</p>
-<p><b>RESUME</b> {user.resume}</p>
-<p><b>GITHUB</b> {user.github}</p>
-<p><b>LINKEDIN</b> {user.linkedin}</p>
-<p><b>WEBSITE</b> {user.website}</p>
+<p><b>RESUME</b> <a href={user.resume} target="_blank" rel="noreferrer">{user.resume}</a></p>
+<p><b>GITHUB</b> <a href={user.github} target="_blank" rel="noreferrer">{user.github}</a></p>
+<p><b>LINKEDIN</b> <a href={user.linkedin} target="_blank" rel="noreferrer">{user.linkedin}</a></p>
+<p><b>WEBSITE</b> <a href={user.website} target="_blank" rel="noreferrer">{user.website}</a></p>
 <p><b>LUNCH</b> {user.lunch}</p>
 <p><b>DIETARY RESTRICTIONS</b> {user.dietaryRestrictions}</p>
 <p><b>ALLERGIES</b> {user.allergies}</p>
