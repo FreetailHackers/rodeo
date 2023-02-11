@@ -16,7 +16,9 @@
 	</h1>
 	<p>
 		Thanks for your interest in our upcoming hackathon! <b>Hack The Future</b> will occur from
-		<b>March 3rd, Friday evening until March 4th, Saturday evening</b>.
+		<b>March 3rd, Friday evening until March 4th, Saturday evening</b>. Check our
+		<a href="https://freetailhackers.com">website</a>
+		and <a href="schedule">schedule</a> for more details!
 	</p>
 	<p>
 		Please make sure to fill out the <a href="apply">application</a> as early as possible. Admission
