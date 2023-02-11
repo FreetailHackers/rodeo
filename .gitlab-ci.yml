@@ -18,7 +18,7 @@ test-job:
 deploy_staging:
   stage: deploy
   variables:
-    PREVIEW_URL: https://rodeo-staging.freetailhackers.com/
+    PREVIEW_URL: rodeo-staging.freetailhackers.com
   only:
     - master
   environment:
@@ -35,7 +35,7 @@ deploy_staging:
 deploy_production:
   stage: deploy
   variables:
-    PROD_URL: https://rodeo.freetailhackers.com/
+    PROD_URL: rodeo.freetailhackers.com
     DEPLOYMENT_URL: https://rodeo.freetailhackers.com/
   only:
     - production
