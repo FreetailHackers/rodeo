@@ -30,12 +30,13 @@ deploy_staging:
     - cp .vercel/.env.preview.local .env
     - npx prisma migrate deploy
     - vercel deploy --token=$VERCEL_TOKEN
-    - vercel alias set https://rodeo-freetail-hackers.vercel.app/ $PREVIEW_URL
+    - vercel alias --token=$VERCEL_TOKEN set https://rodeo-freetail-hackers.vercel.app/ $PREVIEW_URL
 
 deploy_production:
   stage: deploy
   variables:
     PROD_URL: https://rodeo.freetailhackers.com/
+    DEPLOYMENT_URL: https://rodeo.freetailhackers.com/
   only:
     - production
   environment:
@@ -46,6 +47,5 @@ deploy_production:
     - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
     - cp .vercel/.env.production.local .env
     - npx prisma migrate deploy
-    - vercel deploy --prod --token=$VERCEL_TOKEN > domain.txt
-    - vercel alias --token=$VERCEL_TOKEN set `cat domain.txt` $PROD_URL
-    - rm domain.txt
+    - vercel deploy --prod --token=$VERCEL_TOKEN
+    - vercel alias --token=$VERCEL_TOKEN set $DEPLOYMENT_URL $PROD_URL
