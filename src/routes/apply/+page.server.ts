@@ -1,7 +1,7 @@
 import authenticate from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import type { Actions, PageServerLoad } from './$types';
-import { Role } from '@prisma/client';
+import { Race, Role } from '@prisma/client';
 import { redirect } from '@sveltejs/kit';
 
 export const load = (async ({ cookies }) => {
@@ -14,7 +14,20 @@ export const load = (async ({ cookies }) => {
 
 export const actions: Actions = {
 	save: async ({ cookies, request }) => {
-		await trpc(cookies).setUser(Object.fromEntries(await request.formData()));
+		const formData = await request.formData();
+		const data = Object.fromEntries(formData);
+		const user = {
+			...data,
+			race: formData.getAll('race').map((x) => x as Race),
+			photoReleaseAgreed: data.photoReleaseAgreed === 'on',
+			liabilityWaiverAgreed: data.liabilityWaiverAgreed === 'on',
+			codeOfConductAgreed: data.codeOfConductAgreed === 'on',
+			hackathonsAttended: Number(data.hackathonsAttended),
+			workshops: formData.getAll('workshops').map((x) => x as string),
+			lunch: data.lunch === 'on',
+			resume: '',
+		};
+		await trpc(cookies).setUser(user);
 		return 'Saved!';
 	},
 
@@ -22,7 +35,20 @@ export const actions: Actions = {
 		if (!(await trpc(cookies).getApplicationOpen())) {
 			throw redirect(301, '/apply');
 		}
-		await trpc(cookies).setUser(Object.fromEntries(await request.formData()));
+		const formData = await request.formData();
+		const data = Object.fromEntries(formData);
+		const user = {
+			...data,
+			race: formData.getAll('race').map((x) => x as Race),
+			photoReleaseAgreed: data.photoReleaseAgreed === 'on',
+			liabilityWaiverAgreed: data.liabilityWaiverAgreed === 'on',
+			codeOfConductAgreed: data.codeOfConductAgreed === 'on',
+			hackathonsAttended: Number(data.hackathonsAttended),
+			workshops: formData.getAll('workshops').map((x) => x as string),
+			lunch: data.lunch === 'on',
+			resume: '',
+		};
+		await trpc(cookies).setUser(user);
 		return await trpc(cookies).submitApplication();
 	},
 

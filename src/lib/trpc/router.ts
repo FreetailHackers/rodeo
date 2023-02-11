@@ -3,7 +3,19 @@ import sgMail from '@sendgrid/mail';
 import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
 import { z } from 'zod';
 import prisma from '$lib/trpc/db';
-import { Prisma, Role, Status, type Announcement, type Settings, type User } from '@prisma/client';
+import {
+	Classification,
+	DietaryRestriction,
+	Gender,
+	Graduation,
+	Prisma,
+	Race,
+	Role,
+	Status,
+	type Announcement,
+	type Settings,
+	type User,
+} from '@prisma/client';
 import type { Cookies } from '@sveltejs/kit';
 
 export function createContext(cookies: Cookies) {
@@ -19,8 +31,32 @@ sgMail.setApiKey(process.env.SENDGRID_KEY as string);
 
 const userSchema = z
 	.object({
-		name: z.string().optional(),
+		fullName: z.string().optional(),
+		preferredName: z.string().optional(),
+		gender: z.nativeEnum(Gender).optional(),
+		race: z.array(z.nativeEnum(Race)).optional(),
+		pronouns: z.string().optional(),
+		photoReleaseAgreed: z.boolean().optional(),
+		liabilityWaiverAgreed: z.boolean().optional(),
+		codeOfConductAgreed: z.boolean().optional(),
 		major: z.string().optional(),
+		classification: z.nativeEnum(Classification).optional(),
+		graduation: z.nativeEnum(Graduation).optional(),
+		firstGeneration: z.boolean().optional(),
+		international: z.boolean().optional(),
+		hackathonsAttended: z.number().optional(),
+		workshops: z.array(z.string()).optional(),
+		referrer: z.string().optional(),
+		excitedAbout: z.string().optional(),
+		resume: z.string().optional(),
+		github: z.string().optional(),
+		linkedin: z.string().optional(),
+		website: z.string().optional(),
+		lunch: z.boolean().optional(),
+		dietaryRestrictions: z.nativeEnum(DietaryRestriction).optional(),
+		allergies: z.string().optional(),
+		accommodations: z.string().optional(),
+		other: z.string().optional(),
 	})
 	.strict();
 const settingsSchema = z
@@ -92,13 +128,52 @@ export const router = t.router({
 
 		// Validate the user's data
 		const errors: Record<string, string> = {};
-		if (user.name === null || user.name.trim() === '') {
-			errors.name = 'Please enter your name.';
+		if (user.fullName === null || user.fullName.trim() === '') {
+			errors.name = 'Please enter your full name.';
+		}
+		if (user.preferredName === null || user.preferredName.trim() === '') {
+			errors.name = 'Please enter your preferred name.';
+		}
+		if (user.gender === null) {
+			errors.gender = 'Please specify your gender.';
+		}
+		if (!user.photoReleaseAgreed) {
+			errors.photoReleaseAgreed = 'You must agree to the photo release to participate.';
+		}
+		if (!user.liabilityWaiverAgreed) {
+			errors.liabilityWaiverAgreed = 'You must agree to the liability waiver to participate.';
+		}
+		if (!user.codeOfConductAgreed) {
+			errors.codeOfConductAgreed = 'You must agree to the code of conduct to participate.';
 		}
 		if (user.major === null || user.major.trim() === '') {
-			errors.major = 'Please enter your major.';
+			errors.major = 'Please provide your major.';
 		}
-
+		if (user.classification === null) {
+			errors.classification = 'Please specify your classification.';
+		}
+		if (user.graduation === null) {
+			errors.graduationYear = 'Please specify your graduation year.';
+		}
+		if (user.hackathonsAttended === null) {
+			errors.hackathonsAttended = 'Please specify the number of hackathons you have attended.';
+		}
+		if (user.referrer === null) {
+			errors.referrer = 'Please specify how you heard about HackTX.';
+		}
+		if (user.excitedAbout === null || user.excitedAbout.trim() === '') {
+			errors.excitedAbout = 'Please tell us what you are excited about.';
+		}
+		try {
+			if (user.website !== null && user.website.trim() !== '') {
+				new URL(user.website);
+			}
+		} catch (e) {
+			errors.website = 'Please enter a valid URL.';
+		}
+		if (user.dietaryRestrictions === null) {
+			errors.dietaryRestrictions = 'Please specify your dietary restrictions.';
+		}
 		// Update status to applied if there are no errors
 		if (Object.keys(errors).length == 0) {
 			await prisma.user.update({
@@ -116,8 +191,8 @@ export const router = t.router({
 	createUser: t.procedure.input(z.string()).mutation(async (req): Promise<string> => {
 		const email = req.input;
 
-		if (!email.match(/^\S+@\S+\.\S+$/)) {
-			return 'Please enter a valid email address.';
+		if (!email.match(/^\S+@utexas.edu$/)) {
+			return 'Please use your @utexas.edu email address.';
 		}
 
 		// Generate a magic link

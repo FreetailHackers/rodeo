@@ -12,7 +12,7 @@
 
 {#if data.user}
 	<p>
-		Welcome to Rodeo{#if data.user.name !== null}, {data.user.name}{/if}!
+		Welcome to Rodeo{#if data.user.preferredName !== null}, {data.user.preferredName}{/if}!
 	</p>
 
 	<!-- Admin announcements panel -->

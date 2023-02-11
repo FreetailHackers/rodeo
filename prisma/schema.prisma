@@ -9,14 +9,38 @@ generator client {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  email     String    @unique
-  magicLink String    @unique
-  role      Role      @default(HACKER)
-  status    Status    @default(CREATED)
-  decision  Decision?
-  name      String?
-  major     String?
+  id                    Int                 @id @default(autoincrement())
+  email                 String              @unique
+  magicLink             String              @unique
+  role                  Role                @default(HACKER)
+  status                Status              @default(CREATED)
+  decision              Decision?
+  fullName              String?
+  preferredName         String?
+  gender                Gender?
+  race                  Race[]
+  pronouns              String?
+  photoReleaseAgreed    Boolean             @default(false)
+  liabilityWaiverAgreed Boolean             @default(false)
+  codeOfConductAgreed   Boolean             @default(false)
+  major                 String?
+  classification        Classification?
+  graduation            Graduation?
+  firstGeneration       Boolean?
+  international         Boolean?
+  hackathonsAttended    Int?
+  workshops             String[]
+  referrer              String?
+  excitedAbout          String?
+  resume                String?
+  github                String?
+  linkedin              String?
+  website               String?
+  lunch                 Boolean             @default(false)
+  dietaryRestrictions   DietaryRestriction?
+  allergies             String?
+  accommodations        String?
+  other                 String?
 }
 
 model Announcement {
@@ -57,4 +81,51 @@ enum Status {
   WAITLISTED // User has been waitlisted
   CONFIRMED // User has confirmed their attendance
   DECLINED // User has declined their attendance
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  NONBINARY
+  OTHER
+  REFUSE
+}
+
+enum Race {
+  AMERICAN_INDIAN
+  ASIAN
+  BLACK
+  HISPANIC
+  NATIVE_HAWAIIAN
+  WHITE
+  MULTIPLE
+  OTHER
+  REFUSE
+}
+
+enum Classification {
+  FRESHMAN
+  SOPHOMORE
+  JUNIOR
+  SENIOR
+  MASTERS
+  DOCTORATE
+}
+
+enum Graduation {
+  S2023
+  F2023
+  S2024
+  F2024
+  S2025
+  F2025
+  S2026
+  OTHER
+}
+
+enum DietaryRestriction {
+  NONE
+  NO_PORK
+  VEGETARIAN
+  VEGAN
 }

@@ -63,6 +63,7 @@ textarea {
 	resize: none;
 	border: 2px solid gray;
 	height: 10rem;
+	margin-bottom: 1rem;
 }
 
 form {
@@ -77,4 +78,18 @@ a {
 ::selection {
 	background: var(--primary-accent);
 	color: white;
+}
+
+fieldset {
+	margin: 0 0 1rem 0;
+	padding: 0.5rem 1rem 0 1rem;
+}
+
+select {
+	font-family: var(--font-family);
+	font-size: var(--font-size);
+	height: 2.5rem;
+	padding-left: 0.5rem;
+	margin-bottom: 1rem;
+	border: 2px solid gray;
 }

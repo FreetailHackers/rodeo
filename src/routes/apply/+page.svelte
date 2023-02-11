@@ -1,5 +1,9 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import Checkbox from '$lib/components/checkbox.svelte';
+	import Dropdown from '$lib/components/dropdown.svelte';
+	import Multiselect from '$lib/components/multiselect.svelte';
+	import Radio from '$lib/components/radio.svelte';
 	import { trpc } from '$lib/trpc/client';
 	import { Status } from '@prisma/client';
 	import type { ActionData, PageData } from './$types';
@@ -13,8 +17,62 @@
 		);
 	};
 
-	let { name, major } = data.user;
-	$: user = { name, major };
+	let {
+		fullName,
+		preferredName,
+		gender,
+		race,
+		pronouns,
+		photoReleaseAgreed,
+		liabilityWaiverAgreed,
+		codeOfConductAgreed,
+		major,
+		classification,
+		graduation,
+		firstGeneration,
+		international,
+		hackathonsAttended,
+		workshops,
+		referrer,
+		excitedAbout,
+		resume,
+		github,
+		linkedin,
+		website,
+		lunch,
+		dietaryRestrictions,
+		allergies,
+		accommodations,
+		other,
+	} = data.user;
+	$: user = {
+		fullName,
+		preferredName,
+		gender,
+		race,
+		pronouns,
+		photoReleaseAgreed,
+		liabilityWaiverAgreed,
+		codeOfConductAgreed,
+		major,
+		classification,
+		graduation,
+		firstGeneration,
+		international,
+		hackathonsAttended,
+		workshops,
+		referrer,
+		excitedAbout,
+		resume,
+		github,
+		linkedin,
+		website,
+		lunch,
+		dietaryRestrictions,
+		allergies,
+		accommodations,
+		other,
+	};
 
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 	let saveButton: HTMLButtonElement;
@@ -81,15 +139,178 @@
 			}}
 			autocomplete="off"
 		>
-			<label for="name">Name </label>
-			<input bind:value={name} type="name" name="name" placeholder="John Doe" required />
+			<label for="fullName">Full Name</label>
+			<input
+				bind:value={fullName}
+				type="text"
+				id="fullName"
+				name="fullName"
+				placeholder="J. Random Hacker"
+				required
+			/>
+			<label for="fullName">Preferred Name</label>
+			<input
+				bind:value={preferredName}
+				type="text"
+				id="preferredName"
+				name="preferredName"
+				placeholder="John"
+				required
+			/>
+			<Radio
+				name="gender"
+				choices={['MALE', 'FEMALE', 'NONBINARY', 'OTHER', 'REFUSE']}
+				bind:value={gender}
+				required
+			/>
+			<Multiselect
+				bind:value={race}
+				name="race"
+				label="Race"
+				options={[
+					'AMERICAN_INDIAN',
+					'ASIAN',
+					'BLACK',
+					'HISPANIC',
+					'NATIVE_HAWAIIAN',
+					'WHITE',
+					'OTHER',
+					'REFUSE',
+				]}
+				required
+			/>
+			<Radio
+				name="pronouns"
+				choices={['he/him', 'she/hers', 'they/them', 'other', 'prefer not to say']}
+				bind:value={pronouns}
+				required
+			/>
+			<fieldset>
+				<legend>Legal</legend>
+				<Checkbox
+					bind:checked={photoReleaseAgreed}
+					name="photoReleaseAgreed"
+					label="Photo Release"
+					required
+				/>
+				<Checkbox
+					bind:checked={liabilityWaiverAgreed}
+					name="liabilityWaiverAgreed"
+					label="Liability Waiver"
+					required
+				/>
+				<Checkbox
+					bind:checked={codeOfConductAgreed}
+					name="codeOfConductAgreed"
+					label="Code of Conduct"
+					required
+				/>
+			</fieldset>
 			<label for="major">Major</label>
 			<input
 				bind:value={major}
-				type="major"
+				type="text"
 				name="major"
 				placeholder="Underwater Basket Weaving"
 				required
+			/>
+			<Dropdown
+				bind:value={classification}
+				name="classification"
+				label="Classification"
+				options={['FRESHMAN', 'SOPHOMORE', 'JUNIOR', 'SENIOR', 'MASTERS', 'DOCTORATE']}
+				required
+			/>
+			<Dropdown
+				bind:value={graduation}
+				name="graduation"
+				label="When will you be graduating?"
+				options={['S2023', 'F2023', 'S2024', 'F2024', 'S2025', 'F2025', 'S2026', 'Other']}
+				required
+			/>
+			<label for="hackathonsAttended">Hackathons Attended</label>
+			<input
+				bind:value={hackathonsAttended}
+				type="number"
+				name="hackathonsAttended"
+				placeholder="0"
+				min="0"
+				required
+			/>
+			<Multiselect
+				bind:value={workshops}
+				name="workshops"
+				label="What workshops would you like to see?"
+				options={[
+					'Technical (frontend/backend)',
+					'Networking/Resumes',
+					'Ideation',
+					'Pitching',
+					'Sustainability',
+				]}
+			/>
+			<Dropdown
+				bind:value={referrer}
+				name="referrer"
+				label="How did you hear about us?"
+				options={['Social Media', 'Tabling', 'Friends', 'Professor/Department', 'HackTX', 'Other']}
+				required
+			/>
+			<label for="excitedAbout">What are you most excited about?</label>
+			<textarea
+				bind:value={excitedAbout}
+				name="excitedAbout"
+				placeholder="I'm excited to..."
+				required
+			/>
+			<label for="resume">Resume</label>
+			<input type="file" name="resume" accept=".pdf" />
+			<label for="github">GitHub</label>
+			<input
+				bind:value={github}
+				type="url"
+				name="github"
+				placeholder="https://github.com/DanielZTing"
+			/>
+			<label for="linkedin">LinkedIn</label>
+			<input
+				bind:value={linkedin}
+				type="url"
+				name="linkedin"
+				placeholder="https://www.linkedin.com/in/danielzting"
+			/>
+			<label for="website">Website</label>
+			<input
+				bind:value={website}
+				type="url"
+				name="website"
+				placeholder="https://danielzting.github.io"
+			/>
+			<Checkbox bind:checked={lunch} name="lunch" label="I would like lunch provided." />
+			<Dropdown
+				bind:value={dietaryRestrictions}
+				name="dietaryRestrictions"
+				label="Dietary Restrictions"
+				options={['NONE', 'NO_PORK', 'VEGETARIAN', 'VEGAN']}
+				required
+			/>
+			<label for="allergies">Allergies</label>
+			<input bind:value={allergies} type="text" name="allergies" placeholder="Peanuts" />
+			<label for="accomodations">Accomodations</label>
+			<input
+				bind:value={accommodations}
+				name="accommodations"
+				placeholder="I need a wheelchair accessible room."
+			/>
+			<label for="other"
+				>Anything else we should know? (If you answered "Other" to any question above, you may
+				elaborate here.)</label
+			>
+			<input
+				bind:value={other}
+				type="text"
+				name="other"
+				placeholder="I love French food and have a balloon phobia!"
 			/>
 			<button bind:this={saveButton}>{saveButtonText}</button>
 			<button id="submit" formaction="?/finish">Submit Application</button>
@@ -124,7 +345,7 @@
 	}
 
 	#status {
-		border: 1px solid black;
+		border: 2px solid black;
 		padding: 0 1rem;
 		text-align: center;
 		margin-bottom: 1rem;

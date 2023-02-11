@@ -1,6 +1,17 @@
 import { firstNames, lastNames, majors } from './data';
 import { hash } from '../src/lib/hash';
-import { PrismaClient, Role, Status, type User, type Decision } from '@prisma/client';
+import {
+	PrismaClient,
+	Role,
+	Status,
+	type User,
+	type Decision,
+	Gender,
+	Classification,
+	Graduation,
+	DietaryRestriction,
+	Race,
+} from '@prisma/client';
 const prisma = new PrismaClient();
 
 /**
@@ -20,15 +31,18 @@ async function main() {
 		data: {
 			email: 'hacker@example.com',
 			magicLink: await hash('hacker'),
-			name: 'Example Hacker',
+			fullName: 'J. Random Hacker',
+			preferredName: 'John',
 			major: 'Computer Science',
+			status: Status.VERIFIED,
 		},
 	});
 	await prisma.user.create({
 		data: {
 			email: 'admin@freetailhackers.com',
 			magicLink: await hash('admin'),
-			name: 'Example Administrator',
+			fullName: 'J. Random Administrator',
+			preferredName: 'Jane',
 			role: Role.ADMIN,
 		},
 	});
@@ -48,10 +62,43 @@ async function main() {
 		const lastName = lastNames[Math.floor(random() * lastNames.length)];
 		const major = majors[Math.floor(random() * majors.length)];
 		hackers.push({
-			email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}.${i + 2}@example.com`,
+			email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}.${i}@example.com`,
 			magicLink: await hash('hacker' + i),
-			name: `${firstName} ${lastName}`,
+			fullName: `${firstName} ${lastName}`,
+			preferredName: firstName,
+			gender: [Gender.MALE, Gender.FEMALE][Math.floor(random() * 2)],
+			race: Race[Object.keys(Race)[Math.floor(random() * Object.keys(Race).length)]],
+			pronouns: ['he/him', 'she/her', 'they/them', 'other'][Math.floor(random() * 4)],
+			photoReleaseAgreed: true,
+			liabilityWaiverAgreed: true,
+			codeOfConductAgreed: true,
 			major,
+			classification:
+				Classification[
+					Object.keys(Classification)[Math.floor(random() * Object.keys(Classification).length)]
+				],
+			graduation:
+				Graduation[Object.keys(Graduation)[Math.floor(random() * Object.keys(Graduation).length)]],
+			firstGeneration: Math.random() < 0.5,
+			international: Math.random() < 0.5,
+			hackathonsAttended: Math.floor(random() * 10),
+			workshops: [],
+			referrer: 'OTHER',
+			excitedAbout: 'I am excited to learn new things and meet new people!',
+			resume: 'https://example.com/resume.pdf',
+			github: 'https://github.com/DanielZTing',
+			linkedin: 'https://linkedin.com/in/danielzting',
+			website: 'https://danielzting.github.io',
+			lunch: true,
+			dietaryRestrictions:
+				DietaryRestriction[
+					Object.keys(DietaryRestriction)[
+						Math.floor(random() * Object.keys(DietaryRestriction).length)
+					]
+				],
+			allergies: '',
+			accommodations: '',
+			other: '',
 			role: Role.HACKER,
 			status: Status[Object.keys(Status)[Math.floor(random() * Object.keys(Status).length)]],
 		});

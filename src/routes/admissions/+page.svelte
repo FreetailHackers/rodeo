@@ -9,7 +9,7 @@
 {#if data.user === null}
 	<p>Congratulations! You've read every application.</p>
 {:else}
-	<h1>{data.user.name}</h1>
+	<h1>{data.user.fullName}</h1>
 	<User user={data.user} />
 	<form method="POST" use:enhance>
 		<input type="hidden" name="id" value={data.user.id} />

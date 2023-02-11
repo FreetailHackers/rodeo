@@ -47,10 +47,6 @@
 {/if}
 
 <style>
-	textarea {
-		margin-bottom: 1rem;
-	}
-
 	ul {
 		list-style: none;
 		padding-left: 0;

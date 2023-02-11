@@ -84,7 +84,7 @@
 								}
 							}}
 						/>
-						<label for={'' + user.id}>{user.name}</label>
+						<label for={'' + user.id}>{user.fullName}</label>
 					</summary>
 					<div class="user">
 						<User {user} />
