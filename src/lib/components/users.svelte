@@ -85,6 +85,8 @@
 							}}
 						/>
 						<label for={'' + user.id}>{user.fullName}</label>
+						<a class="desktop" href="mailto:{user.email}">{user.email}</a>
+						<span class="{user.status.toLowerCase()} dot" />
 					</summary>
 					<div class="user">
 						<User {user} />
@@ -131,6 +133,20 @@
 		align-items: center;
 	}
 
+	summary a {
+		color: gray;
+	}
+
+	.dot {
+		border-radius: 50%;
+		display: inline-block;
+		margin: 0 1rem;
+		min-height: 20px;
+		max-height: 20px;
+		min-width: 20px;
+		max-width: 20px;
+	}
+
 	summary::after {
 		content: ' ►';
 	}
@@ -147,12 +163,20 @@
 		flex-grow: 1;
 		margin: 0 1rem;
 		z-index: -1;
+		overflow: hidden;
+		white-space: nowrap;
+	}
+
+	@media only screen and (max-width: 768px) {
+		.desktop {
+			display: none;
+		}
 	}
 
 	input[type='checkbox'] {
 		margin: 0;
-		width: 1.5rem;
-		height: 1.5rem;
+		min-width: 1.5rem;
+		min-height: 1.5rem;
 	}
 
 	button {
@@ -163,5 +187,37 @@
 
 	.user {
 		padding-left: 1rem;
+	}
+
+	.accepted {
+		background: rgb(93, 198, 93);
+	}
+
+	.rejected {
+		background: rgb(255, 78, 78);
+	}
+
+	.waitlisted {
+		background: orange;
+	}
+
+	.applied {
+		background: rgb(63, 63, 63);
+	}
+
+	.verified {
+		background: rgb(135, 135, 135);
+	}
+
+	.created {
+		background: lightgray;
+	}
+
+	.confirmed {
+		background: darkgreen;
+	}
+
+	.declined {
+		background: darkred;
 	}
 </style>
