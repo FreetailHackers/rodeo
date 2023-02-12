@@ -13,9 +13,6 @@
 </p>
 <p><b>PREFERRED NAME</b> {user.preferredName}</p>
 <p><b>GENDER</b> {user.gender}</p>
-<p><b>PHOTO RELEASE AGREED</b> {user.photoReleaseAgreed}</p>
-<p><b>LIABILITY WAIVER AGREED</b> {user.liabilityWaiverAgreed}</p>
-<p><b>CODE OF CONDUCT AGREED</b> {user.codeOfConductAgreed}</p>
 <p><b>MAJOR</b> {user.major}</p>
 <p><b>CLASSIFICATION</b> {user.classification}</p>
 <p><b>GRADUATION</b> {user.graduation}</p>
