@@ -32,7 +32,7 @@
 					{#if admin}
 						<form method="POST" action="?/unannounce" use:enhance>
 							<input type="hidden" name="id" value={announcement.id} />
-							<button class="deleteButton">X</button>
+							<button class="deleteButton">🗙</button>
 						</form>
 					{/if}
 				</span>
@@ -42,6 +42,7 @@
 		{/each}
 	</ul>
 {:else}
+	<br />
 	<p>There are no announcements at this time.</p>
 	<br />
 {/if}
