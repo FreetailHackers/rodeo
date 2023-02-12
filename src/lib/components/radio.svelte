@@ -6,7 +6,9 @@
 </script>
 
 <fieldset>
-	<legend>{name}</legend>
+	<legend
+		>{name}{#if required}*{/if}</legend
+	>
 	{#each choices as choice}
 		<div>
 			<input
@@ -31,7 +33,6 @@
 		margin-right: 1rem;
 	}
 
-	label,
 	legend {
 		text-transform: capitalize;
 	}

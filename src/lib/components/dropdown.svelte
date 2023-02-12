@@ -6,7 +6,9 @@
 	export let value: string | null;
 </script>
 
-<label for={name}>{label}</label>
+<label for={name}
+	>{label}{#if required}*{/if}</label
+>
 <select bind:value id={name} {name} {required}>
 	{#each options as option}
 		<option value={option}>{option}</option>

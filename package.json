@@ -12,12 +12,13 @@
 		"test:unit": "vitest",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
-		"database": "prisma migrate diff --from-schema-datasource ./prisma/schema.prisma --to-schema-datamodel ./prisma/schema.prisma --exit-code",
+		"migrate": "prisma migrate dev",
 		"deploy": "npx prisma generate && npm run build"
 	},
 	"pre-commit": [
 		"check",
-		"lint"
+		"lint",
+		"migrate"
 	],
 	"prisma": {
 		"seed": "npx esno prisma/seed.ts"

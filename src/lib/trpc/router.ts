@@ -4,19 +4,7 @@ import sgMail from '@sendgrid/mail';
 import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
 import { z } from 'zod';
 import prisma from '$lib/trpc/db';
-import {
-	Classification,
-	DietaryRestriction,
-	Gender,
-	Graduation,
-	Prisma,
-	Race,
-	Role,
-	Status,
-	type Announcement,
-	type Settings,
-	type User,
-} from '@prisma/client';
+import { Prisma, Role, Status, type Announcement, type Settings, type User } from '@prisma/client';
 import type { Cookies } from '@sveltejs/kit';
 
 export function createContext(cookies: Cookies) {
@@ -35,15 +23,15 @@ const userSchema = z
 	.object({
 		fullName: z.string().optional(),
 		preferredName: z.string().optional(),
-		gender: z.nativeEnum(Gender).optional(),
-		race: z.array(z.nativeEnum(Race)).optional(),
+		gender: z.string().optional(),
+		race: z.array(z.string()).optional(),
 		pronouns: z.string().optional(),
 		photoReleaseAgreed: z.boolean().optional(),
 		liabilityWaiverAgreed: z.boolean().optional(),
 		codeOfConductAgreed: z.boolean().optional(),
 		major: z.string().optional(),
-		classification: z.nativeEnum(Classification).optional(),
-		graduation: z.nativeEnum(Graduation).optional(),
+		classification: z.string().optional(),
+		graduation: z.string().optional(),
 		firstGeneration: z.boolean().optional(),
 		international: z.boolean().optional(),
 		hackathonsAttended: z.number().optional(),
@@ -55,7 +43,7 @@ const userSchema = z
 		linkedin: z.string().optional(),
 		website: z.string().optional(),
 		lunch: z.boolean().optional(),
-		dietaryRestrictions: z.nativeEnum(DietaryRestriction).optional(),
+		dietaryRestrictions: z.string().optional(),
 		allergies: z.string().optional(),
 		accommodations: z.string().optional(),
 		other: z.string().optional(),

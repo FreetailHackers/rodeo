@@ -1,17 +1,6 @@
 import { firstNames, lastNames, majors } from './data';
 import { hash } from '../src/lib/hash';
-import {
-	PrismaClient,
-	Role,
-	Status,
-	type User,
-	type Decision,
-	Gender,
-	Classification,
-	Graduation,
-	DietaryRestriction,
-	Race,
-} from '@prisma/client';
+import { PrismaClient, Role, Status, type User, type Decision } from '@prisma/client';
 const prisma = new PrismaClient();
 
 /**
@@ -66,19 +55,36 @@ async function main() {
 			magicLink: await hash('hacker' + i),
 			fullName: `${firstName} ${lastName}`,
 			preferredName: firstName,
-			gender: [Gender.MALE, Gender.FEMALE][Math.floor(random() * 2)],
-			race: Race[Object.keys(Race)[Math.floor(random() * Object.keys(Race).length)]],
+			gender: ['Male', 'Female'][Math.floor(random() * 2)],
+			race: [
+				[
+					'American Indian or Alaskan Native',
+					'Asian',
+					'Black or African American',
+					'Hispanic',
+					'Native Hawaiian or Pacific Islander',
+					'White',
+					'Other',
+				][Math.floor(random() * 7)],
+			],
 			pronouns: ['he/him', 'she/her', 'they/them', 'other'][Math.floor(random() * 4)],
 			photoReleaseAgreed: true,
 			liabilityWaiverAgreed: true,
 			codeOfConductAgreed: true,
 			major,
-			classification:
-				Classification[
-					Object.keys(Classification)[Math.floor(random() * Object.keys(Classification).length)]
-				],
-			graduation:
-				Graduation[Object.keys(Graduation)[Math.floor(random() * Object.keys(Graduation).length)]],
+			classification: ['Freshman', 'Sophomore', 'Junior', 'Senior', 'Masters', 'Doctorate'][
+				Math.floor(random() * 6)
+			],
+			graduation: [
+				'Spring 2023',
+				'Fall 2023',
+				'Spring 2024',
+				'Fall 2024',
+				'Spring 2025',
+				'Fall 2025',
+				'Spring 2026',
+				'Other',
+			][Math.floor(random() * 8)],
 			firstGeneration: Math.random() < 0.5,
 			international: Math.random() < 0.5,
 			hackathonsAttended: Math.floor(random() * 10),
@@ -90,12 +96,7 @@ async function main() {
 			linkedin: 'https://linkedin.com/in/danielzting',
 			website: 'https://danielzting.github.io',
 			lunch: true,
-			dietaryRestrictions:
-				DietaryRestriction[
-					Object.keys(DietaryRestriction)[
-						Math.floor(random() * Object.keys(DietaryRestriction).length)
-					]
-				],
+			dietaryRestrictions: ['None', 'No pork', 'Vegetarian', 'Vegan'][Math.floor(random() * 4)],
 			allergies: '',
 			accommodations: '',
 			other: '',

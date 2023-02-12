@@ -1,7 +1,7 @@
 import authenticate from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import type { Actions, PageServerLoad } from './$types';
-import { Race, Role } from '@prisma/client';
+import { Role } from '@prisma/client';
 import { redirect } from '@sveltejs/kit';
 
 export const load = (async ({ cookies }) => {
@@ -18,11 +18,11 @@ export const actions: Actions = {
 		const data = Object.fromEntries(formData);
 		const user = {
 			...data,
-			race: formData.getAll('race').map((x) => x as Race),
 			photoReleaseAgreed: data.photoReleaseAgreed === 'on',
 			liabilityWaiverAgreed: data.liabilityWaiverAgreed === 'on',
 			codeOfConductAgreed: data.codeOfConductAgreed === 'on',
 			hackathonsAttended: Number(data.hackathonsAttended),
+			race: formData.getAll('race').map((x) => x as string),
 			workshops: formData.getAll('workshops').map((x) => x as string),
 			lunch: data.lunch === 'on',
 		};
@@ -38,11 +38,11 @@ export const actions: Actions = {
 		const data = Object.fromEntries(formData);
 		const user = {
 			...data,
-			race: formData.getAll('race').map((x) => x as Race),
 			photoReleaseAgreed: data.photoReleaseAgreed === 'on',
 			liabilityWaiverAgreed: data.liabilityWaiverAgreed === 'on',
 			codeOfConductAgreed: data.codeOfConductAgreed === 'on',
 			hackathonsAttended: Number(data.hackathonsAttended),
+			race: formData.getAll('race').map((x) => x as string),
 			workshops: formData.getAll('workshops').map((x) => x as string),
 			lunch: data.lunch === 'on',
 		};

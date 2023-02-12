@@ -139,7 +139,9 @@
 			}}
 			autocomplete="off"
 		>
-			<label for="fullName">Full Name</label>
+			<p>Required fields are marked with an asterisk (*).</p>
+
+			<label for="fullName">Full Name*</label>
 			<input
 				bind:value={fullName}
 				type="text"
@@ -148,7 +150,8 @@
 				placeholder="J. Random Hacker"
 				required
 			/>
-			<label for="fullName">Preferred Name</label>
+
+			<label for="fullName">Preferred Name*</label>
 			<input
 				bind:value={preferredName}
 				type="text"
@@ -157,34 +160,37 @@
 				placeholder="John"
 				required
 			/>
+
 			<Radio
 				name="gender"
-				choices={['MALE', 'FEMALE', 'NONBINARY', 'OTHER', 'REFUSE']}
+				choices={['Male', 'Female', 'Nonbinary', 'Other', 'Prefer not to say']}
 				bind:value={gender}
 				required
 			/>
+
 			<Multiselect
 				bind:value={race}
 				name="race"
-				label="Race"
+				label="Race (hold CTRL/⌘ to select multiple)"
 				options={[
-					'AMERICAN_INDIAN',
-					'ASIAN',
-					'BLACK',
-					'HISPANIC',
-					'NATIVE_HAWAIIAN',
-					'WHITE',
-					'OTHER',
-					'REFUSE',
+					'American Indian or Alaskan Native',
+					'Asian',
+					'Black or African American',
+					'Hispanic',
+					'Native Hawaiian or Pacific Islander',
+					'White',
+					'Other',
 				]}
 				required
 			/>
+
 			<Radio
 				name="pronouns"
-				choices={['he/him', 'she/hers', 'they/them', 'other', 'prefer not to say']}
+				choices={['He/Him', 'She/Hers', 'They/Them', 'Other', 'Prefer not to say']}
 				bind:value={pronouns}
 				required
 			/>
+
 			<fieldset>
 				<legend>Legal</legend>
 				<Checkbox
@@ -206,7 +212,8 @@
 					required
 				/>
 			</fieldset>
-			<label for="major">Major</label>
+
+			<label for="major">Major*</label>
 			<input
 				bind:value={major}
 				type="text"
@@ -214,21 +221,33 @@
 				placeholder="Underwater Basket Weaving"
 				required
 			/>
+
 			<Dropdown
 				bind:value={classification}
 				name="classification"
 				label="Classification"
-				options={['FRESHMAN', 'SOPHOMORE', 'JUNIOR', 'SENIOR', 'MASTERS', 'DOCTORATE']}
+				options={['Freshman', 'Sophomore', 'Junior', 'Senior', 'Masters', 'Doctorate']}
 				required
 			/>
+
 			<Dropdown
 				bind:value={graduation}
 				name="graduation"
 				label="When will you be graduating?"
-				options={['S2023', 'F2023', 'S2024', 'F2024', 'S2025', 'F2025', 'S2026', 'Other']}
+				options={[
+					'Spring 2023',
+					'Fall 2023',
+					'Spring 2024',
+					'Fall 2024',
+					'Spring 2025',
+					'Fall 2025',
+					'Spring 2026',
+					'Other',
+				]}
 				required
 			/>
-			<label for="hackathonsAttended">Hackathons Attended</label>
+
+			<label for="hackathonsAttended">Hackathons Attended*</label>
 			<input
 				bind:value={hackathonsAttended}
 				type="number"
@@ -237,10 +256,11 @@
 				min="0"
 				required
 			/>
+
 			<Multiselect
 				bind:value={workshops}
 				name="workshops"
-				label="What workshops would you like to see?"
+				label="What workshops would you like to see? (hold CTRL/⌘ to select multiple)"
 				options={[
 					'Technical (frontend/backend)',
 					'Networking/Resumes',
@@ -249,6 +269,7 @@
 					'Sustainability',
 				]}
 			/>
+
 			<Dropdown
 				bind:value={referrer}
 				name="referrer"
@@ -256,56 +277,75 @@
 				options={['Social Media', 'Tabling', 'Friends', 'Professor/Department', 'HackTX', 'Other']}
 				required
 			/>
-			<label for="excitedAbout">What are you most excited about?</label>
+
+			<label for="excitedAbout">What are you most excited about?*</label>
 			<textarea
 				bind:value={excitedAbout}
 				name="excitedAbout"
 				placeholder="I'm excited to..."
 				required
 			/>
-			<label for="resume">Resume (last uploaded: {resume?.split('/')[5]})</label>
-			<input type="file" name="resume" accept=".pdf" />
-			<label for="github">GitHub</label>
-			<input
-				bind:value={github}
-				type="url"
-				name="github"
-				placeholder="https://github.com/DanielZTing"
-			/>
-			<label for="linkedin">LinkedIn</label>
-			<input
-				bind:value={linkedin}
-				type="url"
-				name="linkedin"
-				placeholder="https://www.linkedin.com/in/danielzting"
-			/>
-			<label for="website">Website</label>
-			<input
-				bind:value={website}
-				type="url"
-				name="website"
-				placeholder="https://danielzting.github.io"
-			/>
-			<Checkbox bind:checked={lunch} name="lunch" label="I would like lunch provided." />
+
+			<fieldset id="sponsors">
+				<legend>The following information will be shared with our sponsors.</legend>
+				<label for="resume">Resume (last uploaded: {resume?.split('/')[5]})</label>
+				<input type="file" name="resume" accept=".pdf" />
+				<label for="github">GitHub</label>
+				<input
+					bind:value={github}
+					type="url"
+					name="github"
+					placeholder="https://github.com/DanielZTing"
+				/>
+
+				<label for="linkedin">LinkedIn</label>
+				<input
+					bind:value={linkedin}
+					type="url"
+					name="linkedin"
+					placeholder="https://www.linkedin.com/in/danielzting"
+				/>
+
+				<label for="website">Website</label>
+				<input
+					bind:value={website}
+					type="url"
+					name="website"
+					placeholder="https://danielzting.github.io"
+				/>
+			</fieldset>
+
+			<div>
+				<input type="checkbox" bind:checked={lunch} id="lunch" name="lunch" />
+				<label for="lunch">
+					Lunch may be provided to hackers contingent on availability. Check this box if you would
+					like lunch provided to you.
+				</label>
+			</div>
+			<br />
+
 			<Dropdown
 				bind:value={dietaryRestrictions}
 				name="dietaryRestrictions"
 				label="Dietary Restrictions"
-				options={['NONE', 'NO_PORK', 'VEGETARIAN', 'VEGAN']}
+				options={['None', 'No pork', 'Vegetarian', 'Vegan']}
 				required
 			/>
+
 			<label for="allergies">Allergies</label>
 			<input bind:value={allergies} type="text" name="allergies" placeholder="Peanuts" />
+
 			<label for="accomodations">Accomodations</label>
 			<input
 				bind:value={accommodations}
 				name="accommodations"
 				placeholder="I need a wheelchair accessible room."
 			/>
-			<label for="other"
-				>Anything else we should know? (If you answered "Other" to any question above, you may
-				elaborate here.)</label
-			>
+
+			<label for="other">
+				Anything else we should know? (If you answered "Other" to any question above, you may
+				elaborate here.)
+			</label>
 			<input
 				bind:value={other}
 				type="text"
@@ -349,5 +389,15 @@
 		padding: 0 1rem;
 		text-align: center;
 		margin-bottom: 1rem;
+	}
+
+	#lunch {
+		margin: 0;
+		height: initial;
+	}
+
+	#sponsors {
+		display: flex;
+		flex-direction: column;
 	}
 </style>
