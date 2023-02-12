@@ -4,6 +4,8 @@ import type { Actions, PageServerLoad } from './$types';
 import { Role } from '@prisma/client';
 import { redirect } from '@sveltejs/kit';
 
+const FILE_SIZE_LIMIT = 1 * 1024 * 1024; // 1 MB
+
 export const load = (async ({ cookies }) => {
 	const user = await authenticate(cookies, Role.HACKER);
 	return {
@@ -46,6 +48,11 @@ export const actions: Actions = {
 			workshops: formData.getAll('workshops').map((x) => x as string),
 			lunch: data.lunch === 'on',
 		};
+
+		if (data.resume instanceof Object && data.resume?.size > FILE_SIZE_LIMIT) {
+			return 'tooBig';
+		}
+
 		await trpc(cookies).setUser(user);
 		return await trpc(cookies).submitApplication();
 	},
