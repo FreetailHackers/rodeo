@@ -192,23 +192,25 @@
 			/>
 
 			<fieldset>
-				<legend>Legal</legend>
-				<Checkbox
+				<legend>Legal</legend><Checkbox
 					bind:checked={photoReleaseAgreed}
 					name="photoReleaseAgreed"
 					label="Photo Release"
+					link="/forms/photo-release"
 					required
 				/>
 				<Checkbox
 					bind:checked={liabilityWaiverAgreed}
 					name="liabilityWaiverAgreed"
 					label="Liability Waiver"
+					link="/forms/liability-waiver"
 					required
 				/>
 				<Checkbox
 					bind:checked={codeOfConductAgreed}
 					name="codeOfConductAgreed"
 					label="Code of Conduct"
+					link="https://mlh.io/code-of-conduct"
 					required
 				/>
 			</fieldset>
