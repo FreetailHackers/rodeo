@@ -15,6 +15,7 @@ export const t = initTRPC.context<Context>().create();
 
 const MAGIC_LINK_LENGTH = 32;
 const CHARSET = 'abcdefghijklmnopqrstuvwxyz';
+const FILE_SIZE_LIMIT = 1 * 1024 * 1024; // 1 MB
 
 sgMail.setApiKey(process.env.SENDGRID_KEY as string);
 const client = new S3Client({ region: 'us-east-1' });
@@ -90,6 +91,9 @@ export const router = t.router({
 		}
 		// Upload resume to S3
 		if (req.input.resume instanceof Blob) {
+			if (req.input.resume.size > FILE_SIZE_LIMIT) {
+				throw new Error('File size too big');
+			}
 			await client.send(
 				new PutObjectCommand({
 					Bucket: process.env.S3_BUCKET,
