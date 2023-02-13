@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Version from '$lib/components/version.svelte';
 	import { Role } from '@prisma/client';
 	import type { LayoutData } from './$types';
 	import './global.css';
@@ -29,7 +28,6 @@
 			Freetail Hackers
 		</a>
 	</p>
-	<Version />
 </footer>
 
 <style>
