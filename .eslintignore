@@ -15,4 +15,4 @@ yarn.lock
 
 # Let me use build variables
 
-src/routes/+layout.svelte
+src/lib/components/version.svelte

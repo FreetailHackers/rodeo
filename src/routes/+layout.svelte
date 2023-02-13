@@ -1,16 +1,10 @@
 <script lang="ts">
+	import Version from '$lib/components/version.svelte';
 	import { Role } from '@prisma/client';
 	import type { LayoutData } from './$types';
 	import './global.css';
 
 	export let data: LayoutData;
-
-	// @ts-ignore
-	const release = __RELEASE__;
-	// @ts-ignore
-	const build = __BUILD__;
-	// @ts-ignore
-	const timestamp = __TIMESTAMP__;
 </script>
 
 <nav>
@@ -35,7 +29,7 @@
 			Freetail Hackers
 		</a>
 	</p>
-	<p>Release {release} ({build}) @ {timestamp}</p>
+	<Version />
 </footer>
 
 <style>
