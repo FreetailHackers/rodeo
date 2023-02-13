@@ -26,6 +26,7 @@ export const actions: Actions = {
 			hackathonsAttended: Number(data.hackathonsAttended),
 			race: formData.getAll('race').map((x) => x as string),
 			workshops: formData.getAll('workshops').map((x) => x as string),
+			dietaryRestrictions: formData.getAll('dietaryRestrictions').map((x) => x as string),
 			lunch: data.lunch === 'on',
 		};
 
@@ -51,6 +52,7 @@ export const actions: Actions = {
 			hackathonsAttended: Number(data.hackathonsAttended),
 			race: formData.getAll('race').map((x) => x as string),
 			workshops: formData.getAll('workshops').map((x) => x as string),
+			dietaryRestrictions: formData.getAll('dietaryRestrictions').map((x) => x as string),
 			lunch: data.lunch === 'on',
 		};
 
