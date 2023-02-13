@@ -210,46 +210,59 @@ export const router = t.router({
 			.map((n) => CHARSET[n % CHARSET.length])
 			.join('');
 
+		// Create user and email magic link only if not already registered with this email
+		await prisma.user.upsert({
+			where: { email },
+			create: {
+				email: email,
+				magicLink: await hash(magicLink),
+			},
+			update: {
+				magicLink: await hash(magicLink),
+			},
+		});
+
 		// Send email with magic link
 		const link = `${process.env.DOMAIN_NAME}/login/${magicLink}`;
 		const msg = {
 			to: email,
 			from: 'hello@freetailhackers.com',
 			subject: 'Welcome to Rodeo!',
-			text: `Please click on this link to log in to Rodeo: ${link}`,
-			html: `<p>Please click on this link to log in to Rodeo: <a href="${link}">${link}</a></p>`,
+			html: `Please click on this link to log in to Rodeo: <a href="${link}">${link}</a>
+			<br>
+			<br>
+			Keep this email safe as anyone with this link can log in to your account.
+			If you misplace this email, you can always request a new link by registering again with this same email address.
+			Note that this will invalidate your previous link.
+			<br>
+			<br>
+			If you need any help, you may email us at <a href="mailto:tech@freetailhackers.com">tech@freetailhackers.com</a>.
+			Thanks and happy hacking!
+			<br>
+			<br>
+			Best,
+			<br>
+			Freetail Hackers`,
 		};
-
-		// Create user and email magic link only if not already registered with this email
-		const user = await prisma.user.findUnique({ where: { email: email } });
-		if (user === null) {
-			try {
-				await prisma.user.create({
-					data: {
-						email: email,
-						magicLink: await hash(magicLink),
-					},
-				});
-				await sgMail.send(msg);
-				return 'We sent a magic login link to your email!';
-			} catch (error) {
-				console.error(error);
-				return 'An unknown error occurred. Please try again later.';
-			}
+		try {
+			await sgMail.send(msg);
+			return 'We sent a magic login link to your email!';
+		} catch (error) {
+			console.error(error);
+			return 'An unknown error occurred. Please try again later.';
 		}
-		return 'You are already registered with this email.';
 	}),
 
 	/**
 	 * Verify a user.
 	 */
 	verifyUser: t.procedure.mutation(async (req): Promise<void> => {
-		const user = await prisma.user.findUniqueOrThrow({
+		const user = await prisma.user.findUnique({
 			where: {
 				magicLink: await hash(req.ctx.magicLink),
 			},
 		});
-		if (user.status === Status.CREATED) {
+		if (user !== null && user.status === Status.CREATED) {
 			await prisma.user.update({
 				where: {
 					magicLink: await hash(req.ctx.magicLink),
