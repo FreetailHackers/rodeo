@@ -1,3 +1,110 @@
+:root {
+	--font-family: 'Helvetica Neue', 'Arial', sans-serif;
+	--font-size: 16px;
+	--primary-accent: #bf5700;
+}
+
+html {
+	box-sizing: border-box;
+	overflow-y: scroll; /* prevent scrollbar from shifting layout */
+}
+*,
+*:before,
+*:after {
+	box-sizing: inherit;
+}
+
 body {
-	font-family: 'Helvetica Neue', 'Arial', sans-serif;
+	font-family: var(--font-family);
+	font-size: var(--font-size);
+	max-width: 50rem;
+	margin: 0 auto;
+	padding: 1rem;
+}
+
+nav {
+	margin: 1rem 0;
+}
+
+label {
+	margin: 0 0 0.5rem 0;
+}
+
+button {
+	height: 2.5rem;
+	font-size: var(--font-size);
+	color: white;
+	background-color: var(--primary-accent);
+	border: none;
+}
+
+button[disabled] {
+	opacity: 0.5;
+}
+
+input {
+	font-family: var(--font-family);
+	font-size: var(--font-size);
+	height: 2.5rem;
+	padding-left: 0.5rem;
+	margin-bottom: 1rem;
+	border: 2px solid gray;
+}
+
+input[type='checkbox'] {
+	height: 1.5rem;
+	width: 1.5rem;
+}
+
+textarea {
+	font-family: var(--font-family);
+	font-size: var(--font-size);
+	padding: 1rem;
+	resize: none;
+	border: 2px solid gray;
+	height: 10rem;
+	margin-bottom: 1rem;
+}
+
+form {
+	display: flex;
+	flex-direction: column;
+}
+
+a {
+	color: var(--primary-accent);
+}
+
+::selection {
+	background: var(--primary-accent);
+	color: white;
+}
+
+fieldset {
+	margin: 0 0 1rem 0;
+	padding: 0.5rem 1rem 0 1rem;
+}
+
+select {
+	font-family: var(--font-family);
+	font-size: var(--font-size);
+	height: 2.5rem;
+	padding-left: 0.5rem;
+	margin-bottom: 1rem;
+	border: 2px solid gray;
+}
+
+input[type='file'] {
+	padding-left: 0;
+	width: 100%; /* needed to prevent horizontal scrolling on iPhone 8 */
+}
+
+::file-selector-button {
+	padding: 0 1rem;
+	margin-right: 1rem;
+	height: 100%;
+	font-size: var(--font-size);
+	color: white;
+	background-color: var(--primary-accent);
+	border: none;
 }

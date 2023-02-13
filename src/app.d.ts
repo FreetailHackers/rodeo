@@ -7,3 +7,8 @@ declare namespace App {
 	// interface PageData {}
 	// interface Platform {}
 }
+
+// App version
+declare const __VERSION__: string;
+// Date of last commit
+declare const __LASTMOD__: string;

@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import Announcements from '$lib/components/announcements.svelte';
+	import { Role } from '@prisma/client';
 	import type { ActionData, PageData } from './$types';
 
 	export let data: PageData;
@@ -9,46 +11,54 @@
 </script>
 
 {#if data.user}
-	<p>Welcome to Rodeo, {data.user.name}!</p>
-	{#if data.announcements.length > 0}
-		<ul>
-			{#each data.announcements as announcement}
-				<li>
-					<h4>{announcement.title}</h4>
-					<p>{announcement.body}</p>
-				</li>
-			{/each}
-		</ul>
-	{:else}
-		<p>There are no announcements at this time.</p>
-	{/if}
+	<h1>
+		Welcome to Rodeo{#if data.user.preferredName !== null && data.user.preferredName !== ''}, {data
+				.user.preferredName}{/if}!
+	</h1>
+	<p>
+		Thanks for your interest in our upcoming hackathon! <b>Hack The Future</b> will occur from
+		<b>March 3rd, Friday evening until March 4th, Saturday evening</b>. Check our
+		<a href="https://freetailhackers.com">website</a>
+		and <a href="schedule">schedule</a> for more details!
+	</p>
+	<p>
+		Please make sure to fill out the <a href="apply">application</a> as early as possible. Admission
+		will operate on a <b>first-come, first-serve basis</b>. Spots are limited.
+	</p>
+	<p>
+		If you have any questions or concerns, please contact
+		<a href="mailto:hello@freetailhackers.com">hello@freetailhackers.com</a>.
+	</p>
+
+	<!-- Admin announcements panel -->
+	<h2>Announcements</h2>
+	<Announcements announcements={data.announcements} admin={data.user.role === Role.ADMIN} />
 	<form method="POST" action="?/logout" use:enhance>
 		<button>Logout</button>
 	</form>
 {:else}
+	<!-- Signup page -->
 	<h1>Welcome to Rodeo</h1>
+	<p>
+		Rodeo is Freetail Hackers' registration platform and information board for hackathon attendees.
+	</p>
 	<form method="POST" action="?/login" use:enhance>
 		<label for="email">To get started, enter your email: </label>
-		<input bind:value={email} type="email" name="email" placeholder="student@example.edu" />
+		<input
+			bind:value={email}
+			type="email"
+			name="email"
+			placeholder="student@example.edu"
+			required
+		/>
 		<button>Register</button>
 	</form>
 	{#if form}
 		<p>{form}</p>
+		<p>
+			For help, contact <a href="mailto:tech@freetailhackers.com">tech@freetailhackers.com</a>.
+		</p>
 	{/if}
+	<h2>Announcements</h2>
+	<Announcements announcements={data.announcements} admin={false} />
 {/if}
-
-<style>
-	ul {
-		list-style: none;
-		border: 1px solid black;
-		padding: 1rem;
-	}
-
-	h4 {
-		margin: 0;
-	}
-
-	p {
-		margin-bottom: 0;
-	}
-</style>

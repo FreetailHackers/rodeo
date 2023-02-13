@@ -4,25 +4,81 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["extendedWhereUnique"]
 }
 
 model User {
-  id          Int      @id @default(autoincrement())
-  email       String   @unique
-  name        String?
-  magicLink   String   @unique
-  role        Role     @default(HACKER)
+  id                    Int       @id @default(autoincrement())
+  email                 String    @unique
+  magicLink             String    @unique
+  role                  Role      @default(HACKER)
+  status                Status    @default(CREATED)
+  decision              Decision?
+  fullName              String?
+  preferredName         String?
+  gender                String?
+  race                  String[]
+  pronouns              String?
+  photoReleaseAgreed    Boolean   @default(false)
+  liabilityWaiverAgreed Boolean   @default(false)
+  codeOfConductAgreed   Boolean   @default(false)
+  major                 String?
+  classification        String?
+  graduation            String?
+  firstGeneration       Boolean?
+  international         Boolean?
+  hackathonsAttended    Int?
+  workshops             String[]
+  referrer              String?
+  excitedAbout          String?
+  resume                String?
+  github                String?
+  linkedin              String?
+  website               String?
+  lunch                 Boolean   @default(false)
+  dietaryRestrictions   String[]
+  allergies             String?
+  accommodations        String?
+  other                 String?
 }
 
 model Announcement {
-  id          Int      @id @default(autoincrement())
-  title       String
-  body        String
-  published   DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  body      String
+  published DateTime @default(now())
+}
+
+// Store unreleased decisions in their own table
+model Decision {
+  id     Int    @id @default(autoincrement())
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int    @unique
+  status Status
+}
+
+// Store settings in a table with a single row
+model Settings {
+  id                Int     @id @default(autoincrement()) // Dummy ID is to satisfy Prisma
+  // TODO: Separate public and private settings into separate tables
+  // PUBLIC SETTINGS (all users must be able to see these)
+  applicationOpen   Boolean @default(true)
+  // PRIVATE SETTINGS (settings that non-admins do not need)
+  rollingAdmissions Boolean @default(false)
 }
 
 enum Role {
   HACKER
   ADMIN
+}
+
+enum Status {
+  CREATED // User has entered email but has not opened their magic link
+  VERIFIED // User has opened magic link
+  APPLIED // User has finished application
+  ACCEPTED // User has been accepted but has not yet confirmed
+  REJECTED // User has been rejected
+  WAITLISTED // User has been waitlisted
+  CONFIRMED // User has confirmed their attendance
+  DECLINED // User has declined their attendance
 }

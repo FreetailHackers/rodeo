@@ -1,33 +1,52 @@
 default:
-  image: node
+  image: node:18
 
 stages:
-  - build
   - test
   - deploy
 
-build-job:
-  stage: build
-  script:
-    - npm ci
-    - npm run build
-
-unit-test-job:
+test-job:
   stage: test
+  except:
+    - production
   script:
     - npm ci
-    - npm run test:unit
-#   - npm run test # For some reason, Playwright segfaults so skip E2E tests for now
-
-lint-test-job:
-  stage: test
-  script:
-    - npm ci
+    - npm run check
     - npm run lint
+    - npm run test:unit
 
-deploy-job:
+deploy_staging:
   stage: deploy
-  environment: production
+  variables:
+    STAGING_URL: rodeo-staging.freetailhackers.com
+  only:
+    - master
+  environment:
+    name: staging
+    url: https://$STAGING_URL
   script:
-    - echo "Deploying application..."
-    - echo "Application successfully deployed."
+    - npm install --global vercel
+    - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+    - cp .vercel/.env.preview.local .env
+    - npx prisma migrate deploy
+    - vercel deploy --token=$VERCEL_TOKEN > domain.txt
+    - vercel alias --token=$VERCEL_TOKEN set `cat domain.txt` $STAGING_URL
+    - rm domain.txt
+
+deploy_production:
+  stage: deploy
+  variables:
+    PROD_URL: rodeo.freetailhackers.com
+  only:
+    - production
+  environment:
+    name: production
+    url: https://$PROD_URL
+  script:
+    - npm install --global vercel
+    - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+    - cp .vercel/.env.production.local .env
+    - npx prisma migrate deploy
+    - vercel deploy --prod --token=$VERCEL_TOKEN > domain.txt
+    - vercel alias --token=$VERCEL_TOKEN set `cat domain.txt` $PROD_URL
+    - rm domain.txt
