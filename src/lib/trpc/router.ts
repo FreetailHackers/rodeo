@@ -90,10 +90,11 @@ export const router = t.router({
 			throw new Error('Sorry, applications are closed.');
 		}
 		// Upload resume to S3
-		if (req.input.resume instanceof Blob) {
-			if (req.input.resume.size > FILE_SIZE_LIMIT) {
-				throw new Error('File size too big');
-			}
+		if (
+			req.input.resume instanceof Blob &&
+			req.input.resume.size > 0 &&
+			req.input.resume.size < FILE_SIZE_LIMIT
+		) {
 			await client.send(
 				new PutObjectCommand({
 					Bucket: process.env.S3_BUCKET,
@@ -102,6 +103,8 @@ export const router = t.router({
 				})
 			);
 			req.input.resume = `https://s3.amazonaws.com/${process.env.S3_BUCKET}/${user.id}/${req.input.resume.name}`;
+		} else {
+			req.input.resume = undefined;
 		}
 		// Only let verified users that haven't received a decision update their info
 		if (user.status === Status.VERIFIED || user.status === Status.APPLIED) {

@@ -28,6 +28,11 @@ export const actions: Actions = {
 			workshops: formData.getAll('workshops').map((x) => x as string),
 			lunch: data.lunch === 'on',
 		};
+
+		if (data.resume instanceof Object && data.resume?.size > FILE_SIZE_LIMIT) {
+			return 'tooBig';
+		}
+
 		await trpc(cookies).setUser(user);
 		return 'Saved!';
 	},
