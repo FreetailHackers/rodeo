@@ -336,7 +336,7 @@
 			<Multiselect
 				bind:value={dietaryRestrictions}
 				name="dietaryRestrictions"
-				label="Dietary Restrictions"
+				label="Dietary Restrictions (hold CTRL/⌘ to select multiple)"
 				options={[
 					'No pork',
 					'Vegetarian',

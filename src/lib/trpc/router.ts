@@ -249,6 +249,7 @@ export const router = t.router({
 			return 'We sent a magic login link to your email!';
 		} catch (error) {
 			console.error(error);
+			console.log('Could not send email. Magic link is: ' + magicLink);
 			return 'An unknown error occurred. Please try again later.';
 		}
 	}),
