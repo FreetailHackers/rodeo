@@ -44,7 +44,7 @@ const userSchema = z
 		linkedin: z.string().optional(),
 		website: z.string().optional(),
 		lunch: z.boolean().optional(),
-		dietaryRestrictions: z.string().optional(),
+		dietaryRestrictions: z.array(z.string()).optional(),
 		allergies: z.string().optional(),
 		accommodations: z.string().optional(),
 		other: z.string().optional(),

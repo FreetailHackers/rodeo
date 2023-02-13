@@ -96,7 +96,11 @@ async function main() {
 			linkedin: 'https://linkedin.com/in/danielzting',
 			website: 'https://danielzting.github.io',
 			lunch: true,
-			dietaryRestrictions: ['None', 'No pork', 'Vegetarian', 'Vegan'][Math.floor(random() * 4)],
+			dietaryRestrictions: [
+				['No pork', 'Vegetarian', 'Vegan', 'No dairy', 'No nuts', 'No beef', 'Gluten free'][
+					Math.floor(random() * 7)
+				],
+			],
 			allergies: '',
 			accommodations: '',
 			other: '',

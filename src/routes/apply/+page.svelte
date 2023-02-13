@@ -192,7 +192,11 @@
 			/>
 
 			<fieldset>
-				<legend>Legal</legend><Checkbox
+				<legend>Legal</legend>
+				<p style="margin-top: 0">
+					By clicking the checkboxes below, I agree to the following documents.
+				</p>
+				<Checkbox
 					bind:checked={photoReleaseAgreed}
 					name="photoReleaseAgreed"
 					label="Photo Release"
@@ -329,15 +333,25 @@
 			</div>
 			<br />
 
-			<Dropdown
+			<Multiselect
 				bind:value={dietaryRestrictions}
 				name="dietaryRestrictions"
 				label="Dietary Restrictions"
-				options={['None', 'No pork', 'Vegetarian', 'Vegan']}
-				required
+				options={[
+					'No pork',
+					'Vegetarian',
+					'Vegan',
+					'No dairy',
+					'No nuts',
+					'No beef',
+					'Gluten free',
+				]}
 			/>
 
-			<label for="allergies">Allergies</label>
+			<label for="allergies"
+				>If you have any other dietary restrictions or allergies not listed above, please describe
+				them here.</label
+			>
 			<input bind:value={allergies} type="text" name="allergies" placeholder="Peanuts" />
 
 			<label for="accomodations">Accomodations</label>
