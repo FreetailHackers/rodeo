@@ -9,6 +9,18 @@
 
 	let saveButtonText = form ?? 'Save';
 	let releaseConfirm = false;
+
+	// Options for demographic questions
+	let genderOptions = ['Male', 'Female', 'Nonbinary', 'Other', 'Prefer not to say'];
+	let raceOptions = [
+		'American Indian or Alaskan Native',
+		'Asian',
+		'Black or African American',
+		'Hispanic',
+		'Native Hawaiian or Pacific Islander',
+		'White',
+		'Other',
+	];
 </script>
 
 <h1>Admin Panel</h1>
@@ -56,6 +68,32 @@
 		>
 	{/if}
 </form>
+
+<h2>Stats</h2>
+<p>Accepted (pending): {data.decisions.accepted.length}</p>
+<ul>
+	{#each genderOptions as genderOption}
+		<li>
+			{(
+				(data.decisions.accepted.filter((decision) => decision.user.gender == genderOption).length *
+					100) /
+				data.decisions.accepted.length
+			).toFixed(2)}% - {genderOption}
+		</li>
+	{/each}
+</ul>
+<ul>
+	{#each raceOptions as raceOption}
+		<li>
+			{(
+				(data.decisions.accepted.filter((decision) => decision.user.race.includes(raceOption))
+					.length *
+					100) /
+				data.decisions.accepted.length
+			).toFixed(2)}% - {raceOption}
+		</li>
+	{/each}
+</ul>
 
 <h2>Accepted</h2>
 <Users
