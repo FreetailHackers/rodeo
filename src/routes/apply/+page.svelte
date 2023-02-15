@@ -263,6 +263,17 @@
 				required
 			/>
 
+			<Checkbox
+				bind:checked={firstGeneration}
+				name="firstGeneration"
+				label="I am a first generation student."
+			/>
+			<Checkbox
+				bind:checked={international}
+				name="international"
+				label="I am an international student."
+			/>
+
 			<Multiselect
 				bind:value={workshops}
 				name="workshops"
@@ -304,7 +315,7 @@
 					bind:value={github}
 					type="url"
 					name="github"
-					placeholder="https://github.com/DanielZTing"
+					placeholder="https://github.com/username"
 				/>
 
 				<label for="linkedin">LinkedIn</label>
@@ -312,16 +323,11 @@
 					bind:value={linkedin}
 					type="url"
 					name="linkedin"
-					placeholder="https://www.linkedin.com/in/danielzting"
+					placeholder="https://www.linkedin.com/in/username"
 				/>
 
 				<label for="website">Website</label>
-				<input
-					bind:value={website}
-					type="url"
-					name="website"
-					placeholder="https://danielzting.github.io"
-				/>
+				<input bind:value={website} type="url" name="website" placeholder="https://example.com" />
 			</fieldset>
 
 			<div>
