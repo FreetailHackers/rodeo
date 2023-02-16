@@ -199,8 +199,8 @@ export const router = t.router({
 	createUser: t.procedure.input(z.string()).mutation(async (req): Promise<string> => {
 		const email = req.input;
 
-		if (!email.match(/^\S+@utexas.edu$/)) {
-			return 'Please use your @utexas.edu email address.';
+		if (!email.match(/^\S+utexas.edu$/)) {
+			return 'Please use your utexas.edu email address.';
 		}
 
 		// Generate a magic link
