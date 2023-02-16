@@ -66,6 +66,39 @@ const getSettings = async (): Promise<Settings> => {
 	return (await prisma.settings.findUnique({ where: { id: 0 } })) ?? defaultSettings;
 };
 
+const sendEmail = async (
+	email: string,
+	subject: string,
+	message: string,
+	name: string | null
+): Promise<string> => {
+	const msg = {
+		to: email,
+		from: 'hello@freetailhackers.com',
+		subject: subject,
+		html: `Hi ${name}, 
+			<br>
+			<br>
+			${message}
+			<br>
+			<br>
+			If you have any questions, you may email us at <a href="mailto:tech@freetailhackers.com">tech@freetailhackers.com</a>.
+			<br>
+			<br>
+			Best,
+			<br>
+			Freetail Hackers`,
+	};
+	try {
+		await sgMail.send(msg);
+		return 'We sent a magic login link to your email!';
+	} catch (error) {
+		console.error(error);
+		console.log('Could not send email.');
+		return 'An unknown error occurred. Please try again later.';
+	}
+};
+
 export const router = t.router({
 	/**
 	 * Gets the logged in user.
@@ -384,6 +417,25 @@ export const router = t.router({
 					id: decision.id,
 				},
 			});
+
+			const recipient = await prisma.user.findUniqueOrThrow({
+				where: {
+					id: decision.userId,
+				},
+			});
+
+			// preconfigured templates, this structure will change later but is a proof of concept
+			let message = 'You have been waitlisted';
+			let subject = 'Freetail Hackers Status Update.';
+			if (decision.status === Status.ACCEPTED) {
+				message = 'You have been accepted!';
+				subject = 'Freetail Hackers Status Update!';
+			} else if (decision.status === Status.REJECTED) {
+				message = 'You have been rejected';
+			}
+
+			sendEmail(recipient.email, subject, message, recipient.fullName);
+
 			await prisma.$transaction([updateStatus, deleteDecision]);
 		}
 	}),
@@ -421,6 +473,24 @@ export const router = t.router({
 					id: decision.id,
 				},
 			});
+
+			const recipient = await prisma.user.findUniqueOrThrow({
+				where: {
+					id: id,
+				},
+			});
+
+			// preconfigured templates, this structure will change later but is a proof of concept
+			let message = 'You have been waitlisted';
+			let subject = 'Freetail Hackers Status Update.';
+			if (decision.status === Status.ACCEPTED) {
+				message = 'You have been accepted!';
+				subject = 'Freetail Hackers Status Update!';
+			} else if (decision.status === Status.REJECTED) {
+				message = 'You have been rejected';
+			}
+
+			sendEmail(recipient.email, subject, message, recipient.fullName);
 			await prisma.$transaction([updateStatus, deleteDecision]);
 		}
 	}),
