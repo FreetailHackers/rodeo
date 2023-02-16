@@ -86,7 +86,7 @@
 						/>
 						<label for={'' + user.id}>{user.fullName}</label>
 						<a class="desktop" href="mailto:{user.email}">{user.email}</a>
-						<span class="{user.status.toLowerCase()} dot" />
+						<span class="{user.decision?.status.toLowerCase() ?? user.status.toLowerCase()} dot" />
 					</summary>
 					<div class="user">
 						<User {user} />

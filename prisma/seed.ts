@@ -67,7 +67,9 @@ async function main() {
 					'Other',
 				][Math.floor(random() * 7)],
 			],
-			pronouns: ['he/him', 'she/her', 'they/them', 'other'][Math.floor(random() * 4)],
+			pronouns: ['He/him', 'She/her', 'They/them', 'Other', 'Prefer not to say'][
+				Math.floor(random() * 5)
+			],
 			photoReleaseAgreed: true,
 			liabilityWaiverAgreed: true,
 			codeOfConductAgreed: true,
@@ -89,7 +91,9 @@ async function main() {
 			international: Math.random() < 0.5,
 			hackathonsAttended: Math.floor(random() * 10),
 			workshops: [],
-			referrer: 'OTHER',
+			referrer: ['Social Media', 'Tabling', 'Friends', 'Professor/Department', 'HackTX', 'Other'][
+				Math.floor(random() * 6)
+			],
 			excitedAbout: 'I am excited to learn new things and meet new people!',
 			resume: 'https://example.com/resume.pdf',
 			github: 'https://github.com/DanielZTing',

@@ -2,12 +2,11 @@
 	import { enhance } from '$app/forms';
 	import Toggle from '$lib/components/toggle.svelte';
 	import Users from '$lib/components/users.svelte';
-	import type { ActionData, PageData } from './$types';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
-	export let form: ActionData;
 
-	let saveButtonText = form ?? 'Save';
+	let saveButtonText = 'Save';
 	let releaseConfirm = false;
 
 	// Options for demographic questions
@@ -42,6 +41,16 @@
 		name="applicationOpen"
 		label="Accept new applications"
 		checked={data.settings.applicationOpen}
+	/>
+	<br />
+	<label for="confirmBy"
+		>Accepted hackers must confirm by (leave empty if confirmation is not required):
+	</label>
+	<input
+		type="datetime-local"
+		id="confirmBy"
+		name="confirmBy"
+		value={data.settings.confirmBy?.toLocaleString('sv').replace(' ', 'T').slice(0, -3)}
 	/>
 	<button type="submit">{saveButtonText}</button>
 </form>
@@ -113,7 +122,6 @@
 
 <style>
 	button {
-		margin-top: 1rem;
 		width: 100%;
 	}
 
