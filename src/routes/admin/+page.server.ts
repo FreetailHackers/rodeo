@@ -6,7 +6,7 @@ import type { Actions, PageServerLoad } from './$types';
 export const load = (async ({ cookies }) => {
 	await authenticate(cookies, Role.ADMIN);
 	return {
-		settings: await trpc(cookies).getSettings(),
+		settings: await trpc(cookies).getAllSettings(),
 		decisions: await trpc(cookies).getDecisions(),
 	};
 }) satisfies PageServerLoad;
@@ -15,24 +15,22 @@ export const actions: Actions = {
 	settings: async ({ cookies, request }) => {
 		const formData = await request.formData();
 		const applicationOpen = formData.get('applicationOpen') === 'on';
-		await trpc(cookies).setSettings({ applicationOpen });
-		return 'Saved!';
+		const timestamp = Date.parse(formData.get('confirmBy') as string);
+		const confirmBy = Number.isNaN(timestamp) ? null : new Date(timestamp);
+		await trpc(cookies).setSettings({ applicationOpen, confirmBy });
 	},
 
 	release: async ({ cookies, request }) => {
 		const ids = [...(await request.formData()).keys()].map((id) => Number(id));
 		await trpc(cookies).releaseDecisions(ids);
-		return 'Released!';
 	},
 
 	remove: async ({ cookies, request }) => {
 		const ids = [...(await request.formData()).keys()].map((id) => Number(id));
 		await trpc(cookies).removeDecisions(ids);
-		return 'Removed!';
 	},
 
 	releaseAll: async ({ cookies }) => {
 		await trpc(cookies).releaseAllDecisions();
-		return 'Released!';
 	},
 };

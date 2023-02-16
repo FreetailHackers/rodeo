@@ -2,13 +2,24 @@
 	import { enhance } from '$app/forms';
 	import Toggle from '$lib/components/toggle.svelte';
 	import Users from '$lib/components/users.svelte';
-	import type { ActionData, PageData } from './$types';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
-	export let form: ActionData;
 
-	let saveButtonText = form ?? 'Save';
+	let saveButtonText = 'Save';
 	let releaseConfirm = false;
+
+	// Options for demographic questions
+	let genderOptions = ['Male', 'Female', 'Nonbinary', 'Other', 'Prefer not to say'];
+	let raceOptions = [
+		'American Indian or Alaskan Native',
+		'Asian',
+		'Black or African American',
+		'Hispanic',
+		'Native Hawaiian or Pacific Islander',
+		'White',
+		'Other',
+	];
 </script>
 
 <h1>Admin Panel</h1>
@@ -30,6 +41,16 @@
 		name="applicationOpen"
 		label="Accept new applications"
 		checked={data.settings.applicationOpen}
+	/>
+	<br />
+	<label for="confirmBy"
+		>Accepted hackers must confirm by (leave empty if confirmation is not required):
+	</label>
+	<input
+		type="datetime-local"
+		id="confirmBy"
+		name="confirmBy"
+		value={data.settings.confirmBy?.toLocaleString('sv').replace(' ', 'T').slice(0, -3)}
 	/>
 	<button type="submit">{saveButtonText}</button>
 </form>
@@ -57,6 +78,32 @@
 	{/if}
 </form>
 
+<h2>Stats</h2>
+<p>Accepted (pending): {data.decisions.accepted.length}</p>
+<ul>
+	{#each genderOptions as genderOption}
+		<li>
+			{(
+				(data.decisions.accepted.filter((decision) => decision.user.gender == genderOption).length *
+					100) /
+				data.decisions.accepted.length
+			).toFixed(2)}% - {genderOption}
+		</li>
+	{/each}
+</ul>
+<ul>
+	{#each raceOptions as raceOption}
+		<li>
+			{(
+				(data.decisions.accepted.filter((decision) => decision.user.race.includes(raceOption))
+					.length *
+					100) /
+				data.decisions.accepted.length
+			).toFixed(2)}% - {raceOption}
+		</li>
+	{/each}
+</ul>
+
 <h2>Accepted</h2>
 <Users
 	users={data.decisions.accepted.map((decision) => ({ decision, ...decision.user }))}
@@ -75,7 +122,6 @@
 
 <style>
 	button {
-		margin-top: 1rem;
 		width: 100%;
 	}
 

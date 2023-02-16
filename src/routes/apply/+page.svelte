@@ -89,7 +89,7 @@
 		<h1>SUBMITTED</h1>
 		<p>Thanks for applying! The team will review your application soon.</p>
 		<form method="POST" action="?/withdraw" use:enhance>
-			{#if data.applicationOpen}
+			{#if data.settings.applicationOpen}
 				<button>Withdraw and Edit</button>
 			{:else}
 				<button disabled>Cannot edit because applications are closed.</button>
@@ -104,18 +104,49 @@
 			Unfortunately, we do not have the space to offer you admission at this time. We will contact
 			you should this situation change.
 		</p>
-	{:else}
-		<h1>ACCEPTED</h1>
+	{:else if data.user.status === Status.ACCEPTED}
+		<h1>{data.user.status}</h1>
 		<p>
-			Congratulations! We were impressed by your application and would like to invite you to this
-			year's hackathon.
+			Congratulations! We were impressed by your application and would like to invite you to attend.
 		</p>
+		{#if data.settings.confirmBy !== null}
+			<p>
+				You must confirm your attendance by {data.settings.confirmBy.toLocaleDateString('en-US', {
+					weekday: 'long',
+					month: 'long',
+					day: 'numeric',
+					hour: 'numeric',
+					minute: 'numeric',
+				})} to secure your spot. If you know you will not be able to attend, please decline so we can
+				offer your spot to someone else.
+			</p>
+			{#if new Date() < data.settings.confirmBy}
+				<form method="POST" id="rsvp" use:enhance>
+					<button formaction="?/confirm">Confirm</button>
+					<button formaction="?/decline">Decline</button>
+				</form>
+			{:else}
+				<p>Sorry, the deadline to confirm your attendance has passed.</p>
+			{/if}
+		{/if}
+	{:else if data.user.status === Status.CONFIRMED}
+		<h1>CONFIRMED</h1>
+		<p>
+			Glad you could make it! If you change your mind, please decline so we can offer your spot to
+			someone else. We look forward to seeing you at the event!
+		</p>
+		<form method="POST" use:enhance action="?/decline">
+			<button>Decline</button>
+		</form>
+	{:else if data.user.status === Status.DECLINED}
+		<h1>DECLINED</h1>
+		<p>We're sorry to hear that you will not be able to attend. We hope to see you next year!</p>
 	{/if}
 </div>
 
 <!-- The actual application -->
 {#if data.user.status === Status.VERIFIED}
-	{#if data.applicationOpen}
+	{#if data.settings.applicationOpen}
 		<form
 			method="POST"
 			action="?/save"
@@ -263,6 +294,17 @@
 				required
 			/>
 
+			<Checkbox
+				bind:checked={firstGeneration}
+				name="firstGeneration"
+				label="I am a first generation student."
+			/>
+			<Checkbox
+				bind:checked={international}
+				name="international"
+				label="I am an international student."
+			/>
+
 			<Multiselect
 				bind:value={workshops}
 				name="workshops"
@@ -304,7 +346,7 @@
 					bind:value={github}
 					type="url"
 					name="github"
-					placeholder="https://github.com/DanielZTing"
+					placeholder="https://github.com/username"
 				/>
 
 				<label for="linkedin">LinkedIn</label>
@@ -312,16 +354,11 @@
 					bind:value={linkedin}
 					type="url"
 					name="linkedin"
-					placeholder="https://www.linkedin.com/in/danielzting"
+					placeholder="https://www.linkedin.com/in/username"
 				/>
 
 				<label for="website">Website</label>
-				<input
-					bind:value={website}
-					type="url"
-					name="website"
-					placeholder="https://danielzting.github.io"
-				/>
+				<input bind:value={website} type="url" name="website" placeholder="https://example.com" />
 			</fieldset>
 
 			<div>
@@ -391,6 +428,16 @@
 {/if}
 
 <style>
+	#rsvp {
+		flex-direction: row;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	#rsvp > * {
+		flex-grow: 1;
+	}
+
 	button {
 		margin-bottom: 1rem;
 	}

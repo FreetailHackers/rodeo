@@ -59,12 +59,13 @@ model Decision {
 
 // Store settings in a table with a single row
 model Settings {
-  id                Int     @id @default(autoincrement()) // Dummy ID is to satisfy Prisma
+  id                Int       @id @default(autoincrement()) // Dummy ID is to satisfy Prisma
   // TODO: Separate public and private settings into separate tables
   // PUBLIC SETTINGS (all users must be able to see these)
-  applicationOpen   Boolean @default(true)
+  applicationOpen   Boolean   @default(true)
+  confirmBy         DateTime?
   // PRIVATE SETTINGS (settings that non-admins do not need)
-  rollingAdmissions Boolean @default(false)
+  rollingAdmissions Boolean   @default(false)
 }
 
 enum Role {
