@@ -68,6 +68,17 @@ model Settings {
   rollingAdmissions Boolean   @default(false)
 }
 
+model Event {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  start       DateTime
+  end         DateTime
+  location    String
+  type        String
+}
+
+
 enum Role {
   HACKER
   ADMIN

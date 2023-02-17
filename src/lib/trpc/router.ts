@@ -4,7 +4,15 @@ import sgMail from '@sendgrid/mail';
 import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
 import { z } from 'zod';
 import prisma from '$lib/trpc/db';
-import { Prisma, Role, Status, type Announcement, type Settings, type User } from '@prisma/client';
+import {
+	Prisma,
+	Role,
+	Status,
+	type Announcement,
+	type Settings,
+	type User,
+	type Event,
+} from '@prisma/client';
 import type { Cookies } from '@sveltejs/kit';
 
 export function createContext(cookies: Cookies) {
@@ -604,6 +612,37 @@ export const router = t.router({
 			create: { id: 0, ...req.input },
 		});
 	}),
+
+	// get all events in the schedule
+	getSchedule: t.procedure.query(async (): Promise<Event[]> => {
+		return await prisma.event.findMany();
+	}),
+
+	addScheduleEvent: t.procedure
+		.input(
+			z.object({ schedule: z.string(), date: z.date(), description: z.string(), type: z.string() })
+		)
+		.mutation(async (req): Promise<void> => {
+			const user = await prisma.user.findUniqueOrThrow({
+				where: {
+					magicLink: await hash(req.ctx.magicLink),
+				},
+			});
+			if (user.role !== Role.ADMIN) {
+				throw new Error('You have insufficient permissions to perform this action.');
+			}
+
+			const schedule = await prisma.event.create({
+				data: {
+					name: req.input.schedule,
+					start: req.input.date,
+					end: new Date(),
+					location: 'Online',
+					description: req.input.description,
+					type: req.input.type,
+				},
+			});
+		}),
 });
 
 export function trpc(cookies: Cookies) {
