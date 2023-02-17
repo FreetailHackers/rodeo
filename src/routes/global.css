@@ -38,6 +38,15 @@ button {
 	border: none;
 }
 
+button:hover {
+	cursor: pointer;
+	opacity: 90%;
+}
+
+button:active {
+	scale: 0.99;
+}
+
 button[disabled] {
 	opacity: 0.5;
 }
