@@ -632,7 +632,7 @@ export const router = t.router({
 				throw new Error('You have insufficient permissions to perform this action.');
 			}
 
-			const schedule = await prisma.event.create({
+			await prisma.event.create({
 				data: {
 					name: req.input.schedule,
 					start: req.input.date,

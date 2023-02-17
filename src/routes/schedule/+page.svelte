@@ -4,7 +4,6 @@
 	import Dropdown from '$lib/components/dropdown.svelte';
 
 	export let data: PageData;
-	let releaseConfirm = false;
 </script>
 
 <ul>
