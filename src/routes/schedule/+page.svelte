@@ -1,11 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import Toggle from '$lib/components/toggle.svelte';
-	import Users from '$lib/components/users.svelte';
 	import type { PageData } from './$types';
-	import Radio from '$lib/components/radio.svelte';
 	import Dropdown from '$lib/components/dropdown.svelte';
-	import Multiselect from '$lib/components/multiselect.svelte';
 
 	export let data: PageData;
 	let releaseConfirm = false;

@@ -1,6 +1,4 @@
-import authenticate from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
-import { Role } from '@prisma/client';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load = (async ({ cookies }) => {
