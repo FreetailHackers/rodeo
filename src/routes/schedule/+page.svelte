@@ -21,6 +21,13 @@
 		{#each data.schedule as event}
 			<li class={event.type}>
 				<div style="display:table; width:100%;">
+					{#if data.user?.role === Role.ADMIN}
+						<form method="POST" action="?/unannounce" use:enhance>
+							<input type="hidden" name="id" value={event.id} />
+							<button class="deleteButton">X</button>
+						</form>
+					{/if}
+					
 					<div style="display:table-cell; verticl-align:middle;">
 						<h3 class="event-name">{event.name} ({event.location})</h3>
 						<h4 style="text-align:center;">
@@ -105,5 +112,19 @@
 
 	li.Regular-Event {
 		background-color: #f58bff;
+	}
+
+	.deleteButton {
+		background-color: #000000;
+		width: 50px;
+		color: #ffffff;
+		border: none;
+		border-radius: 5px;
+		padding: 5px;
+		margin: 15px;
+	}
+
+	.deleteButton:hover {
+		background-color: #972626;
 	}
 </style>

@@ -21,4 +21,13 @@ export const actions: Actions = {
 		});
 		formData.get('schedule');
 	},
+
+	unannounce: async ({ cookies, request }) => {
+		const formData = await request.formData();
+		const id = formData.get('id');
+		if (typeof id !== 'string') {
+			throw new Error('Invalid announcement ID.');
+		}
+		await trpc(cookies).deleteEvent(Number(id));
+	},
 };
