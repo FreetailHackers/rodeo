@@ -12,8 +12,10 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		trpc(cookies).addScheduleEvent({
 			schedule: formData.get('schedule') as string,
-			date: new Date(formData.get('date') as string),
 			description: formData.get('description') as string,
+			startTime: new Date(formData.get('date') as string),
+			endTime: new Date(formData.get('date') as string),
+			location: formData.get('location') as string,
 			type: formData.get('type') as string,
 		});
 		formData.get('schedule');

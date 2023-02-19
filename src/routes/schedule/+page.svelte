@@ -16,21 +16,27 @@
 
 <form method="POST" action="?/schedule" use:enhance>
 	<label for="schedule">Schedule Name</label>
-	<input type="text" id="schedule" name="schedule" />
+	<input type="text" id="schedule" name="schedule" required />
 
 	<label for="description">Description</label>
 	<textarea id="description" name="description" />
 
+	<label for="startTime">Start Time</label>
+	<input type="datetime-local" id="startTime" name="startTime" />
+
+	<label for="endTime">End Time</label>
+	<input type="datetime-local" id="endTime" name="endTime" />
+
+	<label for="location">Location</label>
+	<input type="text" id="location" name="location" />
+
 	<Dropdown
 		value={null}
 		name="type"
-		label="type"
+		label="Event Type"
 		options={['Key Event', 'Workshop', 'Speaker Event', 'Fun Event', 'Regular Event']}
 		required
 	/>
-
-	<label for="startTime">Start Time</label>
-	<input type="datetime-local" id="startTime" name="startTime" />
 
 	<button type="submit">Submit</button>
 </form>

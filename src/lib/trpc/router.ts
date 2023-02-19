@@ -620,7 +620,14 @@ export const router = t.router({
 
 	addScheduleEvent: t.procedure
 		.input(
-			z.object({ schedule: z.string(), date: z.date(), description: z.string(), type: z.string() })
+			z.object({
+				schedule: z.string(),
+				startTime: z.date(),
+				endTime: z.date(),
+				description: z.string(),
+				type: z.string(),
+				location: z.string(),
+			})
 		)
 		.mutation(async (req): Promise<void> => {
 			const user = await prisma.user.findUniqueOrThrow({
@@ -635,9 +642,9 @@ export const router = t.router({
 			await prisma.event.create({
 				data: {
 					name: req.input.schedule,
-					start: req.input.date,
-					end: new Date(),
-					location: 'Online',
+					start: req.input.startTime,
+					end: req.input.endTime,
+					location: req.input.location,
 					description: req.input.description,
 					type: req.input.type,
 				},
