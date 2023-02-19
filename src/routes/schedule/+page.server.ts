@@ -14,8 +14,8 @@ export const actions: Actions = {
 		trpc(cookies).addScheduleEvent({
 			schedule: formData.get('schedule') as string,
 			description: formData.get('description') as string,
-			startTime: new Date(formData.get('date') as string),
-			endTime: new Date(formData.get('date') as string),
+			startTime: new Date(formData.get('startTime') as string),
+			endTime: new Date(formData.get('endTime') as string),
 			location: formData.get('location') as string,
 			type: formData.get('type') as string,
 		});

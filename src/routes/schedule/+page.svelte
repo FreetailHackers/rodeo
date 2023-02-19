@@ -19,7 +19,7 @@
 	<h3>*All times are in Central Time (CT)*</h3>
 	<ul>
 		{#each data.schedule as event}
-			<li class="{event.type} hovertext" data-hover={event.description}>
+			<li class={event.type}>
 				<div style="display:table; width:100%;">
 					<div style="display:table-cell; verticl-align:middle;">
 						<h3 class="event-name">{event.name} ({event.location})</h3>
@@ -34,6 +34,7 @@
 								hour12: true,
 							})}
 						</h4>
+						<h5 style="text-align:center;">{event.description}</h5>
 					</div>
 				</div>
 			</li>
@@ -90,7 +91,7 @@
 		background-color: #a8e6cf;
 	}
 
-	li.Key-Workshop {
+	li.Workshop {
 		background-color: #dcedc1;
 	}
 
@@ -104,34 +105,5 @@
 
 	li.Regular-Event {
 		background-color: #f58bff;
-	}
-
-	/*	Credit to https://sebhastian.com/html-hover-text/  */
-	.hovertext {
-		position: relative;
-		border-bottom: 1px dotted black;
-	}
-
-	.hovertext:before {
-		content: attr(data-hover);
-		visibility: hidden;
-		opacity: 0;
-		width: max-content;
-		background-color: black;
-		color: #fff;
-		text-align: center;
-		border-radius: 5px;
-		padding: 5px 5px;
-		transition: opacity 1s ease-in-out;
-
-		position: absolute;
-		z-index: 1;
-		left: 0;
-		top: 110%;
-	}
-
-	.hovertext:hover:before {
-		opacity: 1;
-		visibility: visible;
 	}
 </style>
