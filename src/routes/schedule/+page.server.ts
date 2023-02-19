@@ -4,6 +4,7 @@ import type { Actions, PageServerLoad } from './$types';
 export const load = (async ({ cookies }) => {
 	return {
 		schedule: await trpc(cookies).getSchedule(),
+		user: await trpc(cookies).getUser(),
 	};
 }) satisfies PageServerLoad;
 
