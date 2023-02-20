@@ -27,7 +27,7 @@
 							<button class="deleteButton">X</button>
 						</form>
 					{/if}
-					
+
 					<div style="display:table-cell; verticl-align:middle;">
 						<h3 class="event-name">{event.name} ({event.location})</h3>
 						<h4 style="text-align:center;">
@@ -50,22 +50,22 @@
 </div>
 
 {#if data.user?.role === Role.ADMIN}
-	<h2>Schedule Editor</h2>
+	<h2>Schedule Editor: ALL fields are required</h2>
 	<form method="POST" action="?/schedule" use:enhance>
-		<label for="schedule">Schedule Name</label>
+		<label for="schedule">Schedule Name*</label>
 		<input type="text" id="schedule" name="schedule" required />
 
-		<label for="description">Description</label>
-		<textarea id="description" name="description" />
+		<label for="description">Description*</label>
+		<textarea id="description" name="description" required />
 
-		<label for="startTime">Start Time</label>
-		<input type="datetime-local" id="startTime" name="startTime" />
+		<label for="startTime">Start Time*</label>
+		<input type="datetime-local" id="startTime" name="startTime" required />
 
-		<label for="endTime">End Time</label>
-		<input type="datetime-local" id="endTime" name="endTime" />
+		<label for="endTime">End Time*</label>
+		<input type="datetime-local" id="endTime" name="endTime" required/>
 
-		<label for="location">Location</label>
-		<input type="text" id="location" name="location" />
+		<label for="location">Location*</label>
+		<input type="text" id="location" name="location" required/>
 
 		<Dropdown
 			value={null}

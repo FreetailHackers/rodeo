@@ -30,4 +30,5 @@ export const actions: Actions = {
 		}
 		await trpc(cookies).deleteEvent(Number(id));
 	},
+
 };
