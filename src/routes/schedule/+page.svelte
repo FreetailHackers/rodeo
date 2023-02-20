@@ -10,39 +10,40 @@
 <h2>Schedule</h2>
 <div class="schedule">
 	<div class="legend">
-		<b style="border-right:18px solid #f58bff;" />&nbsp; Regular Event
-		<b style="border-right:18px solid #a8e6cf;" />&nbsp; Key Event
-		<b style="border-right:18px solid #ffd3b6;" />&nbsp; Speaker Event
-		<b style="border-right:18px solid #ffaaa5;" />&nbsp; Fun Event
-		<b style="border-right:18px solid #dcedc1;" />&nbsp; Workshop
+		<b style="border-right:18px solid #f58bff;" />Regular Event
+		<b style="border-right:18px solid #a8e6cf;" />Key Event
+		<b style="border-right:18px solid #ffd3b6;" />Speaker Event
+		<b style="border-right:18px solid #ffaaa5;" />Fun Event
+		<b style="border-right:18px solid #dcedc1;" />Workshop
 	</div>
-	<h3>*All times are in Central Time (CT)*</h3>
+	<h3 style="text-align:center;">*All times are in Central Time (CT)*</h3>
 	<ul>
 		{#each data.schedule as event}
 			<li class={event.type}>
-				<div style="display:table; width:100%;">
+				<div style="display:table-cell; vertical-align:middle; position:relative; z-index:0; ">
+					<!-- Element removal box -->
 					{#if data.user?.role === Role.ADMIN}
-						<form method="POST" action="?/unannounce" use:enhance>
-							<input type="hidden" name="id" value={event.id} />
-							<button class="deleteButton">X</button>
-						</form>
+						<div class="overlay">
+							<form method="POST" action="?/unannounce" use:enhance>
+								<input type="hidden" name="id" value={event.id} />
+								<button class="deleteButton">X</button>
+							</form>
+						</div>
 					{/if}
-
-					<div style="display:table-cell; verticl-align:middle;">
-						<h3 class="event-name">{event.name} ({event.location})</h3>
-						<h4 style="text-align:center;">
-							{event.start.toLocaleString('en-US', {
-								hour: 'numeric',
-								minute: 'numeric',
-								hour12: true,
-							})} - {event.end.toLocaleString('en-US', {
-								hour: 'numeric',
-								minute: 'numeric',
-								hour12: true,
-							})}
-						</h4>
-						<h5 style="text-align:center;">{event.description}</h5>
-					</div>
+					<!-- Event box -->
+					<h3 class="event-name">{event.name} ({event.location})</h3>
+					<h4 style="text-align:center;">
+						{event.start.toLocaleString('en-US', {
+							hour: 'numeric',
+							minute: 'numeric',
+							hour12: true,
+						})} - {event.end.toLocaleString('en-US', {
+							hour: 'numeric',
+							minute: 'numeric',
+							hour12: true,
+						})}
+					</h4>
+					<h5 style="text-align:center;">{event.description}</h5>
 				</div>
 			</li>
 		{/each}
@@ -62,10 +63,10 @@
 		<input type="datetime-local" id="startTime" name="startTime" required />
 
 		<label for="endTime">End Time*</label>
-		<input type="datetime-local" id="endTime" name="endTime" required/>
+		<input type="datetime-local" id="endTime" name="endTime" required />
 
 		<label for="location">Location*</label>
-		<input type="text" id="location" name="location" required/>
+		<input type="text" id="location" name="location" required />
 
 		<Dropdown
 			value={null}
@@ -80,6 +81,26 @@
 {/if}
 
 <style>
+	.schedule {
+		padding: 20px;
+		background-color: #f5f2ee;
+	}
+	.overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 9999;
+		color: white;
+	}
+
+	.legend {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
+	}
+
 	h3.event-name {
 		text-align: center;
 		text-decoration: underline;

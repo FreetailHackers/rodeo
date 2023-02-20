@@ -615,7 +615,9 @@ export const router = t.router({
 
 	// get all events in the schedule
 	getSchedule: t.procedure.query(async (): Promise<Event[]> => {
-		return await prisma.event.findMany();
+		return await prisma.event.findMany({
+			orderBy: [{ start: 'asc' }],
+		});
 	}),
 
 	addScheduleEvent: t.procedure
@@ -662,8 +664,6 @@ export const router = t.router({
 		}
 		await prisma.event.delete({ where: { id: req.input } });
 	}),
-
-
 });
 
 export function trpc(cookies: Cookies) {
