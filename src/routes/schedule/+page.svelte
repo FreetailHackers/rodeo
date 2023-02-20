@@ -20,30 +20,32 @@
 	<ul>
 		{#each data.schedule as event}
 			<li class={event.type}>
-				<div style="display:table-cell; vertical-align:middle; position:relative; z-index:0; ">
-					<!-- Element removal box -->
-					{#if data.user?.role === Role.ADMIN}
-						<div class="overlay">
-							<form method="POST" action="?/unannounce" use:enhance>
-								<input type="hidden" name="id" value={event.id} />
-								<button class="deleteButton">X</button>
-							</form>
-						</div>
-					{/if}
-					<!-- Event box -->
-					<h3 class="event-name">{event.name} ({event.location})</h3>
-					<h4 style="text-align:center;">
-						{event.start.toLocaleString('en-US', {
-							hour: 'numeric',
-							minute: 'numeric',
-							hour12: true,
-						})} - {event.end.toLocaleString('en-US', {
-							hour: 'numeric',
-							minute: 'numeric',
-							hour12: true,
-						})}
-					</h4>
-					<h5 style="text-align:center;">{event.description}</h5>
+				<div style="display:table; width:100%;">
+					<div style="display:table-cell; vertical-align:middle; position:relative; z-index:0; ">
+						<!-- Element removal box -->
+						{#if data.user?.role === Role.ADMIN}
+							<div class="overlay">
+								<form method="POST" action="?/unannounce" use:enhance>
+									<input type="hidden" name="id" value={event.id} />
+									<button class="deleteButton">X</button>
+								</form>
+							</div>
+						{/if}
+						<!-- Event box -->
+						<h3 class="event-name">{event.name} ({event.location})</h3>
+						<h4 style="text-align:center;">
+							{event.start.toLocaleString('en-US', {
+								hour: 'numeric',
+								minute: 'numeric',
+								hour12: true,
+							})} - {event.end.toLocaleString('en-US', {
+								hour: 'numeric',
+								minute: 'numeric',
+								hour12: true,
+							})}
+						</h4>
+						<h5 style="text-align:center;">{event.description}</h5>
+					</div>
 				</div>
 			</li>
 		{/each}
