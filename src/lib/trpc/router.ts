@@ -54,6 +54,7 @@ const settingsSchema = z
 	.object({
 		applicationOpen: z.boolean().optional(),
 		confirmBy: z.date().nullable().optional(),
+		info: z.string().optional(),
 		rollingAdmissions: z.boolean().optional(),
 	})
 	.strict();
@@ -61,6 +62,7 @@ const defaultSettings: Settings = {
 	id: 0,
 	applicationOpen: true,
 	confirmBy: null,
+	info: '',
 	rollingAdmissions: false,
 };
 
@@ -565,9 +567,13 @@ export const router = t.router({
 	 * Returns public settings.
 	 */
 	getPublicSettings: t.procedure.query(
-		async (): Promise<{ applicationOpen: boolean; confirmBy: Date | null }> => {
+		async (): Promise<{ applicationOpen: boolean; confirmBy: Date | null; info: string }> => {
 			const settings = await getSettings();
-			return { applicationOpen: settings.applicationOpen, confirmBy: settings.confirmBy };
+			return {
+				applicationOpen: settings.applicationOpen,
+				confirmBy: settings.confirmBy,
+				info: settings.info,
+			};
 		}
 	),
 
