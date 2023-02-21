@@ -10,45 +10,92 @@
 <h2>Schedule</h2>
 <div class="schedule">
 	<div class="legend">
-		<b style="border-right:18px solid #f58bff;" />Regular Event
-		<b style="border-right:18px solid #a8e6cf;" />Key Event
-		<b style="border-right:18px solid #ffd3b6;" />Speaker Event
-		<b style="border-right:18px solid #ffaaa5;" />Fun Event
-		<b style="border-right:18px solid #dcedc1;" />Workshop
+		<mark style="background-color:#f58bff;">Regular Event</mark>
+		<mark style="background-color:#a8e6cf;">Key Event</mark>
+		<mark style="background-color:#ffd3b6;">Speaker Event</mark>
+		<mark style="background-color:#ffaaa5;">Fun Event</mark>
+		<mark style="background-color:#dcedc1;">Workshop</mark>
 	</div>
 	<h3 style="text-align:center;">*All times are in Central Time (CT)*</h3>
 	<ul>
-		{#each data.schedule as event}
-			<li class={event.type}>
-				<div style="display:table; width:100%;">
-					<div style="display:table-cell; vertical-align:middle; position:relative; z-index:0; ">
-						<!-- Element removal box -->
-						{#if data.user?.role === Role.ADMIN}
-							<div class="overlay">
-								<form method="POST" action="?/unannounce" use:enhance>
-									<input type="hidden" name="id" value={event.id} />
-									<button class="deleteButton">X</button>
-								</form>
+		<div class="event-container">
+			<div class="event-child">
+				<h3 style="text-align:center;">Friday, Mar. 3</h3>
+				{#each data.schedule as event}
+					{#if event.start.getDay() === 5}
+						<li class={event.type}>
+							<div style="display:table; width:100%;">
+								<div
+									style="display:table-cell; vertical-align:middle; position:relative; z-index:0; "
+								>
+									<!-- Element removal box -->
+									{#if data.user?.role === Role.ADMIN}
+										<div class="overlay">
+											<form method="POST" action="?/unannounce" use:enhance>
+												<input type="hidden" name="id" value={event.id} />
+												<button class="deleteButton">X</button>
+											</form>
+										</div>
+									{/if}
+									<!-- Event box -->
+									<h3 class="event-name">{event.name} ({event.location})</h3>
+									<h4 style="text-align:center;">
+										{event.start.toLocaleString('en-US', {
+											hour: 'numeric',
+											minute: 'numeric',
+											hour12: true,
+										})} - {event.end.toLocaleString('en-US', {
+											hour: 'numeric',
+											minute: 'numeric',
+											hour12: true,
+										})}
+									</h4>
+									<h5 style="text-align:center;">{event.description}</h5>
+								</div>
 							</div>
-						{/if}
-						<!-- Event box -->
-						<h3 class="event-name">{event.name} ({event.location})</h3>
-						<h4 style="text-align:center;">
-							{event.start.toLocaleString('en-US', {
-								hour: 'numeric',
-								minute: 'numeric',
-								hour12: true,
-							})} - {event.end.toLocaleString('en-US', {
-								hour: 'numeric',
-								minute: 'numeric',
-								hour12: true,
-							})}
-						</h4>
-						<h5 style="text-align:center;">{event.description}</h5>
-					</div>
-				</div>
-			</li>
-		{/each}
+						</li>
+					{/if}
+				{/each}
+			</div>
+			<div class="event-child">
+				<h3 style="text-align:center;">Saturday, Mar. 4</h3>
+				{#each data.schedule as event}
+					{#if event.start.getDay() === 6}
+						<li class={event.type}>
+							<div style="display:table; width:100%;">
+								<div
+									style="display:table-cell; vertical-align:middle; position:relative; z-index:0; "
+								>
+									<!-- Element removal box -->
+									{#if data.user?.role === Role.ADMIN}
+										<div class="overlay">
+											<form method="POST" action="?/unannounce" use:enhance>
+												<input type="hidden" name="id" value={event.id} />
+												<button class="deleteButton">X</button>
+											</form>
+										</div>
+									{/if}
+									<!-- Event box -->
+									<h3 class="event-name">{event.name} ({event.location})</h3>
+									<h4 style="text-align:center;">
+										{event.start.toLocaleString('en-US', {
+											hour: 'numeric',
+											minute: 'numeric',
+											hour12: true,
+										})} - {event.end.toLocaleString('en-US', {
+											hour: 'numeric',
+											minute: 'numeric',
+											hour12: true,
+										})}
+									</h4>
+									<h5 style="text-align:center;">{event.description}</h5>
+								</div>
+							</div>
+						</li>
+					{/if}
+				{/each}
+			</div>
+		</div>
 	</ul>
 </div>
 
@@ -83,10 +130,37 @@
 {/if}
 
 <style>
+	@media only screen and (min-width: 600px) {
+		div.event-container {
+			display: flex;
+			flex-direction: row;
+			margin-bottom: 50px;
+			align-items: flex-start;
+			justify-content: space-between;
+			width: 100%;
+		}
+
+		div.event-child {
+			display: flex;
+			padding: 10px;
+			flex-direction: column;
+			width: 450px;
+			text-align: center;
+		}
+
+		.legend {
+			display: absolute;
+			flex-direction: row;
+			justify-content: space-between;
+			width: 100%;
+		}
+	}
+
 	.schedule {
 		padding: 20px;
 		background-color: #f5f2ee;
 	}
+
 	.overlay {
 		position: absolute;
 		top: 0;
@@ -97,10 +171,17 @@
 		color: white;
 	}
 
+	mark {
+		padding-left: 5px;
+		padding-right: 5px;
+		text-align: center;
+	}
+
 	.legend {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-around;
+		display: inline-block;
+		margin: 0 auto;
+		text-align: center;
+		justify-content: center;
 	}
 
 	h3.event-name {
@@ -138,7 +219,7 @@
 	}
 
 	.deleteButton {
-		background-color: #000000;
+		background-color: #0000008f;
 		width: 50px;
 		color: #ffffff;
 		border: none;
