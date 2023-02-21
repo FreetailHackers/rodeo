@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { Announcement } from '@prisma/client';
+	import SvelteMarkdown from 'svelte-markdown';
 
 	export let admin: boolean;
 
@@ -37,7 +38,7 @@
 					{/if}
 				</span>
 				<br />
-				<p>{announcement.body}</p>
+				<p><SvelteMarkdown source={announcement.body} isInline /></p>
 			</li>
 		{/each}
 	</ul>
