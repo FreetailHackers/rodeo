@@ -33,7 +33,7 @@
 					{#if admin}
 						<form method="POST" action="?/unannounce" use:enhance>
 							<input type="hidden" name="id" value={announcement.id} />
-							<button class="deleteButton">🗙</button>
+							<button class="deleteButton">✕</button>
 						</form>
 					{/if}
 				</span>
