@@ -664,6 +664,19 @@ export const router = t.router({
 		}
 		await prisma.event.delete({ where: { id: req.input } });
 	}),
+
+	// get an event in schedule that matchs	id
+	getTargetEvent: t.procedure.input(z.number()).query(async (req): Promise<Event | null> => {
+		const user = await prisma.user.findUniqueOrThrow({
+			where: {
+				magicLink: await hash(req.ctx.magicLink),
+			},
+		});
+		if (user.role !== Role.ADMIN) {
+			throw new Error('You have insufficient permissions to perform this action.');
+		}
+		return await prisma.event.findUnique({ where: { id: req.input } });
+	}),
 });
 
 export function trpc(cookies: Cookies) {

@@ -19,7 +19,6 @@ export const actions: Actions = {
 			location: formData.get('location') as string,
 			type: formData.get('type') as string,
 		});
-		formData.get('schedule');
 	},
 
 	unannounce: async ({ cookies, request }) => {

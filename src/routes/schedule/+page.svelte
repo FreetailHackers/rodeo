@@ -3,11 +3,76 @@
 	import type { PageData } from './$types';
 	import Dropdown from '$lib/components/dropdown.svelte';
 	import { Role } from '@prisma/client';
+	import { trpc } from '$lib/trpc/client';
+
+	let schedule = '';
+	let description = '';
+	let startTime = '';
+	let endTime = '';
+	let location = '';
+	let type = '';
+	let text = 'All Fields are Required';
+
+	let submitButtonText = 'SUBMIT';
+
+	function scrollToBottom() {
+		const bottomElement = document.getElementById('bottom');
+		if (bottomElement) {
+			bottomElement.scrollIntoView({ behavior: 'smooth' });
+		}
+	}
+
+	let editID = 0;
+	async function finishedEditing() {
+		if (editing == true) {
+			editing = false;
+			submitButtonText = 'SUBMIT';
+			text = 'All Fields are Required';
+			// call the unannounce function
+			await trpc().deleteEvent.mutate(editID);
+		}
+	}
+
+	let editingPopup = false;
+	let editing = false;
+	function popupDelay() {
+		editingPopup = true;
+		setTimeout(() => {
+			editingPopup = false;
+		}, 2000); // hide the alert after 3 seconds
+	}
+
+	async function editEvent(id: number) {
+		editing = true;
+		scrollToBottom();
+		editID = id;
+		text = 'Edit Event';
+		submitButtonText = 'SUBMIT EDIT';
+		popupDelay();
+		const event = await trpc().getTargetEvent.query(id);
+		if (event) {
+			schedule = event.name;
+			description = event.description;
+			startTime = event.start.toString().slice(0, 16);
+			endTime = event.end.toString().slice(0, 16);
+			location = event.location;
+			type = event.type;
+		}
+	}
 
 	export let data: PageData;
 </script>
 
 <h2>Schedule</h2>
+{#if editingPopup}
+	<div
+		style="background-color: rgba(255, 255, 255, 0.5); position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; align-items: center;"
+	>
+		<div style="background-color: #bf5700; padding: 20px; border-radius: 5px;">
+			<p style="color:white;">Currently Editing Event</p>
+		</div>
+	</div>
+{/if}
 <div class="schedule">
 	<div class="legend">
 		<mark style="background-color:#f58bff;">Regular Event</mark>
@@ -33,8 +98,16 @@
 										<div class="overlay">
 											<form method="POST" action="?/unannounce" use:enhance>
 												<input type="hidden" name="id" value={event.id} />
-												<button class="deleteButton">X</button>
+												<button class="deleteButton">❌</button>
 											</form>
+
+											<input type="hidden" name="id" value={event.id} />
+											<button
+												on:click={() => {
+													editEvent(event.id);
+												}}
+												class="deleteButton">✏️</button
+											>
 										</div>
 									{/if}
 									<!-- Event box -->
@@ -71,8 +144,16 @@
 										<div class="overlay">
 											<form method="POST" action="?/unannounce" use:enhance>
 												<input type="hidden" name="id" value={event.id} />
-												<button class="deleteButton">X</button>
+												<button class="deleteButton">❌</button>
 											</form>
+
+											<input type="hidden" name="id" value={event.id} />
+											<button
+												on:click={() => {
+													editEvent(event.id);
+												}}
+												class="deleteButton">✏️</button
+											>
 										</div>
 									{/if}
 									<!-- Event box -->
@@ -100,34 +181,35 @@
 </div>
 
 {#if data.user?.role === Role.ADMIN}
-	<h2>Schedule Editor: ALL fields are required</h2>
+	<h2>Schedule Editor: {text}</h2>
 	<form method="POST" action="?/schedule" use:enhance>
 		<label for="schedule">Schedule Name*</label>
-		<input type="text" id="schedule" name="schedule" required />
+		<input type="text" id="schedule" name="schedule" required bind:value={schedule} />
 
 		<label for="description">Description*</label>
-		<textarea id="description" name="description" required />
+		<textarea id="description" name="description" required bind:value={description} />
 
 		<label for="startTime">Start Time*</label>
-		<input type="datetime-local" id="startTime" name="startTime" required />
+		<input type="datetime-local" id="startTime" name="startTime" required bind:value={startTime} />
 
 		<label for="endTime">End Time*</label>
-		<input type="datetime-local" id="endTime" name="endTime" required />
+		<input type="datetime-local" id="endTime" name="endTime" required bind:value={endTime} />
 
 		<label for="location">Location*</label>
-		<input type="text" id="location" name="location" required />
+		<input type="text" id="location" name="location" required bind:value={location} />
 
 		<Dropdown
-			value={null}
+			bind:value={type}
 			name="type"
 			label="Event Type"
 			options={['Key-Event', 'Workshop', 'Speaker-Event', 'Fun-Event', 'Regular-Event']}
 			required
 		/>
 
-		<button type="submit">Submit</button>
+		<button on:click={finishedEditing} type="submit">{submitButtonText}</button>
 	</form>
 {/if}
+<div id="bottom" />
 
 <style>
 	@media only screen and (min-width: 600px) {
