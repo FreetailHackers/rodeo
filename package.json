@@ -37,6 +37,7 @@
 		"pre-commit": "^1.2.2",
 		"prettier": "^2.8.0",
 		"prettier-plugin-svelte": "^2.8.1",
+		"prisma": "^4.10.1",
 		"svelte": "^3.54.0",
 		"svelte-check": "^2.9.2",
 		"ts-node": "^10.9.1",
@@ -48,13 +49,12 @@
 	"type": "module",
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.267.0",
-		"@prisma/client": "^4.7.1",
+		"@prisma/client": "^4.10.1",
 		"@sendgrid/mail": "^7.7.0",
 		"@trpc/client": "^10.7.0",
 		"@trpc/server": "^10.7.0",
 		"fuzzysort": "^2.0.4",
 		"n": "^9.0.1",
-		"prisma": "^4.7.1",
 		"trpc-sveltekit": "^3.2.2",
 		"zod": "^3.20.2"
 	}

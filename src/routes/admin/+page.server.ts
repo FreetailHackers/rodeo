@@ -35,4 +35,11 @@ export const actions: Actions = {
 		await trpc(cookies).releaseAllDecisions();
 		return 'Released!';
 	},
+
+	template: async ({ cookies, request }) => {
+		const formData = await request.formData();
+		const acceptanceTemplate = formData.get('acceptanceTemplate') as string;
+		await trpc(cookies).setSettings({ emailTemplate: acceptanceTemplate });
+		return "saved!"
+	},
 };
