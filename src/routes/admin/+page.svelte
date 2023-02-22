@@ -64,29 +64,27 @@
 	{/if}
 </form>
 
-
 <!-- EMAIL TEMPLATE -->
 <h3>Email Template</h3>
 
 <form
 	method="POST"
-		action="?/template"
-		use:enhance={() => {
-			saveButtonText = 'Saving...';
-			return async ({ update }) => {
-				update({ reset: false });
-				// 100 ms delay so people actually see the "Saving..." text
-				await new Promise((r) => setTimeout(r, 100));
-				saveButtonText = 'Saved!';
-			};
-		}}
-	>
+	action="?/template"
+	use:enhance={() => {
+		saveButtonText = 'Saving...';
+		return async ({ update }) => {
+			update({ reset: false });
+			// 100 ms delay so people actually see the "Saving..." text
+			await new Promise((r) => setTimeout(r, 100));
+			saveButtonText = 'Saved!';
+		};
+	}}
+>
 	<button on:click={loadAdmissionsTemplate}>Load Template</button>
 	<label for="acceptanceTemplate">Acceptance Email Template: </label>
-	<textarea bind:value={template} name="acceptanceTemplate" id="acceptanceTemplate"></textarea>
+	<textarea bind:value={template} name="acceptanceTemplate" id="acceptanceTemplate" />
 	<button type="submit">{saveButtonText}</button>
 </form>
-
 
 <h2>Accepted</h2>
 <Users

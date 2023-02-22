@@ -430,7 +430,7 @@ export const router = t.router({
 			let subject = 'Freetail Hackers Status Update.';
 			if (decision.status === Status.ACCEPTED) {
 				subject = 'Freetail Hackers Status Update!';
-			} 
+			}
 
 			sendEmail(recipient.email, subject, (await getSettings()).emailTemplate, recipient.fullName);
 
@@ -479,12 +479,10 @@ export const router = t.router({
 			});
 
 			// preconfigured templates, this structure will change later but is a proof of concept
-
 			let subject = 'Freetail Hackers Status Update.';
 			if (decision.status === Status.ACCEPTED) {
 				subject = 'Freetail Hackers Status Update!';
-			} 
-
+			}
 			sendEmail(recipient.email, subject, (await getSettings()).emailTemplate, recipient.fullName);
 			await prisma.$transaction([updateStatus, deleteDecision]);
 		}

@@ -65,7 +65,7 @@ model Settings {
   applicationOpen   Boolean @default(true)
   // PRIVATE SETTINGS (settings that non-admins do not need)
   rollingAdmissions Boolean @default(false)
-  emailTemplate String @default("Welcome")
+  emailTemplate String @default("hello world")
 }
 
 enum Role {

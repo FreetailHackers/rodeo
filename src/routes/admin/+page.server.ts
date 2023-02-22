@@ -40,6 +40,6 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const acceptanceTemplate = formData.get('acceptanceTemplate') as string;
 		await trpc(cookies).setSettings({ emailTemplate: acceptanceTemplate });
-		return "saved!"
+		return 'saved!';
 	},
 };
