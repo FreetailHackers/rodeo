@@ -13,6 +13,7 @@
 		<textarea name="announcement" placeholder="Make an announcement here..." required />
 		<button>Announce</button>
 	</form>
+	<br />
 {/if}
 {#if announcements.length > 0}
 	<ul>
@@ -43,9 +44,7 @@
 		{/each}
 	</ul>
 {:else}
-	<br />
 	<p>There are no announcements at this time.</p>
-	<br />
 {/if}
 
 <style>

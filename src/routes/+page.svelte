@@ -34,7 +34,7 @@
 	<h2>Announcements</h2>
 	<Announcements announcements={data.announcements} admin={data.user.role === Role.ADMIN} />
 	<form method="POST" action="?/logout" use:enhance>
-		<button>Logout</button>
+		<button type="submit" id="logout">Logout</button>
 	</form>
 {:else}
 	<!-- Signup page -->
@@ -62,3 +62,9 @@
 	<h2>Announcements</h2>
 	<Announcements announcements={data.announcements} admin={false} />
 {/if}
+
+<style>
+	#logout {
+		margin-top: 1rem;
+	}
+</style>
