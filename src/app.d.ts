@@ -8,7 +8,9 @@ declare namespace App {
 	// interface Platform {}
 }
 
-// App version
-declare const __VERSION__: string;
-// Date of last commit
-declare const __LASTMOD__: string;
+// Public release version
+declare const __RELEASE__: string;
+// Commit hash of build
+declare const __BUILD__: string;
+// Date of build commit
+declare const __TIMESTAMP__: string;
