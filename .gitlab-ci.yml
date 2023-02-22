@@ -3,20 +3,20 @@ default:
 
 stages:
   - test
-  - deploy
+  - deploy-staging
+  - deploy-production
 
 test-job:
   stage: test
-  except:
-    - production
   script:
     - npm ci
+    - npm run build
     - npm run check
     - npm run lint
     - npm run test:unit
 
-deploy_staging:
-  stage: deploy
+deploy-staging-job:
+  stage: deploy-staging
   variables:
     STAGING_URL: rodeo-staging.freetailhackers.com
   only:
@@ -25,28 +25,27 @@ deploy_staging:
     name: staging
     url: https://$STAGING_URL
   script:
-    - npm install --global vercel
-    - vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
-    - cp .vercel/.env.preview.local .env
+    - npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+    - mv .vercel/.env.preview.local .env
     - npx prisma migrate deploy
-    - vercel deploy --token=$VERCEL_TOKEN > domain.txt
-    - vercel alias --token=$VERCEL_TOKEN set `cat domain.txt` $STAGING_URL
-    - rm domain.txt
+    - npx vercel deploy --token=$VERCEL_TOKEN > domain.txt
+    - npx vercel alias --token=$VERCEL_TOKEN set `cat domain.txt` $STAGING_URL
+    - rm .env domain.txt
 
-deploy_production:
-  stage: deploy
+deploy-production-job:
+  stage: deploy-production
   variables:
     PROD_URL: rodeo.freetailhackers.com
   only:
-    - production
+    - master
   environment:
     name: production
     url: https://$PROD_URL
+  when: manual
   script:
-    - npm install --global vercel
-    - vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-    - cp .vercel/.env.production.local .env
+    - npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+    - mv .vercel/.env.production.local .env
     - npx prisma migrate deploy
-    - vercel deploy --prod --token=$VERCEL_TOKEN > domain.txt
-    - vercel alias --token=$VERCEL_TOKEN set `cat domain.txt` $PROD_URL
-    - rm domain.txt
+    - npx vercel deploy --prod --token=$VERCEL_TOKEN > domain.txt
+    - npx vercel alias --token=$VERCEL_TOKEN set `cat domain.txt` $PROD_URL
+    - rm .env domain.txt

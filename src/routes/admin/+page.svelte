@@ -46,6 +46,7 @@
 	<label for="confirmBy"
 		>Accepted hackers must confirm by (leave empty if confirmation is not required):
 	</label>
+	<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
 	<input
 		type="datetime-local"
 		id="confirmBy"

@@ -2,6 +2,12 @@ import authenticate from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import { Role } from '@prisma/client';
 import type { Actions, PageServerLoad } from './$types';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export const load = (async ({ cookies }) => {
 	await authenticate(cookies, Role.ADMIN);
@@ -15,8 +21,14 @@ export const actions: Actions = {
 	settings: async ({ cookies, request }) => {
 		const formData = await request.formData();
 		const applicationOpen = formData.get('applicationOpen') === 'on';
-		const timestamp = Date.parse(formData.get('confirmBy') as string);
-		const confirmBy = Number.isNaN(timestamp) ? null : new Date(timestamp);
+		let confirmBy: Date | null;
+		try {
+			confirmBy = dayjs
+				.tz(formData.get('confirmBy') as string, formData.get('timezone') as string)
+				.toDate();
+		} catch (e) {
+			confirmBy = null;
+		}
 		await trpc(cookies).setSettings({ applicationOpen, confirmBy });
 	},
 

@@ -38,6 +38,15 @@ button {
 	border: none;
 }
 
+button:hover {
+	cursor: pointer;
+	opacity: 90%;
+}
+
+button:active {
+	scale: 0.99;
+}
+
 button[disabled] {
 	opacity: 0.5;
 }
@@ -107,4 +116,32 @@ input[type='file'] {
 	color: white;
 	background-color: var(--primary-accent);
 	border: none;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+th,
+td {
+	padding: 0.5rem;
+	text-align: left;
+	border: 2px solid black;
+}
+
+pre {
+	overflow: auto;
+	background-color: #eee;
+	padding: 0.5rem 1rem;
+}
+
+code {
+	background-color: #eee;
+}
+
+blockquote {
+	margin: 0;
+	padding-left: 1rem;
+	border-left: 4px solid black;
 }

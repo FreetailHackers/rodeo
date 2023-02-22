@@ -1,6 +1,7 @@
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { hash } from '../hash';
 import sgMail from '@sendgrid/mail';
+import nodemailer from 'nodemailer';
 import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
 import { z } from 'zod';
 import prisma from '$lib/trpc/db';
@@ -26,6 +27,16 @@ const CHARSET = 'abcdefghijklmnopqrstuvwxyz';
 const FILE_SIZE_LIMIT = 1 * 1024 * 1024; // 1 MB
 
 sgMail.setApiKey(process.env.SENDGRID_KEY as string);
+const transporter = nodemailer.createTransport({
+	host: process.env.EMAIL_HOST,
+	port: Number(process.env.EMAIL_PORT),
+	secure: true,
+	auth: {
+		user: process.env.EMAIL_USER,
+		pass: process.env.EMAIL_PASS,
+	},
+});
+
 const client = new S3Client({ region: 'us-east-1' });
 
 const userSchema = z
@@ -62,6 +73,7 @@ const settingsSchema = z
 	.object({
 		applicationOpen: z.boolean().optional(),
 		confirmBy: z.date().nullable().optional(),
+		info: z.string().optional(),
 		rollingAdmissions: z.boolean().optional(),
 	})
 	.strict();
@@ -69,6 +81,7 @@ const defaultSettings: Settings = {
 	id: 0,
 	applicationOpen: true,
 	confirmBy: null,
+	info: '',
 	rollingAdmissions: false,
 };
 
@@ -290,7 +303,11 @@ export const router = t.router({
 			Freetail Hackers`,
 		};
 		try {
-			await sgMail.send(msg);
+			if (process.env.SENDGRID_KEY) {
+				await sgMail.send(msg);
+			} else {
+				await transporter.sendMail(msg);
+			}
 			return 'We sent a magic login link to your email!';
 		} catch (error) {
 			console.error(error);
@@ -573,9 +590,13 @@ export const router = t.router({
 	 * Returns public settings.
 	 */
 	getPublicSettings: t.procedure.query(
-		async (): Promise<{ applicationOpen: boolean; confirmBy: Date | null }> => {
+		async (): Promise<{ applicationOpen: boolean; confirmBy: Date | null; info: string }> => {
 			const settings = await getSettings();
-			return { applicationOpen: settings.applicationOpen, confirmBy: settings.confirmBy };
+			return {
+				applicationOpen: settings.applicationOpen,
+				confirmBy: settings.confirmBy,
+				info: settings.info,
+			};
 		}
 	),
 
