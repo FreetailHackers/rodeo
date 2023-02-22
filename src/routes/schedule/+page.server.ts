@@ -1,5 +1,11 @@
 import { trpc } from '$lib/trpc/router';
 import type { Actions, PageServerLoad } from './$types';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export const load = (async ({ cookies }) => {
 	return {
@@ -11,11 +17,20 @@ export const load = (async ({ cookies }) => {
 export const actions: Actions = {
 	schedule: async ({ cookies, request }) => {
 		const formData = await request.formData();
+		const fixedStartTime = dayjs
+			.tz(formData.get('startTime') as string, formData.get('timezone') as string)
+			.toDate();
+
+		const fixedEndTime = dayjs
+			.tz(formData.get('endTime') as string, formData.get('timezone') as string)
+			.toDate();
+
+
 		trpc(cookies).addScheduleEvent({
 			schedule: formData.get('schedule') as string,
 			description: formData.get('description') as string,
-			startTime: new Date(formData.get('startTime') as string),
-			endTime: new Date(formData.get('endTime') as string),
+			startTime: fixedStartTime,
+			endTime: fixedEndTime,
 			location: formData.get('location') as string,
 			type: formData.get('type') as string,
 		});

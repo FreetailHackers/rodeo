@@ -4,6 +4,7 @@
 	import Dropdown from '$lib/components/dropdown.svelte';
 	import { Role } from '@prisma/client';
 	import { trpc } from '$lib/trpc/client';
+	import { invalidateAll } from '$app/navigation';
 
 	let schedule = '';
 	let description = '';
@@ -29,7 +30,6 @@
 		}
 	}
 
-	let editID = 0;
 	let finishedEditingPopup = false;
 	async function finishedEditing() {
 		if (editing == true) {
@@ -44,6 +44,7 @@
 		setTimeout(() => {
 			finishedEditingPopup = false;
 		}, 2000); // hide the alert after 3 seconds
+		invalidateAll();
 	}
 
 	let editingPopup = false;
@@ -52,9 +53,10 @@
 		editingPopup = true;
 		setTimeout(() => {
 			editingPopup = false;
-		}, 2000); // hide the alert after 3 seconds
+		}, 500); // hide the alert after 3 seconds
 	}
 
+	let editID = 0;
 	async function editEvent(id: number) {
 		editing = true;
 		scrollToBottom();
@@ -66,8 +68,8 @@
 		if (event) {
 			schedule = event.name;
 			description = event.description;
-			startTime = event.start.toString().slice(0, 16);
-			endTime = event.end.toString().slice(0, 16);
+			startTime = new Date(event.start).toLocaleString('sv').slice(0, -3);
+			endTime = new Date(event.end).toLocaleString('sv').slice(0, -3);
 			location = event.location;
 			type = event.type;
 		}
@@ -212,6 +214,7 @@
 		<label for="description">Description*</label>
 		<textarea id="description" name="description" required bind:value={description} />
 
+		<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
 		<label for="startTime">Start Time*</label>
 		<input type="datetime-local" id="startTime" name="startTime" required bind:value={startTime} />
 
