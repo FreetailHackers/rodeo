@@ -7,10 +7,3 @@ declare namespace App {
 	// interface PageData {}
 	// interface Platform {}
 }
-
-// Public release version
-declare const __RELEASE__: string;
-// Commit hash of build
-declare const __BUILD__: string;
-// Date of build commit
-declare const __TIMESTAMP__: string;
