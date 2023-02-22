@@ -120,7 +120,7 @@
 								>
 									<!-- Element removal box -->
 									{#if data.user?.role === Role.ADMIN}
-										<div class="overlay">
+										<div class="button-overlay" style="inblock">
 											<form method="POST" action="?/unannounce" use:enhance>
 												<input type="hidden" name="id" value={event.id} />
 												<button class="deleteButton">❌</button>
@@ -166,12 +166,11 @@
 								>
 									<!-- Element removal box -->
 									{#if data.user?.role === Role.ADMIN}
-										<div class="overlay">
+										<div class="button-overlay">
 											<form method="POST" action="?/unannounce" use:enhance>
 												<input type="hidden" name="id" value={event.id} />
 												<button class="deleteButton">❌</button>
 											</form>
-
 											<input type="hidden" name="id" value={event.id} />
 											<button
 												on:click={() => {
@@ -269,14 +268,9 @@
 		background-color: #f5f2ee;
 	}
 
-	.overlay {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		z-index: 9999;
-		color: white;
+	.button-overlay {
+		display: flex;
+		padding-bottom: 0;
 	}
 
 	mark {
@@ -302,6 +296,7 @@
 		padding: 0;
 		list-style-type: none;
 	}
+
 	li {
 		margin: 10px 0;
 	}
