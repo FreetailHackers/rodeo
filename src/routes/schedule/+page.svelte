@@ -22,7 +22,15 @@
 		}
 	}
 
+	function scrollToTop() {
+		const topElement = document.getElementById('top');
+		if (topElement) {
+			topElement.scrollIntoView({ behavior: 'smooth' });
+		}
+	}
+
 	let editID = 0;
+	let finishedEditingPopup = false;
 	async function finishedEditing() {
 		if (editing == true) {
 			editing = false;
@@ -30,7 +38,12 @@
 			text = 'All Fields are Required';
 			// call the unannounce function
 			await trpc().deleteEvent.mutate(editID);
+			finishedEditingPopup = true;
 		}
+		scrollToTop();
+		setTimeout(() => {
+			finishedEditingPopup = false;
+		}, 2000); // hide the alert after 3 seconds
 	}
 
 	let editingPopup = false;
@@ -64,12 +77,22 @@
 </script>
 
 <h2>Schedule</h2>
+<div id="top" />
 {#if editingPopup}
 	<div
 		style="background-color: rgba(255, 255, 255, 0.5); position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; align-items: center;"
 	>
 		<div style="background-color: #bf5700; padding: 20px; border-radius: 5px;">
 			<p style="color:white;">Currently Editing Event</p>
+		</div>
+	</div>
+{/if}
+{#if finishedEditingPopup}
+	<div
+		style="background-color: rgba(255, 255, 255, 0.5); position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; align-items: center;"
+	>
+		<div style="background-color: #bf5700; padding: 20px; border-radius: 5px;">
+			<p style="color:white;">Event Successfully Edited!</p>
 		</div>
 	</div>
 {/if}
