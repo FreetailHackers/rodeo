@@ -6,13 +6,13 @@
 	import { trpc } from '$lib/trpc/client';
 	import { invalidateAll } from '$app/navigation';
 
-	let name = '';
+	let schedule = '';
 	let description = '';
-	let start = '';
-	let end = '';
+	let startTime = '';
+	let endTime = '';
 	let location = '';
 	let type = '';
-	let statusText = 'Create Event';
+	let statusText = 'All Fields are Required';
 
 	let submitButtonText = 'SUBMIT';
 
@@ -22,18 +22,25 @@
 			editing = false;
 			submitButtonText = 'SUBMIT';
 			statusText = 'All Fields are Required';
+			// call the unannounce function
 			await trpc().deleteEvent.mutate(editID);
 			finishedEditingPopup = true;
 		}
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 		setTimeout(() => {
 			finishedEditingPopup = false;
-		}, 1000);
+		}, 2000); // hide the alert after 3 seconds
 		invalidateAll();
 	}
 
 	let editingPopup = false;
 	let editing = false;
+	function popupDelay() {
+		editingPopup = true;
+		setTimeout(() => {
+			editingPopup = false;
+		}, 500); // hide the alert after 3 seconds
+	}
 
 	let editID = 0;
 	async function editEvent(id: number) {
@@ -42,14 +49,17 @@
 		editID = id;
 		statusText = 'Edit Event';
 		submitButtonText = 'SUBMIT EDIT';
-		const event = await trpc().getEvent.query(id);
+		popupDelay();
+		const event = await trpc().getTargetEvent.query(id);
 		if (event) {
-			name = event.name;
+			schedule = event.name;
 			description = event.description;
-			start = new Date(event.start).toLocaleString('sv').slice(0, -3);
-			end = new Date(event.end).toLocaleString('sv').slice(0, -3);
+			startTime = new Date(event.start).toLocaleString('sv').slice(0, -3);
+			endTime = new Date(event.end).toLocaleString('sv').slice(0, -3);
 			location = event.location;
 			type = event.type;
+		} else {
+			console.log('Error: Event not found');
 		}
 	}
 
@@ -178,17 +188,17 @@
 	<h2>Schedule Editor: {statusText}</h2>
 	<form method="POST" action="?/schedule" use:enhance>
 		<label for="schedule">Schedule Name*</label>
-		<input type="text" id="schedule" name="schedule" required bind:value={name} />
+		<input type="text" id="schedule" name="schedule" required bind:value={schedule} />
 
 		<label for="description">Description*</label>
 		<textarea id="description" name="description" required bind:value={description} />
 
 		<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
 		<label for="startTime">Start Time*</label>
-		<input type="datetime-local" id="startTime" name="startTime" required bind:value={start} />
+		<input type="datetime-local" id="startTime" name="startTime" required bind:value={startTime} />
 
 		<label for="endTime">End Time*</label>
-		<input type="datetime-local" id="endTime" name="endTime" required bind:value={end} />
+		<input type="datetime-local" id="endTime" name="endTime" required bind:value={endTime} />
 
 		<label for="location">Location*</label>
 		<input type="text" id="location" name="location" required bind:value={location} />
@@ -231,6 +241,21 @@
 			justify-content: space-between;
 			width: 100%;
 		}
+	}
+
+	.schedule {
+		padding: 20px;
+		background-color: #f5f2ee;
+	}
+
+	.overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 9999;
+		color: white;
 	}
 
 	mark {
@@ -309,7 +334,15 @@
 		text-decoration-thickness: 2px;
 	}
 
-	.Key-Event {
+	ul {
+		padding: 0;
+		list-style-type: none;
+	}
+	li {
+		margin: 10px 0;
+	}
+
+	li.Key-Event {
 		background-color: #a8e6cf;
 	}
 

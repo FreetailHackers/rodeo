@@ -644,9 +644,9 @@ export const router = t.router({
 	addScheduleEvent: t.procedure
 		.input(
 			z.object({
-				name: z.string(),
-				start: z.date(),
-				end: z.date(),
+				schedule: z.string(),
+				startTime: z.date(),
+				endTime: z.date(),
 				description: z.string(),
 				type: z.string(),
 				location: z.string(),
@@ -663,7 +663,14 @@ export const router = t.router({
 			}
 
 			await prisma.event.create({
-				data: { ...req.input },
+				data: {
+					name: req.input.schedule,
+					start: req.input.startTime,
+					end: req.input.endTime,
+					location: req.input.location,
+					description: req.input.description,
+					type: req.input.type,
+				},
 			});
 		}),
 
@@ -680,7 +687,7 @@ export const router = t.router({
 	}),
 
 	// get an event in schedule that matchs	id
-	getEvent: t.procedure.input(z.number()).query(async (req): Promise<Event | null> => {
+	getTargetEvent: t.procedure.input(z.number()).query(async (req): Promise<Event | null> => {
 		const user = await prisma.user.findUniqueOrThrow({
 			where: {
 				magicLink: await hash(req.ctx.magicLink),

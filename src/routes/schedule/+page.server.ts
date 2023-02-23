@@ -18,18 +18,18 @@ export const actions: Actions = {
 	schedule: async ({ cookies, request }) => {
 		const formData = await request.formData();
 		const fixedStartTime = dayjs
-			.tz(formData.get('start') as string, formData.get('timezone') as string)
+			.tz(formData.get('startTime') as string, formData.get('timezone') as string)
 			.toDate();
 
 		const fixedEndTime = dayjs
-			.tz(formData.get('end') as string, formData.get('timezone') as string)
+			.tz(formData.get('endTime') as string, formData.get('timezone') as string)
 			.toDate();
 
 		trpc(cookies).addScheduleEvent({
-			name: formData.get('name') as string,
+			schedule: formData.get('schedule') as string,
 			description: formData.get('description') as string,
-			start: fixedStartTime,
-			end: fixedEndTime,
+			startTime: fixedStartTime,
+			endTime: fixedEndTime,
 			location: formData.get('location') as string,
 			type: formData.get('type') as string,
 		});
