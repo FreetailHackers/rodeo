@@ -9,6 +9,12 @@
 
 	let saveButtonText = form ?? 'Save';
 	let releaseConfirm = false;
+
+	let template = data.settings.acceptanceTemplate;
+
+	function loadAdmissionsTemplate() {
+		template = 'Congrats on joining Hack the Future!';
+	}
 </script>
 
 <h1>Admin Panel</h1>
@@ -31,6 +37,11 @@
 		label="Accept new applications"
 		checked={data.settings.applicationOpen}
 	/>
+
+	<h3>Email Template</h3>
+	<button on:click={loadAdmissionsTemplate}>Load Template</button>
+	<label for="acceptanceTemplate">Acceptance Email Template: </label>
+	<textarea bind:value={template} name="acceptanceTemplate" id="acceptanceTemplate" />
 	<button type="submit">{saveButtonText}</button>
 </form>
 

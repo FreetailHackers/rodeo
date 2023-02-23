@@ -54,12 +54,14 @@ const settingsSchema = z
 	.object({
 		applicationOpen: z.boolean().optional(),
 		rollingAdmissions: z.boolean().optional(),
+		acceptanceTemplate: z.string().optional(),
 	})
 	.strict();
 const defaultSettings: Settings = {
 	id: 0,
 	applicationOpen: true,
 	rollingAdmissions: false,
+	acceptanceTemplate: '',
 };
 
 const getSettings = async (): Promise<Settings> => {
@@ -76,9 +78,7 @@ const sendEmail = async (
 		to: email,
 		from: 'hello@freetailhackers.com',
 		subject: subject,
-		html: `
-			<br>
-			Hi ${name}, 
+		html: `Hi ${name ?? 'there'}, 
 			<br>
 			<br>
 			${message}
@@ -431,16 +431,16 @@ export const router = t.router({
 			await prisma.$transaction([updateStatus, deleteDecision]);
 
 			// preconfigured templates, this structure will change later but is a proof of concept
-			let message = 'You have been waitlisted';
-			let subject = 'Freetail Hackers Status Update.';
-			if (decision.status === Status.ACCEPTED) {
-				message = 'You have been accepted!';
-				subject = 'Freetail Hackers Status Update!';
-			} else if (decision.status === Status.REJECTED) {
-				message = 'You have been rejected';
-			}
+			const subject = 'Freetail Hackers Status Update.';
 
-			sendEmail(recipient.email, subject, message, recipient.fullName);
+			sendEmail(
+				recipient.email,
+				subject,
+				(await getSettings()).acceptanceTemplate,
+				recipient.fullName
+			);
+
+			await prisma.$transaction([updateStatus, deleteDecision]);
 		}
 	}),
 
@@ -487,16 +487,15 @@ export const router = t.router({
 			await prisma.$transaction([updateStatus, deleteDecision]);
 
 			// preconfigured templates, this structure will change later but is a proof of concept
-			let message = 'You have been waitlisted';
-			let subject = 'Freetail Hackers Status Update.';
-			if (decision.status === Status.ACCEPTED) {
-				message = 'You have been accepted!';
-				subject = 'Freetail Hackers Status Update!';
-			} else if (decision.status === Status.REJECTED) {
-				message = 'You have been rejected';
-			}
+			const subject = 'Freetail Hackers Status Update.';
 
-			sendEmail(recipient.email, subject, message, recipient.fullName);
+			sendEmail(
+				recipient.email,
+				subject,
+				(await getSettings()).acceptanceTemplate,
+				recipient.fullName
+			);
+			await prisma.$transaction([updateStatus, deleteDecision]);
 		}
 	}),
 
