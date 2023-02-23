@@ -39,7 +39,7 @@ export const actions: Actions = {
 	template: async ({ cookies, request }) => {
 		const formData = await request.formData();
 		const acceptanceTemplate = formData.get('acceptanceTemplate') as string;
-		await trpc(cookies).setSettings({ emailTemplate: acceptanceTemplate });
-		return 'saved!';
+		await trpc(cookies).setSettings({ acceptanceTemplate: acceptanceTemplate });
+		return 'Saved!';
 	},
 };

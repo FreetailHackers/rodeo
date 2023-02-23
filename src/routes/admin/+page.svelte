@@ -10,12 +10,11 @@
 	let saveButtonText = form ?? 'Save';
 	let releaseConfirm = false;
 
-	let template = "";
+	let template = data.settings.acceptanceTemplate;
 
 	function loadAdmissionsTemplate() {
-		template = "Congrats on joining Hack the Future!";
+		template = 'Congrats on joining Hack the Future!';
 	}
-
 </script>
 
 <h1>Admin Panel</h1>
@@ -38,6 +37,11 @@
 		label="Accept new applications"
 		checked={data.settings.applicationOpen}
 	/>
+
+	<h3>Email Template</h3>
+	<button on:click={loadAdmissionsTemplate}>Load Template</button>
+	<label for="acceptanceTemplate">Acceptance Email Template: </label>
+	<textarea bind:value={template} name="acceptanceTemplate" id="acceptanceTemplate" />
 	<button type="submit">{saveButtonText}</button>
 </form>
 
@@ -62,28 +66,6 @@
 			decisions</button
 		>
 	{/if}
-</form>
-
-<!-- EMAIL TEMPLATE -->
-<h3>Email Template</h3>
-
-<form
-	method="POST"
-	action="?/template"
-	use:enhance={() => {
-		saveButtonText = 'Saving...';
-		return async ({ update }) => {
-			update({ reset: false });
-			// 100 ms delay so people actually see the "Saving..." text
-			await new Promise((r) => setTimeout(r, 100));
-			saveButtonText = 'Saved!';
-		};
-	}}
->
-	<button on:click={loadAdmissionsTemplate}>Load Template</button>
-	<label for="acceptanceTemplate">Acceptance Email Template: </label>
-	<textarea bind:value={template} name="acceptanceTemplate" id="acceptanceTemplate" />
-	<button type="submit">{saveButtonText}</button>
 </form>
 
 <h2>Accepted</h2>
