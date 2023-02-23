@@ -6,74 +6,50 @@
 	import { trpc } from '$lib/trpc/client';
 	import { invalidateAll } from '$app/navigation';
 
-	let schedule = '';
+	let name = '';
 	let description = '';
-	let startTime = '';
-	let endTime = '';
+	let start = '';
+	let end = '';
 	let location = '';
 	let type = '';
-	let text = 'All Fields are Required';
+	let statusText = 'Create Event';
 
 	let submitButtonText = 'SUBMIT';
-
-	function scrollToBottom() {
-		const bottomElement = document.getElementById('bottom');
-		if (bottomElement) {
-			bottomElement.scrollIntoView({ behavior: 'smooth' });
-		}
-	}
-
-	function scrollToTop() {
-		const topElement = document.getElementById('top');
-		if (topElement) {
-			topElement.scrollIntoView({ behavior: 'smooth' });
-		}
-	}
 
 	let finishedEditingPopup = false;
 	async function finishedEditing() {
 		if (editing == true) {
 			editing = false;
 			submitButtonText = 'SUBMIT';
-			text = 'All Fields are Required';
-			// call the unannounce function
+			statusText = 'All Fields are Required';
 			await trpc().deleteEvent.mutate(editID);
 			finishedEditingPopup = true;
 		}
-		scrollToTop();
+		window.scrollTo({ top: 0, behavior: 'smooth' });
 		setTimeout(() => {
 			finishedEditingPopup = false;
-		}, 2000); // hide the alert after 3 seconds
+		}, 1000);
 		invalidateAll();
 	}
 
 	let editingPopup = false;
 	let editing = false;
-	function popupDelay() {
-		editingPopup = true;
-		setTimeout(() => {
-			editingPopup = false;
-		}, 500); // hide the alert after 3 seconds
-	}
 
 	let editID = 0;
 	async function editEvent(id: number) {
 		editing = true;
-		scrollToBottom();
+		window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 		editID = id;
-		text = 'Edit Event';
+		statusText = 'Edit Event';
 		submitButtonText = 'SUBMIT EDIT';
-		popupDelay();
-		const event = await trpc().getTargetEvent.query(id);
+		const event = await trpc().getEvent.query(id);
 		if (event) {
-			schedule = event.name;
+			name = event.name;
 			description = event.description;
-			startTime = new Date(event.start).toLocaleString('sv').slice(0, -3);
-			endTime = new Date(event.end).toLocaleString('sv').slice(0, -3);
+			start = new Date(event.start).toLocaleString('sv').slice(0, -3);
+			end = new Date(event.end).toLocaleString('sv').slice(0, -3);
 			location = event.location;
 			type = event.type;
-		} else {
-			console.log('Error: Event not found');
 		}
 	}
 
@@ -116,7 +92,7 @@
 								<div class="inner-card">
 									<!-- Element removal box -->
 									{#if data.user?.role === Role.ADMIN}
-										<div class="button-overlay" style="inblock">
+										<div class="button-overlay">
 											<form method="POST" action="?/unannounce" use:enhance>
 												<input type="hidden" name="id" value={event.id} />
 												<button class="deleteButton">❌</button>
@@ -199,20 +175,20 @@
 </div>
 
 {#if data.user?.role === Role.ADMIN}
-	<h2>Schedule Editor: {text}</h2>
+	<h2>Schedule Editor: {statusText}</h2>
 	<form method="POST" action="?/schedule" use:enhance>
 		<label for="schedule">Schedule Name*</label>
-		<input type="text" id="schedule" name="schedule" required bind:value={schedule} />
+		<input type="text" id="schedule" name="schedule" required bind:value={name} />
 
 		<label for="description">Description*</label>
 		<textarea id="description" name="description" required bind:value={description} />
 
 		<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
 		<label for="startTime">Start Time*</label>
-		<input type="datetime-local" id="startTime" name="startTime" required bind:value={startTime} />
+		<input type="datetime-local" id="startTime" name="startTime" required bind:value={start} />
 
 		<label for="endTime">End Time*</label>
-		<input type="datetime-local" id="endTime" name="endTime" required bind:value={endTime} />
+		<input type="datetime-local" id="endTime" name="endTime" required bind:value={end} />
 
 		<label for="location">Location*</label>
 		<input type="text" id="location" name="location" required bind:value={location} />
@@ -255,21 +231,6 @@
 			justify-content: space-between;
 			width: 100%;
 		}
-	}
-
-	.schedule {
-		padding: 20px;
-		background-color: #f5f2ee;
-	}
-
-	.overlay {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		z-index: 9999;
-		color: white;
 	}
 
 	mark {
@@ -348,15 +309,7 @@
 		text-decoration-thickness: 2px;
 	}
 
-	ul {
-		padding: 0;
-		list-style-type: none;
-	}
-	li {
-		margin: 10px 0;
-	}
-
-	li.Key-Event {
+	.Key-Event {
 		background-color: #a8e6cf;
 	}
 
