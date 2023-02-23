@@ -71,12 +71,14 @@ const sendEmail = async (
 	subject: string,
 	message: string,
 	name: string | null
-): Promise<string> => {
+): Promise<void> => {
 	const msg = {
 		to: email,
 		from: 'hello@freetailhackers.com',
 		subject: subject,
-		html: `Hi ${name}, 
+		html: `
+			<br>
+			Hi ${name}, 
 			<br>
 			<br>
 			${message}
@@ -87,15 +89,17 @@ const sendEmail = async (
 			<br>
 			Best,
 			<br>
-			Freetail Hackers`,
+			<br>
+			Freetail Hackers
+			<!-- this ensures Gmail doesn't trim the email -->
+			<span style="opacity: 0"> {{ randomness }} </span> 
+			`,
 	};
 	try {
 		await sgMail.send(msg);
-		return 'We sent a magic login link to your email!';
 	} catch (error) {
 		console.error(error);
 		console.log('Could not send email.');
-		return 'An unknown error occurred. Please try again later.';
 	}
 };
 
@@ -424,6 +428,8 @@ export const router = t.router({
 				},
 			});
 
+			await prisma.$transaction([updateStatus, deleteDecision]);
+
 			// preconfigured templates, this structure will change later but is a proof of concept
 			let message = 'You have been waitlisted';
 			let subject = 'Freetail Hackers Status Update.';
@@ -435,8 +441,6 @@ export const router = t.router({
 			}
 
 			sendEmail(recipient.email, subject, message, recipient.fullName);
-
-			await prisma.$transaction([updateStatus, deleteDecision]);
 		}
 	}),
 
@@ -480,6 +484,8 @@ export const router = t.router({
 				},
 			});
 
+			await prisma.$transaction([updateStatus, deleteDecision]);
+
 			// preconfigured templates, this structure will change later but is a proof of concept
 			let message = 'You have been waitlisted';
 			let subject = 'Freetail Hackers Status Update.';
@@ -491,7 +497,6 @@ export const router = t.router({
 			}
 
 			sendEmail(recipient.email, subject, message, recipient.fullName);
-			await prisma.$transaction([updateStatus, deleteDecision]);
 		}
 	}),
 
