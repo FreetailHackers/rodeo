@@ -16,6 +16,8 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const applicationOpen = formData.get('applicationOpen') === 'on';
 		await trpc(cookies).setSettings({ applicationOpen });
+		const acceptanceTemplate = formData.get('acceptanceTemplate') as string;
+		await trpc(cookies).setSettings({ acceptanceTemplate: acceptanceTemplate });
 		return 'Saved!';
 	},
 
@@ -34,12 +36,5 @@ export const actions: Actions = {
 	releaseAll: async ({ cookies }) => {
 		await trpc(cookies).releaseAllDecisions();
 		return 'Released!';
-	},
-
-	template: async ({ cookies, request }) => {
-		const formData = await request.formData();
-		const acceptanceTemplate = formData.get('acceptanceTemplate') as string;
-		await trpc(cookies).setSettings({ acceptanceTemplate: acceptanceTemplate });
-		return 'Saved!';
 	},
 };
