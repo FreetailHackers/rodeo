@@ -92,8 +92,7 @@ const sendEmail = async (
 			<br>
 			Freetail Hackers
 			<!-- this ensures Gmail doesn't trim the email -->
-			<span style="opacity: 0"> {{ randomness }} </span> 
-			`,
+			<span style="opacity: 0"> {{ randomness }} </span>`,
 	};
 	try {
 		await sgMail.send(msg);
