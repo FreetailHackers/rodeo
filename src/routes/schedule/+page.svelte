@@ -83,43 +83,37 @@
 <h2>Schedule</h2>
 <div id="top" />
 {#if editingPopup}
-	<div
-		style="background-color: rgba(255, 255, 255, 0.5); position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; align-items: center;"
-	>
-		<div style="background-color: #bf5700; padding: 20px; border-radius: 5px;">
-			<p style="color:white;">Currently Editing Event</p>
+	<div class="outter-edit">
+		<div class="inner-edit">
+			<p>Currently Editing Event</p>
 		</div>
 	</div>
 {/if}
 {#if finishedEditingPopup}
-	<div
-		style="background-color: rgba(255, 255, 255, 0.5); position: fixed; top: 0; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; align-items: center;"
-	>
-		<div style="background-color: #bf5700; padding: 20px; border-radius: 5px;">
-			<p style="color:white;">Event Successfully Edited!</p>
+	<div class="outter-edit">
+		<div class="inner-edit">
+			<p>Event Successfully Edited!</p>
 		</div>
 	</div>
 {/if}
 <div class="schedule">
 	<div class="legend">
-		<mark style="background-color:#f58bff;">Regular Event</mark>
-		<mark style="background-color:#a8e6cf;">Key Event</mark>
-		<mark style="background-color:#ffd3b6;">Speaker Event</mark>
-		<mark style="background-color:#ffaaa5;">Fun Event</mark>
-		<mark style="background-color:#dcedc1;">Workshop</mark>
+		<mark class="Regular-Event">Regular Event</mark>
+		<mark class="Key-Event">Key Event</mark>
+		<mark class="Speaker-Event">Speaker Event</mark>
+		<mark class="Fun-Event">Fun Event</mark>
+		<mark class="Workshop">Workshop</mark>
 	</div>
-	<h3 style="text-align:center;">*All times are in Central Time (CT)*</h3>
+	<h3>*All times are in Central Time (CT)*</h3>
 	<ul>
 		<div class="event-container">
 			<div class="event-child">
-				<h3 style="text-align:center;">Friday, Mar. 3</h3>
+				<h3>Friday, Mar. 3</h3>
 				{#each data.schedule as event}
 					{#if event.start.getDay() === 5}
 						<li class={event.type}>
-							<div style="display:table; width:100%;">
-								<div
-									style="display:table-cell; vertical-align:middle; position:relative; z-index:0; "
-								>
+							<div class="outer-card">
+								<div class="inner-card">
 									<!-- Element removal box -->
 									{#if data.user?.role === Role.ADMIN}
 										<div class="button-overlay" style="inblock">
@@ -139,7 +133,7 @@
 									{/if}
 									<!-- Event box -->
 									<h3 class="event-name">{event.name} ({event.location})</h3>
-									<h4 style="text-align:center;">
+									<h4>
 										{event.start.toLocaleString('en-US', {
 											hour: 'numeric',
 											minute: 'numeric',
@@ -150,7 +144,7 @@
 											hour12: true,
 										})}
 									</h4>
-									<h5 style="text-align:center;">{event.description}</h5>
+									<h5>{event.description}</h5>
 								</div>
 							</div>
 						</li>
@@ -158,14 +152,12 @@
 				{/each}
 			</div>
 			<div class="event-child">
-				<h3 style="text-align:center;">Saturday, Mar. 4</h3>
+				<h3>Saturday, Mar. 4</h3>
 				{#each data.schedule as event}
 					{#if event.start.getDay() === 6}
 						<li class={event.type}>
-							<div style="display:table; width:100%;">
-								<div
-									style="display:table-cell; vertical-align:middle; position:relative; z-index:0; "
-								>
+							<div class="outer-card">
+								<div class="inner-card">
 									<!-- Element removal box -->
 									{#if data.user?.role === Role.ADMIN}
 										<div class="button-overlay">
@@ -184,7 +176,7 @@
 									{/if}
 									<!-- Event box -->
 									<h3 class="event-name">{event.name} ({event.location})</h3>
-									<h4 style="text-align:center;">
+									<h4>
 										{event.start.toLocaleString('en-US', {
 											hour: 'numeric',
 											minute: 'numeric',
@@ -195,7 +187,7 @@
 											hour12: true,
 										})}
 									</h4>
-									<h5 style="text-align:center;">{event.description}</h5>
+									<h5>{event.description}</h5>
 								</div>
 							</div>
 						</li>
@@ -270,9 +262,14 @@
 		background-color: #f5f2ee;
 	}
 
-	.button-overlay {
-		display: flex;
-		padding-bottom: 0;
+	.overlay {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		z-index: 9999;
+		color: white;
 	}
 
 	mark {
@@ -281,17 +278,14 @@
 		text-align: center;
 	}
 
-	.legend {
-		display: inline-block;
-		margin: 0 auto;
-		text-align: center;
-		justify-content: center;
+	p {
+		color: white;
 	}
 
-	h3.event-name {
+	h3,
+	h4,
+	h5 {
 		text-align: center;
-		text-decoration: underline;
-		text-decoration-thickness: 2px;
 	}
 
 	ul {
@@ -303,25 +297,86 @@
 		margin: 10px 0;
 	}
 
+	div.outer-card {
+		display: table;
+		width: 100%;
+	}
+
+	div.inner-card {
+		display: table-cell;
+		vertical-align: middle;
+		position: relative;
+		z-index: 0;
+	}
+
+	div.outter-edit {
+		background-color: rgba(255, 255, 255, 0.5);
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	div.inner-edit {
+		background-color: #bf5700;
+		padding: 20px;
+		border-radius: 5px;
+	}
+	div.schedule {
+		padding: 20px;
+		background-color: #f5f2ee;
+	}
+
+	.button-overlay {
+		display: flex;
+		padding-bottom: 0;
+	}
+
+	.legend {
+		display: inline-block;
+		margin: 0 auto;
+		text-align: center;
+		justify-content: center;
+	}
+
+	h3.event-name {
+		text-decoration: underline;
+		text-decoration-thickness: 2px;
+	}
+
+	ul {
+		padding: 0;
+		list-style-type: none;
+	}
+	li {
+		margin: 10px 0;
+	}
+
 	li.Key-Event {
 		background-color: #a8e6cf;
 	}
 
-	li.Workshop {
+	.Workshop {
 		background-color: #dcedc1;
 	}
 
-	li.Speaker-Event {
+	.Speaker-Event {
 		background-color: #ffd3b6;
 	}
 
-	li.Fun-Event {
+	.Fun-Event {
 		background-color: #ffaaa5;
 	}
 
-	li.Regular-Event {
+	.Regular-Event {
 		background-color: #f58bff;
 	}
+
+	/* Admin view */
 
 	.deleteButton {
 		background-color: #0000008f;
