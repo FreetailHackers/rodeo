@@ -25,7 +25,7 @@ export const actions: Actions = {
 			.tz(formData.get('endTime') as string, formData.get('timezone') as string)
 			.toDate();
 
-		trpc(cookies).addScheduleEvent({
+		await trpc(cookies).addScheduleEvent({
 			schedule: formData.get('schedule') as string,
 			description: formData.get('description') as string,
 			startTime: fixedStartTime,

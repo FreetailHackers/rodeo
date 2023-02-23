@@ -6,6 +6,7 @@ CREATE TABLE "Event" (
     "start" TIMESTAMP(3) NOT NULL,
     "end" TIMESTAMP(3) NOT NULL,
     "location" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
 
     CONSTRAINT "Event_pkey" PRIMARY KEY ("id")
 );
