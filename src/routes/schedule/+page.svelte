@@ -72,6 +72,8 @@
 			endTime = new Date(event.end).toLocaleString('sv').slice(0, -3);
 			location = event.location;
 			type = event.type;
+		} else {
+			console.log('Error: Event not found');
 		}
 	}
 
