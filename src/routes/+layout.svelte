@@ -9,6 +9,7 @@
 <nav>
 	<a href="/">Home</a>
 	<a href="/schedule">Schedule</a>
+	<a href="/info">Info</a>
 	{#if data.user?.role === Role.HACKER}
 		<a href="/apply">Apply</a>
 		<!-- <a href="/id">My Hacker ID</a> -->

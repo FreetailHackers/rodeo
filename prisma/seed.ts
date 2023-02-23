@@ -18,7 +18,7 @@ async function main() {
 	// Create example hacker and admin
 	await prisma.user.create({
 		data: {
-			email: 'hacker@example.com',
+			email: 'hacker@yopmail.com',
 			magicLink: await hash('hacker'),
 			fullName: 'J. Random Hacker',
 			preferredName: 'John',
@@ -28,7 +28,7 @@ async function main() {
 	});
 	await prisma.user.create({
 		data: {
-			email: 'admin@freetailhackers.com',
+			email: 'admin@yopmail.com',
 			magicLink: await hash('admin'),
 			fullName: 'J. Random Administrator',
 			preferredName: 'Jane',
@@ -51,7 +51,7 @@ async function main() {
 		const lastName = lastNames[Math.floor(random() * lastNames.length)];
 		const major = majors[Math.floor(random() * majors.length)];
 		hackers.push({
-			email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}.${i}@example.com`,
+			email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}.${i}@yopmail.com`,
 			magicLink: await hash('hacker' + i),
 			fullName: `${firstName} ${lastName}`,
 			preferredName: firstName,
@@ -67,7 +67,9 @@ async function main() {
 					'Other',
 				][Math.floor(random() * 7)],
 			],
-			pronouns: ['he/him', 'she/her', 'they/them', 'other'][Math.floor(random() * 4)],
+			pronouns: ['He/him', 'She/her', 'They/them', 'Other', 'Prefer not to say'][
+				Math.floor(random() * 5)
+			],
 			photoReleaseAgreed: true,
 			liabilityWaiverAgreed: true,
 			codeOfConductAgreed: true,
@@ -89,12 +91,14 @@ async function main() {
 			international: Math.random() < 0.5,
 			hackathonsAttended: Math.floor(random() * 10),
 			workshops: [],
-			referrer: 'OTHER',
+			referrer: ['Social Media', 'Tabling', 'Friends', 'Professor/Department', 'HackTX', 'Other'][
+				Math.floor(random() * 6)
+			],
 			excitedAbout: 'I am excited to learn new things and meet new people!',
-			resume: 'https://example.com/resume.pdf',
-			github: 'https://github.com/DanielZTing',
-			linkedin: 'https://linkedin.com/in/danielzting',
-			website: 'https://danielzting.github.io',
+			resume: 'https://rodeo-staging.s3.amazonaws.com/' + i + '/resume.pdf',
+			github: 'https://github.com/username',
+			linkedin: 'https://linkedin.com/in/username',
+			website: 'https://example.com',
 			lunch: true,
 			dietaryRestrictions: [
 				['No pork', 'Vegetarian', 'Vegan', 'No dairy', 'No nuts', 'No beef', 'Gluten free'][

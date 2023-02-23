@@ -2,7 +2,7 @@
 	export let name: string;
 	export let label: string;
 	export let required = false;
-	export let checked: boolean;
+	export let checked: boolean | null;
 	export let link = '';
 </script>
 

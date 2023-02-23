@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import type { Announcement } from '@prisma/client';
+	import SvelteMarkdown from 'svelte-markdown';
 
 	export let admin: boolean;
 
@@ -32,12 +33,12 @@
 					{#if admin}
 						<form method="POST" action="?/unannounce" use:enhance>
 							<input type="hidden" name="id" value={announcement.id} />
-							<button class="deleteButton">🗙</button>
+							<button class="deleteButton">✕</button>
 						</form>
 					{/if}
 				</span>
 				<br />
-				<p>{announcement.body}</p>
+				<p><SvelteMarkdown source={announcement.body} isInline /></p>
 			</li>
 		{/each}
 	</ul>

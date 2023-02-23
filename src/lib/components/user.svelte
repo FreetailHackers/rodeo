@@ -13,10 +13,14 @@
 </p>
 <p><b>PREFERRED NAME</b> {user.preferredName}</p>
 <p><b>GENDER</b> {user.gender}</p>
+<p><b>RACE</b> {user.race}</p>
+<p><b>PRONOUNS</b> {user.pronouns}</p>
 <p><b>MAJOR</b> {user.major}</p>
 <p><b>CLASSIFICATION</b> {user.classification}</p>
 <p><b>GRADUATION</b> {user.graduation}</p>
 <p><b>HACKATHONS ATTENDED</b> {user.hackathonsAttended}</p>
+<p><b>FIRST GENERATION</b> {user.firstGeneration}</p>
+<p><b>INTERNATIONAL</b> {user.international}</p>
 <p><b>WORKSHOPS</b> {user.workshops}</p>
 <p><b>REFERRER</b> {user.referrer}</p>
 <p><b>EXCITED ABOUT</b> {user.excitedAbout}</p>

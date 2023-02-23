@@ -1,6 +1,7 @@
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { hash } from '../hash';
 import sgMail from '@sendgrid/mail';
+import nodemailer from 'nodemailer';
 import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
 import { z } from 'zod';
 import prisma from '$lib/trpc/db';
@@ -18,6 +19,16 @@ const CHARSET = 'abcdefghijklmnopqrstuvwxyz';
 const FILE_SIZE_LIMIT = 1 * 1024 * 1024; // 1 MB
 
 sgMail.setApiKey(process.env.SENDGRID_KEY as string);
+const transporter = nodemailer.createTransport({
+	host: process.env.EMAIL_HOST,
+	port: Number(process.env.EMAIL_PORT),
+	secure: true,
+	auth: {
+		user: process.env.EMAIL_USER,
+		pass: process.env.EMAIL_PASS,
+	},
+});
+
 const client = new S3Client({ region: 'us-east-1' });
 
 const userSchema = z
@@ -53,6 +64,8 @@ const userSchema = z
 const settingsSchema = z
 	.object({
 		applicationOpen: z.boolean().optional(),
+		confirmBy: z.date().nullable().optional(),
+		info: z.string().optional(),
 		rollingAdmissions: z.boolean().optional(),
 		acceptanceTemplate: z.string().optional(),
 	})
@@ -60,6 +73,8 @@ const settingsSchema = z
 const defaultSettings: Settings = {
 	id: 0,
 	applicationOpen: true,
+	confirmBy: null,
+	info: '',
 	rollingAdmissions: false,
 	acceptanceTemplate: '',
 };
@@ -151,6 +166,12 @@ export const router = t.router({
 				data: { ...req.input, status: Status.VERIFIED },
 			});
 		}
+		// Remove user from pending decision pool
+		await prisma.decision.deleteMany({
+			where: {
+				userId: user.id,
+			},
+		});
 	}),
 
 	/**
@@ -228,14 +249,43 @@ export const router = t.router({
 	}),
 
 	/**
+	 * Confirms or declines the logged in user's acceptance.
+	 */
+	rsvpUser: t.procedure
+		.input(z.enum(['CONFIRMED', 'DECLINED']))
+		.mutation(async (req): Promise<void> => {
+			const user = await prisma.user.findUniqueOrThrow({
+				where: { magicLink: await hash(req.ctx.magicLink) },
+			});
+			const deadline = (await getSettings()).confirmBy;
+			if (req.input === 'CONFIRMED') {
+				// Hackers should only be able to confirm before deadline
+				if (user.status === Status.ACCEPTED && (deadline === null || new Date() < deadline)) {
+					await prisma.user.update({
+						where: { magicLink: await hash(req.ctx.magicLink) },
+						data: { status: Status.CONFIRMED },
+					});
+				}
+			} else {
+				// Hackers should be able to decline after accepting and/or the deadline
+				if (user.status === Status.ACCEPTED || user.status === Status.CONFIRMED) {
+					await prisma.user.update({
+						where: { magicLink: await hash(req.ctx.magicLink) },
+						data: { status: Status.DECLINED },
+					});
+				}
+			}
+		}),
+
+	/**
 	 * Creates a new user with the given email. Returns the success
 	 * status as a string.
 	 */
 	createUser: t.procedure.input(z.string()).mutation(async (req): Promise<string> => {
 		const email = req.input;
 
-		if (!email.match(/^\S+@utexas.edu$/)) {
-			return 'Please use your @utexas.edu email address.';
+		if (!email.match(/^\S+utexas.edu$/)) {
+			return 'Please use your utexas.edu email address.';
 		}
 
 		// Generate a magic link
@@ -280,7 +330,11 @@ export const router = t.router({
 			Freetail Hackers`,
 		};
 		try {
-			await sgMail.send(msg);
+			if (process.env.SENDGRID_KEY) {
+				await sgMail.send(msg);
+			} else {
+				await transporter.sendMail(msg);
+			}
 			return 'We sent a magic login link to your email!';
 		} catch (error) {
 			console.error(error);
@@ -593,16 +647,23 @@ export const router = t.router({
 	}),
 
 	/**
-	 * Returns whether applications are open.
+	 * Returns public settings.
 	 */
-	getApplicationOpen: t.procedure.query(async (): Promise<boolean> => {
-		return (await getSettings()).applicationOpen;
-	}),
+	getPublicSettings: t.procedure.query(
+		async (): Promise<{ applicationOpen: boolean; confirmBy: Date | null; info: string }> => {
+			const settings = await getSettings();
+			return {
+				applicationOpen: settings.applicationOpen,
+				confirmBy: settings.confirmBy,
+				info: settings.info,
+			};
+		}
+	),
 
 	/**
 	 * Get all settings. User must be an admin.
 	 */
-	getSettings: t.procedure.query(async (req): Promise<Settings> => {
+	getAllSettings: t.procedure.query(async (req): Promise<Settings> => {
 		const user = await prisma.user.findUniqueOrThrow({
 			where: {
 				magicLink: await hash(req.ctx.magicLink),
