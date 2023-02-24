@@ -5,6 +5,7 @@ export const load = (async ({ cookies }) => {
 	return {
 		user: trpc(cookies).getUser(),
 		announcements: trpc(cookies).getAnnouncements(),
+		applicationOpen: (await trpc(cookies).getPublicSettings()).applicationOpen,
 	};
 }) satisfies PageServerLoad;
 

@@ -110,23 +110,26 @@
 			Congratulations! We were impressed by your application and would like to invite you to attend.
 		</p>
 		{#if data.settings.confirmBy !== null}
-			<p>
-				You must confirm your attendance by {data.settings.confirmBy.toLocaleDateString('en-US', {
-					weekday: 'long',
-					month: 'long',
-					day: 'numeric',
-					hour: 'numeric',
-					minute: 'numeric',
-				})} to secure your spot. If you know you will not be able to attend, please decline so we can
-				offer your spot to someone else.
-			</p>
 			{#if new Date() < data.settings.confirmBy}
+				<p>
+					You must confirm your attendance by {data.settings.confirmBy.toLocaleDateString('en-US', {
+						weekday: 'long',
+						month: 'long',
+						day: 'numeric',
+						hour: 'numeric',
+						minute: 'numeric',
+					})} to secure your spot. If you know you will not be able to attend, please decline so we can
+					offer your spot to someone else.
+				</p>
 				<form method="POST" id="rsvp" use:enhance>
 					<button formaction="?/confirm">Confirm</button>
 					<button formaction="?/decline">Decline</button>
 				</form>
 			{:else}
-				<p>Sorry, the deadline to confirm your attendance has passed.</p>
+				<p>
+					Sorry, the deadline to confirm your attendance has passed. If space permits, you may sign
+					up as a walk-in at the doors the day of the event, but we cannot make any guarantees.
+				</p>
 			{/if}
 		{/if}
 	{:else if data.user.status === Status.CONFIRMED}
@@ -423,7 +426,10 @@
 			{/each}
 		{/if}
 	{:else}
-		<p>Sorry, applications have closed.</p>
+		<p>
+			Sorry, applications have closed. If space permits, you may sign up as a walk-in at the doors
+			the day of the event, but we cannot make any guarantees.
+		</p>
 	{/if}
 {/if}
 

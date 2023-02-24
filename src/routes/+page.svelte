@@ -42,6 +42,14 @@
 	<p>
 		Rodeo is Freetail Hackers' registration platform and information board for hackathon attendees.
 	</p>
+	{#if !data.applicationOpen}
+		<p>
+			<b>
+				NOTE: Applications are closed. If you would like to be notified of future events, you may
+				enter your email below to subscribe to our mailing list.
+			</b>
+		</p>
+	{/if}
 	<form method="POST" action="?/login" use:enhance>
 		<label for="email">To get started, enter your email: </label>
 		<input
