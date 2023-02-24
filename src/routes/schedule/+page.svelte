@@ -6,10 +6,10 @@
 	import { trpc } from '$lib/trpc/client';
 	import { invalidateAll } from '$app/navigation';
 
-	let schedule = '';
+	let name = '';
 	let description = '';
-	let startTime = '';
-	let endTime = '';
+	let start = '';
+	let end = '';
 	let location = '';
 	let type = '';
 	let statusText = 'All Fields are Required';
@@ -22,25 +22,18 @@
 			editing = false;
 			submitButtonText = 'SUBMIT';
 			statusText = 'All Fields are Required';
-			// call the unannounce function
 			await trpc().deleteEvent.mutate(editID);
 			finishedEditingPopup = true;
 		}
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 		setTimeout(() => {
 			finishedEditingPopup = false;
-		}, 2000); // hide the alert after 3 seconds
+		}, 2000);
 		invalidateAll();
 	}
 
 	let editingPopup = false;
 	let editing = false;
-	function popupDelay() {
-		editingPopup = true;
-		setTimeout(() => {
-			editingPopup = false;
-		}, 500); // hide the alert after 3 seconds
-	}
 
 	let editID = 0;
 	async function editEvent(id: number) {
@@ -49,13 +42,15 @@
 		editID = id;
 		statusText = 'Edit Event';
 		submitButtonText = 'SUBMIT EDIT';
-		popupDelay();
-		const event = await trpc().getTargetEvent.query(id);
+		setTimeout(() => {
+			editingPopup = false;
+		}, 500);
+		const event = await trpc().getEvent.query(id);
 		if (event) {
-			schedule = event.name;
+			name = event.name;
 			description = event.description;
-			startTime = new Date(event.start).toLocaleString('sv').slice(0, -3);
-			endTime = new Date(event.end).toLocaleString('sv').slice(0, -3);
+			start = new Date(event.start).toLocaleString('sv').slice(0, -3);
+			end = new Date(event.end).toLocaleString('sv').slice(0, -3);
 			location = event.location;
 			type = event.type;
 		} else {
@@ -90,7 +85,6 @@
 		<mark class="Fun-Event">Fun Event</mark>
 		<mark class="Workshop">Workshop</mark>
 	</div>
-	<h3>*All times are in Central Time (CT)*</h3>
 	<ul>
 		<div class="event-container">
 			<div class="event-child">
@@ -187,18 +181,18 @@
 {#if data.user?.role === Role.ADMIN}
 	<h2>Schedule Editor: {statusText}</h2>
 	<form method="POST" action="?/schedule" use:enhance>
-		<label for="schedule">Schedule Name*</label>
-		<input type="text" id="schedule" name="schedule" required bind:value={schedule} />
+		<label for="name">Schedule Name*</label>
+		<input type="text" id="name" name="name" required bind:value={name} />
 
 		<label for="description">Description*</label>
 		<textarea id="description" name="description" required bind:value={description} />
 
 		<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
-		<label for="startTime">Start Time*</label>
-		<input type="datetime-local" id="startTime" name="startTime" required bind:value={startTime} />
+		<label for="start">Start Time*</label>
+		<input type="datetime-local" id="start" name="start" required bind:value={start} />
 
-		<label for="endTime">End Time*</label>
-		<input type="datetime-local" id="endTime" name="endTime" required bind:value={endTime} />
+		<label for="end">End Time*</label>
+		<input type="datetime-local" id="end" name="end" required bind:value={end} />
 
 		<label for="location">Location*</label>
 		<input type="text" id="location" name="location" required bind:value={location} />
