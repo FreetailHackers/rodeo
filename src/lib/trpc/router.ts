@@ -483,14 +483,14 @@ export const router = t.router({
 			// preconfigured templates, this structure will change later but is a proof of concept
 			const subject = 'Freetail Hackers Status Update.';
 
+			await prisma.$transaction([updateStatus, deleteDecision]);
+
 			sendEmail(
 				recipient.email,
 				subject,
 				(await getSettings()).acceptanceTemplate,
 				recipient.fullName
 			);
-
-			await prisma.$transaction([updateStatus, deleteDecision]);
 		}
 	}),
 
@@ -537,13 +537,14 @@ export const router = t.router({
 			// preconfigured templates, this structure will change later but is a proof of concept
 			const subject = 'Freetail Hackers Status Update.';
 
+			await prisma.$transaction([updateStatus, deleteDecision]);
+
 			sendEmail(
 				recipient.email,
 				subject,
 				(await getSettings()).acceptanceTemplate,
 				recipient.fullName
 			);
-			await prisma.$transaction([updateStatus, deleteDecision]);
 		}
 	}),
 
