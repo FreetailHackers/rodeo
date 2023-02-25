@@ -6,7 +6,6 @@
 
 	export let data: PageData;
 
-
 	let saveButtonText = 'Save';
 	let releaseConfirm = false;
 
