@@ -70,6 +70,17 @@ model Settings {
   acceptanceTemplate String @default("You have been accepted to our hackathon!")
 }
 
+model Event {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  start       DateTime
+  end         DateTime
+  location    String
+  type        String
+}
+
+
 enum Role {
   HACKER
   ADMIN
