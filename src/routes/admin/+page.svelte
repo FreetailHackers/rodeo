@@ -6,6 +6,7 @@
 
 	export let data: PageData;
 
+
 	let saveButtonText = 'Save';
 	let releaseConfirm = false;
 
@@ -52,6 +53,17 @@
 	<button on:click={loadAdmissionsTemplate}>Load Template</button>
 	<label for="acceptanceTemplate">Acceptance Email Template: </label>
 	<textarea bind:value={template} name="acceptanceTemplate" id="acceptanceTemplate" />
+	<br />
+	<label for="confirmBy"
+		>Accepted hackers must confirm by (leave empty if confirmation is not required):
+	</label>
+	<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
+	<input
+		type="datetime-local"
+		id="confirmBy"
+		name="confirmBy"
+		value={data.settings.confirmBy?.toLocaleString('sv').replace(' ', 'T').slice(0, -3)}
+	/>
 	<br />
 	<label for="confirmBy"
 		>Accepted hackers must confirm by (leave empty if confirmation is not required):
