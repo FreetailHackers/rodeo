@@ -5,14 +5,23 @@ import nodemailer from 'nodemailer';
 import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
 import { z } from 'zod';
 import prisma from '$lib/trpc/db';
-import { Prisma, Role, Status, type Announcement, type Settings, type User } from '@prisma/client';
+import {
+	Prisma,
+	Role,
+	Status,
+	type Announcement,
+	type Settings,
+	type User,
+	type Event,
+} from '@prisma/client';
 import type { Cookies } from '@sveltejs/kit';
+import SuperJSON from 'superjson';
 
 export function createContext(cookies: Cookies) {
 	return { magicLink: cookies.get('magicLink') ?? '' };
 }
 type Context = inferAsyncReturnType<typeof createContext>;
-export const t = initTRPC.context<Context>().create();
+export const t = initTRPC.context<Context>().create({ transformer: SuperJSON });
 
 const MAGIC_LINK_LENGTH = 32;
 const CHARSET = 'abcdefghijklmnopqrstuvwxyz';
@@ -624,6 +633,64 @@ export const router = t.router({
 			update: req.input,
 			create: { id: 0, ...req.input },
 		});
+	}),
+
+	// get all events in the schedule
+	getSchedule: t.procedure.query(async (): Promise<Event[]> => {
+		return await prisma.event.findMany({
+			orderBy: [{ start: 'asc' }],
+		});
+	}),
+
+	addScheduleEvent: t.procedure
+		.input(
+			z.object({
+				name: z.string(),
+				start: z.date(),
+				end: z.date(),
+				description: z.string(),
+				type: z.string(),
+				location: z.string(),
+			})
+		)
+		.mutation(async (req): Promise<void> => {
+			const user = await prisma.user.findUniqueOrThrow({
+				where: {
+					magicLink: await hash(req.ctx.magicLink),
+				},
+			});
+			if (user.role !== Role.ADMIN) {
+				throw new Error('You have insufficient permissions to perform this action.');
+			}
+
+			await prisma.event.create({
+				data: { ...req.input },
+			});
+		}),
+
+	deleteEvent: t.procedure.input(z.number()).mutation(async (req): Promise<void> => {
+		const user = await prisma.user.findUniqueOrThrow({
+			where: {
+				magicLink: await hash(req.ctx.magicLink),
+			},
+		});
+		if (user.role !== Role.ADMIN) {
+			throw new Error('You have insufficient permissions to perform this action.');
+		}
+		await prisma.event.delete({ where: { id: req.input } });
+	}),
+
+	// get an event in schedule that matchs	id
+	getEvent: t.procedure.input(z.number()).query(async (req): Promise<Event | null> => {
+		const user = await prisma.user.findUniqueOrThrow({
+			where: {
+				magicLink: await hash(req.ctx.magicLink),
+			},
+		});
+		if (user.role !== Role.ADMIN) {
+			throw new Error('You have insufficient permissions to perform this action.');
+		}
+		return await prisma.event.findUnique({ where: { id: req.input } });
 	}),
 });
 
