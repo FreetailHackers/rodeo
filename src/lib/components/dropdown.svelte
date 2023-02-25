@@ -3,7 +3,7 @@
 	export let name: string;
 	export let label: string;
 	export let required = false;
-	export let value: string | null;
+	export let value: string | null | undefined;
 </script>
 
 <label for={name}
