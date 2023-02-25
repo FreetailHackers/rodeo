@@ -15,12 +15,13 @@ import {
 	type Event,
 } from '@prisma/client';
 import type { Cookies } from '@sveltejs/kit';
+import SuperJSON from 'superjson';
 
 export function createContext(cookies: Cookies) {
 	return { magicLink: cookies.get('magicLink') ?? '' };
 }
 type Context = inferAsyncReturnType<typeof createContext>;
-export const t = initTRPC.context<Context>().create();
+export const t = initTRPC.context<Context>().create({ transformer: SuperJSON });
 
 const MAGIC_LINK_LENGTH = 32;
 const CHARSET = 'abcdefghijklmnopqrstuvwxyz';

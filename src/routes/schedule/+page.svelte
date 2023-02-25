@@ -2,81 +2,30 @@
 	import { enhance } from '$app/forms';
 	import type { PageData } from './$types';
 	import Dropdown from '$lib/components/dropdown.svelte';
-	import { Role } from '@prisma/client';
+	import { Role, type Event } from '@prisma/client';
 	import { trpc } from '$lib/trpc/client';
-	import { invalidateAll } from '$app/navigation';
 
-	let name = '';
-	let description = '';
-	let start = '';
-	let end = '';
-	let location = '';
-	let type = '';
-	let statusText = 'All Fields are Required';
+	let event: Event | null = null;
+	let statusText = 'Create New Event';
 
-	let submitButtonText = 'SUBMIT';
-
-	let finishedEditingPopup = false;
 	async function finishedEditing() {
-		if (editing == true) {
-			editing = false;
-			submitButtonText = 'SUBMIT';
-			statusText = 'All Fields are Required';
-			await trpc().deleteEvent.mutate(editID);
-			finishedEditingPopup = true;
+		if (event !== null) {
+			await trpc().deleteEvent.mutate(event.id);
+			event = null;
 		}
 		window.scrollTo({ top: 0, behavior: 'smooth' });
-		setTimeout(() => {
-			finishedEditingPopup = false;
-		}, 2000);
-		invalidateAll();
 	}
 
-	let editingPopup = false;
-	let editing = false;
-
-	let editID = 0;
 	async function editEvent(id: number) {
-		editing = true;
 		window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-		editID = id;
 		statusText = 'Edit Event';
-		submitButtonText = 'SUBMIT EDIT';
-		setTimeout(() => {
-			editingPopup = false;
-		}, 500);
-		const event = await trpc().getEvent.query(id);
-		if (event) {
-			name = event.name;
-			description = event.description;
-			start = new Date(event.start).toLocaleString('sv').slice(0, -3);
-			end = new Date(event.end).toLocaleString('sv').slice(0, -3);
-			location = event.location;
-			type = event.type;
-		} else {
-			console.log('Error: Event not found');
-		}
+		event = await trpc().getEvent.query(id);
 	}
 
 	export let data: PageData;
 </script>
 
 <h2>Schedule</h2>
-<div id="top" />
-{#if editingPopup}
-	<div class="outter-edit">
-		<div class="inner-edit">
-			<p>Currently Editing Event</p>
-		</div>
-	</div>
-{/if}
-{#if finishedEditingPopup}
-	<div class="outter-edit">
-		<div class="inner-edit">
-			<p>Event Successfully Edited!</p>
-		</div>
-	</div>
-{/if}
 <div class="schedule">
 	<div class="legend">
 		<mark class="Regular-Event">Regular Event</mark>
@@ -179,36 +128,47 @@
 </div>
 
 {#if data.user?.role === Role.ADMIN}
-	<h2>Schedule Editor: {statusText}</h2>
+	<h2>{statusText}</h2>
 	<form method="POST" action="?/schedule" use:enhance>
-		<label for="name">Schedule Name*</label>
-		<input type="text" id="name" name="name" required bind:value={name} />
+		<label for="name">Name</label>
+		<input type="text" id="name" name="name" required value={event?.name ?? ''} />
 
-		<label for="description">Description*</label>
-		<textarea id="description" name="description" required bind:value={description} />
+		<label for="description">Description</label>
+		<textarea id="description" name="description" required value={event?.description ?? ''} />
 
 		<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
-		<label for="start">Start Time*</label>
-		<input type="datetime-local" id="start" name="start" required bind:value={start} />
+		<label for="start">Start Time</label>
+		<input
+			type="datetime-local"
+			id="start"
+			name="start"
+			required
+			value={event?.start.toLocaleString('sv') ?? ''}
+		/>
 
-		<label for="end">End Time*</label>
-		<input type="datetime-local" id="end" name="end" required bind:value={end} />
+		<label for="end">End Time</label>
+		<input
+			type="datetime-local"
+			id="end"
+			name="end"
+			required
+			value={event?.end.toLocaleString('sv') ?? ''}
+		/>
 
-		<label for="location">Location*</label>
-		<input type="text" id="location" name="location" required bind:value={location} />
+		<label for="location">Location</label>
+		<input type="text" id="location" name="location" required value={event?.location ?? ''} />
 
 		<Dropdown
-			bind:value={type}
+			value={event?.type ?? ''}
 			name="type"
 			label="Event Type"
 			options={['Key-Event', 'Workshop', 'Speaker-Event', 'Fun-Event', 'Regular-Event']}
 			required
 		/>
 
-		<button on:click={finishedEditing} type="submit">{submitButtonText}</button>
+		<button on:click={finishedEditing} type="submit">Save</button>
 	</form>
 {/if}
-<div id="bottom" />
 
 <style>
 	@media only screen and (min-width: 600px) {
@@ -242,24 +202,10 @@
 		background-color: #f5f2ee;
 	}
 
-	.overlay {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		z-index: 9999;
-		color: white;
-	}
-
 	mark {
 		padding-left: 5px;
 		padding-right: 5px;
 		text-align: center;
-	}
-
-	p {
-		color: white;
 	}
 
 	h3,
@@ -289,28 +235,6 @@
 		z-index: 0;
 	}
 
-	div.outter-edit {
-		background-color: rgba(255, 255, 255, 0.5);
-		position: fixed;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-
-	div.inner-edit {
-		background-color: #bf5700;
-		padding: 20px;
-		border-radius: 5px;
-	}
-	div.schedule {
-		padding: 20px;
-		background-color: #f5f2ee;
-	}
-
 	.button-overlay {
 		display: flex;
 		padding-bottom: 0;
@@ -336,7 +260,7 @@
 		margin: 10px 0;
 	}
 
-	li.Key-Event {
+	.Key-Event {
 		background-color: #a8e6cf;
 	}
 
