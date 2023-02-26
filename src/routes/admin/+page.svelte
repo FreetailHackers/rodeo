@@ -42,9 +42,15 @@
 		label="Accept new applications"
 		checked={data.settings.applicationOpen}
 	/>
-	<br />
-	<label for="confirmBy"
-		>Accepted hackers must confirm by (leave empty if confirmation is not required):
+
+	<label for="acceptanceTemplate">Acceptance Email Template: </label>
+	<textarea
+		value={data.settings.acceptanceTemplate}
+		name="acceptanceTemplate"
+		id="acceptanceTemplate"
+	/>
+	<label for="confirmBy">
+		Accepted hackers must confirm by (leave empty if confirmation is not required):
 	</label>
 	<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
 	<input
