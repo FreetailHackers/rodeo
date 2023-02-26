@@ -19,7 +19,7 @@ body {
 	font-size: var(--font-size);
 	max-width: 50rem;
 	margin: 0 auto;
-	padding: 1rem;
+	padding: 0 1rem;
 }
 
 nav {
