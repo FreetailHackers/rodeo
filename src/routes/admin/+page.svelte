@@ -9,11 +9,6 @@
 	let saveButtonText = 'Save';
 	let releaseConfirm = false;
 
-	let template = data.settings.acceptanceTemplate;
-
-	function loadAdmissionsTemplate() {
-		template = 'Congrats on joining Hack the Future!';
-	}
 	// Options for demographic questions
 	let genderOptions = ['Male', 'Female', 'Nonbinary', 'Other', 'Prefer not to say'];
 	let raceOptions = [
@@ -48,24 +43,14 @@
 		checked={data.settings.applicationOpen}
 	/>
 
-	<h3>Email Template</h3>
-	<button on:click={loadAdmissionsTemplate}>Load Template</button>
 	<label for="acceptanceTemplate">Acceptance Email Template: </label>
-	<textarea bind:value={template} name="acceptanceTemplate" id="acceptanceTemplate" />
-	<br />
-	<label for="confirmBy"
-		>Accepted hackers must confirm by (leave empty if confirmation is not required):
-	</label>
-	<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
-	<input
-		type="datetime-local"
-		id="confirmBy"
-		name="confirmBy"
-		value={data.settings.confirmBy?.toLocaleString('sv').replace(' ', 'T').slice(0, -3)}
+	<textarea
+		value={data.settings.acceptanceTemplate}
+		name="acceptanceTemplate"
+		id="acceptanceTemplate"
 	/>
-	<br />
-	<label for="confirmBy"
-		>Accepted hackers must confirm by (leave empty if confirmation is not required):
+	<label for="confirmBy">
+		Accepted hackers must confirm by (leave empty if confirmation is not required):
 	</label>
 	<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
 	<input

@@ -79,17 +79,9 @@ const settingsSchema = z
 		acceptanceTemplate: z.string().optional(),
 	})
 	.strict();
-const defaultSettings: Settings = {
-	id: 0,
-	applicationOpen: true,
-	confirmBy: null,
-	info: '',
-	rollingAdmissions: false,
-	acceptanceTemplate: '',
-};
 
 const getSettings = async (): Promise<Settings> => {
-	return (await prisma.settings.findUnique({ where: { id: 0 } })) ?? defaultSettings;
+	return await prisma.settings.findUniqueOrThrow({ where: { id: 0 } });
 };
 
 const sendEmail = async (
@@ -102,7 +94,7 @@ const sendEmail = async (
 		to: email,
 		from: 'hello@freetailhackers.com',
 		subject: subject,
-		html: `Hi ${name ?? 'there'}, 
+		html: `Hi ${name ?? 'there'},
 			<br>
 			<br>
 			${message}
@@ -116,12 +108,16 @@ const sendEmail = async (
 			Freetail Hackers`,
 	};
 	try {
-		await sgMail.send(msg);
-		return 'We sent a magic login link to your email!';
+		if (process.env.SENDGRID_KEY) {
+			await sgMail.send(msg);
+		} else {
+			await transporter.sendMail(msg);
+		}
+		return 'We sent an email to ' + email + '!';
 	} catch (error) {
 		console.error(error);
-		console.log('Could not send email.');
-		return 'An unknown error occurred. Please try again later.';
+		console.error(`To: ${email}, Subject: ${subject}, Message: ${message}`);
+		return 'There was an error sending the email. Please try again later.';
 	}
 };
 
@@ -318,11 +314,7 @@ export const router = t.router({
 
 		// Send email with magic link
 		const link = `${process.env.DOMAIN_NAME}/login/${magicLink}`;
-		const msg = {
-			to: email,
-			from: 'hello@freetailhackers.com',
-			subject: 'Welcome to Rodeo!',
-			html: `Please click on this link to log in to Rodeo: <a href="${link}">${link}</a>
+		const message = `Please click on this link to log in to Rodeo: <a href="${link}">${link}</a>
 			<br>
 			<br>
 			Keep this email safe as anyone with this link can log in to your account.
@@ -336,20 +328,8 @@ export const router = t.router({
 			<br>
 			Best,
 			<br>
-			Freetail Hackers`,
-		};
-		try {
-			if (process.env.SENDGRID_KEY) {
-				await sgMail.send(msg);
-			} else {
-				await transporter.sendMail(msg);
-			}
-			return 'We sent a magic login link to your email!';
-		} catch (error) {
-			console.error(error);
-			console.log('Could not send email. Magic link is: ' + magicLink);
-			return 'An unknown error occurred. Please try again later.';
-		}
+			Freetail Hackers`;
+		return sendEmail(email, 'Welcome to Rodeo!', message, null);
 	}),
 
 	/**
@@ -490,7 +470,7 @@ export const router = t.router({
 			});
 
 			// preconfigured templates, this structure will change later but is a proof of concept
-			const subject = 'Freetail Hackers Status Update.';
+			const subject = 'Freetail Hackers Status Update';
 
 			await prisma.$transaction([updateStatus, deleteDecision]);
 
@@ -544,7 +524,7 @@ export const router = t.router({
 			});
 
 			// preconfigured templates, this structure will change later but is a proof of concept
-			const subject = 'Freetail Hackers Status Update.';
+			const subject = 'Freetail Hackers Status Update';
 
 			await prisma.$transaction([updateStatus, deleteDecision]);
 
