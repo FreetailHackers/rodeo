@@ -2,6 +2,17 @@
 
 ## v0.3.0
 
+### ADDED
+
+- Acceptance email templates
+- Editable schedule
+- Notice on front page when applications are closed
+
+### CHANGED
+
+- Navbar is now mobile responsive
+- Login cookies now expire after 7 days
+
 ### FIXED
 
 - Too much padding around no announcements available text for non-admins
