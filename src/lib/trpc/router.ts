@@ -4,6 +4,7 @@ import sgMail from '@sendgrid/mail';
 import nodemailer from 'nodemailer';
 import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
 import { z } from 'zod';
+import { marked } from 'marked';
 import prisma from '$lib/trpc/db';
 import {
 	Prisma,
@@ -92,6 +93,7 @@ const sendEmail = async (
 ): Promise<string> => {
 	// Preface with warning if not in production
 	let warning = '';
+	message = marked.parse(message);
 	if (process.env.VERCEL_ENV !== 'production') {
 		// Only allow emails to YOPmail on staging
 		if (process.env.VERCEL_ENV === 'preview' && !recipient.endsWith('@yopmail.com')) {
