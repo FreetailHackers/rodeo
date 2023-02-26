@@ -106,7 +106,7 @@
 			padding: 0.5rem;
 		}
 
-		a {
+		#menu a {
 			display: inline;
 			width: initial;
 		}
