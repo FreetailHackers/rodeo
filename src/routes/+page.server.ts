@@ -15,7 +15,7 @@ export const actions: Actions = {
 		if (typeof email !== 'string') {
 			return { success: false, message: 'Please enter a valid email address.' };
 		}
-		return await trpc(cookies).createUser(email);
+		return await trpc(cookies).registerEmail(email);
 	},
 
 	logout: ({ cookies }) => {

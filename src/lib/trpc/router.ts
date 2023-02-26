@@ -303,7 +303,7 @@ export const router = t.router({
 	 * Creates a new user with the given email. Returns the success
 	 * status as a string.
 	 */
-	createUser: t.procedure.input(z.string()).mutation(async (req): Promise<string> => {
+	registerEmail: t.procedure.input(z.string()).mutation(async (req): Promise<string> => {
 		const email = req.input;
 
 		if (!email.match(/^\S+utexas.edu$/)) {
@@ -339,6 +339,41 @@ export const router = t.router({
 			Note that this will invalidate your previous link.`;
 		return await sendEmail(email, 'Welcome to Rodeo!', message, null);
 	}),
+
+	/**
+	 * Creates a new user with the given email. Logged-in user must be an admin.
+	 */
+	createUser: t.procedure
+		.input(z.object({ fullName: z.string(), email: z.string(), role: z.nativeEnum(Role) }))
+		.mutation(async (req): Promise<string> => {
+			// Generate a magic link
+			const chars = new Uint8Array(MAGIC_LINK_LENGTH);
+			crypto.getRandomValues(chars);
+			const magicLink = Array.from(chars)
+				.map((n) => CHARSET[n % CHARSET.length])
+				.join('');
+
+			// Create user and email magic link
+			try {
+				await prisma.user.create({
+					data: { magicLink: await hash(magicLink), ...req.input },
+				});
+			} catch (e) {
+				if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+					return 'User with this email already exists.';
+				}
+			}
+
+			// Send email with magic link
+			const link = `${process.env.DOMAIN_NAME}/login/${magicLink}`;
+			const message = `Please click on this link to log in to Rodeo: <a href="${link}">${link}</a>
+			<br>
+			<br>
+			Keep this email safe as anyone with this link can log in to your account.
+			If you misplace this email, you can always request a new link by registering again with this same email address.
+			Note that this will invalidate your previous link.`;
+			return await sendEmail(req.input.email, 'Welcome to Rodeo!', message, null);
+		}),
 
 	/**
 	 * Verify a user.
