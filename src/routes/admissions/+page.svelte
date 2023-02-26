@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import User from '$lib/components/user.svelte';
+	import UserCard from '$lib/components/userCard.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
@@ -10,7 +10,7 @@
 	<p>Congratulations! You've read every application.</p>
 {:else}
 	<h1>{data.user.fullName}</h1>
-	<User user={data.user} />
+	<UserCard user={data.user} />
 	<div id="form">
 		<div id="padding" />
 		<form method="POST" use:enhance>

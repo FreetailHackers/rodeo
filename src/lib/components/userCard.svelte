@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Prisma } from '@prisma/client';
 
-	export let user: Prisma.UserGetPayload<{ include: { decision: true } }>;
+	export let user: Partial<Prisma.UserGetPayload<{ include: { decision: true } }>>;
 </script>
 
 <p><b>EMAIL</b> <a href="mailto:{user.email}">{user.email}</a></p>

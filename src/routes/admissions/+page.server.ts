@@ -5,7 +5,7 @@ import type { Actions } from '../$types';
 import type { PageServerLoad } from './$types';
 
 export const load = (async ({ cookies }) => {
-	await authenticate(cookies, Role.ADMIN);
+	await authenticate(cookies, [Role.ADMIN]);
 	return { user: await trpc(cookies).getAppliedUser() };
 }) satisfies PageServerLoad;
 

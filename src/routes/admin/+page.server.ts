@@ -10,7 +10,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export const load = (async ({ cookies }) => {
-	await authenticate(cookies, Role.ADMIN);
+	await authenticate(cookies, [Role.ADMIN]);
 	return {
 		settings: await trpc(cookies).getAllSettings(),
 		decisions: await trpc(cookies).getDecisions(),

@@ -140,12 +140,12 @@ const sendEmail = async (
 
 export const router = t.router({
 	/**
-	 * Gets the logged in user.
+	 * Gets the logged in user, or a user by their *HASHED* magic link.
 	 */
-	getUser: t.procedure.query(async (req): Promise<User | null> => {
+	getUser: t.procedure.input(z.string().optional()).query(async (req): Promise<User | null> => {
 		return await prisma.user.findUnique({
 			where: {
-				magicLink: await hash(req.ctx.magicLink),
+				magicLink: req.input ?? (await hash(req.ctx.magicLink)),
 			},
 		});
 	}),

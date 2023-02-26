@@ -4,13 +4,15 @@
 
 ### ADDED
 
-- Acceptance email templates
+- Customizable acceptance email template
 - Editable schedule
 - Notice on front page when applications are closed
+- Ability for admins to create users
+- Basic Hacker ID implementation
 
 ### CHANGED
 
-- Navbar is now mobile responsive
+- Navbar is now mobile responsive and sticks to the top
 - Login cookies now expire after 7 days
 
 ### FIXED

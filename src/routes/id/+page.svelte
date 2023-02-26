@@ -1,7 +1,24 @@
 <script lang="ts">
 	import type { PageData } from './$types';
+	import QRCode from 'qrcode';
+	import { onMount } from 'svelte';
 
 	export let data: PageData;
+
+	let canvas: HTMLCanvasElement;
+
+	onMount(() => {
+		QRCode.toCanvas(canvas, data.user.magicLink, {
+			width: 300,
+		});
+	});
 </script>
 
-<p>Your Hacker ID is {data.user.id}.</p>
+<canvas bind:this={canvas} id="qrcode" />
+
+<style>
+	canvas {
+		display: block;
+		margin: 0 auto;
+	}
+</style>

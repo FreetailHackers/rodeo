@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import type { Prisma } from '@prisma/client';
 	import fuzzysort from 'fuzzysort';
-	import User from './user.svelte';
+	import UserCard from './userCard.svelte';
 
 	export let users: Prisma.UserGetPayload<{ include: { decision: true } }>[];
 	export let actions: string[];
@@ -89,7 +89,7 @@
 						<span class="{user.decision?.status.toLowerCase() ?? user.status.toLowerCase()} dot" />
 					</summary>
 					<div class="user">
-						<User {user} />
+						<UserCard {user} />
 					</div>
 				</details>
 			</li>

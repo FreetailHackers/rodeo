@@ -4,7 +4,7 @@ import { Role, Status } from '@prisma/client';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load = (async ({ cookies }) => {
-	await authenticate(cookies, Role.ADMIN);
+	await authenticate(cookies, [Role.ADMIN]);
 	return { users: await trpc(cookies).getUsers() };
 }) satisfies PageServerLoad;
 

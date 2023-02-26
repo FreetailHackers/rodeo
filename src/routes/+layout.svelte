@@ -30,8 +30,13 @@
 		<li><a href="/">Home</a></li>
 		<li><a href="/schedule">Schedule</a></li>
 		<li><a href="/info">Info</a></li>
+		{#if data.user}
+			<li><a href="/id">My Hacker ID</a></li>
+		{/if}
+		{#if data.user?.role === Role.ORGANIZER || data.user?.role === Role.ADMIN}
+			<li><a href="/scan">Scan</a></li>
+		{/if}
 		{#if data.user?.role === Role.HACKER}
-			<!-- <li><a href="/id">My Hacker ID</a></li> -->
 			<li><a href="/apply">Apply</a></li>
 		{:else if data.user?.role === Role.ADMIN}
 			<li><a href="/users">Users</a></li>
