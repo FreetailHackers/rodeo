@@ -83,6 +83,11 @@ model Event {
 enum Role {
   HACKER
   ADMIN
+  ORGANIZER // Same as VOLUNTEER but can scan Hacker IDs
+  MENTOR // Should have access to help queue
+  JUDGE // Should have access to judging
+  VOLUNTEER // Miscenalleous volunteer; only has access to Hacker ID
+  SPONSOR // Should have access to resumes
 }
 
 enum Status {
