@@ -29,7 +29,8 @@ export const actions: Actions = {
 		} catch (e) {
 			confirmBy = null;
 		}
-		await trpc(cookies).setSettings({ applicationOpen, confirmBy });
+		const acceptanceTemplate = formData.get('acceptanceTemplate') as string;
+		await trpc(cookies).setSettings({ applicationOpen, confirmBy, acceptanceTemplate });
 	},
 
 	release: async ({ cookies, request }) => {

@@ -76,18 +76,66 @@ const settingsSchema = z
 		confirmBy: z.date().nullable().optional(),
 		info: z.string().optional(),
 		rollingAdmissions: z.boolean().optional(),
+		acceptanceTemplate: z.string().optional(),
 	})
 	.strict();
-const defaultSettings: Settings = {
-	id: 0,
-	applicationOpen: true,
-	confirmBy: null,
-	info: '',
-	rollingAdmissions: false,
-};
 
 const getSettings = async (): Promise<Settings> => {
-	return (await prisma.settings.findUnique({ where: { id: 0 } })) ?? defaultSettings;
+	return await prisma.settings.findUniqueOrThrow({ where: { id: 0 } });
+};
+
+const sendEmail = async (
+	recipient: string,
+	subject: string,
+	message: string,
+	name: string | null
+): Promise<string> => {
+	// Preface with warning if not in production
+	let warning = '';
+	if (process.env.VERCEL_ENV !== 'production') {
+		// Only allow emails to YOPmail on staging
+		if (process.env.VERCEL_ENV === 'preview' && !recipient.endsWith('@yopmail.com')) {
+			return 'Only @yopmail.com addresses are allowed on staging.';
+		}
+		warning = `<h1>
+			WARNING: This email was sent from a testing environment.
+			Be careful when opening any links or attachments!
+			This message cannot be guaranteed to come from Freetail Hackers.
+			</h1>`;
+	}
+	const greeting = name ? `Hi ${name},` : 'Hi,';
+
+	const email = {
+		to: recipient,
+		from: 'hello@freetailhackers.com',
+		subject: subject,
+		html: `
+			${warning}
+			${greeting}
+			<br>
+			<br>
+			${message}
+			<br>
+			<br>
+			If you have any questions, you may email us at <a href="mailto:tech@freetailhackers.com">tech@freetailhackers.com</a>.
+			<br>
+			<br>
+			Best,
+			<br>
+			Freetail Hackers`,
+	};
+	try {
+		if (process.env.SENDGRID_KEY) {
+			await sgMail.send(email);
+		} else {
+			await transporter.sendMail(email);
+		}
+		return 'We sent an email to ' + recipient + '!';
+	} catch (error) {
+		console.error(error);
+		console.error(`To: ${recipient}, Subject: ${subject}, Message: ${message}`);
+		return 'There was an error sending the email. Please try again later.';
+	}
 };
 
 export const router = t.router({
@@ -283,38 +331,13 @@ export const router = t.router({
 
 		// Send email with magic link
 		const link = `${process.env.DOMAIN_NAME}/login/${magicLink}`;
-		const msg = {
-			to: email,
-			from: 'hello@freetailhackers.com',
-			subject: 'Welcome to Rodeo!',
-			html: `Please click on this link to log in to Rodeo: <a href="${link}">${link}</a>
+		const message = `Please click on this link to log in to Rodeo: <a href="${link}">${link}</a>
 			<br>
 			<br>
 			Keep this email safe as anyone with this link can log in to your account.
 			If you misplace this email, you can always request a new link by registering again with this same email address.
-			Note that this will invalidate your previous link.
-			<br>
-			<br>
-			If you need any help, you may email us at <a href="mailto:tech@freetailhackers.com">tech@freetailhackers.com</a>.
-			Thanks and happy hacking!
-			<br>
-			<br>
-			Best,
-			<br>
-			Freetail Hackers`,
-		};
-		try {
-			if (process.env.SENDGRID_KEY) {
-				await sgMail.send(msg);
-			} else {
-				await transporter.sendMail(msg);
-			}
-			return 'We sent a magic login link to your email!';
-		} catch (error) {
-			console.error(error);
-			console.log('Could not send email. Magic link is: ' + magicLink);
-			return 'An unknown error occurred. Please try again later.';
-		}
+			Note that this will invalidate your previous link.`;
+		return sendEmail(email, 'Welcome to Rodeo!', message, null);
 	}),
 
 	/**
@@ -447,7 +470,24 @@ export const router = t.router({
 					id: decision.id,
 				},
 			});
+
+			const recipient = await prisma.user.findUniqueOrThrow({
+				where: {
+					id: decision.userId,
+				},
+			});
+
+			// preconfigured templates, this structure will change later but is a proof of concept
+			const subject = 'Freetail Hackers Status Update';
+
 			await prisma.$transaction([updateStatus, deleteDecision]);
+
+			sendEmail(
+				recipient.email,
+				subject,
+				(await getSettings()).acceptanceTemplate,
+				recipient.fullName
+			);
 		}
 	}),
 
@@ -484,7 +524,24 @@ export const router = t.router({
 					id: decision.id,
 				},
 			});
+
+			const recipient = await prisma.user.findUniqueOrThrow({
+				where: {
+					id: id,
+				},
+			});
+
+			// preconfigured templates, this structure will change later but is a proof of concept
+			const subject = 'Freetail Hackers Status Update';
+
 			await prisma.$transaction([updateStatus, deleteDecision]);
+
+			sendEmail(
+				recipient.email,
+				subject,
+				(await getSettings()).acceptanceTemplate,
+				recipient.fullName
+			);
 		}
 	}),
 
