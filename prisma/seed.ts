@@ -127,6 +127,9 @@ async function main() {
 		});
 	}
 	await prisma.decision.createMany({ data: decisions });
+
+	// Create default settings
+	await prisma.settings.create({ data: {} });
 }
 
 // Quick and dirty seedable random number generator taken from https://stackoverflow.com/a/19303725/16458492

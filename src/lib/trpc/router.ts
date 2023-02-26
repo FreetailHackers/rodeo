@@ -337,7 +337,7 @@ export const router = t.router({
 			Keep this email safe as anyone with this link can log in to your account.
 			If you misplace this email, you can always request a new link by registering again with this same email address.
 			Note that this will invalidate your previous link.`;
-		return sendEmail(email, 'Welcome to Rodeo!', message, null);
+		return await sendEmail(email, 'Welcome to Rodeo!', message, null);
 	}),
 
 	/**
@@ -482,11 +482,13 @@ export const router = t.router({
 
 			await prisma.$transaction([updateStatus, deleteDecision]);
 
-			sendEmail(
+			await sendEmail(
 				recipient.email,
 				subject,
-				(await getSettings()).acceptanceTemplate,
-				recipient.fullName
+				(
+					await getSettings()
+				).acceptanceTemplate,
+				recipient.preferredName
 			);
 		}
 	}),
@@ -536,11 +538,13 @@ export const router = t.router({
 
 			await prisma.$transaction([updateStatus, deleteDecision]);
 
-			sendEmail(
+			await sendEmail(
 				recipient.email,
 				subject,
-				(await getSettings()).acceptanceTemplate,
-				recipient.fullName
+				(
+					await getSettings()
+				).acceptanceTemplate,
+				recipient.preferredName
 			);
 		}
 	}),
