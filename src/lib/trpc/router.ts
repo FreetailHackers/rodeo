@@ -306,7 +306,7 @@ export const router = t.router({
 	 * status as a string.
 	 */
 	registerEmail: t.procedure.input(z.string()).mutation(async (req): Promise<string> => {
-		const email = req.input;
+		const email = req.input.trim().toLowerCase();
 
 		if (!email.match(/^\S+utexas.edu$/)) {
 			return 'Please use your utexas.edu email address.';
@@ -346,7 +346,16 @@ export const router = t.router({
 	 * Creates a new user with the given email. Logged-in user must be an admin.
 	 */
 	createUser: t.procedure
-		.input(z.object({ fullName: z.string(), email: z.string(), role: z.nativeEnum(Role) }))
+		.input(
+			z.object({
+				fullName: z.string(),
+				email: z
+					.string()
+					.trim()
+					.transform((email) => email.toLowerCase()),
+				role: z.nativeEnum(Role),
+			})
+		)
 		.mutation(async (req): Promise<string> => {
 			// Generate a magic link
 			const chars = new Uint8Array(MAGIC_LINK_LENGTH);
