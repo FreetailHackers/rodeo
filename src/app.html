@@ -13,5 +13,19 @@
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>
+		<script src="https://plug.devrev.ai/freetailhackers/widget.js"></script>
+		<script>
+			window.addEventListener('load', function () {
+				const widget = new window.Plug({
+					auth: {
+						sessionToken:
+							'eyJhbGciOiJSUzI1NiIsImlzcyI6Imh0dHBzOi8vYXV0aC10b2tlbi5kZXZyZXYuYWkvIiwia2lkIjoic3RzX2tpZF9yc2EiLCJ0eXAiOiJKV1QifQ.eyJhdWQiOlsiamFudXMiXSwiZXhwIjoxNzA4MzkwNDMyLCJodHRwOi8vZGV2cmV2LmFpL2NsaWVudGlkIjoiNERyc0NMIiwiaHR0cDovL2RldnJldi5haS9kZXZvX2RvbiI6ImRvbjppZGVudGl0eTpkdnJ2LXVzLTE6ZGV2by9mb2VvUGkzaiIsImh0dHA6Ly9kZXZyZXYuYWkvZGV2b2lkIjoiREVWLWZvZW9QaTNqIiwiaHR0cDovL2RldnJldi5haS9zdmNhY2MiOiJkb246aWRlbnRpdHk6ZHZydi11cy0xOmRldm8vZm9lb1BpM2o6c3ZjYWNjLzREcnNDTCIsImh0dHA6Ly9kZXZyZXYuYWkvdG9rZW50eXBlIjoidXJuOmRldnJldjpwYXJhbXM6b2F1dGg6dG9rZW4tdHlwZTphYXQ6cHVibGljIiwiaWF0IjoxNjc2ODU0NDMyLCJpc3MiOiJodHRwczovL2F1dGgtdG9rZW4uZGV2cmV2LmFpLyIsImp0aSI6ImRvbjppZGVudGl0eTpkdnJ2LXVzLTE6ZGV2by9mb2VvUGkzajp0b2tlbi9UZVNHa1lNSCIsInN1YiI6ImRvbjppZGVudGl0eTpkdnJ2LXVzLTE6ZGV2by9mb2VvUGkzajpzdmNhY2MvNERyc0NMIn0.HQ4mDpOQvvOzLj5-fR63msmWHzmUirthrwJiQt80su1CBNacnG_M7fSYLt7SRwM8kHo82v5PM_saLetoz_mfveEh7AAsgXPJCOb798j-9eZVu6FoyuhAwWYJdFDfIJTR3J-4MyGzV7UCKaA3-QKN8O0uBNj0cEfwGRBCutdysPyR_kwZDBAeVweyrWsqOKsHXyDK154SwODHleKkGGyR3GBcNoljkwPH6VwAT5oqu0BOI-ZfQBUHi_5n4tpceEaihb1flaLtxs872c3BKmP-ZjrWAb4807uaajzFlSQW9_cQrGA5ijqWf7o0PLPAvz20BdV5OmeQWIfuh6v95IRQcA',
+					},
+					style: {
+						alignment: 'right',
+					},
+				});
+			});
+		</script>
 	</body>
 </html>
