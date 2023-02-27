@@ -4,6 +4,11 @@
 
 ### CHANGED
 
+- Added more user friendly explanation for 401 Unauthorized error page
+- Login cookies now expire after 90 days
+
+### FIXED
+
 - 401 error message now includes more details
 
 ## v0.3.0

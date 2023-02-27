@@ -3,7 +3,9 @@ import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load = (async ({ params, cookies }) => {
-	cookies.set('magicLink', params.magicLink, { path: '/', maxAge: 60 * 60 * 24 * 7 });
+	// Set the magic link cookie with a 90 day expiry
+	// This should cover the longest of registration periods
+	cookies.set('magicLink', params.magicLink, { path: '/', maxAge: 60 * 60 * 24 * 90 });
 	await trpc(cookies).verifyUser();
 	throw redirect(303, '/');
 }) satisfies PageServerLoad;
