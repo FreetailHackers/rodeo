@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.1
+
+### CHANGED
+
+- 401 error message now includes more details
+
 ## v0.3.0
 
 ### ADDED
