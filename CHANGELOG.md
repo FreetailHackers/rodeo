@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.3.3
+
+### CHANGED
+
+- More user friendly 401 message with link to login page
+
+### FIXED
+
+- Require all fields in create new user form to prevent error 500s
+
 ## v0.3.2
 
 ### CHANGED

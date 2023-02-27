@@ -158,22 +158,27 @@ dialog form {
 	justify-content: flex-end;
 }
 
-dialog::backdrop {
-	backdrop-filter: blur(1px) brightness(0.75);
+dialog button {
+	padding: 0 1rem;
+	margin-left: 1rem;
+	text-transform: capitalize;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 450px) {
 	dialog {
 		margin-block-end: 0;
+		width: 100%;
 	}
 
 	dialog form {
 		flex-direction: column;
 	}
+
+	dialog button {
+		margin-left: 0;
+	}
 }
 
-dialog button {
-	padding: 0 1rem;
-	margin-left: 1rem;
-	text-transform: capitalize;
+dialog::backdrop {
+	backdrop-filter: blur(1px) brightness(0.75);
 }

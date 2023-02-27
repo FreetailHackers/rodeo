@@ -59,7 +59,7 @@
 			placeholder="student@example.edu"
 			required
 		/>
-		<button>Register</button>
+		<button>Continue</button>
 	</form>
 	{#if form}
 		<p>{form}</p>

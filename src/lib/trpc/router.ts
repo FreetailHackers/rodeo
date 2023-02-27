@@ -302,10 +302,11 @@ export const router = t.router({
 		}),
 
 	/**
-	 * Creates a new user with the given email. Returns the success
-	 * status as a string.
+	 * Creates a new user with the given email, or generates a new magic
+	 * link if they already exist. Returns the success status as a
+	 * string.
 	 */
-	registerEmail: t.procedure.input(z.string()).mutation(async (req): Promise<string> => {
+	loginWithEmail: t.procedure.input(z.string()).mutation(async (req): Promise<string> => {
 		const email = req.input.trim().toLowerCase();
 
 		if (!email.match(/^\S+utexas.edu$/)) {
