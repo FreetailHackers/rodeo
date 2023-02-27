@@ -6,6 +6,7 @@
 
 - Added more user friendly explanation for 401 Unauthorized error page
 - Login cookies now expire after 90 days
+- Restrict Hacker ID to non-hackers and confirmed hackers
 
 ### FIXED
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Role } from '@prisma/client';
+	import { Role, Status } from '@prisma/client';
 	import { onMount } from 'svelte';
 	import type { LayoutData } from './$types';
 	import './global.css';
@@ -30,7 +30,8 @@
 		<li><a href="/">Home</a></li>
 		<li><a href="/schedule">Schedule</a></li>
 		<li><a href="/info">Info</a></li>
-		{#if data.user}
+		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->
+		{#if data.user?.role !== Role.HACKER || data.user?.status === Status.CONFIRMED}
 			<li><a href="/id">My Hacker ID</a></li>
 		{/if}
 		{#if data.user?.role === Role.ORGANIZER || data.user?.role === Role.ADMIN}
