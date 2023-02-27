@@ -68,6 +68,7 @@ model Settings {
   // PRIVATE SETTINGS (settings that non-admins do not need)
   rollingAdmissions  Boolean   @default(false)
   acceptanceTemplate String    @default("You have been accepted to our hackathon!")
+  hackerLimit Int @default(0)
 }
 
 model Event {

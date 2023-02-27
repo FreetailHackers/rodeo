@@ -77,6 +77,7 @@ const settingsSchema = z
 		info: z.string().optional(),
 		rollingAdmissions: z.boolean().optional(),
 		acceptanceTemplate: z.string().optional(),
+		
 	})
 	.strict();
 
