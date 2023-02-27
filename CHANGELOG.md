@@ -6,6 +6,7 @@
 
 - Login cookies now expire after 90 days
 - Restrict Hacker ID to non-hackers and confirmed hackers
+- Confirmation dialog for confirming and declining admission
 
 ## v0.3.1
 

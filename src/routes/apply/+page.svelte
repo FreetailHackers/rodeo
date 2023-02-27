@@ -77,6 +77,8 @@
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 	let saveButton: HTMLButtonElement;
 	let saveButtonText = typeof form === 'string' ? form : 'Save';
+	let confirmAction = '';
+	let dialog: HTMLDialogElement;
 </script>
 
 <!-- Application status dialog -->
@@ -121,9 +123,30 @@
 					})} to secure your spot. If you know you will not be able to attend, please decline so we can
 					offer your spot to someone else.
 				</p>
-				<form method="POST" id="rsvp" use:enhance>
-					<button formaction="?/confirm">Confirm</button>
-					<button formaction="?/decline">Decline</button>
+				<form method="POST" id="rsvp" use:enhance={({ cancel }) => cancel()}>
+					<button
+						formaction="?/decline"
+						on:click={() => {
+							confirmAction = 'decline';
+							dialog.showModal();
+						}}>Decline</button
+					>
+					<button
+						formaction="?/confirm"
+						on:click={() => {
+							confirmAction = 'confirm';
+							dialog.showModal();
+						}}>Confirm</button
+					>
+					<dialog bind:this={dialog}>
+						<p>
+							Are you sure you want to {confirmAction} your attendance?
+						</p>
+						<form method="POST" use:enhance>
+							<button type="button" on:click={() => dialog.close()}>Cancel</button>
+							<button formaction={'?/' + confirmAction}>{confirmAction}</button>
+						</form>
+					</dialog>
 				</form>
 			{:else}
 				<p>
@@ -138,8 +161,19 @@
 			Glad you could make it! If you change your mind, please decline so we can offer your spot to
 			someone else. We look forward to seeing you at the event!
 		</p>
-		<form method="POST" use:enhance action="?/decline">
-			<button>Decline</button>
+		<form method="POST" use:enhance={({ cancel }) => cancel()} action="?/decline">
+			<button
+				on:click={() => {
+					dialog.showModal();
+				}}>Decline</button
+			>
+			<dialog bind:this={dialog}>
+				<p>Are you sure you want to decline your attendance?</p>
+				<form method="POST" use:enhance>
+					<button type="button" on:click={() => dialog.close()}>Cancel</button>
+					<button formaction="?/decline">Decline</button>
+				</form>
+			</dialog>
 		</form>
 	{:else if data.user.status === Status.DECLINED}
 		<h1>DECLINED</h1>

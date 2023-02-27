@@ -145,3 +145,35 @@ blockquote {
 	padding-left: 1rem;
 	border-left: 4px solid black;
 }
+
+dialog {
+	min-width: 20rem;
+	max-width: 40rem;
+	padding: 0 1rem;
+	box-shadow: 0.5rem 0.5rem 1rem rgba(0, 0, 0, 1);
+}
+
+dialog form {
+	flex-direction: row;
+	justify-content: flex-end;
+}
+
+dialog::backdrop {
+	backdrop-filter: blur(1px) brightness(0.75);
+}
+
+@media (max-width: 768px) {
+	dialog {
+		margin-block-end: 0;
+	}
+
+	dialog form {
+		flex-direction: column;
+	}
+}
+
+dialog button {
+	padding: 0 1rem;
+	margin-left: 1rem;
+	text-transform: capitalize;
+}
