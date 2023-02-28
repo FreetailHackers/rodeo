@@ -8,6 +8,17 @@ generator client {
   previewFeatures = ["extendedWhereUnique"]
 }
 
+model HelpTicket {
+  id                    Int       @id @default(autoincrement())
+  userId                Int
+  detail                String
+  summary               String
+  location              String?
+  priority              String[]
+  status                Boolean
+  timestamp             DateTime
+}
+
 model User {
   id                    Int       @id @default(autoincrement())
   email                 String    @unique
