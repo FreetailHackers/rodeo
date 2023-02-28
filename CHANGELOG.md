@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.4
+
+### CHANGED
+
+- Keep track of how many times ID has been scanned per action
+
 ## v0.3.3
 
 ### CHANGED
