@@ -409,6 +409,31 @@ export const router = t.router({
 	}),
 
 	/**
+	 * Scan a user's Hacker ID for the given action. Logged-in user must
+	 * be an admin.
+	 */
+	scanUser: t.procedure
+		.input(z.object({ magicLink: z.string(), action: z.string() }))
+		.mutation(async (req): Promise<void> => {
+			const scanCount = (
+				await prisma.user.findUniqueOrThrow({
+					where: {
+						magicLink: req.input.magicLink,
+					},
+				})
+			).scanCount as Prisma.JsonObject;
+			const scans = Number(scanCount[req.input.action] ?? 0);
+			await prisma.user.update({
+				where: {
+					magicLink: req.input.magicLink,
+				},
+				data: {
+					scanCount: { ...scanCount, [req.input.action]: scans + 1 },
+				},
+			});
+		}),
+
+	/**
 	 * Bulk accepts, rejects, or waitlists a list of IDs of users with
 	 * submitted applications. User must be an admin.
 	 */

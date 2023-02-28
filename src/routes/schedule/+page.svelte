@@ -25,7 +25,7 @@
 	export let data: PageData;
 </script>
 
-<h2>Schedule</h2>
+<h1>Schedule</h1>
 <div class="schedule">
 	<div class="legend">
 		<mark class="Regular-Event">Regular Event</mark>

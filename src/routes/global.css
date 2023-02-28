@@ -155,12 +155,11 @@ dialog {
 
 dialog form {
 	flex-direction: row;
-	justify-content: flex-end;
+	gap: 1rem;
 }
 
 dialog button {
-	padding: 0 1rem;
-	margin-left: 1rem;
+	flex-grow: 1;
 	text-transform: capitalize;
 }
 
@@ -172,10 +171,7 @@ dialog button {
 
 	dialog form {
 		flex-direction: column;
-	}
-
-	dialog button {
-		margin-left: 0;
+		gap: 0;
 	}
 }
 
