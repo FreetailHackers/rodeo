@@ -1,13 +1,11 @@
 # Changelog
 
-## v0.3.5
+## v0.3.4
 
 ### ADDED
 
 - Admins can now instant-confirm walk-ins from the user list
 - More descriptive and color-coded QR code error messages
-
-## v0.3.4
 
 ### CHANGED
 
