@@ -410,11 +410,19 @@ export const router = t.router({
 
 	/**
 	 * Scan a user's Hacker ID for the given action. Logged-in user must
-	 * be an admin.
+	 * be an organizer or admin.
 	 */
 	scanUser: t.procedure
 		.input(z.object({ magicLink: z.string(), action: z.string() }))
 		.mutation(async (req): Promise<void> => {
+			const user = await prisma.user.findUniqueOrThrow({
+				where: {
+					magicLink: await hash(req.ctx.magicLink),
+				},
+			});
+			if (user.role !== Role.ORGANIZER && user.role !== Role.ADMIN) {
+				throw new Error('You have insufficient permissions to perform this action.');
+			}
 			const scanCount = (
 				await prisma.user.findUniqueOrThrow({
 					where: {
