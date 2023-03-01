@@ -477,6 +477,45 @@ export const router = t.router({
 		}),
 
 	/**
+	 * Confirms walk-in users who have applied. Logged-in user must be an admin.
+	 */
+	confirmWalkIns: t.procedure.input(z.array(z.number())).mutation(async (req): Promise<void> => {
+		const user = await prisma.user.findUniqueOrThrow({
+			where: {
+				magicLink: await hash(req.ctx.magicLink),
+			},
+		});
+		if (user.role !== Role.ADMIN) {
+			throw new Error('You have insufficient permissions to perform this action.');
+		}
+		for (const id of req.input) {
+			const user = await prisma.user.findUniqueOrThrow({
+				where: {
+					id: id,
+				},
+			});
+			// NOTE: This if statement is a good argument for why each status should be a boolean
+			// Then we could just check if the user has applied at some point
+			if (user.status !== Status.CREATED && user.status !== Status.VERIFIED) {
+				// Use deleteMany to avoid not found errors
+				await prisma.decision.deleteMany({
+					where: {
+						userId: id,
+					},
+				});
+				await prisma.user.update({
+					where: {
+						id: id,
+					},
+					data: {
+						status: Status.CONFIRMED,
+					},
+				});
+			}
+		}
+	}),
+
+	/**
 	 * Gets all decisions. User must be an admin.
 	 */
 	getDecisions: t.procedure.query(

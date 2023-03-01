@@ -9,7 +9,7 @@
 
 	onMount(() => {
 		QRCode.toCanvas(canvas, data.user.magicLink, {
-			width: 300,
+			width: 250,
 		});
 	});
 </script>

@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import UserCard from '$lib/components/userCard.svelte';
 	import { trpc } from '$lib/trpc/client';
-	import type { User } from '@prisma/client';
+	import { Role, Status, type User } from '@prisma/client';
 	import { Html5Qrcode, Html5QrcodeScannerState } from 'html5-qrcode';
 	import { onDestroy } from 'svelte';
 
@@ -49,13 +49,22 @@
 </section>
 <div id="reader" />
 <dialog bind:this={dialog}>
-	{#if user !== null}
+	{#if user === null}
+		<p class="error">Could not find this user in the database.</p>
+		<button type="button" on:click={() => dialog.close()}>Close</button>
+	{:else if user.role === Role.HACKER && user.status !== Status.CONFIRMED}
+		<p class="error">This user has not confirmed their attendance.</p>
+		<button type="button" on:click={() => dialog.close()}>Close</button>
+	{:else}
 		<br />
 		<details>
 			<summary>{user.fullName}</summary>
 			<UserCard {user} />
 		</details>
-		<p>This user has scanned for {action} {scanCount[action] ?? 0} times.</p>
+		<p class={(scanCount[action] ?? 0) == 0 ? 'success' : 'error'}>
+			This user has scanned for {action}
+			{scanCount[action] ?? 0} times.
+		</p>
 		<form method="POST" action="?/scan" use:enhance>
 			<button type="button" on:click={() => dialog.close()}>Cancel</button>
 			<input type="hidden" name="magicLink" value={user.magicLink} />
@@ -75,5 +84,13 @@
 	button {
 		width: 100%;
 		margin-bottom: 1rem;
+	}
+
+	.error {
+		color: red;
+	}
+
+	.success {
+		color: green;
 	}
 </style>

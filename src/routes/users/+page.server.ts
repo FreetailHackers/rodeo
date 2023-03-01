@@ -31,4 +31,9 @@ export const actions: Actions = {
 		const ids = [...(await request.formData()).keys()].map((id) => Number(id));
 		await trpc(cookies).decideUsers({ decision: Status.WAITLISTED, ids });
 	},
+
+	confirm: async ({ cookies, request }) => {
+		const ids = [...(await request.formData()).keys()].map((id) => Number(id));
+		await trpc(cookies).confirmWalkIns(ids);
+	},
 };

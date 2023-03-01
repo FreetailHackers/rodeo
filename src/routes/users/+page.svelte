@@ -28,4 +28,4 @@
 {/if}
 
 <h1>Master Database</h1>
-<Users users={data.users} actions={['accept', 'reject', 'waitlist']} />
+<Users users={data.users} actions={['accept', 'confirm']} />
