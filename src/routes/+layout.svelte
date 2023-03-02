@@ -6,7 +6,7 @@
 
 	export let data: LayoutData;
 
-	let menu: HTMLUListElement;
+	let menu: HTMLMenuElement;
 	let hamburgerCheckbox: HTMLInputElement;
 
 	onMount(() => {
@@ -26,7 +26,7 @@
 		bind:this={hamburgerCheckbox}
 		style="display: none"
 	/>
-	<ul id="menu" bind:this={menu}>
+	<menu id="menu" bind:this={menu}>
 		<li><a href="/">Home</a></li>
 		<li><a href="/schedule">Schedule</a></li>
 		<li><a href="/info">Info</a></li>
@@ -44,7 +44,8 @@
 			<li><a href="/admin">Admin</a></li>
 			<li><a href="/admissions">Admissions</a></li>
 		{/if}
-	</ul>
+		<li><a href="/feedback">Feedback</a></li>
+	</menu>
 	<hr />
 </nav>
 
@@ -68,7 +69,7 @@
 		z-index: 99;
 	}
 
-	#menu {
+	menu {
 		display: none;
 		list-style: none;
 		padding: 0;
@@ -80,12 +81,12 @@
 		padding-top: 1rem;
 	}
 
-	#hamburgerCheckbox:checked + #menu {
+	#hamburgerCheckbox:checked + menu {
 		display: flex;
 		flex-direction: column;
 	}
 
-	#menu a {
+	menu a {
 		display: block;
 		width: 100%;
 		padding: 0.75rem 0;
@@ -96,18 +97,18 @@
 			display: none;
 		}
 
-		#menu {
+		menu {
 			margin: 0;
 			padding-top: 1rem;
 			display: flex;
 		}
 
-		#menu li + li::before {
+		menu li + li::before {
 			content: '|';
 			padding: 0.5rem;
 		}
 
-		#menu a {
+		menu a {
 			display: inline;
 			width: initial;
 		}
