@@ -114,11 +114,7 @@ const sendEmail = async (
 		html: `
 			${warning}
 			${greeting}
-			<br>
-			<br>
 			${message}
-			<br>
-			<br>
 			If you have any questions, you may email us at <a href="mailto:tech@freetailhackers.com">tech@freetailhackers.com</a>.
 			<br>
 			<br>
