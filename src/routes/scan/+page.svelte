@@ -11,16 +11,21 @@
 
 	let action = '';
 	let user: User | null = null;
+	let totalScans: number;
 
-	$: if (action === '') {
-		if (html5QrCode?.getState() === Html5QrcodeScannerState.SCANNING) {
-			html5QrCode?.stop();
+	async function scan(action: string) {
+		if (action === '') {
+			if (html5QrCode?.getState() === Html5QrcodeScannerState.SCANNING) {
+				html5QrCode?.stop();
+			}
+		} else {
+			html5QrCode = new Html5Qrcode('reader');
+			const config = { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1 };
+			html5QrCode.start({ facingMode: 'environment' }, config, handleScan, () => undefined);
+			totalScans = await trpc().getScanCount.query(action);
 		}
-	} else {
-		html5QrCode = new Html5Qrcode('reader');
-		const config = { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1 };
-		html5QrCode.start({ facingMode: 'environment' }, config, handleScan, () => undefined);
 	}
+	$: scan(action);
 	$: scanCount = user?.scanCount as Record<string, number>;
 
 	async function handleScan(decodedText: string) {
@@ -28,6 +33,7 @@
 			return;
 		}
 		user = await trpc().getUser.query(decodedText);
+		totalScans = await trpc().getScanCount.query(action);
 		dialog?.showModal();
 	}
 
@@ -48,6 +54,9 @@
 	{/if}
 </section>
 <div id="reader" />
+{#if action !== ''}
+	<p>{totalScans} hackers have scanned for this action.</p>
+{/if}
 <dialog bind:this={dialog}>
 	{#if user === null}
 		<p class="error">Could not find this user in the database.</p>
@@ -65,6 +74,7 @@
 			This user has scanned for {action}
 			{scanCount[action] ?? 0} times.
 		</p>
+		<p>{totalScans} hackers have scanned for this action.</p>
 		<form method="POST" action="?/scan" use:enhance>
 			<button type="button" on:click={() => dialog.close()}>Cancel</button>
 			<input type="hidden" name="magicLink" value={user.magicLink} />

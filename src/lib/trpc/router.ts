@@ -438,6 +438,37 @@ export const router = t.router({
 		}),
 
 	/**
+	 * Returns the number of hackers who have scanned for the given
+	 * action at least once. Logged-in user must be an organizer or
+	 * admin.
+	 */
+	getScanCount: t.procedure.input(z.string()).query(async (req): Promise<number> => {
+		const user = await prisma.user.findUniqueOrThrow({
+			where: {
+				magicLink: await hash(req.ctx.magicLink),
+			},
+		});
+		if (user.role !== Role.ORGANIZER && user.role !== Role.ADMIN) {
+			throw new Error('You have insufficient permissions to perform this action.');
+		}
+		return await prisma.user.count({
+			where: {
+				AND: [
+					{
+						role: Role.HACKER,
+					},
+					{
+						scanCount: {
+							path: [req.input],
+							gt: 0,
+						},
+					},
+				],
+			},
+		});
+	}),
+
+	/**
 	 * Bulk accepts, rejects, or waitlists a list of IDs of users with
 	 * submitted applications. User must be an admin.
 	 */
