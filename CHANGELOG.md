@@ -6,6 +6,7 @@
 
 - Admins can now instant-confirm walk-ins from the user list
 - More descriptive and color-coded QR code error messages
+- Counter of total number of hackers that have scanned an action
 
 ### CHANGED
 
