@@ -12,6 +12,10 @@
 
 - Keep track of how many times ID has been scanned per action
 
+### FIXED
+
+- Image overflowing containers
+
 ## v0.3.3
 
 ### CHANGED

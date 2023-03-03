@@ -178,3 +178,7 @@ dialog button {
 dialog::backdrop {
 	backdrop-filter: blur(1px) brightness(0.75);
 }
+
+img {
+	max-width: 100%;
+}
