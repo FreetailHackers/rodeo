@@ -2,9 +2,8 @@
 	import { enhance } from '$app/forms';
 	import { Role } from '@prisma/client';
 	import SvelteMarkdown from 'svelte-markdown';
-	import type { PageData } from './$types';
 
-	export let data: PageData;
+	export let data;
 
 	const placeholder = `This text can be formatted with Markdown. Syntax examples:
 

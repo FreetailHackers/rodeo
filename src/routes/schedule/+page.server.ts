@@ -1,5 +1,5 @@
 import { trpc } from '$lib/trpc/router';
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions } from './$types';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -7,12 +7,12 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const load = (async ({ cookies }) => {
+export const load = async ({ cookies }) => {
 	return {
 		schedule: await trpc(cookies).getSchedule(),
 		user: await trpc(cookies).getUser(),
 	};
-}) satisfies PageServerLoad;
+};
 
 export const actions: Actions = {
 	schedule: async ({ cookies, request }) => {

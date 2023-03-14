@@ -1,9 +1,8 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import QRCode from 'qrcode';
 	import { onMount } from 'svelte';
 
-	export let data: PageData;
+	export let data;
 
 	let canvas: HTMLCanvasElement;
 

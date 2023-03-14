@@ -1,18 +1,18 @@
 import authenticate from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions } from './$types';
 import { Role } from '@prisma/client';
 import { redirect } from '@sveltejs/kit';
 
 const FILE_SIZE_LIMIT = 1 * 1024 * 1024; // 1 MB
 
-export const load = (async ({ cookies }) => {
+export const load = async ({ cookies }) => {
 	const user = await authenticate(cookies, [Role.HACKER]);
 	return {
 		user,
 		settings: trpc(cookies).getPublicSettings(),
 	};
-}) satisfies PageServerLoad;
+};
 
 export const actions: Actions = {
 	save: async ({ cookies, request }) => {

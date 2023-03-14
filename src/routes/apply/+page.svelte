@@ -6,9 +6,9 @@
 	import Radio from '$lib/components/radio.svelte';
 	import { trpc } from '$lib/trpc/client';
 	import { Status } from '@prisma/client';
-	import type { ActionData, PageData } from './$types';
+	import type { ActionData } from './$types';
 
-	export let data: PageData;
+	export let data;
 	export let form: ActionData;
 
 	const nullToUndefined = (object: object) => {

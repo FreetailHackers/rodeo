@@ -2,9 +2,9 @@
 	import { enhance } from '$app/forms';
 	import Announcements from '$lib/components/announcements.svelte';
 	import { Role } from '@prisma/client';
-	import type { ActionData, PageData } from './$types';
+	import type { ActionData } from './$types';
 
-	export let data: PageData;
+	export let data;
 	export let form: ActionData;
 
 	let email: string;

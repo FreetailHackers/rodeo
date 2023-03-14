@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { PageData } from './$types';
 	import Dropdown from '$lib/components/dropdown.svelte';
 	import { Role, type Event } from '@prisma/client';
 	import { trpc } from '$lib/trpc/client';
@@ -22,7 +21,7 @@
 		event = await trpc().getEvent.query(id);
 	}
 
-	export let data: PageData;
+	export let data;
 </script>
 
 <h1>Schedule</h1>

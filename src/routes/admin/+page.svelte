@@ -2,9 +2,8 @@
 	import { enhance } from '$app/forms';
 	import Toggle from '$lib/components/toggle.svelte';
 	import Users from '$lib/components/users.svelte';
-	import type { PageData } from './$types';
 
-	export let data: PageData;
+	export let data;
 
 	let saveButtonText = 'Save';
 	let releaseConfirm = false;

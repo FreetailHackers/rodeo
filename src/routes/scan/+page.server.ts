@@ -1,11 +1,11 @@
 import authenticate from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import { Role } from '@prisma/client';
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions } from './$types';
 
-export const load = (async ({ cookies }) => {
+export const load = async ({ cookies }) => {
 	await authenticate(cookies, [Role.ORGANIZER, Role.ADMIN]);
-}) satisfies PageServerLoad;
+};
 
 export const actions: Actions = {
 	scan: async ({ cookies, request }) => {

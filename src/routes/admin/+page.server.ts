@@ -1,7 +1,7 @@
 import authenticate from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import { Role } from '@prisma/client';
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions } from './$types';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -9,13 +9,13 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const load = (async ({ cookies }) => {
+export const load = async ({ cookies }) => {
 	await authenticate(cookies, [Role.ADMIN]);
 	return {
 		settings: await trpc(cookies).getAllSettings(),
 		decisions: await trpc(cookies).getDecisions(),
 	};
-}) satisfies PageServerLoad;
+};
 
 export const actions: Actions = {
 	settings: async ({ cookies, request }) => {

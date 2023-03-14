@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { Role, Status } from '@prisma/client';
 	import { onMount } from 'svelte';
-	import type { LayoutData } from './$types';
 	import './global.css';
 
-	export let data: LayoutData;
+	export let data;
 
 	let menu: HTMLMenuElement;
 	let hamburgerCheckbox: HTMLInputElement;

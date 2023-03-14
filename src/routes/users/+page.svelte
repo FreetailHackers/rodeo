@@ -2,9 +2,9 @@
 	import { enhance } from '$app/forms';
 	import Dropdown from '$lib/components/dropdown.svelte';
 	import Users from '$lib/components/users.svelte';
-	import type { ActionData, PageData } from './$types';
+	import type { ActionData } from './$types';
 
-	export let data: PageData;
+	export let data;
 	export let form: ActionData;
 </script>
 

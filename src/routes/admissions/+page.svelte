@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import UserCard from '$lib/components/userCard.svelte';
-	import type { PageData } from './$types';
 
-	export let data: PageData;
+	export let data;
 </script>
 
 {#if data.user === null}

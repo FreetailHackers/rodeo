@@ -1,12 +1,12 @@
 import { trpc } from '$lib/trpc/router';
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions } from './$types';
 
-export const load = (async ({ cookies }) => {
+export const load = async ({ cookies }) => {
 	return {
 		user: await trpc(cookies).getUser(),
 		info: (await trpc(cookies).getPublicSettings()).info,
 	};
-}) satisfies PageServerLoad;
+};
 
 export const actions: Actions = {
 	default: async ({ cookies, request }) => {
