@@ -24,11 +24,10 @@ deploy-staging-job:
     url: https://$STAGING_URL
   script:
     - npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
-    - mv .vercel/.env.preview.local .env
+    - mv .vercel/.env.preview.local .env # Needed for prisma migrate deploy
+    - export $(xargs < .env) # Needed to correctly set $DOMAIN_URL
     - npx prisma migrate deploy
-    - echo $DOMAIN_NAME
     - npx vercel deploy --token=$VERCEL_TOKEN > domain.txt
-    - echo $DOMAIN_NAME
     - npx vercel alias --token=$VERCEL_TOKEN set `cat domain.txt` `echo $DOMAIN_NAME | awk -F// '{print $NF}'` # Must remove https:// for vercel alias to work
     - rm .env domain.txt
 
@@ -42,7 +41,8 @@ deploy-production-job:
   when: manual
   script:
     - npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-    - mv .vercel/.env.production.local .env
+    - mv .vercel/.env.production.local .env # Needed for prisma migrate deploy
+    - export $(xargs < .env) # Needed to correctly set $DOMAIN_URL
     - npx prisma migrate deploy
     - npx vercel deploy --prod --token=$VERCEL_TOKEN > domain.txt
     - npx vercel alias --token=$VERCEL_TOKEN set `cat domain.txt` $(echo $DOMAIN_NAME | awk -F// '{print $NF}') # Must remove https:// for vercel alias to work
