@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.3.5
+
+### FIXED
+
+- Unauthenticated users can no longer create admin accounts
+
 ## v0.3.4
 
 ### ADDED
