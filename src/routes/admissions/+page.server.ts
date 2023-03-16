@@ -5,22 +5,22 @@ import type { Actions } from './$types';
 
 export const load = async ({ cookies }) => {
 	await authenticate(cookies, [Role.ADMIN]);
-	return { user: await trpc(cookies).getAppliedUser() };
+	return { user: await trpc(cookies).admissions.getAppliedUser() };
 };
 
 export const actions: Actions = {
 	accept: async ({ cookies, request }) => {
 		const id = Number((await request.formData()).get('id'));
-		await trpc(cookies).decideUsers({ decision: Status.ACCEPTED, ids: [id] });
+		await trpc(cookies).admissions.decide({ decision: Status.ACCEPTED, ids: [id] });
 	},
 
 	reject: async ({ cookies, request }) => {
 		const id = Number((await request.formData()).get('id'));
-		await trpc(cookies).decideUsers({ decision: Status.REJECTED, ids: [id] });
+		await trpc(cookies).admissions.decide({ decision: Status.REJECTED, ids: [id] });
 	},
 
 	waitlist: async ({ cookies, request }) => {
 		const id = Number((await request.formData()).get('id'));
-		await trpc(cookies).decideUsers({ decision: Status.WAITLISTED, ids: [id] });
+		await trpc(cookies).admissions.decide({ decision: Status.WAITLISTED, ids: [id] });
 	},
 };

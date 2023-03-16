@@ -9,8 +9,8 @@ dayjs.extend(timezone);
 
 export const load = async ({ cookies }) => {
 	return {
-		schedule: await trpc(cookies).getSchedule(),
-		user: await trpc(cookies).getUser(),
+		schedule: await trpc(cookies).events.getAll(),
+		user: await trpc(cookies).users.get(),
 	};
 };
 
@@ -25,7 +25,7 @@ export const actions: Actions = {
 			.tz(formData.get('end') as string, formData.get('timezone') as string)
 			.toDate();
 
-		await trpc(cookies).addScheduleEvent({
+		await trpc(cookies).events.create({
 			name: formData.get('name') as string,
 			description: formData.get('description') as string,
 			start: fixedStartTime,
@@ -41,6 +41,6 @@ export const actions: Actions = {
 		if (typeof id !== 'string') {
 			throw new Error('Invalid announcement ID.');
 		}
-		await trpc(cookies).deleteEvent(Number(id));
+		await trpc(cookies).events.delete(Number(id));
 	},
 };

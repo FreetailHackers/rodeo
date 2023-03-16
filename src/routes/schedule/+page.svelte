@@ -9,7 +9,7 @@
 
 	async function finishedEditing() {
 		if (event !== null) {
-			await trpc().deleteEvent.mutate(event.id);
+			await trpc().events.delete.mutate(event.id);
 			event = null;
 		}
 		window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -18,7 +18,7 @@
 	async function editEvent(id: number) {
 		window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 		statusText = 'Edit Event';
-		event = await trpc().getEvent.query(id);
+		event = await trpc().events.get.query(id);
 	}
 
 	export let data;

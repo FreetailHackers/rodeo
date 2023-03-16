@@ -5,7 +5,7 @@ import type { Actions } from './$types';
 
 export const load = async ({ cookies }) => {
 	await authenticate(cookies, [Role.ADMIN]);
-	return { users: await trpc(cookies).getUsers() };
+	return { users: await trpc(cookies).users.getAll() };
 };
 
 export const actions: Actions = {
@@ -14,26 +14,26 @@ export const actions: Actions = {
 		const fullName = formData.get('fullName') as string;
 		const email = formData.get('email') as string;
 		const role = formData.get('role') as Role;
-		return await trpc(cookies).createUser({ fullName, email, role });
+		return await trpc(cookies).users.create({ fullName, email, role });
 	},
 
 	accept: async ({ cookies, request }) => {
 		const ids = [...(await request.formData()).keys()].map((id) => Number(id));
-		await trpc(cookies).decideUsers({ decision: Status.ACCEPTED, ids });
+		await trpc(cookies).admissions.decide({ decision: Status.ACCEPTED, ids });
 	},
 
 	reject: async ({ cookies, request }) => {
 		const ids = [...(await request.formData()).keys()].map((id) => Number(id));
-		await trpc(cookies).decideUsers({ decision: Status.REJECTED, ids });
+		await trpc(cookies).admissions.decide({ decision: Status.REJECTED, ids });
 	},
 
 	waitlist: async ({ cookies, request }) => {
 		const ids = [...(await request.formData()).keys()].map((id) => Number(id));
-		await trpc(cookies).decideUsers({ decision: Status.WAITLISTED, ids });
+		await trpc(cookies).admissions.decide({ decision: Status.WAITLISTED, ids });
 	},
 
 	confirm: async ({ cookies, request }) => {
 		const ids = [...(await request.formData()).keys()].map((id) => Number(id));
-		await trpc(cookies).confirmWalkIns(ids);
+		await trpc(cookies).admissions.confirmWalkIns(ids);
 	},
 };

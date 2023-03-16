@@ -3,9 +3,9 @@ import type { Actions } from './$types';
 
 export const load = async ({ cookies }) => {
 	return {
-		user: trpc(cookies).getUser(),
-		announcements: trpc(cookies).getAnnouncements(),
-		applicationOpen: (await trpc(cookies).getPublicSettings()).applicationOpen,
+		user: trpc(cookies).users.get(),
+		announcements: trpc(cookies).announcements.getAll(),
+		applicationOpen: (await trpc(cookies).settings.getPublic()).applicationOpen,
 	};
 };
 
@@ -15,7 +15,7 @@ export const actions: Actions = {
 		if (typeof email !== 'string') {
 			return { success: false, message: 'Please enter a valid email address.' };
 		}
-		return await trpc(cookies).loginWithEmail(email);
+		return await trpc(cookies).users.register(email);
 	},
 
 	logout: ({ cookies }) => {
@@ -28,7 +28,7 @@ export const actions: Actions = {
 		if (typeof body !== 'string') {
 			throw new Error('Invalid announcement body.');
 		}
-		await trpc(cookies).createAnnouncement(body);
+		await trpc(cookies).announcements.create(body);
 		return 'Created announcement!';
 	},
 
@@ -38,6 +38,6 @@ export const actions: Actions = {
 		if (typeof id !== 'string') {
 			throw new Error('Invalid announcement ID.');
 		}
-		await trpc(cookies).deleteAnnouncement(Number(id));
+		await trpc(cookies).announcements.delete(Number(id));
 	},
 };

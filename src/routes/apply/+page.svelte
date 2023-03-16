@@ -200,7 +200,7 @@
 				}
 				debounceTimer = setTimeout(async () => {
 					debounceTimer = undefined;
-					await trpc().setUser.mutate(nullToUndefined(user));
+					await trpc().users.update.mutate(nullToUndefined(user));
 					saveButton.disabled = false;
 					saveButtonText = 'Saved!';
 				}, 1000);

@@ -22,7 +22,7 @@
 			html5QrCode = new Html5Qrcode('reader');
 			const config = { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1 };
 			html5QrCode.start({ facingMode: 'environment' }, config, handleScan, () => undefined);
-			totalScans = await trpc().getScanCount.query(action);
+			totalScans = await trpc().users.getScanCount.query(action);
 		}
 	}
 	$: scan(action);
@@ -32,8 +32,8 @@
 		if (dialog?.open) {
 			return;
 		}
-		user = await trpc().getUser.query(decodedText);
-		totalScans = await trpc().getScanCount.query(action);
+		user = await trpc().users.get.query(decodedText);
+		totalScans = await trpc().users.getScanCount.query(action);
 		dialog?.showModal();
 	}
 

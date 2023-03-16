@@ -12,8 +12,8 @@ dayjs.extend(timezone);
 export const load = async ({ cookies }) => {
 	await authenticate(cookies, [Role.ADMIN]);
 	return {
-		settings: await trpc(cookies).getAllSettings(),
-		decisions: await trpc(cookies).getDecisions(),
+		settings: await trpc(cookies).settings.getAll(),
+		decisions: await trpc(cookies).admissions.getDecisions(),
 	};
 };
 
@@ -30,20 +30,20 @@ export const actions: Actions = {
 			confirmBy = null;
 		}
 		const acceptanceTemplate = formData.get('acceptanceTemplate') as string;
-		await trpc(cookies).setSettings({ applicationOpen, confirmBy, acceptanceTemplate });
+		await trpc(cookies).settings.update({ applicationOpen, confirmBy, acceptanceTemplate });
 	},
 
 	release: async ({ cookies, request }) => {
 		const ids = [...(await request.formData()).keys()].map((id) => Number(id));
-		await trpc(cookies).releaseDecisions(ids);
+		await trpc(cookies).admissions.releaseDecisions(ids);
 	},
 
 	remove: async ({ cookies, request }) => {
 		const ids = [...(await request.formData()).keys()].map((id) => Number(id));
-		await trpc(cookies).removeDecisions(ids);
+		await trpc(cookies).admissions.removeDecisions(ids);
 	},
 
 	releaseAll: async ({ cookies }) => {
-		await trpc(cookies).releaseAllDecisions();
+		await trpc(cookies).admissions.releaseAllDecisions();
 	},
 };

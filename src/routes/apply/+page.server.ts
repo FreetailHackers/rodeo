@@ -10,7 +10,7 @@ export const load = async ({ cookies }) => {
 	const user = await authenticate(cookies, [Role.HACKER]);
 	return {
 		user,
-		settings: trpc(cookies).getPublicSettings(),
+		settings: trpc(cookies).settings.getPublic(),
 	};
 };
 
@@ -36,12 +36,12 @@ export const actions: Actions = {
 			return 'tooBig';
 		}
 
-		await trpc(cookies).setUser(user);
+		await trpc(cookies).users.update(user);
 		return 'Saved!';
 	},
 
 	finish: async ({ cookies, request }) => {
-		if (!(await trpc(cookies).getPublicSettings()).applicationOpen) {
+		if (!(await trpc(cookies).settings.getPublic()).applicationOpen) {
 			throw redirect(301, '/apply');
 		}
 		const formData = await request.formData();
@@ -64,22 +64,22 @@ export const actions: Actions = {
 			return 'tooBig';
 		}
 
-		await trpc(cookies).setUser(user);
-		return await trpc(cookies).submitApplication();
+		await trpc(cookies).users.update(user);
+		return await trpc(cookies).users.submitApplication();
 	},
 
 	withdraw: async ({ cookies }) => {
-		if (!(await trpc(cookies).getPublicSettings()).applicationOpen) {
+		if (!(await trpc(cookies).settings.getPublic()).applicationOpen) {
 			throw redirect(301, '/apply');
 		}
-		await trpc(cookies).setUser({});
+		await trpc(cookies).users.update({});
 	},
 
 	confirm: async ({ cookies }) => {
-		await trpc(cookies).rsvpUser('CONFIRMED');
+		await trpc(cookies).users.rsvp('CONFIRMED');
 	},
 
 	decline: async ({ cookies }) => {
-		await trpc(cookies).rsvpUser('DECLINED');
+		await trpc(cookies).users.rsvp('DECLINED');
 	},
 };

@@ -12,6 +12,6 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const magicLink = formData.get('magicLink') as string;
 		const action = formData.get('action') as string;
-		await trpc(cookies).scanUser({ magicLink, action });
+		await trpc(cookies).users.scan({ magicLink, action });
 	},
 };
