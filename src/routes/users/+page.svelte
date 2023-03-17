@@ -2,10 +2,8 @@
 	import { enhance } from '$app/forms';
 	import Dropdown from '$lib/components/dropdown.svelte';
 	import Users from '$lib/components/users.svelte';
-	import type { ActionData } from './$types';
 
 	export let data;
-	export let form: ActionData;
 </script>
 
 <h1>Add New User</h1>
@@ -23,9 +21,6 @@
 	/>
 	<button type="submit" value="Create">Create User</button>
 </form>
-{#if form}
-	<p>{form}</p>
-{/if}
 
 <h1>Master Database</h1>
 <Users users={data.users} actions={['accept', 'confirm']} />

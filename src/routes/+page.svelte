@@ -2,10 +2,8 @@
 	import { enhance } from '$app/forms';
 	import Announcements from '$lib/components/announcements.svelte';
 	import { Role } from '@prisma/client';
-	import type { ActionData } from './$types';
 
 	export let data;
-	export let form: ActionData;
 
 	let email: string;
 </script>
@@ -61,12 +59,11 @@
 		/>
 		<button>Continue</button>
 	</form>
-	{#if form}
-		<p>{form}</p>
-		<p>
-			For help, contact <a href="mailto:tech@freetailhackers.com">tech@freetailhackers.com</a>.
-		</p>
-	{/if}
+	<p>
+		For assistance with registration, contact <a href="mailto:tech@freetailhackers.com"
+			>tech@freetailhackers.com</a
+		>.
+	</p>
 	<h2>Announcements</h2>
 	<Announcements announcements={data.announcements} admin={false} />
 {/if}

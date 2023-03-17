@@ -29,7 +29,6 @@ export const actions: Actions = {
 			throw new Error('Invalid announcement body.');
 		}
 		await trpc(cookies).announcements.create(body);
-		return 'Created announcement!';
 	},
 
 	unannounce: async ({ cookies, request }) => {

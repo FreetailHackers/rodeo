@@ -1,9 +1,16 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import Toasts from '$lib/components/toasts.svelte';
+	import { toasts } from '$lib/stores';
 	import { Role, Status } from '@prisma/client';
 	import { onMount } from 'svelte';
 	import './global.css';
 
 	export let data;
+
+	$: if ($page.form !== null && $page.form !== undefined) {
+		toasts.notify($page.form);
+	}
 
 	let menu: HTMLMenuElement;
 	let hamburgerCheckbox: HTMLInputElement;
@@ -49,6 +56,8 @@
 </nav>
 
 <slot />
+
+<Toasts />
 
 <footer>
 	<hr />
