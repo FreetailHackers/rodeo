@@ -6,6 +6,15 @@
 
 - Global toast notification system for form action results
 
+[CHANGED]
+
+- Editing events no longer requires client side JavaScript
+
+[FIXED]
+
+- Rare race where an edited event would appear to be duplicated
+- Edit event form didn't fill properly in some cases
+
 ## v0.3.5
 
 [SECURITY]

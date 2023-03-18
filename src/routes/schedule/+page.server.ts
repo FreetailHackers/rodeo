@@ -15,7 +15,7 @@ export const load = async ({ cookies }) => {
 };
 
 export const actions: Actions = {
-	schedule: async ({ cookies, request }) => {
+	create: async ({ cookies, request }) => {
 		const formData = await request.formData();
 		const fixedStartTime = dayjs
 			.tz(formData.get('start') as string, formData.get('timezone') as string)
@@ -35,7 +35,42 @@ export const actions: Actions = {
 		});
 	},
 
-	unannounce: async ({ cookies, request }) => {
+	edit: async ({ cookies, request }) => {
+		const formData = await request.formData();
+		const id = formData.get('id');
+		if (typeof id !== 'string') {
+			throw new Error('Invalid announcement ID.');
+		}
+		return await trpc(cookies).events.get(Number(id));
+	},
+
+	saveEdit: async ({ cookies, request }) => {
+		const formData = await request.formData();
+		const id = formData.get('id');
+		if (typeof id !== 'string') {
+			throw new Error('Invalid announcement ID.');
+		}
+
+		const fixedStartTime = dayjs
+			.tz(formData.get('start') as string, formData.get('timezone') as string)
+			.toDate();
+
+		const fixedEndTime = dayjs
+			.tz(formData.get('end') as string, formData.get('timezone') as string)
+			.toDate();
+
+		await trpc(cookies).events.update({
+			id: Number(id),
+			name: formData.get('name') as string,
+			description: formData.get('description') as string,
+			start: fixedStartTime,
+			end: fixedEndTime,
+			location: formData.get('location') as string,
+			type: formData.get('type') as string,
+		});
+	},
+
+	delete: async ({ cookies, request }) => {
 		const formData = await request.formData();
 		const id = formData.get('id');
 		if (typeof id !== 'string') {

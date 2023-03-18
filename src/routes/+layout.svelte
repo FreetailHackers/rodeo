@@ -8,7 +8,7 @@
 
 	export let data;
 
-	$: if ($page.form !== null && $page.form !== undefined) {
+	$: if (typeof $page.form === 'string') {
 		toasts.notify($page.form);
 	}
 

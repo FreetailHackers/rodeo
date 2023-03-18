@@ -4,6 +4,17 @@ import prisma from '../db';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 
+const eventSchema = z
+	.object({
+		name: z.string(),
+		start: z.date(),
+		end: z.date(),
+		description: z.string(),
+		type: z.string(),
+		location: z.string(),
+	})
+	.strict();
+
 export const eventsRouter = t.router({
 	/**
 	 * Gets all events in the schedule, sorted by start time.
@@ -26,22 +37,29 @@ export const eventsRouter = t.router({
 	 */
 	create: t.procedure
 		.use(authenticate)
-		.input(
-			z.object({
-				name: z.string(),
-				start: z.date(),
-				end: z.date(),
-				description: z.string(),
-				type: z.string(),
-				location: z.string(),
-			})
-		)
+		.input(eventSchema)
 		.mutation(async (req): Promise<void> => {
 			if (req.ctx.user.role !== Role.ADMIN) {
 				throw new Error('You have insufficient permissions to perform this action.');
 			}
 
 			await prisma.event.create({
+				data: { ...req.input },
+			});
+		}),
+
+	/**
+	 * Updates an event in the schedule by ID. User must be an admin.
+	 */
+	update: t.procedure
+		.use(authenticate)
+		.input(eventSchema.merge(z.object({ id: z.number() })))
+		.mutation(async (req): Promise<void> => {
+			if (req.ctx.user.role !== Role.ADMIN) {
+				throw new Error('You have insufficient permissions to perform this action.');
+			}
+			await prisma.event.update({
+				where: { id: req.input.id },
 				data: { ...req.input },
 			});
 		}),

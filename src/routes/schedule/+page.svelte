@@ -1,27 +1,20 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { enhance } from '$app/forms';
 	import Dropdown from '$lib/components/dropdown.svelte';
 	import { Role, type Event } from '@prisma/client';
-	import { trpc } from '$lib/trpc/client';
-
-	let event: Event | null = null;
-	let statusText = 'Create New Event';
-
-	async function finishedEditing() {
-		if (event !== null) {
-			await trpc().events.delete.mutate(event.id);
-			event = null;
-		}
-		window.scrollTo({ top: 0, behavior: 'smooth' });
-	}
-
-	async function editEvent(id: number) {
-		window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-		statusText = 'Edit Event';
-		event = await trpc().events.get.query(id);
-	}
+	import type { ActionData } from './$types';
 
 	export let data;
+	export let form: ActionData;
+
+	let editedEvent: Event | null = null;
+	$: if (form !== null) {
+		editedEvent = form;
+		if (browser) {
+			window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+		}
+	}
 </script>
 
 <h1>Schedule</h1>
@@ -40,41 +33,28 @@
 				{#each data.schedule as event}
 					{#if event.start.getDay() === 5}
 						<li class={event.type}>
-							<div class="outer-card">
-								<div class="inner-card">
-									<!-- Element removal box -->
-									{#if data.user?.role === Role.ADMIN}
-										<div class="button-overlay">
-											<form method="POST" action="?/unannounce" use:enhance>
-												<input type="hidden" name="id" value={event.id} />
-												<button class="deleteButton">❌</button>
-											</form>
-
-											<input type="hidden" name="id" value={event.id} />
-											<button
-												on:click={() => {
-													editEvent(event.id);
-												}}
-												class="deleteButton">✏️</button
-											>
-										</div>
-									{/if}
-									<!-- Event box -->
-									<h3 class="event-name">{event.name} ({event.location})</h3>
-									<h4>
-										{event.start.toLocaleString('en-US', {
-											hour: 'numeric',
-											minute: 'numeric',
-											hour12: true,
-										})} - {event.end.toLocaleString('en-US', {
-											hour: 'numeric',
-											minute: 'numeric',
-											hour12: true,
-										})}
-									</h4>
-									<h5>{event.description}</h5>
-								</div>
-							</div>
+							<!-- Element removal box -->
+							{#if data.user?.role === Role.ADMIN}
+								<form method="POST" use:enhance>
+									<input type="hidden" name="id" value={event.id} />
+									<button type="submit" formaction="?/delete">❌</button>
+									<button type="submit" formaction="?/edit">✏</button>
+								</form>
+							{/if}
+							<!-- Event box -->
+							<h3 class="event-name">{event.name} ({event.location})</h3>
+							<h4>
+								{event.start.toLocaleString('en-US', {
+									hour: 'numeric',
+									minute: 'numeric',
+									hour12: true,
+								})} - {event.end.toLocaleString('en-US', {
+									hour: 'numeric',
+									minute: 'numeric',
+									hour12: true,
+								})}
+							</h4>
+							<h5>{event.description}</h5>
 						</li>
 					{/if}
 				{/each}
@@ -84,40 +64,28 @@
 				{#each data.schedule as event}
 					{#if event.start.getDay() === 6}
 						<li class={event.type}>
-							<div class="outer-card">
-								<div class="inner-card">
-									<!-- Element removal box -->
-									{#if data.user?.role === Role.ADMIN}
-										<div class="button-overlay">
-											<form method="POST" action="?/unannounce" use:enhance>
-												<input type="hidden" name="id" value={event.id} />
-												<button class="deleteButton">❌</button>
-											</form>
-											<input type="hidden" name="id" value={event.id} />
-											<button
-												on:click={() => {
-													editEvent(event.id);
-												}}
-												class="deleteButton">✏️</button
-											>
-										</div>
-									{/if}
-									<!-- Event box -->
-									<h3 class="event-name">{event.name} ({event.location})</h3>
-									<h4>
-										{event.start.toLocaleString('en-US', {
-											hour: 'numeric',
-											minute: 'numeric',
-											hour12: true,
-										})} - {event.end.toLocaleString('en-US', {
-											hour: 'numeric',
-											minute: 'numeric',
-											hour12: true,
-										})}
-									</h4>
-									<h5>{event.description}</h5>
-								</div>
-							</div>
+							<!-- Element removal box -->
+							{#if data.user?.role === Role.ADMIN}
+								<form method="POST" use:enhance>
+									<input type="hidden" name="id" value={event.id} />
+									<button type="submit" formaction="?/delete">❌</button>
+									<button type="submit" formaction="?/edit">✏️️</button>
+								</form>
+							{/if}
+							<!-- Event box -->
+							<h3 class="event-name">{event.name} ({event.location})</h3>
+							<h4>
+								{event.start.toLocaleString('en-US', {
+									hour: 'numeric',
+									minute: 'numeric',
+									hour12: true,
+								})} - {event.end.toLocaleString('en-US', {
+									hour: 'numeric',
+									minute: 'numeric',
+									hour12: true,
+								})}
+							</h4>
+							<h5>{event.description}</h5>
 						</li>
 					{/if}
 				{/each}
@@ -127,13 +95,15 @@
 </div>
 
 {#if data.user?.role === Role.ADMIN}
-	<h2>{statusText}</h2>
-	<form method="POST" action="?/schedule" use:enhance>
+	<h2>{editedEvent == null ? 'Create New Event' : 'Edit Event'}</h2>
+	<form method="POST" action={editedEvent == null ? '?/create' : '?/saveEdit'} use:enhance>
+		<input type="hidden" name="id" value={editedEvent?.id} />
+
 		<label for="name">Name</label>
-		<input type="text" id="name" name="name" required value={event?.name ?? ''} />
+		<input type="text" id="name" name="name" required value={editedEvent?.name ?? ''} />
 
 		<label for="description">Description</label>
-		<textarea id="description" name="description" required value={event?.description ?? ''} />
+		<textarea id="description" name="description" required value={editedEvent?.description ?? ''} />
 
 		<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
 		<label for="start">Start Time</label>
@@ -142,7 +112,7 @@
 			id="start"
 			name="start"
 			required
-			value={event?.start.toLocaleString('sv') ?? ''}
+			value={editedEvent?.start.toLocaleString('sv') ?? ''}
 		/>
 
 		<label for="end">End Time</label>
@@ -151,21 +121,21 @@
 			id="end"
 			name="end"
 			required
-			value={event?.end.toLocaleString('sv') ?? ''}
+			value={editedEvent?.end.toLocaleString('sv') ?? ''}
 		/>
 
 		<label for="location">Location</label>
-		<input type="text" id="location" name="location" required value={event?.location ?? ''} />
+		<input type="text" id="location" name="location" required value={editedEvent?.location ?? ''} />
 
 		<Dropdown
-			value={event?.type ?? ''}
+			value={editedEvent?.type ?? ''}
 			name="type"
 			label="Event Type"
 			options={['Key-Event', 'Workshop', 'Speaker-Event', 'Fun-Event', 'Regular-Event']}
 			required
 		/>
 
-		<button on:click={finishedEditing} type="submit">Save</button>
+		<button type="submit">Save</button>
 	</form>
 {/if}
 
@@ -222,23 +192,6 @@
 		margin: 10px 0;
 	}
 
-	div.outer-card {
-		display: table;
-		width: 100%;
-	}
-
-	div.inner-card {
-		display: table-cell;
-		vertical-align: middle;
-		position: relative;
-		z-index: 0;
-	}
-
-	.button-overlay {
-		display: flex;
-		padding-bottom: 0;
-	}
-
 	.legend {
 		display: inline-block;
 		margin: 0 auto;
@@ -255,6 +208,7 @@
 		padding: 0;
 		list-style-type: none;
 	}
+
 	li {
 		margin: 10px 0;
 	}
@@ -281,17 +235,20 @@
 
 	/* Admin view */
 
-	.deleteButton {
+	li form {
+		flex-direction: row-reverse;
+	}
+
+	li button {
 		background-color: #0000008f;
 		width: 50px;
 		color: #ffffff;
 		border: none;
-		border-radius: 5px;
 		padding: 5px;
-		margin: 15px;
+		margin: 15px 15px 0 0;
 	}
 
-	.deleteButton:hover {
+	li button:hover {
 		background-color: #972626;
 	}
 </style>
