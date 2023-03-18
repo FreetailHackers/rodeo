@@ -29,7 +29,6 @@ deploy-staging-job:
     - npx vercel deploy --token=$VERCEL_TOKEN > domain.txt
     - npx vercel alias --token=$VERCEL_TOKEN set `cat domain.txt` `echo $DOMAIN_NAME | awk -F// '{print $NF}'` # Must remove https:// for vercel alias to work
     - rm .env domain.txt
-    - npx ts-node cleanup-vercel.ts 10 --yes
 
 deploy-production-job:
   stage: deploy-production
@@ -46,4 +45,3 @@ deploy-production-job:
     - npx vercel deploy --prod --token=$VERCEL_TOKEN > domain.txt
     - npx vercel alias --token=$VERCEL_TOKEN set `cat domain.txt` $(echo $DOMAIN_NAME | awk -F// '{print $NF}') # Must remove https:// for vercel alias to work
     - rm .env domain.txt
-    - npx ts-node cleanup-vercel.ts 10 --yes
