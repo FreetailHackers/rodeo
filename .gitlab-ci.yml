@@ -21,6 +21,7 @@ deploy-staging-job:
     - master
   environment:
     name: staging
+    url: https://rodeo-nightly.freetailhackers.com/
   script:
     - npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
     - mv .vercel/.env.preview.local .env # Needed for prisma migrate deploy
@@ -36,6 +37,7 @@ deploy-production-job:
     - master
   environment:
     name: production
+    url: https://rodeo.freetailhackers.com/
   when: manual
   script:
     - npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
