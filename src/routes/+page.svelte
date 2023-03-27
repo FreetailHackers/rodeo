@@ -28,6 +28,16 @@
 		<a href="mailto:hello@freetailhackers.com">hello@freetailhackers.com</a>.
 	</p>
 
+	<!-- Customizable homepage text panel -->
+	{#if data.user.role === Role.ADMIN}
+		<h2>Homepage Text</h2>
+		<form method="POST" action="?/" use:enhance>
+			<textarea name="customHomeText" placeholder="Modify the current homepage text..." required />
+			<button>Modify</button>
+		</form>
+		<br />
+	{/if}
+
 	<!-- Admin announcements panel -->
 	<h2>Announcements</h2>
 	<Announcements announcements={data.announcements} admin={data.user.role === Role.ADMIN} />
