@@ -20,11 +20,9 @@
 		Welcome to Rodeo{#if data.user.preferredName !== null && data.user.preferredName !== ''}, {data
 				.user.preferredName}{/if}!
 	</h1>
-	<p>{data.settings.homepageText}</p>
+	<SvelteMarkdown source={data.settings.homepageText} />
 
 	{#if data.user?.role === Role.ADMIN}
-		<SvelteMarkdown source={displayText} />
-
 		<h4>Start typing to see preview:</h4>
 		<SvelteMarkdown source={inputText} />
 		<form
