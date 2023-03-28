@@ -8,12 +8,7 @@
 
 	let email: string;
 
-	let originalText =
-		'Thanks for your interest in our upcoming hackathon! **Hack The Future** will occure from' +
-		' **March 3rd, Friday evening until March 4th, Saturday evening**. Check our' +
-		' [website](https://freetailhackers.com/hack-the-future) and [schedule](schedule) for more details!';
-
-	let displayText = originalText;
+	let displayText = '';
 	let inputText = '';
 	function updateText() {
 		displayText = inputText;
@@ -25,28 +20,40 @@
 		Welcome to Rodeo{#if data.user.preferredName !== null && data.user.preferredName !== ''}, {data
 				.user.preferredName}{/if}!
 	</h1>
+	<p>{data.settings.homepageText}</p>
 
-	<SvelteMarkdown source={displayText} />
-
-	<h4>Start typing to see preview:</h4>
-	<SvelteMarkdown source={inputText} />
 	{#if data.user?.role === Role.ADMIN}
-		<form>
+		<SvelteMarkdown source={displayText} />
+
+		<h4>Start typing to see preview:</h4>
+		<SvelteMarkdown source={inputText} />
+		<form
+			method="POST"
+			action="?/settings"
+			use:enhance={() => {
+				return async ({ update }) => {
+					update({ reset: false });
+					// 100 ms delay so people actually see the "Saving..." text
+					await new Promise((r) => setTimeout(r, 100));
+				};
+			}}
+		>
 			<textarea
-				id="info"
 				placeholder="Modify the current homepage text..."
-				name="info"
+				name="homepageText"
+				id="homepageText"
 				rows="100"
 				bind:value={inputText}
 			/>
 			<button on:click={updateText} type="submit">Update Homepage Text</button>
 		</form>
+
+		<h6>
+			FORMAT EXAMPLES FOR HOMEPAGE TEXT: *italics* **bold** ***bold italic*** ~~strikethrough~~
+			\`inline code snippet\` [I am a link!](https://example.com) ![Image alt
+			text](https://example.com/image.png) > Blockquote
+		</h6>
 	{/if}
-	<h6>
-		FORMAT EXAMPLES FOR HOMEPAGE TEXT: *italics* **bold** ***bold italic*** ~~strikethrough~~
-		\`inline code snippet\` [I am a link!](https://example.com) ![Image alt
-		text](https://example.com/image.png) > Blockquote
-	</h6>
 
 	<p>
 		Please make sure to fill out the <a href="apply">application</a> as early as possible. Admission
