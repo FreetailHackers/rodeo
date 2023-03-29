@@ -69,7 +69,7 @@ model Settings {
   // PRIVATE SETTINGS (settings that non-admins do not need)
   rollingAdmissions  Boolean   @default(false)
   acceptanceTemplate String    @default("You have been accepted to our hackathon!")
-  homepageText       String    @default("Thanks for your interest in our upcoming hackathon! Check our website for more details!")
+  homepageText       String    @default("This text can be edited from the admin panel. You can put deadline logistics, or other important information here.")
   scanActions        String[]
 }
 

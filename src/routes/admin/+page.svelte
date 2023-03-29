@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import Toggle from '$lib/components/toggle.svelte';
 	import Users from '$lib/components/users.svelte';
+	import SvelteMarkdown from 'svelte-markdown';
 
 	export let data;
 
@@ -19,9 +20,33 @@
 		'White',
 		'Other',
 	];
+
+	let inputText = '';
 </script>
 
 <h1>Admin Panel</h1>
+
+<h4>Start typing to see preview:</h4>
+<SvelteMarkdown source={inputText} />
+<form
+	method="POST"
+	action="?/updateHomepage"
+	use:enhance={() => {
+		return async ({ update }) => {
+			update({ reset: false });
+			await new Promise((r) => setTimeout(r, 100));
+		};
+	}}
+>
+	<textarea
+		placeholder="Modify the homepage text here (Markdown is supported)."
+		name="homepageText"
+		id="homepageText"
+		rows="100"
+		bind:value={inputText}
+	/>
+	<button class="hometext-button" type="submit">Update Homepage Text</button>
+</form>
 
 <form
 	method="POST"
@@ -135,5 +160,9 @@
 		font-weight: bold;
 		margin-top: 0;
 		text-transform: uppercase;
+	}
+
+	h4 {
+		border-top: 1px solid black;
 	}
 </style>

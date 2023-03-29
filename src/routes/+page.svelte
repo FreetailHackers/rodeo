@@ -7,60 +7,10 @@
 	export let data;
 
 	let email: string;
-
-	let displayText = '';
-	let inputText = '';
-	function updateText() {
-		displayText = inputText;
-	}
 </script>
 
 {#if data.user}
-	<h1>
-		Welcome to Rodeo{#if data.user.preferredName !== null && data.user.preferredName !== ''}, {data
-				.user.preferredName}{/if}!
-	</h1>
 	<SvelteMarkdown source={data.settings.homepageText} />
-
-	{#if data.user?.role === Role.ADMIN}
-		<h4>Start typing to see preview:</h4>
-		<SvelteMarkdown source={inputText} />
-		<form
-			method="POST"
-			action="?/settings"
-			use:enhance={() => {
-				return async ({ update }) => {
-					update({ reset: false });
-					// 100 ms delay so people actually see the "Saving..." text
-					await new Promise((r) => setTimeout(r, 100));
-				};
-			}}
-		>
-			<textarea
-				placeholder="Modify the current homepage text..."
-				name="homepageText"
-				id="homepageText"
-				rows="100"
-				bind:value={inputText}
-			/>
-			<button on:click={updateText} type="submit">Update Homepage Text</button>
-		</form>
-
-		<h6>
-			FORMAT EXAMPLES FOR HOMEPAGE TEXT: *italics* **bold** ***bold italic*** ~~strikethrough~~
-			\`inline code snippet\` [I am a link!](https://example.com) ![Image alt
-			text](https://example.com/image.png) > Blockquote
-		</h6>
-	{/if}
-
-	<p>
-		Please make sure to fill out the <a href="apply">application</a> as early as possible. Admission
-		will operate on a <b>first-come, first-serve basis</b>. Spots are limited.
-	</p>
-	<p>
-		If you have any questions or concerns, please contact
-		<a href="mailto:hello@freetailhackers.com">hello@freetailhackers.com</a>.
-	</p>
 
 	<!-- Admin announcements panel -->
 	<h2>Announcements</h2>
@@ -70,10 +20,6 @@
 	</form>
 {:else}
 	<!-- Signup page -->
-	<h1>Welcome to Rodeo</h1>
-	<p>
-		Rodeo is Freetail Hackers' registration platform and information board for hackathon attendees.
-	</p>
 	{#if !data.applicationOpen}
 		<p>
 			<b>
@@ -105,8 +51,5 @@
 <style>
 	#logout {
 		margin-top: 1rem;
-	}
-	h4 {
-		border-top: 1px solid black;
 	}
 </style>

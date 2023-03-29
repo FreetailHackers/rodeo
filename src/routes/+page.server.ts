@@ -11,12 +11,6 @@ export const load = async ({ cookies }) => {
 };
 
 export const actions: Actions = {
-	settings: async ({ cookies, request }) => {
-		const formData = await request.formData();
-		const homepageText = formData.get('homepageText') as string;
-		await trpc(cookies).settings.update({ homepageText: homepageText });
-	},
-
 	login: async ({ cookies, request }) => {
 		const email = (await request.formData()).get('email');
 		if (typeof email !== 'string') {
