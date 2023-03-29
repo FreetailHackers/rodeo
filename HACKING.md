@@ -20,7 +20,7 @@ Next, it is recommended to install Prisma globally as you will be using it a lot
 
 `npm install -g prisma`
 
-Run `prisma migrate dev` to push the schema to the database and seed it.
+Run `prisma migrate dev` to push the schema to the database. You probably will want to run `prisma db seed` as well to insert some dummy data.
 
 Finally, now you can do `npm install` and `npm run dev` to start the development server. You may also want to run `prisma studio` if you want to hand-tinker with the database in a GUI.
 

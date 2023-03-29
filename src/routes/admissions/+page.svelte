@@ -8,8 +8,8 @@
 {#if data.user === null}
 	<p>Congratulations! You've read every application.</p>
 {:else}
-	<h1>{data.user.fullName}</h1>
-	<UserCard user={data.user} />
+	<h1>{data.user.email}</h1>
+	<UserCard user={data.user} questions={data.questions} />
 	<div id="form">
 		<div id="padding" />
 		<form method="POST" use:enhance>

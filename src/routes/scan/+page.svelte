@@ -6,6 +6,8 @@
 	import { Html5Qrcode, Html5QrcodeScannerState } from 'html5-qrcode';
 	import { onDestroy } from 'svelte';
 
+	export let data;
+
 	let html5QrCode: Html5Qrcode;
 	let dialog: HTMLDialogElement;
 
@@ -67,8 +69,8 @@
 	{:else}
 		<br />
 		<details>
-			<summary>{user.fullName}</summary>
-			<UserCard {user} />
+			<summary>{user.email}</summary>
+			<UserCard {user} questions={data.questions} />
 		</details>
 		<p class={(scanCount[action] ?? 0) == 0 ? 'success' : 'error'}>
 			This user has scanned for {action}

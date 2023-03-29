@@ -152,14 +152,7 @@ export const admissionsRouter = t.router({
 
 			await prisma.$transaction([updateStatus, deleteDecision]);
 
-			await sendEmail(
-				recipient.email,
-				subject,
-				(
-					await getSettings()
-				).acceptanceTemplate,
-				recipient.preferredName
-			);
+			await sendEmail(recipient.email, subject, (await getSettings()).acceptanceTemplate, null);
 		}
 	}),
 
@@ -206,14 +199,7 @@ export const admissionsRouter = t.router({
 
 				await prisma.$transaction([updateStatus, deleteDecision]);
 
-				await sendEmail(
-					recipient.email,
-					subject,
-					(
-						await getSettings()
-					).acceptanceTemplate,
-					recipient.preferredName
-				);
+				await sendEmail(recipient.email, subject, (await getSettings()).acceptanceTemplate, null);
 			}
 		}),
 

@@ -5,6 +5,7 @@ import type { Actions } from './$types';
 
 export const load = async ({ cookies }) => {
 	await authenticate(cookies, [Role.ORGANIZER, Role.ADMIN]);
+	return { questions: await trpc(cookies).questions.get() };
 };
 
 export const actions: Actions = {

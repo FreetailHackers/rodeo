@@ -1,17 +1,23 @@
 import { firstNames, lastNames, majors } from './data';
 import { hash } from '../src/lib/hash';
-import { PrismaClient, Role, Status, type User, type Decision } from '@prisma/client';
+import { PrismaClient, Role, Status, Prisma, QuestionType } from '@prisma/client';
 const prisma = new PrismaClient();
 
 /**
  * This script is used to seed the database with example data.
  * WARNING: This script will delete all data in the database before seeding.
  * To use it, run `prisma db seed`
+ *
+ * You can then log in to some test accounts with:
+ *
+ * http://localhost:5173/login/hacker (sample hacker account)
+ * http://localhost:5173/login/admin (sample admin account)
  */
 async function main() {
 	// Reset database
-	await prisma.decision.deleteMany();
 	await prisma.announcement.deleteMany();
+	await prisma.decision.deleteMany();
+	await prisma.question.deleteMany();
 	await prisma.settings.deleteMany();
 	await prisma.user.deleteMany();
 
@@ -20,9 +26,6 @@ async function main() {
 		data: {
 			email: 'hacker@yopmail.com',
 			magicLink: await hash('hacker'),
-			fullName: 'J. Random Hacker',
-			preferredName: 'John',
-			major: 'Computer Science',
 			status: Status.VERIFIED,
 		},
 	});
@@ -30,8 +33,6 @@ async function main() {
 		data: {
 			email: 'admin@yopmail.com',
 			magicLink: await hash('admin'),
-			fullName: 'J. Random Administrator',
-			preferredName: 'Jane',
 			role: Role.ADMIN,
 		},
 	});
@@ -40,74 +41,95 @@ async function main() {
 	await prisma.announcement.deleteMany();
 	await prisma.announcement.create({
 		data: {
-			body: 'We are now accepting applications for Hack the Future! The submission deadline is Friday, February 10th at 11:59 PM.',
+			body: 'We are now accepting applications for HackTX! The deadline is Friday, September 17th at 11:59 PM.',
 		},
 	});
 
+	// Create example questions
+	const questions: (Prisma.QuestionCreateInput & { id: number; generate: () => unknown })[] = [
+		{
+			id: 0,
+			order: 0,
+			label: 'Name',
+			type: QuestionType.SENTENCE,
+			required: true,
+			placeholder: 'J. Random Hacker',
+			generate: () => `${randomElement(firstNames)} ${randomElement(lastNames)}`,
+		},
+		{
+			id: 1,
+			order: 1,
+			label: 'Classification',
+			type: QuestionType.DROPDOWN,
+			required: true,
+			generate: () => randomElement(['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate']),
+		},
+		{
+			id: 2,
+			order: 2,
+			label: 'Major',
+			type: QuestionType.MULTISELECT,
+			required: true,
+			generate: () => randomElement(majors),
+		},
+		{
+			id: 3,
+			order: 3,
+			label: 'I agree to sell my data.',
+			type: QuestionType.CHECKBOXES,
+			required: true,
+			generate: () => true,
+		},
+		{
+			id: 4,
+			order: 4,
+			label: 'How many hackathons have you attended?',
+			type: QuestionType.NUMBER,
+			required: true,
+			placeholder: '0',
+			generate: () => Math.floor(random() * 10),
+		},
+		{
+			id: 5,
+			order: 5,
+			label: 'Why do you want to attend HackTX?',
+			type: QuestionType.PARAGRAPH,
+			required: true,
+			placeholder: 'I love hackathons!',
+			generate: () => 'I want to attend HackTX because I love hackathons!',
+		},
+		{
+			id: 6,
+			order: 6,
+			label: 'Resume',
+			type: QuestionType.FILE,
+			required: false,
+			generate: () => 'https://example.com/resume.pdf',
+		},
+		{
+			id: 7,
+			order: 7,
+			label: 'Shirt size',
+			type: QuestionType.RADIO,
+			required: true,
+			generate: () => randomElement(['XS', 'S', 'M', 'L', 'XL', 'XXL']),
+		},
+	];
+	// Remove the generate function (used when creating dummy users) before creating questions
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	await prisma.question.createMany({ data: questions.map(({ generate, ...keep }) => keep) });
+
 	// Generate 1000 random hackers with a seeded random number generator for reproducibility
-	const hackers: Omit<User, 'id'>[] = [];
+	const hackers: Prisma.UserCreateInput[] = [];
 	for (let i = 0; i < 1000; i++) {
-		const firstName = firstNames[Math.floor(random() * firstNames.length)];
-		const lastName = lastNames[Math.floor(random() * lastNames.length)];
-		const major = majors[Math.floor(random() * majors.length)];
+		const application = {};
+		for (const question of questions) {
+			application[question.id] = question.generate();
+		}
 		hackers.push({
-			email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}.${i}@yopmail.com`,
+			email: `hacker${i}@yopmail.com`,
 			magicLink: await hash('hacker' + i),
-			fullName: `${firstName} ${lastName}`,
-			preferredName: firstName,
-			gender: ['Male', 'Female'][Math.floor(random() * 2)],
-			race: [
-				[
-					'American Indian or Alaskan Native',
-					'Asian',
-					'Black or African American',
-					'Hispanic',
-					'Native Hawaiian or Pacific Islander',
-					'White',
-					'Other',
-				][Math.floor(random() * 7)],
-			],
-			pronouns: ['He/him', 'She/her', 'They/them', 'Other', 'Prefer not to say'][
-				Math.floor(random() * 5)
-			],
-			photoReleaseAgreed: true,
-			liabilityWaiverAgreed: true,
-			codeOfConductAgreed: true,
-			major,
-			classification: ['Freshman', 'Sophomore', 'Junior', 'Senior', 'Masters', 'Doctorate'][
-				Math.floor(random() * 6)
-			],
-			graduation: [
-				'Spring 2023',
-				'Fall 2023',
-				'Spring 2024',
-				'Fall 2024',
-				'Spring 2025',
-				'Fall 2025',
-				'Spring 2026',
-				'Other',
-			][Math.floor(random() * 8)],
-			firstGeneration: Math.random() < 0.5,
-			international: Math.random() < 0.5,
-			hackathonsAttended: Math.floor(random() * 10),
-			workshops: [],
-			referrer: ['Social Media', 'Tabling', 'Friends', 'Professor/Department', 'HackTX', 'Other'][
-				Math.floor(random() * 6)
-			],
-			excitedAbout: 'I am excited to learn new things and meet new people!',
-			resume: 'https://rodeo-staging.s3.amazonaws.com/' + i + '/resume.pdf',
-			github: 'https://github.com/username',
-			linkedin: 'https://linkedin.com/in/username',
-			website: 'https://example.com',
-			lunch: true,
-			dietaryRestrictions: [
-				['No pork', 'Vegetarian', 'Vegan', 'No dairy', 'No nuts', 'No beef', 'Gluten free'][
-					Math.floor(random() * 7)
-				],
-			],
-			allergies: '',
-			accommodations: '',
-			other: '',
+			application,
 			role: Role.HACKER,
 			status: Status[Object.keys(Status)[Math.floor(random() * Object.keys(Status).length)]],
 		});
@@ -115,7 +137,7 @@ async function main() {
 	await prisma.user.createMany({ data: hackers });
 
 	// Generate up to 100 decisions (not randomized so I don't have to worry about duplicates)
-	const decisions: Omit<Decision, 'id'>[] = [];
+	const decisions: Prisma.DecisionCreateManyInput[] = [];
 	for (let i = 0; i < 100; i++) {
 		// Only decide on hackers with status APPLIED or WAITLISTED
 		if (hackers[i].status !== Status.APPLIED && hackers[i].status !== Status.WAITLISTED) {
@@ -137,6 +159,10 @@ let seed = 0;
 function random() {
 	const x = Math.sin(seed++) * 10000;
 	return x - Math.floor(x);
+}
+
+function randomElement<T>(array: T[]): T {
+	return array[Math.floor(random() * array.length)];
 }
 
 main()

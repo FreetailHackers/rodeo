@@ -8,11 +8,8 @@
 	let email: string;
 </script>
 
+<h1>Welcome to Rodeo</h1>
 {#if data.user}
-	<h1>
-		Welcome to Rodeo{#if data.user.preferredName !== null && data.user.preferredName !== ''}, {data
-				.user.preferredName}{/if}!
-	</h1>
 	<p>
 		Thanks for your interest in our upcoming hackathon! <b>Hack The Future</b> will occur from
 		<b>March 3rd, Friday evening until March 4th, Saturday evening</b>. Check our
@@ -36,7 +33,6 @@
 	</form>
 {:else}
 	<!-- Signup page -->
-	<h1>Welcome to Rodeo</h1>
 	<p>
 		Rodeo is Freetail Hackers' registration platform and information board for hackathon attendees.
 	</p>

@@ -4,67 +4,37 @@ import type { Actions } from './$types';
 import { Role } from '@prisma/client';
 import { redirect } from '@sveltejs/kit';
 
-const FILE_SIZE_LIMIT = 1 * 1024 * 1024; // 1 MB
-
 export const load = async ({ cookies }) => {
 	const user = await authenticate(cookies, [Role.HACKER]);
 	return {
 		user,
-		settings: trpc(cookies).settings.getPublic(),
+		questions: await trpc(cookies).questions.get(),
+		settings: await trpc(cookies).settings.getPublic(),
 	};
 };
 
 export const actions: Actions = {
 	save: async ({ cookies, request }) => {
-		const formData = await request.formData();
-		const data = Object.fromEntries(formData);
-		const user = {
-			...data,
-			photoReleaseAgreed: data.photoReleaseAgreed === 'on',
-			liabilityWaiverAgreed: data.liabilityWaiverAgreed === 'on',
-			codeOfConductAgreed: data.codeOfConductAgreed === 'on',
-			firstGeneration: data.firstGeneration === 'on',
-			international: data.international === 'on',
-			hackathonsAttended: Number(data.hackathonsAttended),
-			race: formData.getAll('race').map((x) => x as string),
-			workshops: formData.getAll('workshops').map((x) => x as string),
-			dietaryRestrictions: formData.getAll('dietaryRestrictions').map((x) => x as string),
-			lunch: data.lunch === 'on',
-		};
-
-		if (data.resume instanceof Object && data.resume?.size > FILE_SIZE_LIMIT) {
-			return 'tooBig';
+		const application = Object.fromEntries(await request.formData());
+		// Strip the leading 'q' from the input names
+		for (const inputName in application) {
+			application[inputName.substring(1)] = application[inputName];
+			delete application[inputName];
 		}
-
-		await trpc(cookies).users.update(user);
-		return 'Saved!';
+		await trpc(cookies).users.update(application as Record<string, string>);
 	},
 
 	finish: async ({ cookies, request }) => {
 		if (!(await trpc(cookies).settings.getPublic()).applicationOpen) {
 			throw redirect(301, '/apply');
 		}
-		const formData = await request.formData();
-		const data = Object.fromEntries(formData);
-		const user = {
-			...data,
-			photoReleaseAgreed: data.photoReleaseAgreed === 'on',
-			liabilityWaiverAgreed: data.liabilityWaiverAgreed === 'on',
-			codeOfConductAgreed: data.codeOfConductAgreed === 'on',
-			firstGeneration: data.firstGeneration === 'on',
-			international: data.international === 'on',
-			hackathonsAttended: Number(data.hackathonsAttended),
-			race: formData.getAll('race').map((x) => x as string),
-			workshops: formData.getAll('workshops').map((x) => x as string),
-			dietaryRestrictions: formData.getAll('dietaryRestrictions').map((x) => x as string),
-			lunch: data.lunch === 'on',
-		};
-
-		if (data.resume instanceof Object && data.resume?.size > FILE_SIZE_LIMIT) {
-			return 'tooBig';
+		const application = Object.fromEntries(await request.formData());
+		// Strip the leading 'q' from the input names
+		for (const inputName in application) {
+			application[inputName.substring(1)] = application[inputName];
+			delete application[inputName];
 		}
-
-		await trpc(cookies).users.update(user);
+		await trpc(cookies).users.update(application as Record<string, string>);
 		return await trpc(cookies).users.submitApplication();
 	},
 
