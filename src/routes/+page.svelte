@@ -10,7 +10,7 @@
 </script>
 
 {#if data.user}
-	<SvelteMarkdown source={data.settings.homepageText} />
+	<SvelteMarkdown source={data.settings} />
 
 	<!-- Admin announcements panel -->
 	<h2>Announcements</h2>
