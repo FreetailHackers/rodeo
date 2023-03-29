@@ -11,6 +11,7 @@ const settingsSchema = z
 		info: z.string().optional(),
 		rollingAdmissions: z.boolean().optional(),
 		acceptanceTemplate: z.string().optional(),
+		homepageText: z.string().optional(),
 	})
 	.strict();
 
@@ -23,9 +24,15 @@ export const settingsRouter = t.router({
 	 * Returns public settings.
 	 */
 	getPublic: t.procedure.query(
-		async (): Promise<{ applicationOpen: boolean; confirmBy: Date | null; info: string }> => {
+		async (): Promise<{
+			homepageText: string;
+			applicationOpen: boolean;
+			confirmBy: Date | null;
+			info: string;
+		}> => {
 			const settings = await getSettings();
 			return {
+				homepageText: settings.homepageText,
 				applicationOpen: settings.applicationOpen,
 				confirmBy: settings.confirmBy,
 				info: settings.info,
