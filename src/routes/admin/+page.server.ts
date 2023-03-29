@@ -36,7 +36,7 @@ export const actions: Actions = {
 	updateHomepage: async ({ cookies, request }) => {
 		const formData = await request.formData();
 		const homepageText = formData.get('homepageText') as string;
-		await trpc(cookies).settings.update({ homepageText: homepageText });
+		await trpc(cookies).settings.update({ homepageText });
 	},
 
 	release: async ({ cookies, request }) => {

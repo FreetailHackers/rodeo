@@ -28,16 +28,7 @@
 
 <h4>Start typing to see preview:</h4>
 <SvelteMarkdown source={inputText} />
-<form
-	method="POST"
-	action="?/updateHomepage"
-	use:enhance={() => {
-		return async ({ update }) => {
-			update({ reset: false });
-			await new Promise((r) => setTimeout(r, 100));
-		};
-	}}
->
+<form method="POST" action="?/updateHomepage" use:enhance>
 	<textarea
 		placeholder="Modify the homepage text here (Markdown is supported)."
 		name="homepageText"
