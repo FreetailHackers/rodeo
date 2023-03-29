@@ -21,23 +21,25 @@
 		'Other',
 	];
 
-	let inputText = '';
+	let inputText = data.settings.homepageText;
 </script>
 
 <h1>Admin Panel</h1>
 
-<h4>Start typing to see preview:</h4>
-<SvelteMarkdown source={inputText} />
-<form method="POST" action="?/updateHomepage" use:enhance>
-	<textarea
-		placeholder="Modify the homepage text here (Markdown is supported)."
-		name="homepageText"
-		id="homepageText"
-		rows="100"
-		bind:value={inputText}
-	/>
-	<button class="hometext-button" type="submit">Update Homepage Text</button>
-</form>
+<div class="extra-padding">
+	<h4>Start typing to see preview:</h4>
+	<SvelteMarkdown source={inputText} />
+	<form method="POST" action="?/updateHomepage" use:enhance>
+		<textarea
+			placeholder="Modify the homepage text here (Markdown is supported)."
+			name="homepageText"
+			id="homepageText"
+			rows="100"
+			bind:value={inputText}
+		/>
+		<button class="hometext" type="submit">Update Homepage Text</button>
+	</form>
+</div>
 
 <form
 	method="POST"
@@ -153,7 +155,7 @@
 		text-transform: uppercase;
 	}
 
-	h4 {
-		border-top: 1px solid black;
+	.extra-padding {
+		padding-bottom: 10px;
 	}
 </style>
