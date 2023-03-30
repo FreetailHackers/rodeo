@@ -30,7 +30,17 @@ export const actions: Actions = {
 			confirmBy = null;
 		}
 		const acceptanceTemplate = formData.get('acceptanceTemplate') as string;
-		await trpc(cookies).settings.update({ applicationOpen, confirmBy, acceptanceTemplate });
+		const RSVPTemplate = formData.get('RSVPTemplate') as string;
+		const withdrawTemplate = formData.get('withdrawTemplate') as string;
+		const submitTemplate = formData.get('submitTemplate') as string;
+		await trpc(cookies).settings.update({
+			applicationOpen,
+			confirmBy,
+			acceptanceTemplate,
+			RSVPTemplate,
+			withdrawTemplate,
+			submitTemplate,
+		});
 	},
 
 	release: async ({ cookies, request }) => {

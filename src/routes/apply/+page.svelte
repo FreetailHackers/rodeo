@@ -373,7 +373,7 @@
 
 			<fieldset id="sponsors">
 				<legend>The following information will be shared with our sponsors.</legend>
-				{#if form === 'tooBig'}<p class="error">Resumes can only be 1 MB.</p>{/if}
+				<!-- {#if form === 'tooBig'}<p class="error">Resumes can only be 1 MB.</p>{/if} -->
 				<label for="resume"
 					>Resume {#if resume !== null}(last uploaded: {resume?.split('/')[5]}){/if}</label
 				>

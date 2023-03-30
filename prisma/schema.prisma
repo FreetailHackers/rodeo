@@ -70,6 +70,9 @@ model Settings {
   rollingAdmissions  Boolean   @default(false)
   acceptanceTemplate String    @default("You have been accepted to our hackathon!")
   scanActions        String[]
+  RSVPTemplate String  @default("Thank you for singing up to our hackathon!")
+  withdrawTemplate String @default("We're sorry to see you go!")
+  submitTemplate String @default("Thank you for submitting your application!")
 }
 
 model Event {

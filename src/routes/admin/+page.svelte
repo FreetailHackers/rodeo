@@ -48,6 +48,16 @@
 		name="acceptanceTemplate"
 		id="acceptanceTemplate"
 	/>
+
+	<label for="RSVPTemplate">RSVP Email Template: </label>
+	<textarea value={data.settings.RSVPTemplate} name="RSVPTemplate" id="RSVPTemplate" />
+
+	<label for="withdrawTemplate">Withdraw Email Template: </label>
+	<textarea value={data.settings.withdrawTemplate} name="withdrawTemplate" id="withdrawTemplate" />
+
+	<label for="submitTemplate">Submit Application Email Template: </label>
+	<textarea value={data.settings.submitTemplate} name="submitTemplate" id="submitTemplate" />
+
 	<label for="confirmBy">
 		Accepted hackers must confirm by (leave empty if confirmation is not required):
 	</label>
