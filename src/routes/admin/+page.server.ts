@@ -43,6 +43,12 @@ export const actions: Actions = {
 		});
 	},
 
+	updateHomepage: async ({ cookies, request }) => {
+		const formData = await request.formData();
+		const homepageText = formData.get('homepageText') as string;
+		await trpc(cookies).settings.update({ homepageText });
+	},
+
 	release: async ({ cookies, request }) => {
 		const ids = [...(await request.formData()).keys()].map((id) => Number(id));
 		await trpc(cookies).admissions.releaseDecisions(ids);
