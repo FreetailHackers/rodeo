@@ -102,14 +102,7 @@ export const usersRouter = t.router({
 
 				// notify user through their email on successful application submission
 				const subject = 'Thanks for Submitting!';
-				await sendEmail(
-					req.ctx.user.email,
-					subject,
-					(
-						await getSettings()
-					).submitTemplate,
-					req.ctx.user.preferredName
-				);
+				await sendEmail(req.ctx.user.email, subject, (await getSettings()).submitTemplate, null);
 			}
 			return errors;
 		}),
@@ -138,14 +131,7 @@ export const usersRouter = t.router({
 
 					// notify user through email on confirming there RSVP
 					const subject = 'Thanks for Confirming!';
-					await sendEmail(
-						req.ctx.user.email,
-						subject,
-						(
-							await getSettings()
-						).RSVPTemplate,
-						req.ctx.user.preferredName
-					);
+					await sendEmail(req.ctx.user.email, subject, (await getSettings()).RSVPTemplate, null);
 				}
 			} else {
 				// Hackers should be able to decline after accepting and/or the deadline
@@ -163,7 +149,7 @@ export const usersRouter = t.router({
 						(
 							await getSettings()
 						).withdrawTemplate,
-						req.ctx.user.preferredName
+						null
 					);
 				}
 			}
