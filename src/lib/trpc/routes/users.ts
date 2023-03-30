@@ -179,7 +179,7 @@ export const usersRouter = t.router({
 					data: { status: Status.APPLIED },
 				});
 
-				// notify user through email on successful application submission
+				// notify user through their email on successful application submission
 				const subject = 'Thanks for Submitting!';
 				await sendEmail(
 					req.ctx.user.email,
