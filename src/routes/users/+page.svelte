@@ -23,4 +23,4 @@
 </form>
 
 <h1>Master Database</h1>
-<Users users={data.users} actions={['accept', 'confirm']} />
+<Users questions={data.questions} users={data.users} actions={['accept', 'confirm']} />

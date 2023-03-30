@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import type { Prisma } from '@prisma/client';
+	import type { Prisma, Question } from '@prisma/client';
 	import fuzzysort from 'fuzzysort';
 	import UserCard from './userCard.svelte';
 
 	export let users: Prisma.UserGetPayload<{ include: { decision: true } }>[];
+	export let questions: Question[];
 	export let actions: string[];
 
 	let DISPLAY_LIMIT = 25;
@@ -84,12 +85,12 @@
 								}
 							}}
 						/>
-						<label for={'' + user.id}>{user.fullName}</label>
-						<a class="desktop" href="mailto:{user.email}">{user.email}</a>
+						<a href="mailto:{user.email}">{user.email}</a>
+						<span class="grow" />
 						<span class="{user.decision?.status.toLowerCase() ?? user.status.toLowerCase()} dot" />
 					</summary>
 					<div class="user">
-						<UserCard {user} />
+						<UserCard {user} {questions} />
 					</div>
 				</details>
 			</li>
@@ -134,7 +135,11 @@
 	}
 
 	summary a {
-		color: gray;
+		margin-left: 1rem;
+	}
+
+	.grow {
+		flex-grow: 1;
 	}
 
 	.dot {
@@ -157,20 +162,6 @@
 
 	details > div {
 		padding: 0 1rem 0 1rem;
-	}
-
-	label {
-		flex-grow: 1;
-		margin: 0 1rem;
-		z-index: -1;
-		overflow: hidden;
-		white-space: nowrap;
-	}
-
-	@media only screen and (max-width: 768px) {
-		.desktop {
-			display: none;
-		}
 	}
 
 	input[type='checkbox'] {

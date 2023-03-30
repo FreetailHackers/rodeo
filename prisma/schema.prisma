@@ -9,39 +9,14 @@ generator client {
 }
 
 model User {
-  id                    Int       @id @default(autoincrement())
-  email                 String    @unique
-  magicLink             String    @unique
-  role                  Role      @default(HACKER)
-  status                Status    @default(CREATED)
-  decision              Decision?
-  fullName              String?
-  preferredName         String?
-  gender                String?
-  race                  String[]
-  pronouns              String?
-  photoReleaseAgreed    Boolean   @default(false)
-  liabilityWaiverAgreed Boolean   @default(false)
-  codeOfConductAgreed   Boolean   @default(false)
-  major                 String?
-  classification        String?
-  graduation            String?
-  firstGeneration       Boolean?
-  international         Boolean?
-  hackathonsAttended    Int?
-  workshops             String[]
-  referrer              String?
-  excitedAbout          String?
-  resume                String?
-  github                String?
-  linkedin              String?
-  website               String?
-  lunch                 Boolean   @default(false)
-  dietaryRestrictions   String[]
-  allergies             String?
-  accommodations        String?
-  other                 String?
-  scanCount             Json      @default("{}")
+  id          Int       @id @default(autoincrement())
+  email       String    @unique
+  magicLink   String    @unique
+  role        Role      @default(HACKER)
+  status      Status    @default(CREATED)
+  decision    Decision?
+  application Json      @default("{}")
+  scanCount   Json      @default("{}")
 }
 
 model Announcement {
@@ -58,19 +33,33 @@ model Decision {
   status Status
 }
 
-// Store global global settings/configuration/configuration in a table with a single row
+// Store global settings/configuration/configuration in a table with a single row
 model Settings {
   id                 Int       @id @default(0) // Dummy ID is to satisfy Prisma
-  // TODO: Separate public and private settings into separate tables
+  // TODO: Separate public and private settings into separate tables?
   // PUBLIC SETTINGS (all users must be able to see these)
   applicationOpen    Boolean   @default(true)
   confirmBy          DateTime?
-  info               String    @default("")
+  info               String    @default("Put everything anybody may need to know about your hackathon here.")
   // PRIVATE SETTINGS (settings that non-admins do not need)
   rollingAdmissions  Boolean   @default(false)
   acceptanceTemplate String    @default("You have been accepted to our hackathon!")
   homepageText       String    @default("This text can be edited from the admin panel. You can put deadlines, logistics, or other important information here.")
   scanActions        String[]
+}
+
+model Question {
+  id          String       @id @default(uuid())
+  label       String
+  type        QuestionType
+  required    Boolean      @default(false)
+  order       Int          @unique
+  placeholder String? // For sentences, paragraphs, and numbers
+  options     String[] // For dropdowns, multiselects, checkboxes, and radios
+  min         Int? // For numbers
+  max         Int? // For numbers
+  step        Int? // For numbers
+  regex       String? // For sentences and paragraphs
 }
 
 model Event {
@@ -102,4 +91,15 @@ enum Status {
   WAITLISTED // User has been waitlisted
   CONFIRMED // User has confirmed their attendance
   DECLINED // User has declined their attendance
+}
+
+enum QuestionType {
+  SENTENCE
+  PARAGRAPH
+  NUMBER
+  DROPDOWN
+  MULTISELECT
+  CHECKBOXES
+  RADIO
+  FILE
 }
