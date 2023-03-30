@@ -110,7 +110,6 @@ async function main() {
 			other: '',
 			role: Role.HACKER,
 			status: Status[Object.keys(Status)[Math.floor(random() * Object.keys(Status).length)]],
-			scanCount: 0,
 		});
 	}
 	await prisma.user.createMany({ data: hackers });
