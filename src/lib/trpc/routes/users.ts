@@ -1,49 +1,15 @@
 import { hash } from '$lib/hash';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { Prisma, Role, Status, type User } from '@prisma/client';
 import { z } from 'zod';
 import prisma from '../db';
 import { sendEmail } from '../email';
 import { authenticate } from '../middleware';
 import { t } from '../t';
+import { getQuestions } from './questions';
 import { getSettings } from './settings';
 
 const MAGIC_LINK_LENGTH = 32;
 const CHARSET = 'abcdefghijklmnopqrstuvwxyz';
-const FILE_SIZE_LIMIT = 1 * 1024 * 1024; // 1 MB
-
-const userSchema = z
-	.object({
-		fullName: z.string().optional(),
-		preferredName: z.string().optional(),
-		gender: z.string().optional(),
-		race: z.array(z.string()).optional(),
-		pronouns: z.string().optional(),
-		photoReleaseAgreed: z.boolean().optional(),
-		liabilityWaiverAgreed: z.boolean().optional(),
-		codeOfConductAgreed: z.boolean().optional(),
-		major: z.string().optional(),
-		classification: z.string().optional(),
-		graduation: z.string().optional(),
-		firstGeneration: z.boolean().optional(),
-		international: z.boolean().optional(),
-		hackathonsAttended: z.number().optional(),
-		workshops: z.array(z.string()).optional(),
-		referrer: z.string().optional(),
-		excitedAbout: z.string().optional(),
-		resume: z.any(),
-		github: z.string().optional(),
-		linkedin: z.string().optional(),
-		website: z.string().optional(),
-		lunch: z.boolean().optional(),
-		dietaryRestrictions: z.array(z.string()).optional(),
-		allergies: z.string().optional(),
-		accommodations: z.string().optional(),
-		other: z.string().optional(),
-	})
-	.strict();
-
-const client = new S3Client({ region: 'us-east-1' });
 
 export const usersRouter = t.router({
 	/**
@@ -63,7 +29,7 @@ export const usersRouter = t.router({
 	 */
 	update: t.procedure
 		.use(authenticate)
-		.input(userSchema)
+		.input(z.record(z.string(), z.string()))
 		.mutation(async (req): Promise<void> => {
 			if (req.ctx.user.role !== Role.HACKER) {
 				throw new Error('You have insufficient permissions to perform this action.');
@@ -71,22 +37,12 @@ export const usersRouter = t.router({
 			if (!(await getSettings()).applicationOpen) {
 				throw new Error('Sorry, applications are closed.');
 			}
-			// Upload resume to S3
-			if (
-				req.input.resume instanceof Blob &&
-				req.input.resume.size > 0 &&
-				req.input.resume.size < FILE_SIZE_LIMIT
-			) {
-				await client.send(
-					new PutObjectCommand({
-						Bucket: process.env.S3_BUCKET,
-						Key: `${req.ctx.user.id}/${req.input.resume.name}`,
-						Body: Buffer.from(await req.input.resume.arrayBuffer()),
-					})
-				);
-				req.input.resume = `https://s3.amazonaws.com/${process.env.S3_BUCKET}/${req.ctx.user.id}/${req.input.resume.name}`;
-			} else {
-				req.input.resume = undefined;
+			// Validate application
+			const questions = await getQuestions();
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const application: Record<string, any> = {};
+			for (const question of questions) {
+				application[question.id] = req.input[question.id];
 			}
 			// Only let verified users that haven't received a decision update their info
 			if (req.ctx.user.status === Status.VERIFIED || req.ctx.user.status === Status.APPLIED) {
@@ -95,7 +51,7 @@ export const usersRouter = t.router({
 						magicLink: await hash(req.ctx.magicLink),
 					},
 					// "Un-apply" the user if they're already applied
-					data: { ...req.input, status: Status.VERIFIED },
+					data: { application, status: Status.VERIFIED },
 				});
 			}
 			// Remove user from pending decision pool
@@ -126,51 +82,16 @@ export const usersRouter = t.router({
 
 			// Validate the user's data
 			const errors: Record<string, string> = {};
-			if (req.ctx.user.fullName === null || req.ctx.user.fullName.trim() === '') {
-				errors.name = 'Please enter your full name.';
-			}
-			if (req.ctx.user.preferredName === null || req.ctx.user.preferredName.trim() === '') {
-				errors.name = 'Please enter your preferred name.';
-			}
-			if (req.ctx.user.gender === null) {
-				errors.gender = 'Please specify your gender.';
-			}
-			if (!req.ctx.user.photoReleaseAgreed) {
-				errors.photoReleaseAgreed = 'You must agree to the photo release to participate.';
-			}
-			if (!req.ctx.user.liabilityWaiverAgreed) {
-				errors.liabilityWaiverAgreed = 'You must agree to the liability waiver to participate.';
-			}
-			if (!req.ctx.user.codeOfConductAgreed) {
-				errors.codeOfConductAgreed = 'You must agree to the code of conduct to participate.';
-			}
-			if (req.ctx.user.major === null || req.ctx.user.major.trim() === '') {
-				errors.major = 'Please provide your major.';
-			}
-			if (req.ctx.user.classification === null) {
-				errors.classification = 'Please specify your classification.';
-			}
-			if (req.ctx.user.graduation === null) {
-				errors.graduationYear = 'Please specify your graduation year.';
-			}
-			if (req.ctx.user.hackathonsAttended === null) {
-				errors.hackathonsAttended = 'Please specify the number of hackathons you have attended.';
-			}
-			if (req.ctx.user.referrer === null) {
-				errors.referrer = 'Please specify how you heard about HackTX.';
-			}
-			if (req.ctx.user.excitedAbout === null || req.ctx.user.excitedAbout.trim() === '') {
-				errors.excitedAbout = 'Please tell us what you are excited about.';
-			}
-			try {
-				if (req.ctx.user.website !== null && req.ctx.user.website.trim() !== '') {
-					new URL(req.ctx.user.website);
+			const questions = await prisma.question.findMany();
+			const application = req.ctx.user.application as Record<string, string>;
+			for (const question of questions) {
+				const answer = application[question.id];
+				if (
+					question.required &&
+					(answer === undefined || answer === null || answer.trim() === '')
+				) {
+					errors[question.label] = 'This field is required.';
 				}
-			} catch (e) {
-				errors.website = 'Please enter a valid URL.';
-			}
-			if (req.ctx.user.dietaryRestrictions === null) {
-				errors.dietaryRestrictions = 'Please specify your dietary restrictions.';
 			}
 			// Update status to applied if there are no errors
 			if (Object.keys(errors).length == 0) {

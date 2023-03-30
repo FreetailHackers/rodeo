@@ -5,7 +5,10 @@ import type { Actions } from './$types';
 
 export const load = async ({ cookies }) => {
 	await authenticate(cookies, [Role.ADMIN]);
-	return { users: await trpc(cookies).users.getAll() };
+	return {
+		questions: await trpc(cookies).questions.get(),
+		users: await trpc(cookies).users.getAll(),
+	};
 };
 
 export const actions: Actions = {
