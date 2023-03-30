@@ -12,6 +12,9 @@ const settingsSchema = z
 		rollingAdmissions: z.boolean().optional(),
 		acceptanceTemplate: z.string().optional(),
 		homepageText: z.string().optional(),
+		RSVPTemplate: z.string().optional(),
+		withdrawTemplate: z.string().optional(),
+		submitTemplate: z.string().optional(),
 	})
 	.strict();
 
