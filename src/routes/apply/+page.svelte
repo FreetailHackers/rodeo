@@ -4,11 +4,11 @@
 	import type { ActionData } from './$types';
 
 	export let data;
-	$: application = data.user.application as Record<number, unknown>;
+	$: application = data.user.application as Record<string, unknown>;
 	export let form: ActionData;
 
 	let applicationForm: HTMLFormElement;
-	let focusedQuestion: number;
+	let focusedQuestionId: string;
 
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 	let saveButton: HTMLButtonElement;
@@ -147,19 +147,19 @@
 		>
 			{#each data.questions as question}
 				{#if question.type === 'SENTENCE'}
-					<label for={'q' + question.id}>
+					<label for={question.id}>
 						{question.label}
 						{#if question.required}*{/if}
 					</label>
 					<!-- svelte-ignore a11y-autofocus -->
 					<input
 						type="text"
-						name={'q' + question.id}
-						id={'q' + question.id}
+						name={question.id}
+						id={question.id}
 						bind:value={application[question.id]}
 						placeholder={question.placeholder}
-						autofocus={question.id === focusedQuestion}
-						on:focus={() => (focusedQuestion = question.id)}
+						autofocus={question.id === focusedQuestionId}
+						on:focus={() => (focusedQuestionId = question.id)}
 					/>
 				{/if}
 			{/each}

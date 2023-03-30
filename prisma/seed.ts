@@ -46,9 +46,8 @@ async function main() {
 	});
 
 	// Create example questions
-	const questions: (Prisma.QuestionCreateInput & { id: number; generate: () => unknown })[] = [
+	const questions: (Prisma.QuestionCreateInput & { generate: () => unknown })[] = [
 		{
-			id: 0,
 			order: 0,
 			label: 'Name',
 			type: QuestionType.SENTENCE,
@@ -57,7 +56,6 @@ async function main() {
 			generate: () => `${randomElement(firstNames)} ${randomElement(lastNames)}`,
 		},
 		{
-			id: 1,
 			order: 1,
 			label: 'Classification',
 			type: QuestionType.DROPDOWN,
@@ -65,7 +63,6 @@ async function main() {
 			generate: () => randomElement(['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate']),
 		},
 		{
-			id: 2,
 			order: 2,
 			label: 'Major',
 			type: QuestionType.MULTISELECT,
@@ -73,7 +70,6 @@ async function main() {
 			generate: () => randomElement(majors),
 		},
 		{
-			id: 3,
 			order: 3,
 			label: 'I agree to sell my data.',
 			type: QuestionType.CHECKBOXES,
@@ -81,7 +77,6 @@ async function main() {
 			generate: () => true,
 		},
 		{
-			id: 4,
 			order: 4,
 			label: 'How many hackathons have you attended?',
 			type: QuestionType.NUMBER,
@@ -90,7 +85,6 @@ async function main() {
 			generate: () => Math.floor(random() * 10),
 		},
 		{
-			id: 5,
 			order: 5,
 			label: 'Why do you want to attend HackTX?',
 			type: QuestionType.PARAGRAPH,
@@ -99,7 +93,6 @@ async function main() {
 			generate: () => 'I want to attend HackTX because I love hackathons!',
 		},
 		{
-			id: 6,
 			order: 6,
 			label: 'Resume',
 			type: QuestionType.FILE,
@@ -107,7 +100,6 @@ async function main() {
 			generate: () => 'https://example.com/resume.pdf',
 		},
 		{
-			id: 7,
 			order: 7,
 			label: 'Shirt size',
 			type: QuestionType.RADIO,
@@ -119,12 +111,15 @@ async function main() {
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	await prisma.question.createMany({ data: questions.map(({ generate, ...keep }) => keep) });
 
+	const createdQuestions = await prisma.question.findMany();
+
 	// Generate 1000 random hackers with a seeded random number generator for reproducibility
 	const hackers: Prisma.UserCreateInput[] = [];
 	for (let i = 0; i < 1000; i++) {
 		const application = {};
-		for (const question of questions) {
-			application[question.id] = question.generate();
+		for (const question of createdQuestions) {
+			// IMPORTANT: This assumes that the questions variable is ordered by the order field!!
+			application[question.id] = questions[question.order].generate();
 		}
 		hackers.push({
 			email: `hacker${i}@yopmail.com`,

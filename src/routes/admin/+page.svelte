@@ -14,6 +14,8 @@
 
 <h1>Admin Panel</h1>
 
+<a href="/admin/questions">Registration Questions</a>
+
 <div class="extra-padding">
 	<h4>Start typing to see preview:</h4>
 	<SvelteMarkdown source={inputText} />

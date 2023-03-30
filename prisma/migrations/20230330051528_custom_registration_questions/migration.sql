@@ -66,7 +66,7 @@ ADD COLUMN     "application" JSONB NOT NULL DEFAULT '{}';
 
 -- CreateTable
 CREATE TABLE "Question" (
-    "id" SERIAL NOT NULL,
+    "id" TEXT NOT NULL,
     "label" TEXT NOT NULL,
     "type" "QuestionType" NOT NULL,
     "required" BOOLEAN NOT NULL DEFAULT false,

@@ -16,11 +16,6 @@ export const load = async ({ cookies }) => {
 export const actions: Actions = {
 	save: async ({ cookies, request }) => {
 		const application = Object.fromEntries(await request.formData());
-		// Strip the leading 'q' from the input names
-		for (const inputName in application) {
-			application[inputName.substring(1)] = application[inputName];
-			delete application[inputName];
-		}
 		await trpc(cookies).users.update(application as Record<string, string>);
 	},
 
@@ -29,11 +24,6 @@ export const actions: Actions = {
 			throw redirect(301, '/apply');
 		}
 		const application = Object.fromEntries(await request.formData());
-		// Strip the leading 'q' from the input names
-		for (const inputName in application) {
-			application[inputName.substring(1)] = application[inputName];
-			delete application[inputName];
-		}
 		await trpc(cookies).users.update(application as Record<string, string>);
 		return await trpc(cookies).users.submitApplication();
 	},

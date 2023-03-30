@@ -29,7 +29,7 @@ export const usersRouter = t.router({
 	 */
 	update: t.procedure
 		.use(authenticate)
-		.input(z.object({}).catchall(z.string()).passthrough())
+		.input(z.record(z.string(), z.string()))
 		.mutation(async (req): Promise<void> => {
 			if (req.ctx.user.role !== Role.HACKER) {
 				throw new Error('You have insufficient permissions to perform this action.');
@@ -40,7 +40,7 @@ export const usersRouter = t.router({
 			// Validate application
 			const questions = await getQuestions();
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const application: Record<number, any> = {};
+			const application: Record<string, any> = {};
 			for (const question of questions) {
 				application[question.id] = req.input[question.id];
 			}
@@ -83,7 +83,7 @@ export const usersRouter = t.router({
 			// Validate the user's data
 			const errors: Record<string, string> = {};
 			const questions = await prisma.question.findMany();
-			const application = req.ctx.user.application as Record<number, string>;
+			const application = req.ctx.user.application as Record<string, string>;
 			for (const question of questions) {
 				const answer = application[question.id];
 				if (

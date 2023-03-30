@@ -49,7 +49,7 @@ model Settings {
 }
 
 model Question {
-  id          Int          @id @default(autoincrement())
+  id          String       @id @default(uuid())
   label       String
   type        QuestionType
   required    Boolean      @default(false)
