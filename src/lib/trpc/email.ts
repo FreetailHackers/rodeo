@@ -1,10 +1,10 @@
 import sgMail from '@sendgrid/mail';
 import nodemailer from 'nodemailer';
 import { marked } from 'marked';
-/** @type {import('@sveltejs/adapter-vercel').Config} */
+import type { Options } from '@sveltejs/adapter-vercel';
 
-export const config = {
-	runtime: 'nodejs18.x',
+export const config: Options = {
+	edge: false,
 };
 
 sgMail.setApiKey(process.env.SENDGRID_KEY as string);
