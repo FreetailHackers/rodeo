@@ -1,8 +1,8 @@
 import { trpc } from '$lib/trpc/router';
-import type { Options } from '@sveltejs/adapter-vercel';
+/** @type {import('@sveltejs/adapter-vercel').Config} */
 
-export const config: Options = {
-	edge: true,
+export const config = {
+	runtime: 'edge',
 };
 
 export const load = async ({ cookies }) => {
