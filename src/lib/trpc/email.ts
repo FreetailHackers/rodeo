@@ -1,6 +1,11 @@
 import sgMail from '@sendgrid/mail';
 import nodemailer from 'nodemailer';
 import { marked } from 'marked';
+import type { Options } from '@sveltejs/adapter-vercel';
+
+export const config: Options = {
+	edge: false,
+};
 
 sgMail.setApiKey(process.env.SENDGRID_KEY as string);
 const transporter = nodemailer.createTransport({
