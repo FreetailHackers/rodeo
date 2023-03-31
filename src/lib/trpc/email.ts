@@ -3,7 +3,7 @@ import nodemailer from 'nodemailer';
 import { marked } from 'marked';
 
 export const config = {
-	runtime: 'nodejs18.x',
+	runtime: 'edge',
 };
 
 sgMail.setApiKey(process.env.SENDGRID_KEY as string);
