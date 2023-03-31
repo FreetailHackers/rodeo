@@ -37,6 +37,7 @@
 	input {
 		margin: 0;
 		flex-grow: 1;
+		width: 100%;
 	}
 
 	fieldset button {

@@ -28,7 +28,8 @@ export const questionsRouter = t.router({
 			throw new Error('You have insufficient permissions to perform this action.');
 		}
 		// TODO: Only supports adding at end for now
-		const lastOrder = Math.max(...(await getQuestions()).map((question) => question.order));
+		const orders = (await getQuestions()).map((question) => question.order);
+		const lastOrder = orders.length == 0 ? 0 : Math.max(...orders);
 		return await prisma.question.create({
 			data: {
 				label: '',
