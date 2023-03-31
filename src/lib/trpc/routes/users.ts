@@ -99,6 +99,10 @@ export const usersRouter = t.router({
 					where: { magicLink: await hash(req.ctx.magicLink) },
 					data: { status: Status.APPLIED },
 				});
+
+				// notify user through their email on successful application submission
+				const subject = 'Thanks for Submitting!';
+				await sendEmail(req.ctx.user.email, subject, (await getSettings()).submitTemplate, null);
 			}
 			return errors;
 		}),
@@ -124,6 +128,10 @@ export const usersRouter = t.router({
 						where: { magicLink: await hash(req.ctx.magicLink) },
 						data: { status: Status.CONFIRMED },
 					});
+
+					// notify user through email on confirming there RSVP
+					const subject = 'Thanks for Confirming!';
+					await sendEmail(req.ctx.user.email, subject, (await getSettings()).RSVPTemplate, null);
 				}
 			} else {
 				// Hackers should be able to decline after accepting and/or the deadline
@@ -132,6 +140,17 @@ export const usersRouter = t.router({
 						where: { magicLink: await hash(req.ctx.magicLink) },
 						data: { status: Status.DECLINED },
 					});
+
+					// notify user through email on successful withdrawal
+					const subject = 'Application Withdrawal Confirmation';
+					await sendEmail(
+						req.ctx.user.email,
+						subject,
+						(
+							await getSettings()
+						).withdrawTemplate,
+						null
+					);
 				}
 			}
 		}),

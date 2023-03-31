@@ -46,6 +46,23 @@ model Settings {
   acceptanceTemplate String    @default("You have been accepted to our hackathon!")
   homepageText       String    @default("This text can be edited from the admin panel. You can put deadlines, logistics, or other important information here.")
   scanActions        String[]
+  RSVPTemplate String  @default("Thank you for signing up to our hackathon!")
+  withdrawTemplate String @default("We're sorry to see you go!")
+  submitTemplate String @default("Thank you for submitting your application!")
+}
+
+model Question {
+  id          String       @id @default(uuid())
+  label       String
+  type        QuestionType
+  required    Boolean      @default(false)
+  order       Int          @unique
+  placeholder String? // For sentences, paragraphs, and numbers
+  options     String[] // For dropdowns, multiselects, checkboxes, and radios
+  min         Int? // For numbers
+  max         Int? // For numbers
+  step        Int? // For numbers
+  regex       String? // For sentences and paragraphs
 }
 
 model Question {
