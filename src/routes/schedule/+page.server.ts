@@ -52,7 +52,7 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id');
 		if (typeof id !== 'string') {
-			throw new Error('Invalid announcement ID.');
+			throw new Error('Invalid event ID.');
 		}
 		return await trpc(cookies).events.get(Number(id));
 	},
@@ -61,7 +61,7 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id');
 		if (typeof id !== 'string') {
-			throw new Error('Invalid announcement ID.');
+			throw new Error('Invalid event ID.');
 		}
 
 		const fixedStartTime = dayjs
@@ -87,7 +87,7 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id');
 		if (typeof id !== 'string') {
-			throw new Error('Invalid announcement ID.');
+			throw new Error('Invalid event ID.');
 		}
 		await trpc(cookies).events.delete(Number(id));
 	},

@@ -79,6 +79,7 @@
 							hour12: true,
 						})}
 					</h4>
+					<a class="hyperlink" href="/schedule/{event.id}">Learn more...</a>
 				</li>
 			{/if}
 		{/each}
@@ -86,6 +87,7 @@
 </div>
 
 {#if data.user?.role === Role.ADMIN}
+	<hr />
 	<h2>{editedEvent == null ? 'Create New Event' : 'Edit Event'}</h2>
 	<form method="POST" action={editedEvent == null ? '?/create' : '?/saveEdit'} use:enhance>
 		<input type="hidden" name="id" value={editedEvent?.id} />
@@ -162,9 +164,10 @@
 	}
 
 	li {
+		text-align: center;
 		margin: 15px 0;
-		padding-top: 5px;
-		padding-bottom: 5px;
+		padding-top: 2px;
+		padding-bottom: 15px;
 	}
 
 	.legend {
@@ -172,11 +175,6 @@
 		margin: 0 auto;
 		text-align: center;
 		justify-content: center;
-	}
-
-	h3.event-name {
-		text-decoration: underline;
-		text-decoration-thickness: 2px;
 	}
 
 	ul {
@@ -243,5 +241,14 @@
 	li div {
 		position: absolute;
 		padding-left: 15px;
+	}
+
+	a.hyperlink {
+		color: black;
+		text-align: center;
+	}
+
+	hr {
+		margin-top: 20px;
 	}
 </style>
