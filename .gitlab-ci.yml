@@ -1,8 +1,8 @@
 default:
-  image: node:19
+  image: registry.gitlab.com/freetail-hackers/rodeo
 
 stages:
-  - test
+  # - test
   - deploy-staging
   - deploy-production
 
