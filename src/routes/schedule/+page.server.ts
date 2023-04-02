@@ -7,10 +7,23 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+const daysOfWeek: Array<string> = [];
+function getDayMonthString(date: Date) {
+	return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+}
+
 export const load = async ({ cookies }) => {
+	const eventList = await trpc(cookies).events.getAll();
+	for (const day of eventList) {
+		const hackathonDate = getDayMonthString(day.start);
+		if (!daysOfWeek.includes(hackathonDate)) {
+			daysOfWeek.push(hackathonDate);
+		}
+	}
 	return {
-		schedule: await trpc(cookies).events.getAll(),
+		schedule: eventList,
 		user: await trpc(cookies).users.get(),
+		daysOfWeek: daysOfWeek,
 	};
 };
 

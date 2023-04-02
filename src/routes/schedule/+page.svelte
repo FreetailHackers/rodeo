@@ -15,6 +15,25 @@
 			window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 		}
 	}
+
+	let currentDay = 5; // 0 = Sunday, 6 = Saturday
+	function toggleVisibility(hackDate: string) {
+		if (hackDate.includes('Friday')) {
+			currentDay = 5;
+		} else if (hackDate.includes('Saturday')) {
+			currentDay = 6;
+		} else if (hackDate.includes('Sunday')) {
+			currentDay = 0;
+		} else if (hackDate.includes('Monday')) {
+			currentDay = 1;
+		} else if (hackDate.includes('Tuesday')) {
+			currentDay = 2;
+		} else if (hackDate.includes('Wednesday')) {
+			currentDay = 3;
+		} else if (hackDate.includes('Thursday')) {
+			currentDay = 4;
+		}
+	}
 </script>
 
 <h1>Schedule</h1>
@@ -26,71 +45,43 @@
 		<mark class="Fun-Event">Fun Event</mark>
 		<mark class="Workshop">Workshop</mark>
 	</div>
+
+	<div class="btn-group">
+		{#each data.daysOfWeek as hackDate}
+			<button on:click={() => toggleVisibility(hackDate)} class="btn">{hackDate} </button>
+		{/each}
+	</div>
+
 	<ul>
-		<div class="event-container">
-			<div class="event-child">
-				<h3>Friday, Mar. 3</h3>
-				{#each data.schedule as event}
-					{#if event.start.getDay() === 5}
-						<li class={event.type}>
-							<!-- Element removal box -->
-							{#if data.user?.role === Role.ADMIN}
-								<form method="POST" use:enhance>
-									<input type="hidden" name="id" value={event.id} />
-									<button type="submit" formaction="?/delete">❌</button>
-									<button type="submit" formaction="?/edit">✏</button>
-								</form>
-							{/if}
-							<!-- Event box -->
-							<h3 class="event-name">{event.name} ({event.location})</h3>
-							<h4>
-								{event.start.toLocaleString('en-US', {
-									hour: 'numeric',
-									minute: 'numeric',
-									hour12: true,
-								})} - {event.end.toLocaleString('en-US', {
-									hour: 'numeric',
-									minute: 'numeric',
-									hour12: true,
-								})}
-							</h4>
-							<h5>{event.description}</h5>
-						</li>
+		{#each data.schedule as event}
+			{#if event.start.getDay() === currentDay}
+				<li class={event.type}>
+					<!-- Element removal box -->
+					{#if data.user?.role === Role.ADMIN}
+						<div>
+							<form method="POST" use:enhance>
+								<input type="hidden" name="id" value={event.id} />
+								<button type="submit" formaction="?/delete">❌</button>
+								<button type="submit" formaction="?/edit">✏</button>
+							</form>
+						</div>
 					{/if}
-				{/each}
-			</div>
-			<div class="event-child">
-				<h3>Saturday, Mar. 4</h3>
-				{#each data.schedule as event}
-					{#if event.start.getDay() === 6}
-						<li class={event.type}>
-							<!-- Element removal box -->
-							{#if data.user?.role === Role.ADMIN}
-								<form method="POST" use:enhance>
-									<input type="hidden" name="id" value={event.id} />
-									<button type="submit" formaction="?/delete">❌</button>
-									<button type="submit" formaction="?/edit">✏️️</button>
-								</form>
-							{/if}
-							<!-- Event box -->
-							<h3 class="event-name">{event.name} ({event.location})</h3>
-							<h4>
-								{event.start.toLocaleString('en-US', {
-									hour: 'numeric',
-									minute: 'numeric',
-									hour12: true,
-								})} - {event.end.toLocaleString('en-US', {
-									hour: 'numeric',
-									minute: 'numeric',
-									hour12: true,
-								})}
-							</h4>
-							<h5>{event.description}</h5>
-						</li>
-					{/if}
-				{/each}
-			</div>
-		</div>
+					<!-- Event box -->
+					<h3 class="event-name">{event.name} ({event.location})</h3>
+					<h4>
+						{event.start.toLocaleString('en-US', {
+							hour: 'numeric',
+							minute: 'numeric',
+							hour12: true,
+						})} - {event.end.toLocaleString('en-US', {
+							hour: 'numeric',
+							minute: 'numeric',
+							hour12: true,
+						})}
+					</h4>
+				</li>
+			{/if}
+		{/each}
 	</ul>
 </div>
 
@@ -141,23 +132,6 @@
 
 <style>
 	@media only screen and (min-width: 600px) {
-		div.event-container {
-			display: flex;
-			flex-direction: row;
-			margin-bottom: 50px;
-			align-items: flex-start;
-			justify-content: space-between;
-			width: 100%;
-		}
-
-		div.event-child {
-			display: flex;
-			padding: 10px;
-			flex-direction: column;
-			width: 450px;
-			text-align: center;
-		}
-
 		.legend {
 			display: absolute;
 			flex-direction: row;
@@ -178,8 +152,7 @@
 	}
 
 	h3,
-	h4,
-	h5 {
+	h4 {
 		text-align: center;
 	}
 
@@ -189,7 +162,9 @@
 	}
 
 	li {
-		margin: 10px 0;
+		margin: 15px 0;
+		padding-top: 5px;
+		padding-bottom: 5px;
 	}
 
 	.legend {
@@ -207,10 +182,6 @@
 	ul {
 		padding: 0;
 		list-style-type: none;
-	}
-
-	li {
-		margin: 10px 0;
 	}
 
 	.Key-Event {
@@ -245,10 +216,32 @@
 		color: #ffffff;
 		border: none;
 		padding: 5px;
-		margin: 15px 15px 0 0;
+		margin: 5px 15px 0 0;
 	}
 
 	li button:hover {
 		background-color: #972626;
+	}
+
+	div.btn-group {
+		padding-top: 20px;
+		display: flex;
+		justify-content: center;
+	}
+
+	button.btn {
+		flex: 1;
+	}
+
+	button.btn:not(:last-child) {
+		margin-right: 5px;
+	}
+	button.btn:hover {
+		background-color: #9e3f00;
+	}
+
+	li div {
+		position: absolute;
+		padding-left: 15px;
 	}
 </style>
