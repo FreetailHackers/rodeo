@@ -1,5 +1,5 @@
 default:
-  image: node:18
+  image: node:19
 
 stages:
   - test
@@ -17,32 +17,33 @@ test-job:
 
 deploy-staging-job:
   stage: deploy-staging
-  only:
-    - master
+  variables:
+    DOMAIN_NAME: 'https://rodeo-$CI_COMMIT_BRANCH.freetailhackers.com'
   environment:
-    name: staging
-    url: https://rodeo-nightly.freetailhackers.com/
+    name: review/$CI_COMMIT_BRANCH
+    url: $DOMAIN_NAME
   script:
     - npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
     - mv .vercel/.env.preview.local .env # Needed for prisma migrate deploy
-    - "export $(grep -v '^#' .env | xargs)" # Needed to correctly set $DOMAIN_NAME
+    - "export $(grep -v '^#' .env | xargs)" # Export .env to environment variables in shell
+    - echo "SELECT 'CREATE DATABASE \"rodeo-$CI_COMMIT_BRANCH\"' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'rodeo-$CI_COMMIT_BRANCH')\gexec" | psql $DATABASE_URL
+    - export DATABASE_URL=$DATABASE_URL/$CI_COMMIT_BRANCH
     - npx prisma migrate deploy
-    - npx vercel deploy --token=$VERCEL_TOKEN > domain.txt
-    - npx vercel alias --token=$VERCEL_TOKEN set `cat domain.txt` `echo $DOMAIN_NAME | awk -F// '{print $NF}'` # Must remove https:// for vercel alias to work
+    - npx tsx prisma/seed.ts
+    - npx vercel deploy --token=$VERCEL_TOKEN --env DOMAIN_NAME=$DOMAIN_NAME --env DATABASE_URL=$DATABASE_URL > domain.txt
+    - npx vercel alias --token=$VERCEL_TOKEN set `cat domain.txt` $(echo $DOMAIN_NAME | awk -F// '{print $NF}') # Must remove https:// for vercel alias to work
     - rm .env domain.txt
 
 deploy-production-job:
   stage: deploy-production
-  only:
-    - master
   environment:
     name: production
-    url: https://rodeo.freetailhackers.com/
+    url: https://rodeo.freetailhackers.com
   when: manual
   script:
     - npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
     - mv .vercel/.env.production.local .env # Needed for prisma migrate deploy
-    - "export $(grep -v '^#' .env | xargs)" # Needed to correctly set $DOMAIN_NAME
+    - "export $(grep -v '^#' .env | xargs)" # Export .env to environment variables in shell
     - npx prisma migrate deploy
     - npx vercel deploy --prod --token=$VERCEL_TOKEN > domain.txt
     - npx vercel alias --token=$VERCEL_TOKEN set `cat domain.txt` $(echo $DOMAIN_NAME | awk -F// '{print $NF}') # Must remove https:// for vercel alias to work
