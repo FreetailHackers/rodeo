@@ -26,7 +26,7 @@ deploy-staging-job:
     - npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
     - mv .vercel/.env.preview.local .env # Needed for prisma migrate deploy
     - "export $(grep -v '^#' .env | xargs)" # Export .env to environment variables in shell
-    - sudo apt-get install -y postgresql-client
+    - apt-get install -y postgresql-client
     - echo "SELECT 'CREATE DATABASE \"rodeo-$CI_COMMIT_BRANCH\"' WHERE NOT EXISTS (SELECT FROM pg_database WHERE datname = 'rodeo-$CI_COMMIT_BRANCH')\gexec" | psql $DATABASE_URL
     - export DATABASE_URL=$DATABASE_URL/$CI_COMMIT_BRANCH
     - npx prisma migrate deploy
