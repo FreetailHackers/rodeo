@@ -16,7 +16,15 @@
 		}
 	}
 
-	let currentDay = 5; // 0 = Sunday, 6 = Saturday
+	let currentDateTime = new Date();
+
+	const updateDateTime = () => {
+		currentDateTime = new Date();
+	};
+
+	setInterval(updateDateTime, 1000);
+
+	let currentDay = currentDateTime.getDay(); // 0 = Sunday, 6 = Saturday
 	function toggleVisibility(hackDate: string) {
 		if (hackDate.includes('Friday')) {
 			currentDay = 5;
@@ -54,7 +62,7 @@
 
 	<ul>
 		{#each data.schedule as event}
-			{#if event.start.getDay() === currentDay}
+			{#if event.start.getDay() === currentDay && event.end > currentDateTime}
 				<li class={event.type}>
 					<!-- Element removal box -->
 					{#if data.user?.role === Role.ADMIN}
@@ -67,8 +75,9 @@
 						</div>
 					{/if}
 					<!-- Event box -->
-					<h3 class="event-name">{event.name} ({event.location})</h3>
-					<h4>
+					<h2 class="event-name">{event.name}</h2>
+					<h4 class="event-info">📍{' '}{event.location}</h4>
+					<h4 class="event-info">
 						{event.start.toLocaleString('en-US', {
 							hour: 'numeric',
 							minute: 'numeric',
@@ -153,11 +162,6 @@
 		text-align: center;
 	}
 
-	h3,
-	h4 {
-		text-align: center;
-	}
-
 	ul {
 		padding: 0;
 		list-style-type: none;
@@ -177,29 +181,38 @@
 		justify-content: center;
 	}
 
+	.event-name {
+		margin-top: 15px;
+		margin-bottom: 10px;
+	}
+
+	.event-info {
+		text-align: center;
+		margin: 10px;
+	}
 	ul {
 		padding: 0;
 		list-style-type: none;
 	}
 
 	.Key-Event {
-		background-color: #a8e6cf;
+		background-color: #c1e7e3;
 	}
 
 	.Workshop {
-		background-color: #dcedc1;
+		background-color: #b6fcf4;
 	}
 
 	.Speaker-Event {
-		background-color: #ffd3b6;
+		background-color: #ff9bdf;
 	}
 
 	.Fun-Event {
-		background-color: #ffaaa5;
+		background-color: #dabfde;
 	}
 
 	.Regular-Event {
-		background-color: #f58bff;
+		background-color: #bbbddd;
 	}
 
 	/* Admin view */
