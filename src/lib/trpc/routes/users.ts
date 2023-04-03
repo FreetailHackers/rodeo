@@ -187,7 +187,9 @@ export const usersRouter = t.router({
 		});
 
 		// Send email with magic link
-		const link = `${process.env.DOMAIN_NAME}/login/${magicLink}`;
+		const link = `${
+			process.env.DOMAIN_NAME ?? 'https://' + process.env.VERCEL_URL
+		}/login/${magicLink}`;
 		const message = `Please click on this link to log in to Rodeo: <a href="${link}">${link}</a>
 			<br>
 			<br>
@@ -236,7 +238,9 @@ export const usersRouter = t.router({
 			}
 
 			// Send email with magic link
-			const link = `${process.env.DOMAIN_NAME}/login/${magicLink}`;
+			const link = `${
+				process.env.DOMAIN_NAME ?? 'https://' + process.env.VERCEL_URL
+			}/login/${magicLink}`;
 			const message = `Please click on this link to log in to Rodeo: <a href="${link}">${link}</a>
 			<br>
 			<br>
