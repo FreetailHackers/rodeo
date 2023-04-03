@@ -1,5 +1,5 @@
 import type { Role, User } from '.prisma/client';
-import { error, type Cookies, redirect } from '@sveltejs/kit';
+import { type Cookies, redirect } from '@sveltejs/kit';
 import { trpc } from './trpc/router';
 
 /**
