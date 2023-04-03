@@ -19,8 +19,7 @@
 		if (isUnauthorized) {
 			toasts.notify('The user is unauthorized');
 		}
-	})
-
+	});
 </script>
 
 {#if data.user}
