@@ -1,5 +1,5 @@
 import type { Role, User } from '.prisma/client';
-import { error, type Cookies } from '@sveltejs/kit';
+import { error, type Cookies, redirect } from '@sveltejs/kit';
 import { trpc } from './trpc/router';
 
 /**
@@ -13,10 +13,10 @@ import { trpc } from './trpc/router';
 export default async function authenticate(cookies: Cookies, roles?: Role[]): Promise<User> {
 	const user = await trpc(cookies).users.get();
 	if (user === null) {
-		throw error(401, 'Unauthorized');
+		throw redirect(302, '/?unauthenticated');
 	}
 	if (roles !== undefined && !roles.includes(user.role)) {
-		throw error(403, 'Forbidden');
+		throw redirect(302, '/?unauthenticated');
 	}
 	return user;
 }

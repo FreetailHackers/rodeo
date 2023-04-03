@@ -3,10 +3,24 @@
 	import Announcements from '$lib/components/announcements.svelte';
 	import { Role } from '@prisma/client';
 	import SvelteMarkdown from 'svelte-markdown';
-
+	import { toasts } from '$lib/stores';
 	export let data;
+	import { onMount } from 'svelte';
 
 	let email: string;
+
+	let isUnauthorized = false;
+
+	onMount(() => {
+		const { pathname } = location;
+		if (pathname === '/?unauthorized') {
+			isUnauthorized = true;
+		}
+		if (isUnauthorized) {
+			toasts.notify('The user is unauthorized');
+		}
+	})
+
 </script>
 
 {#if data.user}
