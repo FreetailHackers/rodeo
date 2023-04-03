@@ -62,6 +62,7 @@ deploy-preview-job:
     # Deploy schema changes, if any
     - npx prisma migrate deploy
     # Required to get tsx to work
+    - npm install svelte-kit
     - npm run prepare
     # Reset preview database and seed with fake data
     - npx tsx prisma/seed.ts
