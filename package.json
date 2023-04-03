@@ -22,7 +22,7 @@
 		"migrate"
 	],
 	"prisma": {
-		"seed": "npx esno prisma/seed.ts"
+		"seed": "npx tsx prisma/seed.ts"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
