@@ -59,6 +59,8 @@ deploy-preview-job:
     - echo "CREATE DATABASE \"rodeo-$CI_COMMIT_BRANCH\"" | psql $DATABASE_URL
     # Set database connection string to use preview database
     - export DATABASE_URL=$DATABASE_URL/$CI_COMMIT_BRANCH
+    # Delete .env so Prisma doesn't try to read the outdated DATABASE_URL from it
+    - rm .env
     # Deploy schema changes, if any
     - npx prisma migrate deploy
     # Required to get tsx to work
