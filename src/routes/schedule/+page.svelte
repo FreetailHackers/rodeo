@@ -17,7 +17,6 @@
 	}
 
 	let currentDateTime = new Date();
-
 	const updateDateTime = () => {
 		currentDateTime = new Date();
 	};
