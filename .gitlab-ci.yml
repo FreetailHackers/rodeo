@@ -25,7 +25,7 @@
 default:
   # This pipeline requires a custom Docker image with npm and psql
   # installed (see the relevant Dockerfile for details)
-  image: node:18
+  image: node:16
 
 stages:
   # - test
