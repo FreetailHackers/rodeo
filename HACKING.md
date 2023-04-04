@@ -55,3 +55,7 @@ To get acquainted with the codebase, here's how to add a field to the hacker app
 # Architecture
 
 Rodeo is a [SvelteKit](https://kit.svelte.dev/) app that is built on top of a [TRPC](https://trpc.io/) backend that uses the [Prisma](https://www.prisma.io/) ORM to query a [PostgreSQL](https://www.postgresql.org/) database. The database schema, migration history, and seed script are located in the `prisma` directory. The backend is located in the `src/lib/trpc` directory, which contains a couple of TRPC boilerplate files and a `routes` folder, which is where the actual endpoints are located. The frontend is located in `src/routes`. SvelteKit uses filesystem-based routing, so each folder corresponds to an actual route and contains a `+page.svelte` file and a `+page.server.ts` file. `+page.svelte` contains all the HTML, CSS, and JavaScript for a page, while the job of `+page.server.ts` is twofold: it exports a `load` function that fetches all the data the frontend needs from TRPC, and handlers for any forms on the page. Reuseable components in pure Svelte go in `src/lib/components`.
+
+# Deployment
+
+Every commit to the master branch is deployed to [https://rodeo-nightly.freetailhackers.com](https://rodeo-nightly.freetailhackers.com). To deploy to production, a user with at least Maintainer access that was NOT the author of the commit must promote a preview deployment from the Deployments > Environments tab.
