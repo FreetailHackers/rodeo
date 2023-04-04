@@ -1,7 +1,11 @@
 import { firstNames, lastNames, majors } from './data';
-import { hash } from '../src/lib/hash';
+// import { hash } from '../src/lib/hash';
 import { PrismaClient, Role, Status, Prisma, QuestionType } from '@prisma/client';
 const prisma = new PrismaClient();
+
+function hash(input: string) {
+	return input;
+}
 
 /**
  * This script is used to seed the database with example data.
