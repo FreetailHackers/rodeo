@@ -25,21 +25,21 @@
 default:
   # This pipeline requires a custom Docker image with npm and psql
   # installed (see the relevant Dockerfile for details)
-  image: node:16
+  image: registry.gitlab.com/freetail-hackers/rodeo
 
 stages:
-  # - test
+  - test
   - deploy-preview
   - deploy-production
 
-# test-job:
-#   stage: test
-#   script:
-#     - npm ci
-#     - npm run build
-#     - npm run check
-#     - npm run lint
-#     - npm run test:unit
+test-job:
+  stage: test
+  script:
+    - npm ci
+    - npm run build
+    - npm run check
+    - npm run lint
+    - npm run test:unit
 
 deploy-preview-job:
   stage: deploy-preview
@@ -56,7 +56,7 @@ deploy-preview-job:
     # Export .env to environment variables in shell so we can use them in this script
     - "export $(grep -v '^#' .env | xargs)"
     # Create a new separate preview database for each branch (if it already exists, oh well)
-    # - echo "CREATE DATABASE $CI_COMMIT_BRANCH" | psql $DATABASE_URL
+    - echo "CREATE DATABASE $CI_COMMIT_BRANCH" | psql $DATABASE_URL
     # Set database connection string to use preview database
     - export DATABASE_URL=$DATABASE_URL/$CI_COMMIT_BRANCH
     # Delete .env so Prisma doesn't try to read the outdated DATABASE_URL from it

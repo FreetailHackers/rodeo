@@ -1,11 +1,7 @@
 import { firstNames, lastNames, majors } from './data';
-// import { hash } from '../src/lib/hash';
+import { hash } from '../src/lib/hash';
 import { PrismaClient, Role, Status, Prisma, QuestionType } from '@prisma/client';
 const prisma = new PrismaClient();
-
-function hash(input: string) {
-	return input;
-}
 
 /**
  * This script is used to seed the database with example data.
@@ -18,14 +14,12 @@ function hash(input: string) {
  * http://localhost:5173/login/admin (sample admin account)
  */
 async function main() {
-	console.log('starting');
 	// Reset database
 	await prisma.announcement.deleteMany();
 	await prisma.decision.deleteMany();
 	await prisma.question.deleteMany();
 	await prisma.settings.deleteMany();
 	await prisma.user.deleteMany();
-	console.log('deleted');
 
 	// Create example hacker and admin
 	await prisma.user.create({
@@ -153,7 +147,6 @@ async function main() {
 
 	// Create default settings
 	await prisma.settings.create({ data: {} });
-	console.log('end of main');
 }
 
 // Quick and dirty seedable random number generator taken from https://stackoverflow.com/a/19303725/16458492
@@ -169,7 +162,6 @@ function randomElement<T>(array: T[]): T {
 
 main()
 	.then(async () => {
-		console.log('completed');
 		await prisma.$disconnect();
 	})
 	.catch(async (e) => {
