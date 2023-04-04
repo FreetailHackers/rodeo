@@ -13,10 +13,10 @@ import { trpc } from './trpc/router';
 export default async function authenticate(cookies: Cookies, roles?: Role[]): Promise<User> {
 	const user = await trpc(cookies).users.get();
 	if (user === null) {
-		throw redirect(302, '/?unauthenticated');
+		throw redirect(303, '/?unauthenticated');
 	}
 	if (roles !== undefined && !roles.includes(user.role)) {
-		throw redirect(302, '/?unauthenticated');
+		throw redirect(303, '/?forbidden');
 	}
 	return user;
 }

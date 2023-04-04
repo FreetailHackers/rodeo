@@ -9,15 +9,12 @@
 
 	let email: string;
 
-	let isUnauthorized = false;
-
 	onMount(() => {
 		const { pathname } = location;
 		if (pathname === '/?unauthorized') {
-			isUnauthorized = true;
-		}
-		if (isUnauthorized) {
-			toasts.notify('The user is unauthorized');
+			toasts.notify('You must be logged in to do perform that action.');
+		} else if (pathname === '/?forbidden') {
+			toasts.notify('You do not have permissions to do that.')
 		}
 	});
 </script>
