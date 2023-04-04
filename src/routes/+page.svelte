@@ -14,7 +14,7 @@
 		if (pathname === '/?unauthorized') {
 			toasts.notify('You must be logged in to do perform that action.');
 		} else if (pathname === '/?forbidden') {
-			toasts.notify('You do not have permissions to do that.')
+			toasts.notify('You do not have permissions to do that.');
 		}
 	});
 </script>
