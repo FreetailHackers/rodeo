@@ -5,6 +5,9 @@
 [ADDED]
 
 - Global toast notification system for form action results
+- Custom registration questions for text inputs
+- Customizable homepage text
+- Automatic email receipts for submitting/confirming/declining
 
 [CHANGED]
 
