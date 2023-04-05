@@ -1,3 +1,12 @@
+# This pipeline requires the following variables:
+#
+# VERCEL_ORG_ID
+# VERCEL_PROJECT_ID
+# VERCEL_TOKEN
+#
+# See https://vercel.com/guides/using-vercel-cli-for-custom-workflows
+# for a guide on how to get these variables.
+
 # At a high level, this pipeline consists of three stages:
 #
 # 1. A testing stage that builds the project, checks it for type errors,
@@ -21,6 +30,20 @@
 # Therefore, environment variables like the database connection string
 # are declared in Rodeo's Vercel project settings, which can then be
 # downloaded from the command line with the first call to `vercel pull`.
+
+# IMPORTANT: since Vercel does not support scoping personal access
+# tokens, all stages share the same $VERCEL_TOKEN so that we can get a
+# preview deployment for every branch. Therefore, you MUST configure
+# GitLab to always only use the .gitlab-ci.yml from your master branch
+# through Settings > CI/CD > General pipelines > CI/CD configuration
+# with the value
+#
+# .gitlab-ci.yml@USERNAME_OR_GROUP_NAMESPACE/REPOSITORY_NAME:BRANCH
+#
+# For example, we use .gitlab-ci.yml@freetail-hackers/rodeo:master. In
+# addition, you MUST rigorously review any merge requests that change
+# the pipeline. That way, non-maintainers cannot expose the Vercel token
+# and deploy to production without permission.
 
 default:
   # This pipeline requires a custom Docker image with npm and psql
