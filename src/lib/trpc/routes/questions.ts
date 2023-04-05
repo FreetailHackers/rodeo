@@ -44,15 +44,15 @@ export const questionsRouter = t.router({
 	 */
 	update: t.procedure
 		.use(authenticate)
-		.input(z.record(z.string()))
+		.input(z.record(z.record(z.any())))
 		.mutation(async (req): Promise<void> => {
 			if (req.ctx.user.role !== Role.ADMIN) {
 				throw new Error('You have insufficient permissions to perform this action.');
 			}
-			for (const id of Object.keys(req.input)) {
+			for (const questionId in req.input) {
 				await prisma.question.update({
-					where: { id },
-					data: { label: req.input[id] },
+					where: { id: questionId },
+					data: { ...req.input[questionId] },
 				});
 			}
 		}),

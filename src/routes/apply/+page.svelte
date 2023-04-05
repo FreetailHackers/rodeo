@@ -146,14 +146,23 @@
 			autocomplete="off"
 		>
 			{#each data.questions as question}
+				<label for={question.id}>
+					{question.label}
+					{#if question.required}*{/if}
+				</label>
+				<!-- svelte-ignore a11y-autofocus -->
 				{#if question.type === 'SENTENCE'}
-					<label for={question.id}>
-						{question.label}
-						{#if question.required}*{/if}
-					</label>
-					<!-- svelte-ignore a11y-autofocus -->
 					<input
 						type="text"
+						name={question.id}
+						id={question.id}
+						bind:value={application[question.id]}
+						placeholder={question.placeholder}
+						autofocus={question.id === focusedQuestionId}
+						on:focus={() => (focusedQuestionId = question.id)}
+					/>
+				{:else if question.type === 'PARAGRAPH'}
+					<textarea
 						name={question.id}
 						id={question.id}
 						bind:value={application[question.id]}

@@ -8,6 +8,7 @@
 
 	export let data;
 
+	// Automtaically display a toast if a form action returns a string
 	$: if (typeof $page.form === 'string') {
 		toasts.notify($page.form);
 	}
