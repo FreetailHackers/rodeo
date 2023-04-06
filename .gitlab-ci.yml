@@ -1,9 +1,58 @@
+# This pipeline requires the following variables:
+#
+# VERCEL_ORG_ID
+# VERCEL_PROJECT_ID
+# VERCEL_TOKEN
+#
+# See https://vercel.com/guides/using-vercel-cli-for-custom-workflows
+# for a guide on how to get these variables.
+
+# At a high level, this pipeline consists of three stages:
+#
+# 1. A testing stage that builds the project, checks it for type errors,
+#    lints it for style errors, and runs unit tests.
+#
+# 2. A preview deployment stage that creates a preview database for that
+#    branch if it doesn't exist already, performs any migrations, seeds
+#    it, and initiates a preview deployment to Vercel.
+#
+# 3. A production deployment stage that performs any migrations on the
+#    production database, initiates a production deployment to Vercel
+#    and aliases the deployment to the production URL.
+#
+# There is also a job that cleans up the corresponding preview database
+# when a branch is deleted.
+#
+# Wherever possible, Vercel (not GitLab's CI/CD variables settings) is
+# used as the single source of single for environment variables in order
+# to minimize configuration drift.
+#
+# Therefore, environment variables like the database connection string
+# are declared in Rodeo's Vercel project settings, which can then be
+# downloaded from the command line with the first call to `vercel pull`.
+
+# IMPORTANT: since Vercel does not support scoping personal access
+# tokens, all stages share the same $VERCEL_TOKEN so that we can get a
+# preview deployment for every branch. Therefore, you MUST configure
+# GitLab to always only use the .gitlab-ci.yml from your master branch
+# through Settings > CI/CD > General pipelines > CI/CD configuration
+# with the value
+#
+# .gitlab-ci.yml@USERNAME_OR_GROUP_NAMESPACE/REPOSITORY_NAME:BRANCH
+#
+# For example, we use .gitlab-ci.yml@freetail-hackers/rodeo:master. In
+# addition, you MUST rigorously review any merge requests that change
+# the pipeline. That way, non-maintainers cannot expose the Vercel token
+# and deploy to production without permission.
+
 default:
-  image: node:18
+  # This pipeline requires a custom Docker image with npm and psql
+  # installed (see the relevant Dockerfile for details)
+  image: registry.gitlab.com/freetail-hackers/rodeo
 
 stages:
   - test
-  - deploy-staging
+  - deploy-preview
   - deploy-production
 
 test-job:
@@ -15,35 +64,66 @@ test-job:
     - npm run lint
     - npm run test:unit
 
-deploy-staging-job:
-  stage: deploy-staging
-  only:
-    - master
+deploy-preview-job:
+  stage: deploy-preview
   environment:
-    name: staging
-    url: https://rodeo-nightly.freetailhackers.com/
+    name: review/$CI_COMMIT_BRANCH
+    url: $DOMAIN_NAME
   script:
+    # Get environment variables from Vercel
     - npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
-    - mv .vercel/.env.preview.local .env # Needed for prisma migrate deploy
-    - "export $(grep -v '^#' .env | xargs)" # Needed to correctly set $DOMAIN_NAME
+    # Schema is configured to have Prisma read the database connection string from .env
+    - mv .vercel/.env.preview.local .env
+    # Export .env to environment variables in shell so we can use them in this script
+    - "export $(grep -v '^#' .env | xargs)"
+    # Create a new separate preview database for each branch (if it already exists, oh well)
+    - echo "CREATE DATABASE $CI_COMMIT_BRANCH" | psql $DATABASE_URL
+    # Set database connection string to use preview database
+    - export DATABASE_URL=$DATABASE_URL/$CI_COMMIT_BRANCH
+    # Delete .env so Prisma doesn't try to read the outdated DATABASE_URL from it
+    - rm .env
+    # Deploy schema changes, if any
     - npx prisma migrate deploy
-    - npx vercel deploy --token=$VERCEL_TOKEN > domain.txt
-    - npx vercel alias --token=$VERCEL_TOKEN set `cat domain.txt` `echo $DOMAIN_NAME | awk -F// '{print $NF}'` # Must remove https:// for vercel alias to work
-    - rm .env domain.txt
+    # Required to get tsx to work
+    - npm install svelte-kit
+    - npm run prepare
+    # Reset preview database and seed with fake data
+    - npx prisma db seed
+    # Deploy to Vercel with branch-specific database
+    - npx vercel deploy --token=$VERCEL_TOKEN --env DATABASE_URL=$DATABASE_URL > domain.txt
+    # If this is the master branch, alias it to our permanent staging URL
+    - export DOMAIN_NAME=$(cat domain.txt)
+    - if [ "$CI_COMMIT_BRANCH" == "master" ]; then npx vercel alias --token=$VERCEL_TOKEN set $DOMAIN_NAME rodeo-nightly.freetailhackers.com; fi
+    # Set dynamic environment URL
+    - echo "DOMAIN_NAME=$DOMAIN_NAME" >> deploy.env
+  artifacts:
+    reports:
+      dotenv: deploy.env
+
+stop-preview-job:
+  stage: deploy-preview
+  variables:
+    GIT_STRATEGY: none
+  environment:
+    name: review/$CI_COMMIT_REF_SLUG
+    action: stop
+  when: manual
+  script:
+    # !!! WARNING !!! NEVER RUN ON PRODUCTION ENVIRONMENT !!!
+    - npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+    - mv .vercel/.env.preview.local .env
+    - echo "DROP DATABASE \"rodeo-$CI_COMMIT_BRANCH\"" | psql $DATABASE_URL
 
 deploy-production-job:
   stage: deploy-production
-  only:
-    - master
   environment:
     name: production
-    url: https://rodeo.freetailhackers.com/
+    url: https://rodeo.freetailhackers.com
   when: manual
   script:
     - npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
-    - mv .vercel/.env.production.local .env # Needed for prisma migrate deploy
-    - "export $(grep -v '^#' .env | xargs)" # Needed to correctly set $DOMAIN_NAME
+    - mv .vercel/.env.production.local .env
+    - "export $(grep -v '^#' .env | xargs)"
     - npx prisma migrate deploy
     - npx vercel deploy --prod --token=$VERCEL_TOKEN > domain.txt
-    - npx vercel alias --token=$VERCEL_TOKEN set `cat domain.txt` $(echo $DOMAIN_NAME | awk -F// '{print $NF}') # Must remove https:// for vercel alias to work
-    - rm .env domain.txt
+    - npx vercel alias --token=$VERCEL_TOKEN set $(cat domain.txt) $(echo $DOMAIN_NAME | awk -F// '{print $NF}')
