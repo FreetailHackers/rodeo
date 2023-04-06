@@ -34,7 +34,7 @@
 {#if data.user?.role === Role.ADMIN}
 	<hr />
 	<h1>Edit Event</h1>
-	<form method="POST" action={'?/saveEdit'} use:enhance>
+	<form method="POST" action='?/saveEdit' use:enhance>
 		<input type="hidden" name="id" value={data.event.id} />
 
 		<label for="name">Name</label>

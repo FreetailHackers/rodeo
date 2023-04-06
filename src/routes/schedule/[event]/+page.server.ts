@@ -10,7 +10,7 @@ dayjs.extend(timezone);
 
 export const load = async ({ params, cookies }) => {
 	const event = await trpc(cookies).events.get(Number(params.event));
-	if (event) {
+	if (event !== null) {
 		return {
 			event,
 			user: await trpc(cookies).users.get(),

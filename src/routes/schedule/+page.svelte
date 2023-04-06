@@ -23,23 +23,9 @@
 
 	setInterval(updateDateTime, 1000);
 
-	let currentDay = currentDateTime.getDay(); // 0 = Sunday, 6 = Saturday
-	function toggleVisibility(hackDate: string) {
-		if (hackDate.includes('Friday')) {
-			currentDay = 5;
-		} else if (hackDate.includes('Saturday')) {
-			currentDay = 6;
-		} else if (hackDate.includes('Sunday')) {
-			currentDay = 0;
-		} else if (hackDate.includes('Monday')) {
-			currentDay = 1;
-		} else if (hackDate.includes('Tuesday')) {
-			currentDay = 2;
-		} else if (hackDate.includes('Wednesday')) {
-			currentDay = 3;
-		} else if (hackDate.includes('Thursday')) {
-			currentDay = 4;
-		}
+	let currentDay = currentDateTime; // 0 = Sunday, 6 = Saturday
+	function toggleVisibility(hackTime: Date) {
+		currentDay = hackTime;
 	}
 </script>
 
@@ -54,14 +40,16 @@
 	</div>
 
 	<div class="btn-group">
-		{#each data.daysOfWeek as hackDate}
-			<button on:click={() => toggleVisibility(hackDate)} class="btn">{hackDate} </button>
+		{#each data.daysOfWeek as hackDate, i}
+			<button on:click={() => toggleVisibility(data.schedule[i].start)} class="btn"
+				>{hackDate}
+			</button>
 		{/each}
 	</div>
 
 	<ul>
 		{#each data.schedule as event}
-			{#if event.start.getDay() === currentDay && event.end > currentDateTime}
+			{#if event.start === currentDay}
 				<li class={event.type}>
 					<!-- Element removal box -->
 					{#if data.user?.role === Role.ADMIN}

@@ -7,12 +7,12 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-const daysOfWeek: Array<string> = [];
 function getDayMonthString(date: Date) {
 	return date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 }
 
 export const load = async ({ cookies }) => {
+	const daysOfWeek: string[] = [];
 	const eventList = await trpc(cookies).events.getAll();
 	for (const day of eventList) {
 		const hackathonDate = getDayMonthString(day.start);
