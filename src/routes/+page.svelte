@@ -10,10 +10,9 @@
 	let email: string;
 
 	onMount(() => {
-		const { pathname } = location;
-		if (pathname === '/?unauthorized') {
+		if (location.search === '?unauthenticated') {
 			toasts.notify('You must be logged in to do perform that action.');
-		} else if (pathname === '/?forbidden') {
+		} else if (location.search === '?forbidden') {
 			toasts.notify('You do not have permissions to do that.');
 		}
 	});
