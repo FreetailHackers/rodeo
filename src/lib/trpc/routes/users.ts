@@ -37,6 +37,10 @@ export const usersRouter = t.router({
 			if (!(await getSettings()).applicationOpen) {
 				throw new Error('Sorry, applications are closed.');
 			}
+			if (req.ctx.user.status !== Status.VERIFIED) {
+				throw new Error('You have already submitted your application.');
+			}
+
 			// Validate application
 			const questions = await getQuestions();
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -45,15 +49,12 @@ export const usersRouter = t.router({
 				application[question.id] = req.input[question.id];
 			}
 			// Only let verified users that haven't received a decision update their info
-			if (req.ctx.user.status === Status.VERIFIED || req.ctx.user.status === Status.APPLIED) {
-				await prisma.user.update({
-					where: {
-						magicLink: await hash(req.ctx.magicLink),
-					},
-					// "Un-apply" the user if they're already applied
-					data: { application, status: Status.VERIFIED },
-				});
-			}
+			await prisma.user.update({
+				where: {
+					magicLink: await hash(req.ctx.magicLink),
+				},
+				data: { application },
+			});
 			// Remove user from pending decision pool
 			await prisma.decision.deleteMany({
 				where: {
@@ -106,6 +107,23 @@ export const usersRouter = t.router({
 			}
 			return errors;
 		}),
+
+	/**
+	 * Withdraws the logged in user's application. Throws an error if
+	 * user has not submitted their application yet.
+	 */
+	withdrawApplication: t.procedure.use(authenticate).mutation(async (req): Promise<void> => {
+		if (req.ctx.user.role !== Role.HACKER) {
+			throw new Error('You have insufficient permissions to perform this action.');
+		}
+		if (req.ctx.user.status !== Status.APPLIED) {
+			throw new Error('You have not submitted your application yet.');
+		}
+		await prisma.user.update({
+			where: { magicLink: await hash(req.ctx.magicLink) },
+			data: { status: Status.VERIFIED },
+		});
+	}),
 
 	/**
 	 * Confirms or declines the logged in user's acceptance.
