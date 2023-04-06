@@ -32,7 +32,7 @@ export const actions: Actions = {
 		if (!(await trpc(cookies).settings.getPublic()).applicationOpen) {
 			throw redirect(301, '/apply');
 		}
-		await trpc(cookies).users.update({});
+		await trpc(cookies).users.withdrawApplication();
 	},
 
 	confirm: async ({ cookies }) => {
