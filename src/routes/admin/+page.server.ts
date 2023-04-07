@@ -30,11 +30,13 @@ export const actions: Actions = {
 		} catch (e) {
 			confirmBy = null;
 		}
+		const homepageText = formData.get('homepageText') as string;
 		const acceptanceTemplate = formData.get('acceptanceTemplate') as string;
 		const RSVPTemplate = formData.get('RSVPTemplate') as string;
 		const withdrawTemplate = formData.get('withdrawTemplate') as string;
 		const submitTemplate = formData.get('submitTemplate') as string;
 		await trpc(cookies).settings.update({
+			homepageText,
 			applicationOpen,
 			confirmBy,
 			acceptanceTemplate,
@@ -42,12 +44,6 @@ export const actions: Actions = {
 			withdrawTemplate,
 			submitTemplate,
 		});
-	},
-
-	updateHomepage: async ({ cookies, request }) => {
-		const formData = await request.formData();
-		const homepageText = formData.get('homepageText') as string;
-		await trpc(cookies).settings.update({ homepageText });
 	},
 
 	release: async ({ cookies, request }) => {

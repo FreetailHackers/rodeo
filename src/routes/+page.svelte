@@ -23,7 +23,7 @@
 </script>
 
 {#if data.user}
-	<SvelteMarkdown source={data.settings} />
+	<SvelteMarkdown source={data.settings.homepageText} />
 
 	<!-- Admin announcements panel -->
 	<h2>Announcements</h2>

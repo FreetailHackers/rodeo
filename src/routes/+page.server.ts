@@ -5,7 +5,7 @@ export const load = async ({ cookies }) => {
 	return {
 		user: trpc(cookies).users.get(),
 		announcements: trpc(cookies).announcements.getAll(),
-		settings: (await trpc(cookies).settings.getPublic()).homepageText,
+		settings: await trpc(cookies).settings.getPublic(),
 		applicationOpen: (await trpc(cookies).settings.getPublic()).applicationOpen,
 	};
 };

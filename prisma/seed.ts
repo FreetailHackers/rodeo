@@ -1,18 +1,19 @@
-import { firstNames, lastNames, majors } from './data';
-import { hash } from '../src/lib/hash';
-import { PrismaClient, Role, Status, Prisma, QuestionType } from '@prisma/client';
-const prisma = new PrismaClient();
-
 /**
  * This script is used to seed the database with example data.
- * WARNING: This script will delete all data in the database before seeding.
- * To use it, run `prisma db seed`
+ * WARNING: This script will reset the database before seeding.
+ * To use it, run `npx prisma db seed`
  *
  * You can then log in to some test accounts with:
  *
  * http://localhost:5173/login/hacker (sample hacker account)
  * http://localhost:5173/login/admin (sample admin account)
  */
+
+import { firstNames, lastNames, majors } from './data';
+import { hash } from '../src/lib/hash';
+import { PrismaClient, Role, Status, Prisma, QuestionType } from '@prisma/client';
+const prisma = new PrismaClient();
+
 async function main() {
 	// Reset database
 	await prisma.announcement.deleteMany();

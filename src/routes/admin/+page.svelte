@@ -2,34 +2,18 @@
 	import { enhance } from '$app/forms';
 	import Toggle from '$lib/components/toggle.svelte';
 	import Users from '$lib/components/users.svelte';
-	import SvelteMarkdown from 'svelte-markdown';
 
 	export let data;
 
 	let saveButtonText = 'Save';
 	let releaseConfirm = false;
-
-	let inputText = data.settings.homepageText;
 </script>
 
 <h1>Admin Panel</h1>
 
 <a href="/admin/questions">Registration Questions</a>
-
-<div class="extra-padding">
-	<h4>Start typing to see preview:</h4>
-	<SvelteMarkdown source={inputText} />
-	<form method="POST" action="?/updateHomepage" use:enhance>
-		<textarea
-			placeholder="Modify the homepage text here (Markdown is supported)."
-			name="homepageText"
-			id="homepageText"
-			rows="100"
-			bind:value={inputText}
-		/>
-		<button class="hometext" type="submit">Update Homepage Text</button>
-	</form>
-</div>
+<br />
+<br />
 
 <form
 	method="POST"
@@ -48,6 +32,15 @@
 		name="applicationOpen"
 		label="Accept new applications"
 		checked={data.settings.applicationOpen}
+	/>
+
+	<label for="homepageText">Homepage Text: </label>
+	<textarea
+		placeholder="Modify the homepage text here (Markdown is supported)."
+		name="homepageText"
+		id="homepageText"
+		rows="100"
+		value={data.settings.homepageText}
 	/>
 
 	<label for="acceptanceTemplate">Acceptance Email Template: </label>
@@ -130,9 +123,5 @@
 		font-weight: bold;
 		margin-top: 0;
 		text-transform: uppercase;
-	}
-
-	.extra-padding {
-		padding-bottom: 10px;
 	}
 </style>
