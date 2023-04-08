@@ -23,8 +23,22 @@
 
 	setInterval(updateDateTime, 1000);
 
-	let currentDay = currentDateTime; // 0 = Sunday, 6 = Saturday
-	function toggleVisibility(hackTime: Date) {
+	let currentDay = currentDateTime;
+	let firstHackathonDate = data.dates[0];
+	if (currentDay.getTime() < firstHackathonDate.getTime()) {
+		currentDay = firstHackathonDate;
+	}
+
+	let prevButton: HTMLElement | null = null;
+	function updateDate(hackTime: Date) {
+		if (prevButton != null) {
+			prevButton.removeAttribute('disabled');
+		}
+		const myButton = document.getElementById(hackTime.toDateString());
+		if (myButton != null) {
+			myButton.setAttribute('disabled', 'true');
+			prevButton = myButton;
+		}
 		currentDay = hackTime;
 	}
 </script>
@@ -40,16 +54,16 @@
 	</div>
 
 	<div class="btn-group">
-		{#each data.daysOfWeek as hackDate, i}
-			<button on:click={() => toggleVisibility(data.schedule[i].start)} class="btn"
-				>{hackDate}
+		{#each data.dates as hackDate}
+			<button id={hackDate.toDateString()} on:click={() => updateDate(hackDate)} class="btn"
+				>{hackDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
 			</button>
 		{/each}
 	</div>
 
 	<ul>
 		{#each data.schedule as event}
-			{#if event.start === currentDay}
+			{#if event.start.toDateString() === currentDay.toDateString()}
 				<li class={event.type}>
 					<!-- Element removal box -->
 					{#if data.user?.role === Role.ADMIN}
@@ -63,18 +77,22 @@
 					{/if}
 					<!-- Event box -->
 					<h2 class="event-name">{event.name}</h2>
-					<h4 class="event-info">📍{' '}{event.location}</h4>
-					<h4 class="event-info">
-						{event.start.toLocaleString('en-US', {
-							hour: 'numeric',
-							minute: 'numeric',
-							hour12: true,
-						})} - {event.end.toLocaleString('en-US', {
-							hour: 'numeric',
-							minute: 'numeric',
-							hour12: true,
-						})}
-					</h4>
+					{#if currentDateTime < event.end}
+						<h4 class="event-info">📍{' ' + event.location}</h4>
+						<h4 class="event-info">
+							{event.start.toLocaleString('en-US', {
+								hour: 'numeric',
+								minute: 'numeric',
+								hour12: true,
+							})} - {event.end.toLocaleString('en-US', {
+								hour: 'numeric',
+								minute: 'numeric',
+								hour12: true,
+							})}
+						</h4>
+					{:else}
+						<h4>⚠️ This event has ended</h4>
+					{/if}
 					<a class="hyperlink" href="/schedule/{event.id}">Learn more...</a>
 				</li>
 			{/if}
@@ -85,7 +103,15 @@
 {#if data.user?.role === Role.ADMIN}
 	<hr />
 	<h2>{editedEvent == null ? 'Create New Event' : 'Edit Event'}</h2>
-	<form method="POST" action={editedEvent == null ? '?/create' : '?/saveEdit'} use:enhance>
+	<form
+		method="POST"
+		action={editedEvent == null ? '?/create' : '?/saveEdit'}
+		use:enhance={() => {
+			return async ({ update }) => {
+				update({ reset: false });
+			};
+		}}
+	>
 		<input type="hidden" name="id" value={editedEvent?.id} />
 
 		<label for="name">Name</label>
