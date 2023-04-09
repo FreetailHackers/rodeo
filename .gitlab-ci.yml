@@ -75,6 +75,7 @@ deploy-preview-job:
   environment:
     name: review/$CI_COMMIT_BRANCH
     url: $DOMAIN_NAME
+    on_stop: stop-preview-job
   rules:
     - if: $CI_COMMIT_TAG
       when: never
@@ -84,14 +85,10 @@ deploy-preview-job:
   script:
     # Get environment variables from Vercel
     - npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
-    # Schema is configured to have Prisma read the database connection string from .env
-    - mv .vercel/.env.preview.local .env
     # Export .env to environment variables in shell so we can use them in this script
-    - "export $(grep -v '^#' .env | xargs)"
+    - "export $(grep -v '^#' .vercel/.env.preview.local | xargs)"
     # Set database connection string to use preview database
     - export DATABASE_URL=$DATABASE_URL/$CI_COMMIT_BRANCH
-    # Delete .env so Prisma doesn't try to read the outdated DATABASE_URL from it
-    - rm .env
     # Deploy schema changes, if any
     # Fun fact: prisma migrate deploy will create the database if it doesn't exist, so no need to do that manually!
     - npx prisma migrate deploy
@@ -118,18 +115,12 @@ stop-preview-job:
   environment:
     name: review/$CI_COMMIT_BRANCH
     action: stop
-  rules:
-    - if: $CI_COMMIT_TAG
-      when: never
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: never
-    - when: on_success
   when: manual
   script:
     # !!! WARNING !!! NEVER RUN ON PRODUCTION ENVIRONMENT !!!
     - npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
-    - mv .vercel/.env.preview.local .env
-    - echo "DROP DATABASE \"rodeo-$CI_COMMIT_BRANCH\"" | psql $DATABASE_URL
+    - "export $(grep -v '^#' .vercel/.env.preview.local | xargs)"
+    - echo "DROP DATABASE \"$CI_COMMIT_BRANCH\"" | psql $DATABASE_URL
 
 deploy-production-job:
   stage: deploy-production
