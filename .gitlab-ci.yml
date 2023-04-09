@@ -76,6 +76,7 @@ deploy-preview-job:
   rules:
     - if: $CI_COMMIT_TAG
       when: never
+    - when: on_success
   script:
     # Get environment variables from Vercel
     - npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
