@@ -17,19 +17,36 @@
 	}
 </script>
 
-<h1>{data.event.name}</h1>
+<h1>{data.event.name}&nbsp;<span class={data.event.type}>{data.event.type}</span></h1>
+<h2>📍&nbsp;{data.event.location}</h2>
 <h2>
-	{data.event.location} | {data.event.start.toLocaleString('en-US', {
+	🕒&nbsp;
+	{data.event.start.toLocaleString('en-US', {
+		day: 'numeric',
+		weekday: 'long',
+		month: 'long',
 		hour: 'numeric',
 		minute: 'numeric',
 		hour12: true,
-	})} - {data.event.end.toLocaleString('en-US', {
-		hour: 'numeric',
-		minute: 'numeric',
-		hour12: true,
-	})}
+	})} -
+	{#if data.event.start.toDateString() === data.event.end.toDateString()}
+		{data.event.end.toLocaleString('en-US', {
+			hour: 'numeric',
+			minute: 'numeric',
+			hour12: true,
+		})}
+	{:else}
+		{data.event.end.toLocaleString('en-US', {
+			day: 'numeric',
+			weekday: 'long',
+			month: 'long',
+			hour: 'numeric',
+			minute: 'numeric',
+			hour12: true,
+		})}
+	{/if}
 </h2>
-<h3>{data.event.description}</h3>
+<p>{data.event.description}</p>
 
 {#if data.user?.role === Role.ADMIN}
 	<hr />
@@ -84,3 +101,39 @@
 		<button type="submit">Save</button>
 	</form>
 {/if}
+
+<style>
+	h1 {
+		display: inline;
+	}
+
+	span {
+		display: inline-block;
+		vertical-align: middle;
+		white-space: nowrap;
+		text-align: center;
+		padding: 6px;
+		font-size: small;
+		border-radius: 20px;
+	}
+
+	.Key-Event {
+		background-color: #c1e7e3;
+	}
+
+	.Workshop {
+		background-color: #b6fcf4;
+	}
+
+	.Speaker-Event {
+		background-color: #ff9bdf;
+	}
+
+	.Fun-Event {
+		background-color: #dabfde;
+	}
+
+	.Regular-Event {
+		background-color: #bbbddd;
+	}
+</style>

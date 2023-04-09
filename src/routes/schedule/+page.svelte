@@ -88,7 +88,7 @@
 					<h2 class="event-name">
 						{event.name}
 					</h2>
-					<h4 class="event-info">📍{' ' + event.location}</h4>
+					<h4 class="event-info">📍&nbsp;{event.location}</h4>
 					<h4 class="event-info">
 						{event.start.toLocaleString('en-US', {
 							hour: 'numeric',
