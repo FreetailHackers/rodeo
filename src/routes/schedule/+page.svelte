@@ -15,88 +15,109 @@
 			window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 		}
 	}
+
+	let currentDateTime = new Date();
+	const updateDateTime = () => {
+		currentDateTime = new Date();
+	};
+
+	setInterval(updateDateTime, 1000);
+
+	// Loops through all events and finds the closest date to the current date
+	let displayDate = currentDateTime;
+	displayDate = data.dates.reduce((prev, curr) =>
+		Math.abs(curr.getTime() - currentDateTime.getTime()) <
+		Math.abs(prev.getTime() - currentDateTime.getTime())
+			? curr
+			: prev
+	);
 </script>
 
 <h1>Schedule</h1>
 <div class="schedule">
-	<div class="legend">
-		<mark class="Regular-Event">Regular Event</mark>
-		<mark class="Key-Event">Key Event</mark>
-		<mark class="Speaker-Event">Speaker Event</mark>
-		<mark class="Fun-Event">Fun Event</mark>
-		<mark class="Workshop">Workshop</mark>
-	</div>
-	<ul>
-		<div class="event-container">
-			<div class="event-child">
-				<h3>Friday, Mar. 3</h3>
-				{#each data.schedule as event}
-					{#if event.start.getDay() === 5}
-						<li class={event.type}>
-							<!-- Element removal box -->
-							{#if data.user?.role === Role.ADMIN}
-								<form method="POST" use:enhance>
-									<input type="hidden" name="id" value={event.id} />
-									<button type="submit" formaction="?/delete">❌</button>
-									<button type="submit" formaction="?/edit">✏</button>
-								</form>
-							{/if}
-							<!-- Event box -->
-							<h3 class="event-name">{event.name} ({event.location})</h3>
-							<h4>
-								{event.start.toLocaleString('en-US', {
-									hour: 'numeric',
-									minute: 'numeric',
-									hour12: true,
-								})} - {event.end.toLocaleString('en-US', {
-									hour: 'numeric',
-									minute: 'numeric',
-									hour12: true,
-								})}
-							</h4>
-							<h5>{event.description}</h5>
-						</li>
-					{/if}
-				{/each}
-			</div>
-			<div class="event-child">
-				<h3>Saturday, Mar. 4</h3>
-				{#each data.schedule as event}
-					{#if event.start.getDay() === 6}
-						<li class={event.type}>
-							<!-- Element removal box -->
-							{#if data.user?.role === Role.ADMIN}
-								<form method="POST" use:enhance>
-									<input type="hidden" name="id" value={event.id} />
-									<button type="submit" formaction="?/delete">❌</button>
-									<button type="submit" formaction="?/edit">✏️️</button>
-								</form>
-							{/if}
-							<!-- Event box -->
-							<h3 class="event-name">{event.name} ({event.location})</h3>
-							<h4>
-								{event.start.toLocaleString('en-US', {
-									hour: 'numeric',
-									minute: 'numeric',
-									hour12: true,
-								})} - {event.end.toLocaleString('en-US', {
-									hour: 'numeric',
-									minute: 'numeric',
-									hour12: true,
-								})}
-							</h4>
-							<h5>{event.description}</h5>
-						</li>
-					{/if}
-				{/each}
-			</div>
+	<div>
+		<div class="key">
+			<div class="box Regular-Event" />
+			&nbsp;Regular Event
 		</div>
+		<div class="key">
+			<div class="box Key-Event" />
+			&nbsp;Key Event
+		</div>
+		<div class="key">
+			<div class="box Speaker-Event" />
+			&nbsp;Speaker Event
+		</div>
+		<div class="key">
+			<div class="box Fun-Event" />
+			&nbsp;Fun Event
+		</div>
+		<div class="key">
+			<div class="box Workshop" />
+			&nbsp;Workshop
+		</div>
+	</div>
+
+	<div class="btn-group">
+		{#each data.dates as eventDate}
+			<button
+				id={eventDate.toDateString()}
+				on:click={() => (displayDate = eventDate)}
+				class={displayDate.toDateString() === eventDate.toDateString() ? 'btn selected' : 'btn'}
+				>{eventDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+			</button>
+		{/each}
+	</div>
+
+	<ul>
+		{#each data.schedule as event}
+			{#if event.start.toDateString() === displayDate.toDateString()}
+				<li class={currentDateTime > event.end ? event.type + ' passed' : event.type}>
+					<!-- Element removal box -->
+					{#if data.user?.role === Role.ADMIN}
+						<div class="modification-buttons">
+							<form method="POST" use:enhance>
+								<input type="hidden" name="id" value={event.id} />
+								<button type="submit" formaction="?/delete">❌</button>
+								<button type="submit" formaction="?/edit">✏</button>
+							</form>
+						</div>
+					{/if}
+					<!-- Event box -->
+					<a class="hyperlink" href="/schedule/{event.id}">ℹ️</a>
+					<h2 class="event-name">
+						{event.name}
+					</h2>
+					<h4 class="event-info">📍&nbsp;{event.location}</h4>
+					<h4 class="event-info">
+						{event.start.toLocaleString('en-US', {
+							hour: 'numeric',
+							minute: 'numeric',
+							hour12: true,
+						})} - {event.end.toLocaleString('en-US', {
+							hour: 'numeric',
+							minute: 'numeric',
+							hour12: true,
+						})}
+					</h4>
+				</li>
+			{/if}
+		{/each}
 	</ul>
 </div>
 
 {#if data.user?.role === Role.ADMIN}
+	<hr />
 	<h2>{editedEvent == null ? 'Create New Event' : 'Edit Event'}</h2>
-	<form method="POST" action={editedEvent == null ? '?/create' : '?/saveEdit'} use:enhance>
+	<form
+		method="POST"
+		action={editedEvent == null ? '?/create' : '?/saveEdit'}
+		use:enhance={() => {
+			return async ({ update }) => {
+				update({ reset: false });
+			};
+		}}
+	>
 		<input type="hidden" name="id" value={editedEvent?.id} />
 
 		<label for="name">Name</label>
@@ -140,68 +161,15 @@
 {/if}
 
 <style>
-	@media only screen and (min-width: 600px) {
-		div.event-container {
-			display: flex;
-			flex-direction: row;
-			margin-bottom: 50px;
-			align-items: flex-start;
-			justify-content: space-between;
-			width: 100%;
-		}
-
-		div.event-child {
-			display: flex;
-			padding: 10px;
-			flex-direction: column;
-			width: 450px;
-			text-align: center;
-		}
-
-		.legend {
-			display: absolute;
-			flex-direction: row;
-			justify-content: space-between;
-			width: 100%;
-		}
-	}
-
 	.schedule {
-		padding: 20px;
+		width: 100%;
+		padding: 20px 20px 5px 20px;
 		background-color: #f5f2ee;
 	}
 
-	mark {
-		padding-left: 5px;
-		padding-right: 5px;
-		text-align: center;
-	}
-
-	h3,
-	h4,
-	h5 {
-		text-align: center;
-	}
-
-	ul {
-		padding: 0;
-		list-style-type: none;
-	}
-
-	li {
-		margin: 10px 0;
-	}
-
-	.legend {
+	div {
 		display: inline-block;
-		margin: 0 auto;
 		text-align: center;
-		justify-content: center;
-	}
-
-	h3.event-name {
-		text-decoration: underline;
-		text-decoration-thickness: 2px;
 	}
 
 	ul {
@@ -210,42 +178,102 @@
 	}
 
 	li {
-		margin: 10px 0;
+		position: relative;
+		text-align: center;
+		padding: 2px 2px;
+	}
+
+	li:not(:last-child) {
+		margin: 22px 0;
+	}
+
+	.box {
+		float: left;
+		height: 20px;
+		width: 20px;
+		margin-bottom: 15px;
+		border: 1px solid black;
+		clear: both;
+	}
+
+	div.key:not(:last-child) {
+		margin-right: 10px;
 	}
 
 	.Key-Event {
-		background-color: #a8e6cf;
+		background-color: #c1e7e3;
 	}
 
 	.Workshop {
-		background-color: #dcedc1;
+		background-color: #b6fcf4;
 	}
 
 	.Speaker-Event {
-		background-color: #ffd3b6;
+		background-color: #ff9bdf;
 	}
 
 	.Fun-Event {
-		background-color: #ffaaa5;
+		background-color: #dabfde;
 	}
 
 	.Regular-Event {
-		background-color: #f58bff;
+		background-color: #bbbddd;
+	}
+
+	div.btn-group {
+		display: flex;
+		justify-content: center;
+		gap: 0.3rem;
+	}
+
+	button.btn {
+		flex: 1;
+	}
+
+	button.selected {
+		text-decoration: underline;
+	}
+
+	li div {
+		position: absolute;
+	}
+
+	a.hyperlink {
+		margin-top: 15px;
+		margin-right: 15px;
+		right: 0;
+		position: absolute;
+		font-size: 30px;
+		text-decoration: none;
+	}
+
+	li.passed {
+		opacity: 0.5;
 	}
 
 	/* Admin view */
 
+	hr {
+		margin-top: 20px;
+	}
+
+	div.modification-buttons {
+		position: absolute;
+		left: 0;
+		margin-left: 15px;
+	}
+
 	li form {
-		flex-direction: row-reverse;
+		flex-direction: row;
 	}
 
 	li button {
 		background-color: #0000008f;
-		width: 50px;
+		width: 30px;
+		height: 30px;
 		color: #ffffff;
 		border: none;
-		padding: 5px;
-		margin: 15px 15px 0 0;
+		margin: 15px 15px 0px 0px;
 	}
 
 	li button:hover {

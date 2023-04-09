@@ -8,9 +8,18 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export const load = async ({ cookies }) => {
+	const dates: Date[] = [];
+	const events = await trpc(cookies).events.getAll();
+	for (const event of events) {
+		const date = event.start;
+		if (dates.length == 0 || dates[dates.length - 1].toDateString() != date.toDateString()) {
+			dates.push(date);
+		}
+	}
 	return {
-		schedule: await trpc(cookies).events.getAll(),
+		schedule: events,
 		user: await trpc(cookies).users.get(),
+		dates: dates,
 	};
 };
 
@@ -39,7 +48,7 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id');
 		if (typeof id !== 'string') {
-			throw new Error('Invalid announcement ID.');
+			throw new Error('Invalid event ID.');
 		}
 		return await trpc(cookies).events.get(Number(id));
 	},
@@ -48,7 +57,7 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id');
 		if (typeof id !== 'string') {
-			throw new Error('Invalid announcement ID.');
+			throw new Error('Invalid event ID.');
 		}
 
 		const fixedStartTime = dayjs
@@ -74,7 +83,7 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const id = formData.get('id');
 		if (typeof id !== 'string') {
-			throw new Error('Invalid announcement ID.');
+			throw new Error('Invalid event ID.');
 		}
 		await trpc(cookies).events.delete(Number(id));
 	},
