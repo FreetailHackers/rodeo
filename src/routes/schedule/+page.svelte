@@ -4,7 +4,6 @@
 	import Dropdown from '$lib/components/dropdown.svelte';
 	import { Role, type Event } from '@prisma/client';
 	import type { ActionData } from './$types';
-	import { date } from 'zod';
 
 	export let data;
 	export let form: ActionData;
@@ -24,14 +23,14 @@
 
 	setInterval(updateDateTime, 1000);
 
+	// Loops through all events and finds the closest date to the current date
 	let displayDate = currentDateTime;
-	let firstHackathonDate = data.dates[0];
-	if (
-		displayDate.getTime() < firstHackathonDate.getTime() ||
-		displayDate.getTime() > data.dates[data.dates.length - 1].getTime()
-	) {
-		displayDate = firstHackathonDate;
-	}
+	displayDate = data.dates.reduce((prev, curr) =>
+		Math.abs(curr.getTime() - currentDateTime.getTime()) <
+		Math.abs(prev.getTime() - currentDateTime.getTime())
+			? curr
+			: prev
+	);
 </script>
 
 <h1>Schedule</h1>
@@ -224,14 +223,11 @@
 	div.btn-group {
 		display: flex;
 		justify-content: center;
+		gap: 0.3rem;
 	}
 
 	button.btn {
 		flex: 1;
-	}
-
-	button.btn:not(:last-child) {
-		margin-right: 0.3vw;
 	}
 
 	button.selected {
