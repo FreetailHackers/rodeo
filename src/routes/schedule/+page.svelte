@@ -4,6 +4,7 @@
 	import Dropdown from '$lib/components/dropdown.svelte';
 	import { Role, type Event } from '@prisma/client';
 	import type { ActionData } from './$types';
+	import { date } from 'zod';
 
 	export let data;
 	export let form: ActionData;
@@ -25,19 +26,37 @@
 
 	let displayDate = currentDateTime;
 	let firstHackathonDate = data.dates[0];
-	if (displayDate.getTime() < firstHackathonDate.getTime()) {
+	if (
+		displayDate.getTime() < firstHackathonDate.getTime() ||
+		displayDate.getTime() > data.dates[data.dates.length - 1].getTime()
+	) {
 		displayDate = firstHackathonDate;
 	}
 </script>
 
 <h1>Schedule</h1>
 <div class="schedule">
-	<div class="legend">
-		<mark class="Regular-Event">Regular Event</mark>
-		<mark class="Key-Event">Key Event</mark>
-		<mark class="Speaker-Event">Speaker Event</mark>
-		<mark class="Fun-Event">Fun Event</mark>
-		<mark class="Workshop">Workshop</mark>
+	<div>
+		<div class="key">
+			<div class="box Regular-Event" />
+			&nbsp;Regular Event
+		</div>
+		<div class="key">
+			<div class="box Key-Event" />
+			&nbsp;Key Event
+		</div>
+		<div class="key">
+			<div class="box Speaker-Event" />
+			&nbsp;Speaker Event
+		</div>
+		<div class="key">
+			<div class="box Fun-Event" />
+			&nbsp;Fun Event
+		</div>
+		<div class="key">
+			<div class="box Workshop" />
+			&nbsp;Workshop
+		</div>
 	</div>
 
 	<div class="btn-group">
@@ -54,10 +73,10 @@
 	<ul>
 		{#each data.schedule as event}
 			{#if event.start.toDateString() === displayDate.toDateString()}
-				<li class={event.type} style={currentDateTime > event.end ? 'opacity:0.65;' : ''}>
+				<li class={currentDateTime > event.end ? event.type + ' passed' : event.type}>
 					<!-- Element removal box -->
 					{#if data.user?.role === Role.ADMIN}
-						<div>
+						<div class="modification-buttons">
 							<form method="POST" use:enhance>
 								<input type="hidden" name="id" value={event.id} />
 								<button type="submit" formaction="?/delete">❌</button>
@@ -66,8 +85,9 @@
 						</div>
 					{/if}
 					<!-- Event box -->
+					<a class="hyperlink" href="/schedule/{event.id}">ℹ️</a>
 					<h2 class="event-name">
-						{event.name} <a class="hyperlink" href="/schedule/{event.id}">ℹ️</a>
+						{event.name}
 					</h2>
 					<h4 class="event-info">📍{' ' + event.location}</h4>
 					<h4 class="event-info">
@@ -142,23 +162,14 @@
 {/if}
 
 <style>
-	@media only screen and (min-width: 600px) {
-		.legend {
-			display: absolute;
-			flex-direction: row;
-			justify-content: space-between;
-			width: 100%;
-		}
-	}
-
 	.schedule {
-		padding: 20px;
+		width: 100%;
+		padding: 20px 20px 5px 20px;
 		background-color: #f5f2ee;
 	}
 
-	mark {
-		padding-left: 5px;
-		padding-right: 5px;
+	div {
+		display: inline-block;
 		text-align: center;
 	}
 
@@ -168,31 +179,26 @@
 	}
 
 	li {
+		position: relative;
 		text-align: center;
-		margin: 15px 0;
-		padding-top: 2px;
-		padding-bottom: 15px;
+		padding: 2px 2px;
 	}
 
-	.legend {
-		display: inline-block;
-		margin: 0 auto;
-		text-align: center;
-		justify-content: center;
+	li:not(:last-child) {
+		margin: 22px 0;
 	}
 
-	.event-name {
-		margin-top: 15px;
-		margin-bottom: 10px;
+	.box {
+		float: left;
+		height: 20px;
+		width: 20px;
+		margin-bottom: 15px;
+		border: 1px solid black;
+		clear: both;
 	}
 
-	.event-info {
-		text-align: center;
-		margin: 10px;
-	}
-	ul {
-		padding: 0;
-		list-style-type: none;
+	div.key:not(:last-child) {
+		margin-right: 10px;
 	}
 
 	.Key-Event {
@@ -215,26 +221,7 @@
 		background-color: #bbbddd;
 	}
 
-	/* Admin view */
-
-	li form {
-		flex-direction: row-reverse;
-	}
-
-	li button {
-		background-color: #0000008f;
-		width: 50px;
-		color: #ffffff;
-		border: none;
-		margin: 12px 15px 0 0;
-	}
-
-	li button:hover {
-		background-color: #972626;
-	}
-
 	div.btn-group {
-		padding-top: 20px;
 		display: flex;
 		justify-content: center;
 	}
@@ -244,30 +231,56 @@
 	}
 
 	button.btn:not(:last-child) {
-		margin-right: 5px;
+		margin-right: 0.3vw;
 	}
-	button.btn:hover {
-		background-color: #9e3f00;
+
+	button.selected {
+		text-decoration: underline;
 	}
 
 	li div {
 		position: absolute;
-		padding-left: 15px;
 	}
 
 	a.hyperlink {
+		margin-top: 15px;
+		margin-right: 15px;
+		right: 0;
+		position: absolute;
+		font-size: 30px;
 		text-decoration: none;
 	}
+
+	li.passed {
+		opacity: 0.5;
+	}
+
+	/* Admin view */
 
 	hr {
 		margin-top: 20px;
 	}
 
-	li.true {
-		opacity: 0.5px;
+	div.modification-buttons {
+		position: absolute;
+		left: 0;
+		margin-left: 15px;
 	}
 
-	button.selected {
-		text-decoration: underline;
+	li form {
+		flex-direction: row;
+	}
+
+	li button {
+		background-color: #0000008f;
+		width: 30px;
+		height: 30px;
+		color: #ffffff;
+		border: none;
+		margin: 15px 15px 0px 0px;
+	}
+
+	li button:hover {
+		background-color: #972626;
 	}
 </style>
