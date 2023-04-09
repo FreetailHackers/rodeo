@@ -12,14 +12,9 @@ export const load = async ({ cookies }) => {
 	const events = await trpc(cookies).events.getAll();
 	for (const event of events) {
 		const date = event.start;
-		let isPresent = false;
-		for (let i = 0; i < dates.length; i++) {
-			if (dates[i].toDateString() === date.toDateString()) {
-				isPresent = true;
-				break;
-			}
+		if (dates.length == 0 || dates[dates.length - 1].toDateString() != date.toDateString()) {
+			dates.push(date);
 		}
-		if (!isPresent) dates.push(date);
 	}
 	return {
 		schedule: events,

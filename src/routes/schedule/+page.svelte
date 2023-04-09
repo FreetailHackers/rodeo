@@ -23,23 +23,10 @@
 
 	setInterval(updateDateTime, 1000);
 
-	let currentDay = currentDateTime;
+	let displayDate = currentDateTime;
 	let firstHackathonDate = data.dates[0];
-	if (currentDay.getTime() < firstHackathonDate.getTime()) {
-		currentDay = firstHackathonDate;
-	}
-
-	let prevButton: HTMLElement | null = null;
-	function updateDate(hackTime: Date) {
-		if (prevButton != null) {
-			prevButton.removeAttribute('disabled');
-		}
-		const myButton = document.getElementById(hackTime.toDateString());
-		if (myButton != null) {
-			myButton.setAttribute('disabled', 'true');
-			prevButton = myButton;
-		}
-		currentDay = hackTime;
+	if (displayDate.getTime() < firstHackathonDate.getTime()) {
+		displayDate = firstHackathonDate;
 	}
 </script>
 
@@ -54,17 +41,20 @@
 	</div>
 
 	<div class="btn-group">
-		{#each data.dates as hackDate}
-			<button id={hackDate.toDateString()} on:click={() => updateDate(hackDate)} class="btn"
-				>{hackDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
+		{#each data.dates as eventDate}
+			<button
+				id={eventDate.toDateString()}
+				on:click={() => (displayDate = eventDate)}
+				class={displayDate.toDateString() === eventDate.toDateString() ? 'btn selected' : 'btn'}
+				>{eventDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
 			</button>
 		{/each}
 	</div>
 
 	<ul>
 		{#each data.schedule as event}
-			{#if event.start.toDateString() === currentDay.toDateString()}
-				<li class={event.type}>
+			{#if event.start.toDateString() === displayDate.toDateString()}
+				<li class={event.type} style={currentDateTime > event.end ? 'opacity:0.65;' : ''}>
 					<!-- Element removal box -->
 					{#if data.user?.role === Role.ADMIN}
 						<div>
@@ -76,24 +66,21 @@
 						</div>
 					{/if}
 					<!-- Event box -->
-					<h2 class="event-name">{event.name}</h2>
-					{#if currentDateTime < event.end}
-						<h4 class="event-info">📍{' ' + event.location}</h4>
-						<h4 class="event-info">
-							{event.start.toLocaleString('en-US', {
-								hour: 'numeric',
-								minute: 'numeric',
-								hour12: true,
-							})} - {event.end.toLocaleString('en-US', {
-								hour: 'numeric',
-								minute: 'numeric',
-								hour12: true,
-							})}
-						</h4>
-					{:else}
-						<h4>⚠️ This event has ended</h4>
-					{/if}
-					<a class="hyperlink" href="/schedule/{event.id}">Learn more...</a>
+					<h2 class="event-name">
+						{event.name} <a class="hyperlink" href="/schedule/{event.id}">ℹ️</a>
+					</h2>
+					<h4 class="event-info">📍{' ' + event.location}</h4>
+					<h4 class="event-info">
+						{event.start.toLocaleString('en-US', {
+							hour: 'numeric',
+							minute: 'numeric',
+							hour12: true,
+						})} - {event.end.toLocaleString('en-US', {
+							hour: 'numeric',
+							minute: 'numeric',
+							hour12: true,
+						})}
+					</h4>
 				</li>
 			{/if}
 		{/each}
@@ -239,8 +226,7 @@
 		width: 50px;
 		color: #ffffff;
 		border: none;
-		padding: 5px;
-		margin: 5px 15px 0 0;
+		margin: 12px 15px 0 0;
 	}
 
 	li button:hover {
@@ -270,11 +256,18 @@
 	}
 
 	a.hyperlink {
-		color: black;
-		text-align: center;
+		text-decoration: none;
 	}
 
 	hr {
 		margin-top: 20px;
+	}
+
+	li.true {
+		opacity: 0.5px;
+	}
+
+	button.selected {
+		text-decoration: underline;
 	}
 </style>
