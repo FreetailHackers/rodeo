@@ -10,4 +10,4 @@ For mentors, sponsors, judges, volunteers, and everybody else, it serves as a vi
 
 # Developing
 
-See [HACKING.md](HACKING.md) for setup instructions, a high-level architecture overview, and guides.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for setup instructions, a high-level architecture overview, and guides.
