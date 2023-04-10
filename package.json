@@ -60,7 +60,6 @@
 		"dayjs": "^1.11.7",
 		"fuzzysort": "^2.0.4",
 		"html5-qrcode": "^2.3.7",
-		"ical-generator": "^4.0.0",
 		"ics": "^3.1.0",
 		"nodemailer": "^6.9.1",
 		"prisma": "^4.7.1",

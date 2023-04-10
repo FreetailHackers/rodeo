@@ -44,8 +44,7 @@
 			date.getMinutes(),
 		];
 	}
-	let e: Error;
-	let b: String;
+
 	const icsData = [];
 	for (const event of data.schedule) {
 		const { error, value } = ics.createEvent({
