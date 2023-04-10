@@ -18,7 +18,7 @@
 	}
 
 	const cal = ical({
-		name: 'Rodeo',
+		name: 'Hackathon Schedule',
 	});
 
 	cal.createEvent({

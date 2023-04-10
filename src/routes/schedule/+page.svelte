@@ -36,7 +36,7 @@
 	}
 
 	const cal = ical({
-		name: 'Rodeo',
+		name: 'Hackathon Schedule',
 	});
 
 	for (const event of data.schedule) {
@@ -52,8 +52,8 @@
 	const url = cal.toURL();
 </script>
 
-<a href={url}>Export to Calendar</a>
 <h1>Schedule</h1>
+<a id="calendar-export-link" href={url}>Export All Events to Calendar</a>
 <div class="schedule">
 	<div>
 		<div class="key">
@@ -77,7 +77,7 @@
 			&nbsp;Workshop
 		</div>
 	</div>
-
+	<br />
 	<div class="btn-group">
 		{#each data.dates as eventDate}
 			<button
@@ -88,7 +88,6 @@
 			</button>
 		{/each}
 	</div>
-
 	<ul>
 		{#each data.schedule as event}
 			{#if event.start.toDateString() === displayDate.toDateString()}
@@ -125,7 +124,6 @@
 		{/each}
 	</ul>
 </div>
-
 {#if data.user?.role === Role.ADMIN}
 	<hr />
 	<h2>{editedEvent == null ? 'Create New Event' : 'Edit Event'}</h2>
@@ -298,5 +296,10 @@
 
 	li button:hover {
 		background-color: #972626;
+	}
+
+	#calendar-export-link {
+		display: flex;
+		justify-content: right;
 	}
 </style>
