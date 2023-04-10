@@ -4,6 +4,7 @@
 	import Dropdown from '$lib/components/dropdown.svelte';
 	import { Role, type Event } from '@prisma/client';
 	import type { ActionData } from './$types';
+	import ical from 'ical-generator';
 
 	export let data;
 	export let form: ActionData;
@@ -33,9 +34,25 @@
 				: prev
 		);
 	}
+
+	const cal = ical({
+		name: 'Rodeo',
+	});
+
+	for (const event of data.schedule) {
+		cal.createEvent({
+			summary: event.name,
+			start: event.start,
+			end: event.end,
+			description: event.description,
+			location: event.location,
+		});
+	}
+
+	const url = cal.toURL();
 </script>
 
-<a href={data.calURL}>Export to Calendar</a>
+<a href={url}>Export to Calendar</a>
 <h1>Schedule</h1>
 <div class="schedule">
 	<div>

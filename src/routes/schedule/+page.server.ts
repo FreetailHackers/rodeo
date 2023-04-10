@@ -8,10 +8,6 @@ import ical from 'ical-generator';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-const cal = ical({
-	name: 'Hackathon Schedule',
-});
-
 export const load = async ({ cookies }) => {
 	const dates: Date[] = [];
 	const events = await trpc(cookies).events.getAll();
@@ -20,21 +16,11 @@ export const load = async ({ cookies }) => {
 		if (dates.length == 0 || dates[dates.length - 1].toDateString() != date.toDateString()) {
 			dates.push(date);
 		}
-
-		cal.createEvent({
-			start: event.start,
-			end: event.end,
-			summary: event.name,
-			description: event.description,
-			location: event.location,
-		});
 	}
-	const calURL = cal.toURL();
 	return {
 		schedule: events,
 		user: await trpc(cookies).users.get(),
 		dates: dates,
-		calURL: calURL,
 	};
 };
 
