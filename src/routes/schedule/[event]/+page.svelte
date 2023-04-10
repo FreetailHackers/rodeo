@@ -21,7 +21,7 @@
 		name: 'Rodeo',
 	});
 
-	const event = cal.createEvent({
+	cal.createEvent({
 		summary: data.event.name,
 		start: data.event.start,
 		end: data.event.end,

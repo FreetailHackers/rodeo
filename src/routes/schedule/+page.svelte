@@ -35,6 +35,7 @@
 	}
 </script>
 
+<a href={data.calURL}>Export to Calendar</a>
 <h1>Schedule</h1>
 <div class="schedule">
 	<div>
