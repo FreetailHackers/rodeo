@@ -3,6 +3,7 @@
 	import { enhance } from '$app/forms';
 	import Dropdown from '$lib/components/dropdown.svelte';
 	import { Role, type Event } from '@prisma/client';
+	import ical from 'ical-generator';
 	import type { ActionData } from './$types';
 
 	export let data;
@@ -15,6 +16,19 @@
 			window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 		}
 	}
+
+	const cal = ical({
+		name: 'Rodeo',
+	});
+
+	const event = cal.createEvent({
+		start: data.event.start,
+		end: data.event.end,
+		description: data.event.description,
+		location: data.event.location,
+	});
+
+	const url = cal.toURL();
 </script>
 
 <h1>{data.event.name}&nbsp;<span class={data.event.type}>{data.event.type}</span></h1>
@@ -47,6 +61,9 @@
 	{/if}
 </h2>
 <p>{data.event.description}</p>
+
+<a href="/schedule/">Back to Schedule</a>
+<a href={url}>Add to Calendar</a>
 
 {#if data.user?.role === Role.ADMIN}
 	<hr />
@@ -135,5 +152,9 @@
 
 	.Regular-Event {
 		background-color: #bbbddd;
+	}
+
+	a {
+		padding-right: 0.5rem;
 	}
 </style>
