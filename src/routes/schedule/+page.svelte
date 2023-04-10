@@ -4,7 +4,7 @@
 	import Dropdown from '$lib/components/dropdown.svelte';
 	import { Role, type Event } from '@prisma/client';
 	import type { ActionData } from './$types';
-	import ical from 'ical-generator';
+	import ics from 'ics';
 
 	export let data;
 	export let form: ActionData;
@@ -35,21 +35,35 @@
 		);
 	}
 
-	const cal = ical({
-		name: 'Hackathon Schedule',
-	});
-
+	function dateToIcsArray(date: Date): ics.DateArray {
+		return [
+			date.getFullYear(),
+			date.getMonth() + 1,
+			date.getDate(),
+			date.getHours(),
+			date.getMinutes(),
+		];
+	}
+	let e: Error;
+	let b: String;
+	const icsData = [];
 	for (const event of data.schedule) {
-		cal.createEvent({
-			summary: event.name,
-			start: event.start,
-			end: event.end,
+		const { error, value } = ics.createEvent({
+			title: event.name,
+			start: dateToIcsArray(event.start),
+			end: dateToIcsArray(event.end),
 			description: event.description,
 			location: event.location,
 		});
+
+		if (!error) {
+			icsData.push(value);
+		}
 	}
 
-	const url = cal.toURL();
+	const combinedIcsData = icsData.join('\n');
+	const blob = new Blob([combinedIcsData], { type: 'text/calendar;charset=utf-8' });
+	const url = URL.createObjectURL(blob);
 </script>
 
 <h1>Schedule</h1>
