@@ -22,6 +22,7 @@
 	});
 
 	const event = cal.createEvent({
+		summary: data.event.name,
 		start: data.event.start,
 		end: data.event.end,
 		description: data.event.description,

@@ -25,12 +25,14 @@
 
 	// Loops through all events and finds the closest date to the current date
 	let displayDate = currentDateTime;
-	displayDate = data.dates.reduce((prev, curr) =>
-		Math.abs(curr.getTime() - currentDateTime.getTime()) <
-		Math.abs(prev.getTime() - currentDateTime.getTime())
-			? curr
-			: prev
-	);
+	if (data.dates.length > 0) {
+		displayDate = data.dates.reduce((prev, curr) =>
+			Math.abs(curr.getTime() - currentDateTime.getTime()) <
+			Math.abs(prev.getTime() - currentDateTime.getTime())
+				? curr
+				: prev
+		);
+	}
 </script>
 
 <h1>Schedule</h1>
