@@ -3,7 +3,8 @@
 	import { enhance } from '$app/forms';
 	import Dropdown from '$lib/components/dropdown.svelte';
 	import { Role, type Event } from '@prisma/client';
-	import ical from 'ical-generator';
+	import { createEvent } from 'ics';
+	import { onMount } from 'svelte';
 	import type { ActionData } from './$types';
 
 	export let data;
@@ -17,19 +18,36 @@
 		}
 	}
 
-	const cal = ical({
-		name: 'Hackathon Schedule',
-	});
+	function dateToIcsArray(date: Date) : number[] {
+		return [
+			date.getFullYear(),
+			date.getMonth() + 1,
+			date.getDate(),
+			date.getHours(),
+			date.getMinutes(),
+		];
+	}
 
-	cal.createEvent({
-		summary: data.event.name,
-		start: data.event.start,
-		end: data.event.end,
+	let eventUrl: string;
+	const event = {
+		title: data.event.name,
+		start: dateToIcsArray(data.event.start),
+		end: dateToIcsArray(data.event.end),
 		description: data.event.description,
 		location: data.event.location,
-	});
+	};
 
-	const url = cal.toURL();
+	onMount(() => {
+		createEvent(event, (error, value) => {
+			if (error) {
+				console.log(error);
+				return;
+			}
+
+			const blob = new Blob([value], { type: 'text/calendar' });
+			eventUrl = URL.createObjectURL(blob);
+		});
+	});
 </script>
 
 <h1>{data.event.name}&nbsp;<span class={data.event.type}>{data.event.type}</span></h1>
@@ -64,7 +82,7 @@
 <p>{data.event.description}</p>
 
 <a href="/schedule/">Back to Schedule</a>
-<a href={url}>Add to Calendar</a>
+<a href={eventUrl} download="event.ics">Add to Calendar</a>
 
 {#if data.user?.role === Role.ADMIN}
 	<hr />

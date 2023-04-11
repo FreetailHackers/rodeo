@@ -4,7 +4,8 @@
 	import Dropdown from '$lib/components/dropdown.svelte';
 	import { Role, type Event } from '@prisma/client';
 	import type { ActionData } from './$types';
-	import ics from 'ics';
+	import { createEvent } from 'ics';
+	import { onMount } from 'svelte';
 
 	export let data;
 	export let form: ActionData;
@@ -35,7 +36,7 @@
 		);
 	}
 
-	function dateToIcsArray(date: Date): ics.DateArray {
+	function dateToIcsArray(date: Date): number[] {
 		return [
 			date.getFullYear(),
 			date.getMonth() + 1,
@@ -44,30 +45,57 @@
 			date.getMinutes(),
 		];
 	}
-	let e: Error;
-	let b: String;
-	const icsData = [];
+
+	interface calEvent {
+		title: string;
+		description: string;
+		location: string;
+		start: [number, number, number, number, number];
+		end: [number, number, number, number, number];
+	}
+
+	const icsData: calEvent[] = [];
 	for (const event of data.schedule) {
-		const { error, value } = ics.createEvent({
+		const icsEvent = {
 			title: event.name,
 			start: dateToIcsArray(event.start),
 			end: dateToIcsArray(event.end),
 			description: event.description,
 			location: event.location,
-		});
-
-		if (!error) {
-			icsData.push(value);
-		}
+		};
+		icsData.push(icsEvent);
 	}
 
-	const combinedIcsData = icsData.join('\n');
-	const blob = new Blob([combinedIcsData], { type: 'text/calendar;charset=utf-8' });
-	const url = URL.createObjectURL(blob);
+	let url: string;
+
+	onMount(() => {
+		let icsContent = '';
+
+		for (let i = 0; i < icsData.length; i++) {
+			createEvent(icsData[i], (error, value) => {
+				if (error) {
+					console.log(error);
+					return;
+				}
+
+				icsContent += value + '\n';
+
+				if (i === icsData.length - 1) {
+					// Last event, generate URL
+					const blob = new Blob([icsContent], { type: 'text/calendar' });
+					url = URL.createObjectURL(blob);
+				}
+			});
+		}
+	});
 </script>
 
 <h1>Schedule</h1>
-<a id="calendar-export-link" href={url}>Export All Events to Calendar</a>
+{#if url}
+	<a class="calendar-export-link" href={url} download="events.ics">Download All Events</a>
+{:else}
+	<p>Loading...</p>
+{/if}
 <div class="schedule">
 	<div>
 		<div class="key">
@@ -312,7 +340,7 @@
 		background-color: #972626;
 	}
 
-	#calendar-export-link {
+	a.calendar-export-link {
 		padding-bottom: 10px;
 		display: flex;
 		justify-content: right;
