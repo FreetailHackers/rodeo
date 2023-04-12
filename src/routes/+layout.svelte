@@ -50,6 +50,7 @@
 			<li><a href="/users">Users</a></li>
 			<li><a href="/admin">Admin</a></li>
 			<li><a href="/admissions">Admissions</a></li>
+			<li><a href="/email">Email</a></li>
 		{/if}
 		<li><a href="/feedback">Feedback</a></li>
 	</menu>
