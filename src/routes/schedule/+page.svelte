@@ -186,15 +186,7 @@
 {#if data.user?.role === Role.ADMIN}
 	<hr />
 	<h2>{editedEvent == null ? 'Create New Event' : 'Edit Event'}</h2>
-	<form
-		method="POST"
-		action={editedEvent == null ? '?/create' : '?/saveEdit'}
-		use:enhance={() => {
-			return async ({ update }) => {
-				update({ reset: true });
-			};
-		}}
-	>
+	<form method="POST" action={editedEvent == null ? '?/create' : '?/saveEdit'} use:enhance>
 		<input type="hidden" name="id" value={editedEvent?.id} />
 
 		<label for="name">Name</label>
