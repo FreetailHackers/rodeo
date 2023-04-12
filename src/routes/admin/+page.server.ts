@@ -13,7 +13,6 @@ export const load = async ({ cookies }) => {
 	await authenticate(cookies, [Role.ADMIN]);
 	return {
 		decisions: await trpc(cookies).admissions.getDecisions(),
-		questions: await trpc(cookies).questions.get(),
 		settings: await trpc(cookies).settings.getAll(),
 	};
 };
