@@ -3,7 +3,6 @@
 	import { enhance } from '$app/forms';
 	import Dropdown from '$lib/components/dropdown.svelte';
 	import { Role, type Event } from '@prisma/client';
-	import { createEvent } from 'ics';
 	import { onMount } from 'svelte';
 	import type { ActionData } from './$types';
 
@@ -18,7 +17,10 @@
 		}
 	}
 
-	function dateToIcsArray(date: Date) : number[] {
+	// Calendar functionality
+	type DateArray = [year: number, month: number, day: number, hour: number, minute: number];
+
+	function dateToIcsArray(date: Date): DateArray {
 		return [
 			date.getFullYear(),
 			date.getMonth() + 1,
@@ -28,26 +30,44 @@
 		];
 	}
 
-	let eventUrl: string;
-	const event = {
-		title: data.event.name,
-		start: dateToIcsArray(data.event.start),
-		end: dateToIcsArray(data.event.end),
-		description: data.event.description,
-		location: data.event.location,
-	};
+	let url: string;
+	let icsData = [
+		{
+			title: data.event.name,
+			start: dateToIcsArray(data.event.start),
+			end: dateToIcsArray(data.event.end),
+			description: data.event.description,
+			location: data.event.location,
+		},
+	];
 
 	onMount(() => {
-		createEvent(event, (error, value) => {
-			if (error) {
-				console.log(error);
-				return;
-			}
-
-			const blob = new Blob([value], { type: 'text/calendar' });
-			eventUrl = URL.createObjectURL(blob);
-		});
+		generateIcsContent();
 	});
+
+	function generateIcsContent() {
+		let icsContent = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Rodeo//NONSGML//EN\n';
+		for (const event of icsData) {
+			icsContent += 'BEGIN:VEVENT\n';
+			icsContent += `SUMMARY:${event.title}\n`;
+			icsContent += `DTSTART:${event.start[0]}${event.start[1]
+				.toString()
+				.padStart(2, '0')}${event.start[2].toString().padStart(2, '0')}T${event.start[3]
+				.toString()
+				.padStart(2, '0')}${event.start[4].toString().padStart(2, '0')}\n`;
+			icsContent += `DTEND:${event.end[0]}${event.end[1].toString().padStart(2, '0')}${event.end[2]
+				.toString()
+				.padStart(2, '0')}T${event.end[3].toString().padStart(2, '0')}${event.end[4]
+				.toString()
+				.padStart(2, '0')}\n`;
+			icsContent += `DESCRIPTION:${event.description}\n`;
+			icsContent += `LOCATION:${event.location}\n`;
+			icsContent += 'END:VEVENT\n';
+		}
+		icsContent += 'END:VCALENDAR\n';
+		const blob = new Blob([icsContent], { type: 'text/calendar' });
+		url = URL.createObjectURL(blob);
+	}
 </script>
 
 <h1>{data.event.name}&nbsp;<span class={data.event.type}>{data.event.type}</span></h1>
@@ -82,7 +102,9 @@
 <p>{data.event.description}</p>
 
 <a href="/schedule/">Back to Schedule</a>
-<a href={eventUrl} download="event.ics">Add to Calendar</a>
+{#if url}
+	<a href={url} download="event.ics">Add to Calendar</a>
+{/if}
 
 {#if data.user?.role === Role.ADMIN}
 	<hr />

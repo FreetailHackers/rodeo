@@ -4,7 +4,6 @@
 	import Dropdown from '$lib/components/dropdown.svelte';
 	import { Role, type Event } from '@prisma/client';
 	import type { ActionData } from './$types';
-	import { createEvent } from 'ics';
 	import { onMount } from 'svelte';
 
 	export let data;
@@ -36,7 +35,10 @@
 		);
 	}
 
-	function dateToIcsArray(date: Date): number[] {
+	// Calendar functionality
+	type DateArray = [year: number, month: number, day: number, hour: number, minute: number];
+
+	function dateToIcsArray(date: Date): DateArray {
 		return [
 			date.getFullYear(),
 			date.getMonth() + 1,
@@ -54,44 +56,52 @@
 		end: [number, number, number, number, number];
 	}
 
-	const icsData: calEvent[] = [];
-	for (const event of data.schedule) {
-		const icsEvent = {
-			title: event.name,
-			start: dateToIcsArray(event.start),
-			end: dateToIcsArray(event.end),
-			description: event.description,
-			location: event.location,
-		};
-		icsData.push(icsEvent);
+	let icsData: calEvent[] = [];
+	let icsContent = '';
+
+	function generateIcsContent() {
+		icsContent = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Rodeo//NONSGML//EN\n';
+		for (const event of icsData) {
+			icsContent += 'BEGIN:VEVENT\n';
+			icsContent += `SUMMARY:${event.title}\n`;
+			icsContent += `DTSTART:${event.start[0]}${event.start[1]
+				.toString()
+				.padStart(2, '0')}${event.start[2].toString().padStart(2, '0')}T${event.start[3]
+				.toString()
+				.padStart(2, '0')}${event.start[4].toString().padStart(2, '0')}\n`;
+			icsContent += `DTEND:${event.end[0]}${event.end[1].toString().padStart(2, '0')}${event.end[2]
+				.toString()
+				.padStart(2, '0')}T${event.end[3].toString().padStart(2, '0')}${event.end[4]
+				.toString()
+				.padStart(2, '0')}\n`;
+			icsContent += `DESCRIPTION:${event.description}\n`;
+			icsContent += `LOCATION:${event.location}\n`;
+			icsContent += 'END:VEVENT\n';
+		}
+		icsContent += 'END:VCALENDAR\n';
+		const blob = new Blob([icsContent], { type: 'text/calendar' });
+		url = URL.createObjectURL(blob);
 	}
 
 	let url: string;
 
 	onMount(() => {
-		let icsContent = '';
-
-		for (let i = 0; i < icsData.length; i++) {
-			createEvent(icsData[i], (error, value) => {
-				if (error) {
-					console.log(error);
-					return;
-				}
-
-				icsContent += value + '\n';
-
-				if (i === icsData.length - 1) {
-					// Last event, generate URL
-					const blob = new Blob([icsContent], { type: 'text/calendar' });
-					url = URL.createObjectURL(blob);
-				}
-			});
+		for (const event of data.schedule) {
+			const icsEvent = {
+				title: event.name,
+				start: dateToIcsArray(event.start),
+				end: dateToIcsArray(event.end),
+				description: event.description,
+				location: event.location,
+			};
+			icsData.push(icsEvent);
 		}
+		generateIcsContent();
 	});
 </script>
 
 <h1>Schedule</h1>
-{#if url}
+{#if url && data.schedule.length > 0}
 	<a class="calendar-export-link" href={url} download="events.ics">Download All Events</a>
 {:else}
 	<p>Loading...</p>
