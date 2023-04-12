@@ -50,16 +50,26 @@
 		for (const event of icsData) {
 			icsContent += 'BEGIN:VEVENT\n';
 			icsContent += `SUMMARY:${event.title}\n`;
-			icsContent += `DTSTART:${event.start[0]}${event.start[1]
-				.toString()
-				.padStart(2, '0')}${event.start[2].toString().padStart(2, '0')}T${event.start[3]
-				.toString()
-				.padStart(2, '0')}${event.start[4].toString().padStart(2, '0')}\n`;
-			icsContent += `DTEND:${event.end[0]}${event.end[1].toString().padStart(2, '0')}${event.end[2]
-				.toString()
-				.padStart(2, '0')}T${event.end[3].toString().padStart(2, '0')}${event.end[4]
-				.toString()
-				.padStart(2, '0')}\n`;
+			icsContent += `DTSTART:${new Date(
+				event.start[0],
+				event.start[1] - 1,
+				event.start[2],
+				event.start[3],
+				event.start[4]
+			)
+				.toISOString()
+				.replace(/[-:]/g, '')
+				.replace(/\.\d\d\d/g, '')}\n`;
+			icsContent += `DTEND:${new Date(
+				event.end[0],
+				event.end[1] - 1,
+				event.end[2],
+				event.end[3],
+				event.end[4]
+			)
+				.toISOString()
+				.replace(/[-:]/g, '')
+				.replace(/\.\d\d\d/g, '')}\n`;
 			icsContent += `DESCRIPTION:${event.description}\n`;
 			icsContent += `LOCATION:${event.location}\n`;
 			icsContent += 'END:VEVENT\n';
