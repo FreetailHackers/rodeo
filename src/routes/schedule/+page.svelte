@@ -112,8 +112,6 @@
 <h1>Schedule</h1>
 {#if url && data.schedule.length > 0}
 	<a class="calendar-export-link" href={url} download="events.ics">Download All Events</a>
-{:else}
-	<p>Loading...</p>
 {/if}
 <div class="schedule">
 	<div>
@@ -193,7 +191,7 @@
 		action={editedEvent == null ? '?/create' : '?/saveEdit'}
 		use:enhance={() => {
 			return async ({ update }) => {
-				update({ reset: false });
+				update({ reset: true });
 			};
 		}}
 	>
