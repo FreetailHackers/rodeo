@@ -57,7 +57,6 @@
 	}
 
 	let icsData: calEvent[] = [];
-	let icsContent = '';
 
 	function generateIcsContent() {
 		let icsContent = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Rodeo//NONSGML//EN\n';
