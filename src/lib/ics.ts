@@ -1,18 +1,11 @@
-interface calEvent {
-	title: string;
-	description: string;
-	location: string;
-	start: Date;
-	end: Date;
-}
-
-export function generateIcsContent(events: calEvent[]): string {
+import type { Event } from '@prisma/client';
+export function generateIcsContent(events: Event[]): string {
 	return getIcsContent();
 	function getIcsContent() {
 		let icsContent = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Rodeo//NONSGML//EN\n';
 		for (const event of events) {
 			icsContent += 'BEGIN:VEVENT\n';
-			icsContent += `SUMMARY:${event.title}\n`;
+			icsContent += `SUMMARY:${event.name}\n`;
 			icsContent += `DTSTART:${event.start
 				.toISOString()
 				.replace(/[-:]/g, '')
