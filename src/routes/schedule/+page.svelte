@@ -52,8 +52,8 @@
 		title: string;
 		description: string;
 		location: string;
-		start: [number, number, number, number, number];
-		end: [number, number, number, number, number];
+		start: Date;
+		end: Date;
 	}
 
 	let icsData: calEvent[] = [];
@@ -98,8 +98,8 @@
 		for (const event of data.schedule) {
 			const icsEvent = {
 				title: event.name,
-				start: dateToIcsArray(event.start),
-				end: dateToIcsArray(event.end),
+				start: event.start,
+				end: event.end,
 				description: event.description,
 				location: event.location,
 			};

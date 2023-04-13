@@ -35,8 +35,8 @@
 		title: string;
 		description: string;
 		location: string;
-		start: [number, number, number, number, number];
-		end: [number, number, number, number, number];
+		start: Date;
+		end: Date;
 	}
 
 	let icsData: calEvent[] = [];
@@ -46,8 +46,8 @@
 	onMount(() => {
 		const icsEvent = {
 			title: data.event.name,
-			start: dateToIcsArray(data.event.start),
-			end: dateToIcsArray(data.event.end),
+			start: data.event.start,
+			end: data.event.end,
 			description: data.event.description,
 			location: data.event.location,
 		};
