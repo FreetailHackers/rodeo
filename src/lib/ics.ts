@@ -7,8 +7,7 @@ interface calEvent {
 }
 
 export function generateIcsContent(events: calEvent[]): string {
-	let url: string;
-	return (url = getIcsContent());
+	return getIcsContent();
 	function getIcsContent() {
 		let icsContent = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Rodeo//NONSGML//EN\n';
 		for (const event of events) {
