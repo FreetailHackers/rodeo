@@ -1,42 +1,17 @@
-export function generateIcsContent(events: Event[]): string {
-    type DateArray = [year: number, month: number, day: number, hour: number, minute: number];
+interface calEvent {
+	title: string;
+	description: string;
+	location: string;
+	start: [number, number, number, number, number];
+	end: [number, number, number, number, number];
+}
 
-	function dateToIcsArray(date: Date): DateArray {
-		return [
-			date.getFullYear(),
-			date.getMonth() + 1,
-			date.getDate(),
-			date.getHours(),
-			date.getMinutes(),
-		];
-	}
-
-	interface calEvent {
-		title: string;
-		description: string;
-		location: string;
-		start: [number, number, number, number, number];
-		end: [number, number, number, number, number];
-	}
-
-	let icsData: calEvent[] = [];
-
-    for (const event of events) {
-        const icsEvent = {
-            title: event.name,
-            start: dateToIcsArray(event.start),
-            end: dateToIcsArray(event.end),
-            description: event.description,
-            location: event.location,
-        };
-        icsData.push(icsEvent);
-    }
-
-    let url = generateIcsContent();
-	function generateIcsContent() {
-        let url: string;
+export function generateIcsContent(events: calEvent[]): string {
+	let url: string;
+	return (url = getIcsContent());
+	function getIcsContent() {
 		let icsContent = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Rodeo//NONSGML//EN\n';
-		for (const event of icsData) {
+		for (const event of events) {
 			icsContent += 'BEGIN:VEVENT\n';
 			icsContent += `SUMMARY:${event.title}\n`;
 			icsContent += `DTSTART:${new Date(
@@ -65,8 +40,7 @@ export function generateIcsContent(events: Event[]): string {
 		}
 		icsContent += 'END:VCALENDAR\n';
 		const blob = new Blob([icsContent], { type: 'text/calendar' });
-		url = URL.createObjectURL(blob);
-        return url;
-    }
-    return url;
+		const url = URL.createObjectURL(blob);
+		return url;
+	}
 }

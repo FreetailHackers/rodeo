@@ -5,6 +5,7 @@
 	import { Role, type Event } from '@prisma/client';
 	import { onMount } from 'svelte';
 	import type { ActionData } from './$types';
+	import { generateIcsContent } from '$lib/ics';
 
 	export let data;
 	export let form: ActionData;
@@ -30,54 +31,29 @@
 		];
 	}
 
+	interface calEvent {
+		title: string;
+		description: string;
+		location: string;
+		start: [number, number, number, number, number];
+		end: [number, number, number, number, number];
+	}
+
+	let icsData: calEvent[] = [];
+
 	let url: string;
-	let icsData = [
-		{
+
+	onMount(() => {
+		const icsEvent = {
 			title: data.event.name,
 			start: dateToIcsArray(data.event.start),
 			end: dateToIcsArray(data.event.end),
 			description: data.event.description,
 			location: data.event.location,
-		},
-	];
-
-	onMount(() => {
-		generateIcsContent();
+		};
+		icsData.push(icsEvent);
+		url = generateIcsContent(icsData);
 	});
-
-	function generateIcsContent() {
-		let icsContent = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Rodeo//NONSGML//EN\n';
-		for (const event of icsData) {
-			icsContent += 'BEGIN:VEVENT\n';
-			icsContent += `SUMMARY:${event.title}\n`;
-			icsContent += `DTSTART:${new Date(
-				event.start[0],
-				event.start[1] - 1,
-				event.start[2],
-				event.start[3],
-				event.start[4]
-			)
-				.toISOString()
-				.replace(/[-:]/g, '')
-				.replace(/\.\d\d\d/g, '')}\n`;
-			icsContent += `DTEND:${new Date(
-				event.end[0],
-				event.end[1] - 1,
-				event.end[2],
-				event.end[3],
-				event.end[4]
-			)
-				.toISOString()
-				.replace(/[-:]/g, '')
-				.replace(/\.\d\d\d/g, '')}\n`;
-			icsContent += `DESCRIPTION:${event.description}\n`;
-			icsContent += `LOCATION:${event.location}\n`;
-			icsContent += 'END:VEVENT\n';
-		}
-		icsContent += 'END:VCALENDAR\n';
-		const blob = new Blob([icsContent], { type: 'text/calendar' });
-		url = URL.createObjectURL(blob);
-	}
 </script>
 
 <h1>{data.event.name}&nbsp;<span class={data.event.type}>{data.event.type}</span></h1>

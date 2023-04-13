@@ -48,15 +48,15 @@
 		];
 	}
 
-	// interface calEvent {
-	// 	title: string;
-	// 	description: string;
-	// 	location: string;
-	// 	start: [number, number, number, number, number];
-	// 	end: [number, number, number, number, number];
-	// }
+	interface calEvent {
+		title: string;
+		description: string;
+		location: string;
+		start: [number, number, number, number, number];
+		end: [number, number, number, number, number];
+	}
 
-	// let icsData: calEvent[] = [];
+	let icsData: calEvent[] = [];
 
 	// // function generateIcsContent() {
 	// // 	let icsContent = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Rodeo//NONSGML//EN\n';
@@ -95,17 +95,17 @@
 	let url: string;
 
 	onMount(() => {
-		// for (const event of data.schedule) {
-		// 	const icsEvent = {
-		// 		title: event.name,
-		// 		start: dateToIcsArray(event.start),
-		// 		end: dateToIcsArray(event.end),
-		// 		description: event.description,
-		// 		location: event.location,
-		// 	};
-		// 	icsData.push(icsEvent);
-		// }
-		url = generateIcsContent(data.schedule);
+		for (const event of data.schedule) {
+			const icsEvent = {
+				title: event.name,
+				start: dateToIcsArray(event.start),
+				end: dateToIcsArray(event.end),
+				description: event.description,
+				location: event.location,
+			};
+			icsData.push(icsEvent);
+		}
+		url = generateIcsContent(icsData);
 	});
 </script>
 
