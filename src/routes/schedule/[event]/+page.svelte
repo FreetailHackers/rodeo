@@ -19,18 +19,6 @@
 	}
 
 	// Calendar functionality
-	type DateArray = [year: number, month: number, day: number, hour: number, minute: number];
-
-	function dateToIcsArray(date: Date): DateArray {
-		return [
-			date.getFullYear(),
-			date.getMonth() + 1,
-			date.getDate(),
-			date.getHours(),
-			date.getMinutes(),
-		];
-	}
-
 	interface calEvent {
 		title: string;
 		description: string;
