@@ -14,10 +14,9 @@ export const load = async ({ cookies }) => {
 export const actions: Actions = {
 	create: async ({ cookies, request }) => {
 		const formData = await request.formData();
-		const fullName = formData.get('fullName') as string;
 		const email = formData.get('email') as string;
 		const role = formData.get('role') as Role;
-		return await trpc(cookies).users.create({ fullName, email, role });
+		return await trpc(cookies).users.create({ email, role });
 	},
 
 	accept: async ({ cookies, request }) => {

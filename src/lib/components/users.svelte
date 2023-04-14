@@ -10,31 +10,96 @@
 
 	let DISPLAY_LIMIT = 25;
 
+	let key = 'email';
+	let filter = '';
 	let search = '';
+
+	// The question that is currently being filtered on
+	$: question = questions.find((question) => 'application.' + question.id === key);
+	// HACK: Unfortunately, Svelte doesn't update the bound value of a
+	// select element when the options change, so we have to manually
+	// do it.
+	$: if (
+		key === 'email' ||
+		key === 'role' ||
+		key === 'status' ||
+		question?.type === 'SENTENCE' ||
+		question?.type === 'PARAGRAPH'
+	) {
+		filter = 'contains';
+	} else {
+		filter = 'UNSUPPORTED';
+	}
 	$: filtered = users;
 	$: selected = filtered.map(() => false).slice(0, DISPLAY_LIMIT);
 	let selectAll: HTMLInputElement;
 
-	function searchUsers() {
+	// This is a function to get a nested property of an object where
+	// the path is a string of the form 'a.b.c' where each part is a
+	// property of the previous part.
+	// e.g. getNestedProperty({ a: { b: { c: 'd' } } }, 'a.b.c') === 'd'
+	function getNestedProperty(object: Record<string, unknown>, path: string) {
+		const parts = path.split('.');
+		for (const part of parts) {
+			if (object[part] === undefined) {
+				return '';
+			}
+			object = object[part] as Record<string, unknown>;
+		}
+		return object as unknown as string;
+	}
+
+	// Do the actual filtering
+	$: {
 		if (search === '') {
 			filtered = users;
 		} else {
-			filtered = fuzzysort
-				.go(search, users, { keys: ['name', 'email', 'major', 'status', 'role'] })
-				.map((user) => user.obj);
+			if (filter === 'contains') {
+				filtered = users.filter((user) =>
+					getNestedProperty(user, key)?.toLowerCase().includes(search.toLowerCase())
+				);
+			} else if (filter === 'is') {
+				filtered = users.filter(
+					(user) => getNestedProperty(user, key)?.toLowerCase() === search.toLowerCase()
+				);
+			} else if (filter === 'regex') {
+				filtered = users.filter((user) =>
+					new RegExp(search, 'i').test(getNestedProperty(user, key))
+				);
+			} else if (filter === 'fuzzy') {
+				filtered = fuzzysort.go(search, users, { key }).map((user) => user.obj);
+			} else if (filter === 'UNSUPPORTED') {
+				filtered = [];
+			}
 			selectAll.indeterminate = false;
 		}
 	}
 </script>
 
-<input
-	type="text"
-	name="search"
-	bind:value={search}
-	on:input={searchUsers}
-	placeholder="Search"
-	autocomplete="off"
-/>
+<!-- Search filters -->
+<div id="filter">
+	<select bind:value={key}>
+		<option value="email">Email</option>
+		<option value="role">Role</option>
+		<option value="status">Status</option>
+		<optgroup label="Application Questions">
+			{#each questions as question}
+				<option value={'application' + '.' + question.id}>{question.label}</option>
+			{/each}
+		</optgroup>
+	</select>
+	<select bind:value={filter}>
+		{#if key === 'email' || key === 'role' || key === 'status' || question?.type === 'SENTENCE' || question?.type === 'PARAGRAPH'}
+			<option value="contains">Contains</option>
+			<option value="is">Is exactly</option>
+			<option value="regex">Matches regex</option>
+			<option value="fuzzy">Matches fuzzy</option>
+		{:else}
+			<option value="UNSUPPORTED">Filtering on this question type is not supported yet!</option>
+		{/if}
+	</select>
+</div>
+<input type="text" name="search" bind:value={search} placeholder="Search" autocomplete="off" />
 
 <p>
 	Found {filtered.length} results{#if filtered.length > DISPLAY_LIMIT}&nbsp;(showing first {DISPLAY_LIMIT}){/if}:
@@ -127,6 +192,11 @@
 		margin-top: -2px;
 	}
 
+	#filter {
+		display: flex;
+		flex-direction: column;
+	}
+
 	summary {
 		padding: 1rem;
 		list-style: none;
@@ -136,6 +206,9 @@
 
 	summary a {
 		margin-left: 1rem;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.grow {

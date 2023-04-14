@@ -225,7 +225,6 @@ export const usersRouter = t.router({
 		.use(authenticate)
 		.input(
 			z.object({
-				fullName: z.string(),
 				email: z
 					.string()
 					.trim()

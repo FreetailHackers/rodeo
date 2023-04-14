@@ -5,13 +5,14 @@
 [ADDED]
 
 - Global toast notification system for form action results
-- Custom registration questions for text inputs
+- Custom registration questions for text, paragraph inputs
 - Customizable homepage text
 - Automatic email receipts for submitting/confirming/declining
 
 [CHANGED]
 
 - Editing events no longer requires client side JavaScript
+- Schedule only shows one day at a time
 
 [FIXED]
 
