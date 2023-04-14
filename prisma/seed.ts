@@ -18,6 +18,7 @@ async function main() {
 	// Reset database
 	await prisma.announcement.deleteMany();
 	await prisma.decision.deleteMany();
+	await prisma.event.deleteMany();
 	await prisma.question.deleteMany();
 	await prisma.settings.deleteMany();
 	await prisma.user.deleteMany();
@@ -113,6 +114,68 @@ async function main() {
 	await prisma.question.createMany({ data: questions.map(({ generate, ...keep }) => keep) });
 
 	const createdQuestions = await prisma.question.findMany();
+
+	// Create example events
+	const events: Prisma.EventCreateInput[] = [
+		{
+			name: 'Opening Ceremony',
+			start: new Date('2021-09-24T18:00:00.000Z'),
+			end: new Date('2021-09-24T19:00:00.000Z'),
+			location: 'GDC Auditorium (2.216)',
+			description: 'Welcome to HackTX 2021!',
+			type: 'Key-Event',
+		},
+		{
+			name: 'Hacking Begins',
+			start: new Date('2021-09-24T19:00:00.000Z'),
+			end: new Date('2021-09-25T19:00:00.000Z'),
+			location: 'GDC',
+			description: 'Start hacking!',
+			type: 'Key-Event',
+		},
+		{
+			name: 'Intro to Svelte',
+			start: new Date('2021-09-24T19:30:00.000Z'),
+			end: new Date('2021-09-24T20:30:00.000Z'),
+			location: 'GDC 6.302',
+			description: 'Learn how to use Svelte, the hottest and most-loved framework in town!',
+			type: 'Workshop',
+		},
+		{
+			name: 'Midnight Snack',
+			start: new Date('2021-09-24T23:00:00.000Z'),
+			end: new Date('2021-09-25T00:00:00.000Z'),
+			location: 'GDC',
+			description: 'Free food!',
+			type: 'Regular-Event',
+		},
+		{
+			name: 'Hacking Ends',
+			start: new Date('2021-09-25T19:00:00.000Z'),
+			end: new Date('2021-09-25T20:00:00.000Z'),
+			location: 'GDC',
+			description: 'Stop hacking!',
+			type: 'Key-Event',
+		},
+		{
+			name: '5BLD with Feet Bench Press',
+			start: new Date('2021-09-25T19:30:00.000Z'),
+			end: new Date('2021-09-25T20:00:00.000Z'),
+			location: 'Gregory Gym Basement',
+			description:
+				"Who can bench press the most weight while solving a 5x5 Rubik's cube with their feet blindfolded?",
+			type: 'Fun-Event',
+		},
+		{
+			name: 'Closing Ceremony',
+			start: new Date('2021-09-25T20:00:00.000Z'),
+			end: new Date('2021-09-25T21:00:00.000Z'),
+			location: 'GDC Auditorium (2.216)',
+			description: 'Goodbye!',
+			type: 'Key-Event',
+		},
+	];
+	await prisma.event.createMany({ data: events });
 
 	// Generate 1000 random hackers with a seeded random number generator for reproducibility
 	const hackers: Prisma.UserCreateInput[] = [];

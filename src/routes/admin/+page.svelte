@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import Toggle from '$lib/components/toggle.svelte';
-	import Users from '$lib/components/users.svelte';
 
 	export let data;
 
@@ -94,25 +93,6 @@
 		>
 	{/if}
 </form>
-
-<h2>Accepted</h2>
-<Users
-	questions={data.questions}
-	users={data.decisions.accepted.map((decision) => ({ decision, ...decision.user }))}
-	actions={['remove', 'release']}
-/>
-<h2>Rejected</h2>
-<Users
-	questions={data.questions}
-	users={data.decisions.rejected.map((decision) => ({ decision, ...decision.user }))}
-	actions={['remove', 'release']}
-/>
-<h2>Waitlisted</h2>
-<Users
-	questions={data.questions}
-	users={data.decisions.waitlisted.map((decision) => ({ decision, ...decision.user }))}
-	actions={['remove', 'release']}
-/>
 
 <style>
 	button {
