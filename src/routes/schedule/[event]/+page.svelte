@@ -19,28 +19,10 @@
 	}
 
 	// Calendar functionality
-	interface calEvent {
-		title: string;
-		description: string;
-		location: string;
-		start: Date;
-		end: Date;
-	}
-
-	let icsData: calEvent[] = [];
-
 	let url: string;
 
 	onMount(() => {
-		const icsEvent = {
-			title: data.event.name,
-			start: data.event.start,
-			end: data.event.end,
-			description: data.event.description,
-			location: data.event.location,
-		};
-		icsData.push(icsEvent);
-		url = generateIcsContent(icsData);
+		url = generateIcsContent([data.event]);
 	});
 </script>
 
