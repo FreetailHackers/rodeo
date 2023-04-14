@@ -36,15 +36,35 @@
 	}
 
 	// Calendar functionality
+	interface calEvent {
+		title: string;
+		description: string;
+		location: string;
+		start: Date;
+		end: Date;
+	}
+
+	let icsData: calEvent[] = [];
+
 	let url: string;
 
 	onMount(() => {
-		url = generateIcsContent(data.schedule);
+		for (const event of data.schedule) {
+			const icsEvent = {
+				title: event.name,
+				start: event.start,
+				end: event.end,
+				description: event.description,
+				location: event.location,
+			};
+			icsData.push(icsEvent);
+		}
+		url = generateIcsContent(icsData);
 	});
 </script>
 
 <h1>Schedule</h1>
-{#if data.schedule.length > 0}
+{#if url && data.schedule.length > 0}
 	<a class="calendar-export-link" href={url} download="events.ics">Download All Events</a>
 {/if}
 <div class="schedule">
