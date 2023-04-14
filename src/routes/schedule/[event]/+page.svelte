@@ -3,7 +3,9 @@
 	import { enhance } from '$app/forms';
 	import Dropdown from '$lib/components/dropdown.svelte';
 	import { Role, type Event } from '@prisma/client';
+	import { onMount } from 'svelte';
 	import type { ActionData } from './$types';
+	import { generateIcsContent } from '$lib/ics';
 
 	export let data;
 	export let form: ActionData;
@@ -15,6 +17,13 @@
 			window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 		}
 	}
+
+	// Calendar functionality
+	let url: string;
+
+	onMount(() => {
+		url = generateIcsContent([data.event]);
+	});
 </script>
 
 <h1>{data.event.name}&nbsp;<span class={data.event.type}>{data.event.type}</span></h1>
@@ -47,6 +56,11 @@
 	{/if}
 </h2>
 <p>{data.event.description}</p>
+
+<a href="/schedule/">Back to Schedule</a>
+{#if url}
+	<a href={url} download="event.ics">Add to Calendar</a>
+{/if}
 
 {#if data.user?.role === Role.ADMIN}
 	<hr />
@@ -135,5 +149,9 @@
 
 	.Regular-Event {
 		background-color: #bbbddd;
+	}
+
+	a {
+		padding-right: 0.5rem;
 	}
 </style>

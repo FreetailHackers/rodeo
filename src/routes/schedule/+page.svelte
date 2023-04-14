@@ -4,7 +4,8 @@
 	import Dropdown from '$lib/components/dropdown.svelte';
 	import { Role, type Event } from '@prisma/client';
 	import type { ActionData } from './$types';
-
+	import { onMount } from 'svelte';
+	import { generateIcsContent } from '$lib/ics';
 	export let data;
 	export let form: ActionData;
 
@@ -25,15 +26,27 @@
 
 	// Loops through all events and finds the closest date to the current date
 	let displayDate = currentDateTime;
-	displayDate = data.dates.reduce((prev, curr) =>
-		Math.abs(curr.getTime() - currentDateTime.getTime()) <
-		Math.abs(prev.getTime() - currentDateTime.getTime())
-			? curr
-			: prev
-	);
+	if (data.dates.length > 0) {
+		displayDate = data.dates.reduce((prev, curr) =>
+			Math.abs(curr.getTime() - currentDateTime.getTime()) <
+			Math.abs(prev.getTime() - currentDateTime.getTime())
+				? curr
+				: prev
+		);
+	}
+
+	// Calendar functionality
+	let url: string;
+
+	onMount(() => {
+		url = generateIcsContent(data.schedule);
+	});
 </script>
 
 <h1>Schedule</h1>
+{#if url && data.schedule.length > 0}
+	<a class="calendar-export-link" href={url} download="events.ics">Download All Events</a>
+{/if}
 <div class="schedule">
 	<div>
 		<div class="key">
@@ -57,7 +70,7 @@
 			&nbsp;Workshop
 		</div>
 	</div>
-
+	<br />
 	<div class="btn-group">
 		{#each data.dates as eventDate}
 			<button
@@ -68,7 +81,6 @@
 			</button>
 		{/each}
 	</div>
-
 	<ul>
 		{#each data.schedule as event}
 			{#if event.start.toDateString() === displayDate.toDateString()}
@@ -105,19 +117,10 @@
 		{/each}
 	</ul>
 </div>
-
 {#if data.user?.role === Role.ADMIN}
 	<hr />
 	<h2>{editedEvent == null ? 'Create New Event' : 'Edit Event'}</h2>
-	<form
-		method="POST"
-		action={editedEvent == null ? '?/create' : '?/saveEdit'}
-		use:enhance={() => {
-			return async ({ update }) => {
-				update({ reset: false });
-			};
-		}}
-	>
+	<form method="POST" action={editedEvent == null ? '?/create' : '?/saveEdit'} use:enhance>
 		<input type="hidden" name="id" value={editedEvent?.id} />
 
 		<label for="name">Name</label>
@@ -278,5 +281,11 @@
 
 	li button:hover {
 		background-color: #972626;
+	}
+
+	a.calendar-export-link {
+		padding-bottom: 10px;
+		display: flex;
+		justify-content: right;
 	}
 </style>
