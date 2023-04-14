@@ -8,16 +8,20 @@
 - Custom registration questions for text, paragraph inputs
 - Customizable homepage text
 - Automatic email receipts for submitting/confirming/declining
+- Export schedule to .ics
+- Dedicated page for each event
 
 [CHANGED]
 
 - Editing events no longer requires client side JavaScript
-- Schedule only shows one day at a time
+- Schedule only shows one day at a time and no longer hardcodes days
+- More user friendly message for 401 and 403 errors
 
 [FIXED]
 
 - Rare race where an edited event would appear to be duplicated
 - Edit event form didn't fill properly in some cases
+- Error 500 on spam deleting announcements
 
 ## v0.3.5
 

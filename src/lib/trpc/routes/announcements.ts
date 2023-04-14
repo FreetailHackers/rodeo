@@ -37,6 +37,6 @@ export const announcementsRouter = t.router({
 			if (req.ctx.user.role !== Role.ADMIN) {
 				throw new Error('You have insufficient permissions to perform this action.');
 			}
-			await prisma.announcement.delete({ where: { id: req.input } });
+			await prisma.announcement.deleteMany({ where: { id: req.input } });
 		}),
 });

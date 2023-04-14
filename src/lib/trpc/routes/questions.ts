@@ -67,6 +67,6 @@ export const questionsRouter = t.router({
 			if (req.ctx.user.role !== Role.ADMIN) {
 				throw new Error('You have insufficient permissions to perform this action.');
 			}
-			await prisma.question.delete({ where: { id: req.input } });
+			await prisma.question.deleteMany({ where: { id: req.input } });
 		}),
 });
