@@ -28,7 +28,7 @@ async function main() {
 		data: {
 			email: 'hacker@yopmail.com',
 			magicLink: await hash('hacker'),
-			status: Status.VERIFIED,
+			status: Status.CREATED,
 		},
 	});
 	await prisma.user.create({

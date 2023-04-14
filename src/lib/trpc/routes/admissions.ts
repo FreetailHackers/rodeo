@@ -63,9 +63,7 @@ export const admissionsRouter = t.router({
 						id: id,
 					},
 				});
-				// NOTE: This if statement is a good argument for why each status should be a boolean
-				// Then we could just check if the user has applied at some point
-				if (user.status !== Status.CREATED && user.status !== Status.VERIFIED) {
+				if (user.status !== Status.CREATED) {
 					// Use deleteMany to avoid not found errors
 					await prisma.decision.deleteMany({
 						where: {

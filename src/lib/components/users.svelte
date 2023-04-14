@@ -269,10 +269,6 @@
 		background: rgb(63, 63, 63);
 	}
 
-	.verified {
-		background: rgb(135, 135, 135);
-	}
-
 	.created {
 		background: lightgray;
 	}

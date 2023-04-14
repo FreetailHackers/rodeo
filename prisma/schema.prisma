@@ -46,9 +46,9 @@ model Settings {
   acceptanceTemplate String    @default("You have been accepted to our hackathon!")
   homepageText       String    @default("This text can be edited from the admin panel. You can put deadlines, logistics, or other important information here.")
   scanActions        String[]
-  RSVPTemplate String  @default("Thank you for signing up to our hackathon!")
-  withdrawTemplate String @default("We're sorry to see you go!")
-  submitTemplate String @default("Thank you for submitting your application!")
+  RSVPTemplate       String    @default("Thank you for signing up to our hackathon!")
+  withdrawTemplate   String    @default("We're sorry to see you go!")
+  submitTemplate     String    @default("Thank you for submitting your application!")
 }
 
 model Question {
@@ -87,7 +87,6 @@ enum Role {
 
 enum Status {
   CREATED // User has entered email but has not opened their magic link
-  VERIFIED // User has opened magic link
   APPLIED // User has finished application
   ACCEPTED // User has been accepted but has not yet confirmed
   REJECTED // User has been rejected

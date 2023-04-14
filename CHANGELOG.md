@@ -23,6 +23,10 @@
 - Edit event form didn't fill properly in some cases
 - Error 500 on spam deleting announcements
 
+[REMOVED]
+
+- The VERIFIED status
+
 ## v0.3.5
 
 [SECURITY]

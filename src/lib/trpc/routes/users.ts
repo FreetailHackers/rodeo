@@ -37,7 +37,7 @@ export const usersRouter = t.router({
 			if (!(await getSettings()).applicationOpen) {
 				throw new Error('Sorry, applications are closed.');
 			}
-			if (req.ctx.user.status !== Status.VERIFIED) {
+			if (req.ctx.user.status !== Status.CREATED) {
 				throw new Error('You have already submitted your application.');
 			}
 
@@ -48,7 +48,6 @@ export const usersRouter = t.router({
 			for (const question of questions) {
 				application[question.id] = req.input[question.id];
 			}
-			// Only let verified users that haven't received a decision update their info
 			await prisma.user.update({
 				where: {
 					magicLink: await hash(req.ctx.magicLink),
@@ -77,7 +76,7 @@ export const usersRouter = t.router({
 			if (!(await getSettings()).applicationOpen) {
 				throw new Error('Sorry, applications are closed.');
 			}
-			if (req.ctx.user.status !== Status.VERIFIED) {
+			if (req.ctx.user.status !== Status.CREATED) {
 				throw new Error('You have already submitted your application.');
 			}
 
@@ -121,7 +120,7 @@ export const usersRouter = t.router({
 		}
 		await prisma.user.update({
 			where: { magicLink: await hash(req.ctx.magicLink) },
-			data: { status: Status.VERIFIED },
+			data: { status: Status.CREATED },
 		});
 	}),
 
@@ -266,22 +265,6 @@ export const usersRouter = t.router({
 			Note that this will invalidate your previous link.`;
 			return await sendEmail(req.input.email, 'Welcome to Rodeo!', message, null);
 		}),
-
-	/**
-	 * Verify a user.
-	 */
-	verify: t.procedure.use(authenticate).mutation(async (req): Promise<void> => {
-		if (req.ctx.user.status === Status.CREATED) {
-			await prisma.user.update({
-				where: {
-					magicLink: await hash(req.ctx.magicLink),
-				},
-				data: {
-					status: Status.VERIFIED,
-				},
-			});
-		}
-	}),
 
 	/**
 	 * Scan a user's Hacker ID for the given action. Logged-in user must
