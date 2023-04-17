@@ -91,6 +91,10 @@ export const usersRouter = t.router({
 					(answer === undefined || answer === null || answer.trim() === '')
 				) {
 					errors[question.label] = 'This field is required.';
+				} else if (question.regex !== null) {
+					if (!new RegExp(question.regex).test(answer)) {
+						errors[question.label] = 'This field must match the given pattern: ' + question.regex;
+					}
 				}
 			}
 			// Update status to applied if there are no errors

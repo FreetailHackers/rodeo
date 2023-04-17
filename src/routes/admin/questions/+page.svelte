@@ -45,8 +45,17 @@
 					<input
 						value={question.placeholder}
 						name={question.id + '_placeholder'}
-						id={question.id}
+						id={question.id + '_placeholder'}
 						placeholder="J. Random Hacker"
+					/>
+				</div>
+				<div>
+					<label for={question.id}>Response must match regex:</label>
+					<input
+						value={question.regex}
+						name={question.id + '_regex'}
+						id={question.id + '_regex'}
+						placeholder="Leave empty to accept all"
 					/>
 				</div>
 			{/if}
