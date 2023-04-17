@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import fuzzysort from 'fuzzysort';
 	import UserCard from '$lib/components/user-card.svelte';
+	import type { Prisma } from '@prisma/client';
 
 	export let data;
 
@@ -70,6 +71,54 @@
 				filtered = [];
 			}
 			selectAll.indeterminate = false;
+		}
+	}
+
+	// Validate that the selected action can be applied to the selected users
+	// Throws an error if the action is invalid, otherwise returns a string
+	function validateSelection(
+		action: string,
+		filtered: Prisma.UserGetPayload<{ include: { decision: true } }>[],
+		selected: boolean[]
+	) {
+		if (action === '') {
+			throw 'You must select an action.';
+		}
+		if (selected.filter(Boolean).length === 0) {
+			throw 'You must select at least one user.';
+		}
+		if (action === 'admissions') {
+			if (
+				filtered.filter(
+					(user, i) => selected[i] && user.status !== 'APPLIED' && user.status !== 'WAITLISTED'
+				).length > 0
+			) {
+				throw 'You can only perform admissions on users that have applied or are waitlisted.';
+			}
+			return `${
+				selected.filter(Boolean).length
+			} selected users will be added to the pending decisions pool.
+						These decisions will NOT be visible until you release them.`;
+		}
+		if (action === 'status') {
+			return `${
+				selected.filter(Boolean).length
+			} selected users will have their status immediately set.
+					This will NOT send any notifications and WILL delete any pending (unreleased) decisions.`;
+		}
+		if (action === 'role') {
+			if (filtered.filter((user, i) => selected[i] && user.id === data.user.id).length > 0) {
+				throw 'You cannot change your own role.';
+			}
+			return `${selected.filter(Boolean).length} selected users will have their role set.`;
+		}
+		if (action === 'release') {
+			if (filtered.filter((user, i) => selected[i] && user.decision === null).length > 0) {
+				throw 'You can only release decisions for users with a pending decision.';
+			}
+			return `${
+				selected.filter(Boolean).length
+			} selected users will have their decisions released.`;
 		}
 	}
 </script>
@@ -200,40 +249,23 @@
 					<input type="radio" name="action" id="user-release" bind:group={action} value="release" />
 					<label for="user-release">Release decisions</label>
 				</div>
-				{#if action === ''}
-					You must select an action.
-				{:else if selected.filter(Boolean).length === 0}
-					You must select at least one user.
-				{:else if action === 'admissions'}
-					{#if filtered.filter((user, i) => selected[i] && user.status !== 'APPLIED' && user.status !== 'WAITLISTED').length > 0}
-						You can only perform admissions on users that have applied or are waitlisted.
-					{:else}
-						{selected.filter(Boolean).length} selected users will be added to the pending decisions pool.
-						These decisions will NOT be visible until you release them.
-					{/if}
-				{:else if action === 'status'}
-					{selected.filter(Boolean).length} selected users will have their status immediately set. This
-					will NOT send any notifications and WILL delete any pending (unreleased) decisions.
-				{:else if action === 'role'}
-					{selected.filter(Boolean).length} selected users will have their role set.
-				{:else if action === 'release'}
-					{#if filtered.filter((user, i) => selected[i] && user.decision === null).length > 0}
-						You can only release decisions for users with a pending decision.
-					{:else}
-						{selected.filter(Boolean).length} selected users will have their decisions released.
-					{/if}
-				{/if}
+				{(() => {
+					try {
+						return validateSelection(action, filtered, selected);
+					} catch (e) {
+						return e;
+					}
+				})()}
 				<button
 					type="submit"
-					disabled={selected.filter(Boolean).length === 0 ||
-						action === '' ||
-						(action === 'admissions' &&
-							filtered.filter(
-								(user, i) =>
-									selected[i] && user.status !== 'APPLIED' && user.status !== 'WAITLISTED'
-							).length > 0) ||
-						(action === 'release' &&
-							filtered.filter((user, i) => selected[i] && user.decision === null).length > 0)}
+					disabled={(() => {
+						try {
+							validateSelection(action, filtered, selected);
+							return false;
+						} catch (e) {
+							return true;
+						}
+					})()}
 				>
 					Confirm
 				</button>

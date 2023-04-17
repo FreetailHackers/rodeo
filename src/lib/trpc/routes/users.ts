@@ -387,6 +387,9 @@ export const usersRouter = t.router({
 			if (req.ctx.user.role !== Role.ADMIN) {
 				throw new Error('You have insufficient permissions to perform this action.');
 			}
+			if (req.input.ids.includes(req.ctx.user.id)) {
+				throw new Error('You cannot change your own role.');
+			}
 			await prisma.user.updateMany({
 				where: {
 					id: {
