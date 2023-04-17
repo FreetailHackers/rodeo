@@ -62,7 +62,13 @@
 {/if}
 
 <style>
-	#logout {
-		margin-top: 1rem;
+	label {
+		display: block;
+		margin-bottom: 0.5rem;
+	}
+
+	input {
+		display: block;
+		margin-bottom: 1rem;
 	}
 </style>

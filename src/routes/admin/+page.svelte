@@ -92,6 +92,16 @@
 </form>
 
 <style>
+	label {
+		display: block;
+		margin-top: 1rem;
+		margin-bottom: 0.5rem;
+	}
+
+	input {
+		margin-bottom: 1rem;
+	}
+
 	button {
 		width: 100%;
 	}

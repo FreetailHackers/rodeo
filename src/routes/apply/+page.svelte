@@ -211,6 +211,11 @@
 		flex-grow: 1;
 	}
 
+	input,
+	textarea {
+		margin-bottom: 1rem;
+	}
+
 	button {
 		margin-bottom: 1rem;
 	}

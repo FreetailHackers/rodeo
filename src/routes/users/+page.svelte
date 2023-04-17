@@ -2,7 +2,6 @@
 	import { enhance } from '$app/forms';
 	import fuzzysort from 'fuzzysort';
 	import UserCard from '$lib/components/user-card.svelte';
-	import Dropdown from '$lib/components/dropdown.svelte';
 
 	export let data;
 
@@ -78,22 +77,31 @@
 <h1>Add New User</h1>
 <form method="POST" action="?/create" use:enhance>
 	<label for="email">Email</label>
-	<input type="email" name="email" id="email" placeholder="email@example.com" required />
-	<Dropdown
-		label="Role"
-		name="role"
-		options={['HACKER', 'ADMIN', 'ORGANIZER', 'JUDGE', 'VOLUNTEER', 'SPONSOR']}
-		value=""
+	<input
+		type="email"
+		name="email"
+		id="email"
+		placeholder="email@example.com"
 		required
+		class="margin-bottom-1"
 	/>
+	<label for="role">Role</label>
+	<select name="role" id="role" required class="margin-bottom-1">
+		<option value="HACKER">Hacker</option>
+		<option value="ADMIN">Admin</option>
+		<option value="ORGANIZER">Organizer</option>
+		<option value="JUDGE">Judge</option>
+		<option value="VOLUNTEER">Volunteer</option>
+		<option value="SPONSOR">Sponsor</option>
+	</select>
 	<button type="submit" value="Create">Create User</button>
 </form>
 
 <h1>Master Database</h1>
 
 <!-- Search filters -->
-<div id="filter">
-	<select bind:value={key}>
+<fieldset id="filter">
+	<select id="key" bind:value={key} class="margin-bottom-1">
 		<option value="email">Email</option>
 		<option value="role">Role</option>
 		<option value="status">Status</option>
@@ -103,18 +111,20 @@
 			{/each}
 		</optgroup>
 	</select>
-	<select bind:value={filter}>
-		{#if key === 'email' || key === 'role' || key === 'status' || question?.type === 'SENTENCE' || question?.type === 'PARAGRAPH'}
-			<option value="contains">Contains</option>
-			<option value="is">Is exactly</option>
-			<option value="regex">Matches regex</option>
-			<option value="fuzzy">Matches fuzzy</option>
-		{:else}
-			<option value="UNSUPPORTED">Filtering on this question type is not supported yet!</option>
-		{/if}
-	</select>
-	<input type="text" name="search" bind:value={search} placeholder="Search" autocomplete="off" />
-</div>
+	<div id="condition">
+		<select bind:value={filter}>
+			{#if key === 'email' || key === 'role' || key === 'status' || question?.type === 'SENTENCE' || question?.type === 'PARAGRAPH'}
+				<option value="contains">Contains</option>
+				<option value="is">Is exactly</option>
+				<option value="regex">Regex</option>
+				<option value="fuzzy">Fuzzy</option>
+			{:else}
+				<option value="UNSUPPORTED">Filtering on this question type is not supported yet!</option>
+			{/if}
+		</select>
+		<input type="text" name="search" bind:value={search} placeholder="Search" autocomplete="off" />
+	</div>
+</fieldset>
 
 <p>
 	Found {filtered.length} results{#if filtered.length > DISPLAY_LIMIT}&nbsp;(showing first {DISPLAY_LIMIT}){/if}:
@@ -267,9 +277,12 @@
 </form>
 
 <style>
-	input[type='text'] {
-		width: 100%;
-		margin-bottom: 0;
+	.margin-bottom-1 {
+		margin-bottom: 1rem;
+	}
+
+	label {
+		margin-bottom: 0.5rem;
 	}
 
 	ul {
@@ -309,7 +322,18 @@
 	#filter {
 		display: flex;
 		flex-direction: column;
+		min-width: 0;
+	}
+
+	#condition {
+		display: flex;
 		gap: 0.5rem;
+		width: 100%;
+	}
+
+	#condition input {
+		flex-grow: 1;
+		min-width: 0;
 	}
 
 	summary {

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { enhance } from '$app/forms';
-	import Dropdown from '$lib/components/dropdown.svelte';
 	import { Role, type Event } from '@prisma/client';
 	import { onMount } from 'svelte';
 	import type { ActionData } from './$types';
@@ -104,23 +103,20 @@
 		<label for="location">Location</label>
 		<input type="text" id="location" name="location" required value={data.event.location} />
 
-		<Dropdown
-			value={data.event.type}
-			name="type"
-			label="Event Type"
-			options={['Key-Event', 'Workshop', 'Speaker-Event', 'Fun-Event', 'Regular-Event']}
-			required
-		/>
+		<label for="type">Event Type</label>
+		<select name="type" value={data.event.type} required>
+			<option value="Regular-Event">Regular Event</option>
+			<option value="Key-Event">Key Event</option>
+			<option value="Speaker-Event">Speaker Event</option>
+			<option value="Fun-Event">Fun Event</option>
+			<option value="Workshop">Workshop</option>
+		</select>
 
 		<button type="submit">Save</button>
 	</form>
 {/if}
 
 <style>
-	h1 {
-		display: inline;
-	}
-
 	span {
 		display: inline-block;
 		vertical-align: middle;
@@ -129,6 +125,22 @@
 		padding: 6px;
 		font-size: small;
 		border-radius: 20px;
+	}
+
+	a {
+		display: inline-block;
+		margin-bottom: 1rem;
+	}
+
+	label {
+		display: block;
+		margin-bottom: 0.5rem;
+	}
+
+	select,
+	input,
+	textarea {
+		margin-bottom: 1rem;
 	}
 
 	.Key-Event {

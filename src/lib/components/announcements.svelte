@@ -13,7 +13,6 @@
 		<textarea name="announcement" placeholder="Make an announcement here..." required />
 		<button>Announce</button>
 	</form>
-	<br />
 {/if}
 {#if announcements.length > 0}
 	<ul>
@@ -66,6 +65,10 @@
 
 	span {
 		display: flex;
+	}
+
+	textarea {
+		margin-bottom: 1rem;
 	}
 
 	.deleteButton {

@@ -48,5 +48,6 @@ print('This is a multi-line code block.')
 <style>
 	textarea {
 		height: 32rem;
+		margin-bottom: 1rem;
 	}
 </style>

@@ -20,16 +20,7 @@
 		<fieldset>
 			<!-- Fields common to all question types -->
 			<div class="metadata">
-				<select name={question.id + '_type'} value={question.type}>
-					<option value="SENTENCE">Sentence</option>
-					<option value="PARAGRAPH">Paragraph</option>
-					<option value="NUMBER">Number</option>
-					<option value="DROPDOWN">Dropdown</option>
-					<option value="MULTISELECT">Multiselect</option>
-					<option value="CHECKBOXES">Checkboxes</option>
-					<option value="RADIO">Radio</option>
-					<option value="FILE">File</option>
-				</select>
+				<Toggle name={question.id + '_required'} label="Required" checked={question.required} />
 				<button
 					type="submit"
 					name="id"
@@ -38,27 +29,43 @@
 					class="deleteButton">✕</button
 				>
 			</div>
-			<Toggle name={question.id + '_required'} label="Required" checked={question.required} />
-			<label for={question.id}>Question Label</label>
-			<input
-				value={question.label}
-				name={question.id + '_label'}
-				id={question.id}
-				placeholder="What is your name?"
-			/>
+			<div>
+				<label for={question.id}><b>{question.type}</b> Label</label>
+				<input
+					value={question.label}
+					name={question.id + '_label'}
+					id={question.id}
+					placeholder="What is your name?"
+				/>
+			</div>
 			<!-- Question-type-specific fields -->
 			{#if question.type === 'SENTENCE' || question.type === 'PARAGRAPH'}
-				<label for={question.id}>Placeholder</label>
-				<input
-					value={question.placeholder}
-					name={question.id + '_placeholder'}
-					id={question.id}
-					placeholder="J. Random Hacker"
-				/>
+				<div>
+					<label for={question.id}>Placeholder</label>
+					<input
+						value={question.placeholder}
+						name={question.id + '_placeholder'}
+						id={question.id}
+						placeholder="J. Random Hacker"
+					/>
+				</div>
 			{/if}
 		</fieldset>
 	{/each}
-	<button type="submit" formaction="?/create" id="addQuestion">Add Question</button>
+
+	<form method="POST" id="addQuestion" action="?/create" use:enhance>
+		<button type="submit">Add Question</button>
+		<select name="type" form="addQuestion">
+			<option value="SENTENCE">Sentence</option>
+			<option value="PARAGRAPH">Paragraph</option>
+			<option value="NUMBER">Number</option>
+			<option value="DROPDOWN">Dropdown</option>
+			<option value="MULTISELECT">Multiselect</option>
+			<option value="CHECKBOX">Checkbox</option>
+			<option value="RADIO">Radio</option>
+			<option value="FILE">File</option>
+		</select>
+	</form>
 	<button type="submit">Save</button>
 </form>
 
@@ -66,7 +73,13 @@
 	fieldset {
 		display: flex;
 		flex-direction: column;
-		padding: 1rem;
+		gap: 1rem;
+		margin-bottom: 1rem;
+	}
+
+	label {
+		display: block;
+		margin-bottom: 0.5rem;
 	}
 
 	input {
@@ -75,21 +88,27 @@
 	}
 
 	fieldset button {
-		margin-left: 0.5rem;
 		padding: 0 1rem;
 	}
 
 	#addQuestion {
+		display: flex;
+		flex-direction: row;
+		gap: 1rem;
 		margin-bottom: 1rem;
+	}
+
+	#addQuestion select {
+		flex-grow: 1;
+	}
+
+	#addQuestion button {
+		padding: 0 1rem;
 	}
 
 	.metadata {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
-	}
-
-	.metadata select {
-		flex-grow: 1;
 	}
 </style>
