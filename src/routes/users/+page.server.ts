@@ -19,23 +19,31 @@ export const actions: Actions = {
 		return await trpc(cookies).users.create({ email, role });
 	},
 
+	bulk: async ({ cookies, request }) => {
+		const formData = await request.formData();
+		const action = formData.get('action') as string;
+		const ids: number[] = [];
+		for (const key of formData.keys()) {
+			if (key.startsWith('id')) {
+				ids.push(Number(key.split('.')[1]));
+			}
+		}
+		if (action === 'admissions') {
+			const decision = formData.get('user-admissions') as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED';
+			await trpc(cookies).admissions.decide({ decision, ids });
+		} else if (action === 'status') {
+			const status = formData.get('user-status') as Status;
+			await trpc(cookies).users.setStatuses({ status, ids });
+		} else if (action === 'role') {
+			const role = formData.get('user-role') as Role;
+			await trpc(cookies).users.setRoles({ role, ids });
+		} else if (action === 'release') {
+			await trpc(cookies).admissions.releaseDecisions(ids);
+		}
+	},
+
 	accept: async ({ cookies, request }) => {
 		const ids = [...(await request.formData()).keys()].map((id) => Number(id));
 		await trpc(cookies).admissions.decide({ decision: Status.ACCEPTED, ids });
-	},
-
-	reject: async ({ cookies, request }) => {
-		const ids = [...(await request.formData()).keys()].map((id) => Number(id));
-		await trpc(cookies).admissions.decide({ decision: Status.REJECTED, ids });
-	},
-
-	waitlist: async ({ cookies, request }) => {
-		const ids = [...(await request.formData()).keys()].map((id) => Number(id));
-		await trpc(cookies).admissions.decide({ decision: Status.WAITLISTED, ids });
-	},
-
-	confirm: async ({ cookies, request }) => {
-		const ids = [...(await request.formData()).keys()].map((id) => Number(id));
-		await trpc(cookies).admissions.confirmWalkIns(ids);
 	},
 };

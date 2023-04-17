@@ -74,7 +74,7 @@ async function main() {
 		{
 			order: 3,
 			label: 'I agree to sell my data.',
-			type: QuestionType.CHECKBOXES,
+			type: QuestionType.CHECKBOX,
 			required: true,
 			generate: () => true,
 		},
@@ -195,17 +195,18 @@ async function main() {
 	}
 	await prisma.user.createMany({ data: hackers });
 
-	// Generate up to 100 decisions (not randomized so I don't have to worry about duplicates)
+	// Generate up to 10 decisions (not randomized so I don't have to worry about duplicates)
 	const decisions: Prisma.DecisionCreateManyInput[] = [];
-	for (let i = 0; i < 100; i++) {
+	for (const hacker of hackers) {
 		// Only decide on hackers with status APPLIED or WAITLISTED
-		if (hackers[i].status !== Status.APPLIED && hackers[i].status !== Status.WAITLISTED) {
+		if (hacker.status !== Status.APPLIED && hacker.status !== Status.WAITLISTED) {
 			continue;
 		}
 		decisions.push({
-			userId: (await prisma.user.findUniqueOrThrow({ where: { email: hackers[i].email } })).id,
-			status: [Status.ACCEPTED, Status.REJECTED, Status.WAITLISTED][Math.floor(random() * 3)],
+			userId: (await prisma.user.findUniqueOrThrow({ where: { email: hacker.email } })).id,
+			status: randomElement([Status.ACCEPTED, Status.REJECTED, Status.WAITLISTED]),
 		});
+		if (decisions.length >= 10) break;
 	}
 	await prisma.decision.createMany({ data: decisions });
 

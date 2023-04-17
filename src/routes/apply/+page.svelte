@@ -202,6 +202,11 @@
 		gap: 1rem;
 	}
 
+	label {
+		display: block;
+		margin-bottom: 0.5rem;
+	}
+
 	#rsvp > * {
 		flex-grow: 1;
 	}

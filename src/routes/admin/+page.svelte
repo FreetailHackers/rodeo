@@ -4,7 +4,6 @@
 
 	export let data;
 
-	let saveButtonText = 'Save';
 	let releaseConfirm = false;
 </script>
 
@@ -18,12 +17,8 @@
 	method="POST"
 	action="?/settings"
 	use:enhance={() => {
-		saveButtonText = 'Saving...';
 		return async ({ update }) => {
 			update({ reset: false });
-			// 100 ms delay so people actually see the "Saving..." text
-			await new Promise((r) => setTimeout(r, 100));
-			saveButtonText = 'Saved!';
 		};
 	}}
 >
@@ -42,21 +37,23 @@
 		value={data.settings.homepageText}
 	/>
 
-	<label for="acceptanceTemplate">Acceptance Email Template: </label>
-	<textarea
-		value={data.settings.acceptanceTemplate}
-		name="acceptanceTemplate"
-		id="acceptanceTemplate"
-	/>
-
-	<label for="RSVPTemplate">RSVP Email Template: </label>
-	<textarea value={data.settings.RSVPTemplate} name="RSVPTemplate" id="RSVPTemplate" />
-
-	<label for="withdrawTemplate">Withdraw Email Template: </label>
-	<textarea value={data.settings.withdrawTemplate} name="withdrawTemplate" id="withdrawTemplate" />
-
 	<label for="submitTemplate">Submit Application Email Template: </label>
 	<textarea value={data.settings.submitTemplate} name="submitTemplate" id="submitTemplate" />
+
+	<label for="acceptanceTemplate">Acceptance Email Template: </label>
+	<textarea value={data.settings.acceptTemplate} name="acceptTemplate" id="acceptTemplate" />
+
+	<label for="rejectTemplate">Rejection Email Template: </label>
+	<textarea value={data.settings.rejectTemplate} name="rejectTemplate" id="rejectTemplate" />
+
+	<label for="waitlistTemplate">Waitlist Email Template: </label>
+	<textarea value={data.settings.waitlistTemplate} name="waitlistTemplate" id="waitlistTemplate" />
+
+	<label for="RSVPTemplate">Confirm Attendance Email Template: </label>
+	<textarea value={data.settings.confirmTemplate} name="confirmTemplate" id="confirmTemplate" />
+
+	<label for="withdrawTemplate">Decline Attendance Email Template: </label>
+	<textarea value={data.settings.declineTemplate} name="declineTemplate" id="declineTemplate" />
 
 	<label for="confirmBy">
 		Accepted hackers must confirm by (leave empty if confirmation is not required):
@@ -68,13 +65,13 @@
 		name="confirmBy"
 		value={data.settings.confirmBy?.toLocaleString('sv').replace(' ', 'T').slice(0, -3)}
 	/>
-	<button type="submit">{saveButtonText}</button>
+	<button type="submit">Save</button>
 </form>
 
 <h1>Pending Decisions</h1>
 <form
 	method="POST"
-	action="?/releaseAll"
+	action="?/release"
 	use:enhance={({ cancel }) => {
 		if (!releaseConfirm) {
 			cancel();

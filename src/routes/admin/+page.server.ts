@@ -30,32 +30,28 @@ export const actions: Actions = {
 			confirmBy = null;
 		}
 		const homepageText = formData.get('homepageText') as string;
-		const acceptanceTemplate = formData.get('acceptanceTemplate') as string;
-		const RSVPTemplate = formData.get('RSVPTemplate') as string;
-		const withdrawTemplate = formData.get('withdrawTemplate') as string;
 		const submitTemplate = formData.get('submitTemplate') as string;
+		const acceptTemplate = formData.get('acceptTemplate') as string;
+		const rejectTemplate = formData.get('rejectTemplate') as string;
+		const waitlistTemplate = formData.get('waitlistTemplate') as string;
+		const confirmTemplate = formData.get('confirmTemplate') as string;
+		const declineTemplate = formData.get('declineTemplate') as string;
 		await trpc(cookies).settings.update({
-			homepageText,
 			applicationOpen,
 			confirmBy,
-			acceptanceTemplate,
-			RSVPTemplate,
-			withdrawTemplate,
+			homepageText,
 			submitTemplate,
+			acceptTemplate,
+			rejectTemplate,
+			waitlistTemplate,
+			confirmTemplate,
+			declineTemplate,
 		});
+		return 'Saved settings!';
 	},
 
-	release: async ({ cookies, request }) => {
-		const ids = [...(await request.formData()).keys()].map((id) => Number(id));
-		await trpc(cookies).admissions.releaseDecisions(ids);
-	},
-
-	remove: async ({ cookies, request }) => {
-		const ids = [...(await request.formData()).keys()].map((id) => Number(id));
-		await trpc(cookies).admissions.removeDecisions(ids);
-	},
-
-	releaseAll: async ({ cookies }) => {
+	release: async ({ cookies }) => {
 		await trpc(cookies).admissions.releaseAllDecisions();
+		return 'Released all decisions!';
 	},
 };

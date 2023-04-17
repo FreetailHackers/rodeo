@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import UserCard from '$lib/components/userCard.svelte';
+	import UserCard from '$lib/components/user-card.svelte';
 	import { trpc } from '$lib/trpc/client';
 	import { Role, Status, type User } from '@prisma/client';
 	import { Html5Qrcode, Html5QrcodeScannerState } from 'html5-qrcode';

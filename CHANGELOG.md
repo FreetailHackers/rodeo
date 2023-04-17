@@ -10,6 +10,7 @@
 - Automatic email receipts for submitting/confirming/declining
 - Export schedule to .ics
 - Dedicated page for each event
+- Ability for admins to set/release decisions, status, role for any user
 
 [CHANGED]
 
@@ -26,6 +27,7 @@
 [REMOVED]
 
 - The VERIFIED status
+- The MENTOR role
 
 ## v0.3.5
 

@@ -47,42 +47,6 @@ export const admissionsRouter = t.router({
 		}),
 
 	/**
-	 * Confirms walk-in users who have applied. Logged-in user must be
-	 * an admin.
-	 */
-	confirmWalkIns: t.procedure
-		.use(authenticate)
-		.input(z.array(z.number()))
-		.mutation(async (req): Promise<void> => {
-			if (req.ctx.user.role !== Role.ADMIN) {
-				throw new Error('You have insufficient permissions to perform this action.');
-			}
-			for (const id of req.input) {
-				const user = await prisma.user.findUniqueOrThrow({
-					where: {
-						id: id,
-					},
-				});
-				if (user.status !== Status.CREATED) {
-					// Use deleteMany to avoid not found errors
-					await prisma.decision.deleteMany({
-						where: {
-							userId: id,
-						},
-					});
-					await prisma.user.update({
-						where: {
-							id: id,
-						},
-						data: {
-							status: Status.CONFIRMED,
-						},
-					});
-				}
-			}
-		}),
-
-	/**
 	 * Gets all decisions. User must be an admin.
 	 */
 	getDecisions: t.procedure.use(authenticate).query(
@@ -138,19 +102,22 @@ export const admissionsRouter = t.router({
 					id: decision.id,
 				},
 			});
-
 			const recipient = await prisma.user.findUniqueOrThrow({
 				where: {
 					id: decision.userId,
 				},
 			});
-
-			// preconfigured templates, this structure will change later but is a proof of concept
-			const subject = 'Freetail Hackers Status Update';
-
 			await prisma.$transaction([updateStatus, deleteDecision]);
 
-			await sendEmail(recipient.email, subject, (await getSettings()).acceptanceTemplate, null);
+			let template = '';
+			if (decision.status === 'ACCEPTED') {
+				template = (await getSettings()).acceptTemplate;
+			} else if (decision.status === 'REJECTED') {
+				template = (await getSettings()).rejectTemplate;
+			} else if (decision.status === 'WAITLISTED') {
+				template = (await getSettings()).waitlistTemplate;
+			}
+			await sendEmail(recipient.email, 'Freetail Hackers Status Update', template, null);
 		}
 	}),
 
@@ -185,19 +152,22 @@ export const admissionsRouter = t.router({
 						id: decision.id,
 					},
 				});
-
 				const recipient = await prisma.user.findUniqueOrThrow({
 					where: {
 						id: id,
 					},
 				});
-
-				// preconfigured templates, this structure will change later but is a proof of concept
-				const subject = 'Freetail Hackers Status Update';
-
 				await prisma.$transaction([updateStatus, deleteDecision]);
 
-				await sendEmail(recipient.email, subject, (await getSettings()).acceptanceTemplate, null);
+				let template = '';
+				if (decision.status === 'ACCEPTED') {
+					template = (await getSettings()).acceptTemplate;
+				} else if (decision.status === 'REJECTED') {
+					template = (await getSettings()).rejectTemplate;
+				} else if (decision.status === 'WAITLISTED') {
+					template = (await getSettings()).waitlistTemplate;
+				}
+				await sendEmail(recipient.email, 'Freetail Hackers Status Update', template, null);
 			}
 		}),
 
