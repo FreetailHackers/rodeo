@@ -170,6 +170,19 @@
 						autofocus={question.id === focusedQuestionId}
 						on:focus={() => (focusedQuestionId = question.id)}
 					/>
+				{:else if question.type === 'NUMBER'}
+					<input
+						type="number"
+						name={question.id}
+						id={question.id}
+						min={question.min}
+						max={question.max}
+						step={question.step}
+						bind:value={application[question.id]}
+						placeholder={question.placeholder}
+						autofocus={question.id === focusedQuestionId}
+						on:focus={() => (focusedQuestionId = question.id)}
+					/>
 				{/if}
 			{/each}
 

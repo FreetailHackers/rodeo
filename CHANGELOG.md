@@ -5,7 +5,7 @@
 [ADDED]
 
 - Global toast notification system for form action results
-- Custom registration questions for text, paragraph inputs
+- Custom registration questions for text, paragraph, number inputs
 - Customizable homepage text
 - Automatic email receipts for submitting/confirming/declining
 - Export schedule to .ics

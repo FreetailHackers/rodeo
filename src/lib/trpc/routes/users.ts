@@ -29,7 +29,7 @@ export const usersRouter = t.router({
 	 */
 	update: t.procedure
 		.use(authenticate)
-		.input(z.record(z.string(), z.string()))
+		.input(z.record(z.any()))
 		.mutation(async (req): Promise<void> => {
 			if (req.ctx.user.role !== Role.HACKER) {
 				throw new Error('You have insufficient permissions to perform this action.');
@@ -83,17 +83,24 @@ export const usersRouter = t.router({
 			// Validate the user's data
 			const errors: Record<string, string> = {};
 			const questions = await prisma.question.findMany();
-			const application = req.ctx.user.application as Record<string, string>;
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			const application = req.ctx.user.application as Record<string, any>;
 			for (const question of questions) {
 				const answer = application[question.id];
-				if (
-					question.required &&
-					(answer === undefined || answer === null || answer.trim() === '')
-				) {
+				if (question.required && (answer === undefined || answer === null)) {
 					errors[question.label] = 'This field is required.';
-				} else if (question.regex !== null) {
+				} else if (
+					(question.type === 'SENTENCE' || question.type === 'PARAGRAPH') &&
+					question.regex !== null
+				) {
 					if (!new RegExp(question.regex).test(answer)) {
 						errors[question.label] = 'This field must match the given pattern: ' + question.regex;
+					}
+				} else if (question.type === 'NUMBER') {
+					if (question.min !== null && answer < question.min) {
+						errors[question.label] = `This field must be at least ${question.min}.`;
+					} else if (question.max !== null && answer > question.max) {
+						errors[question.label] = `This field must be at most ${question.max}.`;
 					}
 				}
 			}

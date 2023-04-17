@@ -63,6 +63,20 @@ export const actions: Actions = {
 		// Perform type conversions
 		for (const id in questions) {
 			questions[id].required = questions[id].required === 'on';
+			if (questions[id].type === 'NUMBER') {
+				const min = Number(questions[id].min);
+				const max = Number(questions[id].max);
+				questions[id].min = questions[id].min === '' || Number.isNaN(min) ? null : min;
+				questions[id].max = questions[id].max === '' || Number.isNaN(max) ? null : max;
+				if (
+					questions[id].min !== null &&
+					questions[id].max !== null &&
+					questions[id].min > questions[id].max
+				) {
+					[questions[id].min, questions[id].max] = [questions[id].max, questions[id].min];
+				}
+				questions[id].step = Number(questions[id].step) || 1;
+			}
 		}
 		await trpc(cookies).questions.update(questions);
 	},

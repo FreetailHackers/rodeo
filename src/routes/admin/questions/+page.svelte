@@ -17,9 +17,10 @@
 >
 	<!-- NOTE: see corresponding +page.server.ts to see how form data is structured and parsed -->
 	{#each data.questions as question}
+		<input type="hidden" name={question.id + '_type'} value={question.type} />
 		<fieldset>
 			<!-- Fields common to all question types -->
-			<div class="metadata">
+			<div class="flex-row">
 				<Toggle name={question.id + '_required'} label="Required" checked={question.required} />
 				<button
 					type="submit"
@@ -57,6 +58,52 @@
 						id={question.id + '_regex'}
 						placeholder="Leave empty to accept all"
 					/>
+				</div>
+			{:else if question.type === 'NUMBER'}
+				<div>
+					<label for={question.id}>Placeholder</label>
+					<input
+						value={question.placeholder}
+						type="number"
+						name={question.id + '_placeholder'}
+						id={question.id + '_placeholder'}
+						placeholder="J. Random Hacker"
+					/>
+				</div>
+				<div class="flex-row">
+					<div>
+						<label for={question.id}>Minimum</label>
+						<input
+							value={question.min}
+							type="number"
+							name={question.id + '_min'}
+							id={question.id + '_min'}
+							placeholder="0"
+							step="any"
+						/>
+					</div>
+					<div>
+						<label for={question.id}>Maximum</label>
+						<input
+							value={question.max}
+							type="number"
+							name={question.id + '_max'}
+							id={question.id + '_max'}
+							placeholder="100"
+							step="any"
+						/>
+					</div>
+					<div>
+						<label for={question.id}>Step</label>
+						<input
+							value={question.step}
+							type="number"
+							name={question.id + '_step'}
+							id={question.id + '_step'}
+							placeholder="1"
+							step="any"
+						/>
+					</div>
 				</div>
 			{/if}
 		</fieldset>
@@ -115,9 +162,14 @@
 		padding: 0 1rem;
 	}
 
-	.metadata {
+	.flex-row {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.flex-row > div {
+		flex-grow: 1;
 	}
 </style>

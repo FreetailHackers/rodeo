@@ -59,12 +59,12 @@ model Question {
   type        QuestionType
   required    Boolean      @default(false)
   order       Int          @unique
-  placeholder String? // For sentences, paragraphs, and numbers
+  placeholder String       @default("") // For sentences, paragraphs, and numbers
   options     String[] // For dropdowns, multiselects, checkboxes, and radios
-  min         Int? // For numbers
-  max         Int? // For numbers
-  step        Int? // For numbers
-  regex       String? // For sentences and paragraphs
+  min         Float? // For numbers
+  max         Float? // For numbers
+  step        Float? // For numbers
+  regex       String       @default("") // For sentences and paragraphs
 }
 
 model Event {
