@@ -1,18 +1,21 @@
 <script lang="ts">
-	import { fly } from 'svelte/transition';
+	import { fly, scale } from 'svelte/transition';
 	import { toasts } from '$lib/stores';
 </script>
 
 <ol id="toasts">
-	{#each $toasts as toast}
-		<li in:fly={{ x: 1000, duration: 500 }} class="toast">
-			{toast}
+	{#each $toasts as toast (toast)}
+		<li in:fly={{ x: 1000, duration: 500 }} out:scale class="toast">
+			{toast.message}
 		</li>
 	{/each}
 </ol>
 
 <style>
 	#toasts {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
 		position: fixed;
 		bottom: 0;
 		right: 0;
@@ -27,7 +30,6 @@
 	.toast {
 		position: relative;
 		width: 100%;
-		margin-top: 0.5rem;
 		padding: 1rem;
 		background-color: white;
 		border: 2px solid black;

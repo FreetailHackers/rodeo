@@ -13,5 +13,6 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const info = formData.get('info') as string;
 		await trpc(cookies).settings.update({ info });
+		return 'Saved info page!';
 	},
 };

@@ -1,13 +1,18 @@
 import { writable } from 'svelte/store';
 
+interface Notification {
+	message: string;
+	timestamp: number;
+}
+
 function initToasts() {
-	const array: string[] = []; // Must declare this typed array to satisfy TypeScript
+	const array: Notification[] = []; // Must declare this typed array to satisfy TypeScript
 	const { subscribe, update } = writable(array);
 
 	return {
 		subscribe,
-		notify: (toast: string) => {
-			update((toasts) => [...toasts, toast]);
+		notify: (message: string) => {
+			update((toasts) => [...toasts, { message, timestamp: Date.now() }]);
 			// Remove the toast after a short amount of time
 			setTimeout(() => {
 				update((toasts) => toasts.slice(1));

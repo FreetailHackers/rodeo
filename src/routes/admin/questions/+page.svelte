@@ -17,19 +17,11 @@
 >
 	<!-- NOTE: see corresponding +page.server.ts to see how form data is structured and parsed -->
 	{#each data.questions as question}
+		<input type="hidden" name={question.id + '_type'} value={question.type} />
 		<fieldset>
 			<!-- Fields common to all question types -->
-			<div class="metadata">
-				<select name={question.id + '_type'} value={question.type}>
-					<option value="SENTENCE">Sentence</option>
-					<option value="PARAGRAPH">Paragraph</option>
-					<option value="NUMBER">Number</option>
-					<option value="DROPDOWN">Dropdown</option>
-					<option value="MULTISELECT">Multiselect</option>
-					<option value="CHECKBOXES">Checkboxes</option>
-					<option value="RADIO">Radio</option>
-					<option value="FILE">File</option>
-				</select>
+			<div class="flex-row">
+				<Toggle name={question.id + '_required'} label="Required" checked={question.required} />
 				<button
 					type="submit"
 					name="id"
@@ -38,27 +30,98 @@
 					class="deleteButton">✕</button
 				>
 			</div>
-			<Toggle name={question.id + '_required'} label="Required" checked={question.required} />
-			<label for={question.id}>Question Label</label>
-			<input
-				value={question.label}
-				name={question.id + '_label'}
-				id={question.id}
-				placeholder="What is your name?"
-			/>
+			<div>
+				<label for={question.id}><b>{question.type}</b> Label</label>
+				<input
+					value={question.label}
+					name={question.id + '_label'}
+					id={question.id}
+					placeholder="What is your name?"
+				/>
+			</div>
 			<!-- Question-type-specific fields -->
 			{#if question.type === 'SENTENCE' || question.type === 'PARAGRAPH'}
-				<label for={question.id}>Placeholder</label>
-				<input
-					value={question.placeholder}
-					name={question.id + '_placeholder'}
-					id={question.id}
-					placeholder="J. Random Hacker"
-				/>
+				<div>
+					<label for={question.id}>Placeholder</label>
+					<input
+						value={question.placeholder}
+						name={question.id + '_placeholder'}
+						id={question.id + '_placeholder'}
+						placeholder="J. Random Hacker"
+					/>
+				</div>
+				<div>
+					<label for={question.id}>Response must match regex:</label>
+					<input
+						value={question.regex}
+						name={question.id + '_regex'}
+						id={question.id + '_regex'}
+						placeholder="Leave empty to accept all"
+					/>
+				</div>
+			{:else if question.type === 'NUMBER'}
+				<div>
+					<label for={question.id}>Placeholder</label>
+					<input
+						value={question.placeholder}
+						type="number"
+						name={question.id + '_placeholder'}
+						id={question.id + '_placeholder'}
+						placeholder="J. Random Hacker"
+					/>
+				</div>
+				<div class="flex-row">
+					<div>
+						<label for={question.id}>Minimum</label>
+						<input
+							value={question.min}
+							type="number"
+							name={question.id + '_min'}
+							id={question.id + '_min'}
+							placeholder="0"
+							step="any"
+						/>
+					</div>
+					<div>
+						<label for={question.id}>Maximum</label>
+						<input
+							value={question.max}
+							type="number"
+							name={question.id + '_max'}
+							id={question.id + '_max'}
+							placeholder="100"
+							step="any"
+						/>
+					</div>
+					<div>
+						<label for={question.id}>Step</label>
+						<input
+							value={question.step}
+							type="number"
+							name={question.id + '_step'}
+							id={question.id + '_step'}
+							placeholder="1"
+							step="any"
+						/>
+					</div>
+				</div>
 			{/if}
 		</fieldset>
 	{/each}
-	<button type="submit" formaction="?/create" id="addQuestion">Add Question</button>
+
+	<form method="POST" id="addQuestion" action="?/create" use:enhance>
+		<button type="submit">Add Question</button>
+		<select name="type" form="addQuestion">
+			<option value="SENTENCE">Sentence</option>
+			<option value="PARAGRAPH">Paragraph</option>
+			<option value="NUMBER">Number</option>
+			<option value="DROPDOWN">Dropdown</option>
+			<option value="MULTISELECT">Multiselect</option>
+			<option value="CHECKBOX">Checkbox</option>
+			<option value="RADIO">Radio</option>
+			<option value="FILE">File</option>
+		</select>
+	</form>
 	<button type="submit">Save</button>
 </form>
 
@@ -66,7 +129,13 @@
 	fieldset {
 		display: flex;
 		flex-direction: column;
-		padding: 1rem;
+		gap: 1rem;
+		margin-bottom: 1rem;
+	}
+
+	label {
+		display: block;
+		margin-bottom: 0.5rem;
 	}
 
 	input {
@@ -75,21 +144,32 @@
 	}
 
 	fieldset button {
-		margin-left: 0.5rem;
 		padding: 0 1rem;
 	}
 
 	#addQuestion {
+		display: flex;
+		flex-direction: row;
+		gap: 1rem;
 		margin-bottom: 1rem;
 	}
 
-	.metadata {
+	#addQuestion select {
+		flex-grow: 1;
+	}
+
+	#addQuestion button {
+		padding: 0 1rem;
+	}
+
+	.flex-row {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
+		gap: 1rem;
 	}
 
-	.metadata select {
+	.flex-row > div {
 		flex-grow: 1;
 	}
 </style>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import UserCard from '$lib/components/userCard.svelte';
+	import UserCard from '$lib/components/user-card.svelte';
 
 	export let data;
 </script>

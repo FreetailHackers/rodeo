@@ -21,7 +21,7 @@
 <!-- Application status dialog -->
 <div id="status">
 	<p>Your application status is:</p>
-	{#if data.user.status === Status.VERIFIED}
+	{#if data.user.status === Status.CREATED}
 		<h1>INCOMPLETE</h1>
 		<p>You must complete your application to be considered for admission.</p>
 	{:else if data.user.status === Status.APPLIED}
@@ -119,7 +119,7 @@
 </div>
 
 <!-- The actual application -->
-{#if data.user.status === Status.VERIFIED}
+{#if data.user.status === Status.CREATED}
 	{#if data.settings.applicationOpen}
 		<form
 			bind:this={applicationForm}
@@ -170,6 +170,19 @@
 						autofocus={question.id === focusedQuestionId}
 						on:focus={() => (focusedQuestionId = question.id)}
 					/>
+				{:else if question.type === 'NUMBER'}
+					<input
+						type="number"
+						name={question.id}
+						id={question.id}
+						min={question.min}
+						max={question.max}
+						step={question.step}
+						bind:value={application[question.id]}
+						placeholder={question.placeholder}
+						autofocus={question.id === focusedQuestionId}
+						on:focus={() => (focusedQuestionId = question.id)}
+					/>
 				{/if}
 			{/each}
 
@@ -202,8 +215,18 @@
 		gap: 1rem;
 	}
 
+	label {
+		display: block;
+		margin-bottom: 0.5rem;
+	}
+
 	#rsvp > * {
 		flex-grow: 1;
+	}
+
+	input,
+	textarea {
+		margin-bottom: 1rem;
 	}
 
 	button {

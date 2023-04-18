@@ -18,6 +18,7 @@ async function main() {
 	// Reset database
 	await prisma.announcement.deleteMany();
 	await prisma.decision.deleteMany();
+	await prisma.event.deleteMany();
 	await prisma.question.deleteMany();
 	await prisma.settings.deleteMany();
 	await prisma.user.deleteMany();
@@ -27,7 +28,7 @@ async function main() {
 		data: {
 			email: 'hacker@yopmail.com',
 			magicLink: await hash('hacker'),
-			status: Status.VERIFIED,
+			status: Status.CREATED,
 		},
 	});
 	await prisma.user.create({
@@ -73,7 +74,7 @@ async function main() {
 		{
 			order: 3,
 			label: 'I agree to sell my data.',
-			type: QuestionType.CHECKBOXES,
+			type: QuestionType.CHECKBOX,
 			required: true,
 			generate: () => true,
 		},
@@ -114,6 +115,68 @@ async function main() {
 
 	const createdQuestions = await prisma.question.findMany();
 
+	// Create example events
+	const events: Prisma.EventCreateInput[] = [
+		{
+			name: 'Opening Ceremony',
+			start: new Date('2021-09-24T18:00:00.000Z'),
+			end: new Date('2021-09-24T19:00:00.000Z'),
+			location: 'GDC Auditorium (2.216)',
+			description: 'Welcome to HackTX 2021!',
+			type: 'Key-Event',
+		},
+		{
+			name: 'Hacking Begins',
+			start: new Date('2021-09-24T19:00:00.000Z'),
+			end: new Date('2021-09-25T19:00:00.000Z'),
+			location: 'GDC',
+			description: 'Start hacking!',
+			type: 'Key-Event',
+		},
+		{
+			name: 'Intro to Svelte',
+			start: new Date('2021-09-24T19:30:00.000Z'),
+			end: new Date('2021-09-24T20:30:00.000Z'),
+			location: 'GDC 6.302',
+			description: 'Learn how to use Svelte, the hottest and most-loved framework in town!',
+			type: 'Workshop',
+		},
+		{
+			name: 'Midnight Snack',
+			start: new Date('2021-09-24T23:00:00.000Z'),
+			end: new Date('2021-09-25T00:00:00.000Z'),
+			location: 'GDC',
+			description: 'Free food!',
+			type: 'Regular-Event',
+		},
+		{
+			name: 'Hacking Ends',
+			start: new Date('2021-09-25T19:00:00.000Z'),
+			end: new Date('2021-09-25T20:00:00.000Z'),
+			location: 'GDC',
+			description: 'Stop hacking!',
+			type: 'Key-Event',
+		},
+		{
+			name: '5BLD with Feet Bench Press',
+			start: new Date('2021-09-25T19:30:00.000Z'),
+			end: new Date('2021-09-25T20:00:00.000Z'),
+			location: 'Gregory Gym Basement',
+			description:
+				"Who can bench press the most weight while solving a 5x5 Rubik's cube with their feet blindfolded?",
+			type: 'Fun-Event',
+		},
+		{
+			name: 'Closing Ceremony',
+			start: new Date('2021-09-25T20:00:00.000Z'),
+			end: new Date('2021-09-25T21:00:00.000Z'),
+			location: 'GDC Auditorium (2.216)',
+			description: 'Goodbye!',
+			type: 'Key-Event',
+		},
+	];
+	await prisma.event.createMany({ data: events });
+
 	// Generate 1000 random hackers with a seeded random number generator for reproducibility
 	const hackers: Prisma.UserCreateInput[] = [];
 	for (let i = 0; i < 1000; i++) {
@@ -132,17 +195,18 @@ async function main() {
 	}
 	await prisma.user.createMany({ data: hackers });
 
-	// Generate up to 100 decisions (not randomized so I don't have to worry about duplicates)
+	// Generate up to 10 decisions (not randomized so I don't have to worry about duplicates)
 	const decisions: Prisma.DecisionCreateManyInput[] = [];
-	for (let i = 0; i < 100; i++) {
+	for (const hacker of hackers) {
 		// Only decide on hackers with status APPLIED or WAITLISTED
-		if (hackers[i].status !== Status.APPLIED && hackers[i].status !== Status.WAITLISTED) {
+		if (hacker.status !== Status.APPLIED && hacker.status !== Status.WAITLISTED) {
 			continue;
 		}
 		decisions.push({
-			userId: (await prisma.user.findUniqueOrThrow({ where: { email: hackers[i].email } })).id,
-			status: [Status.ACCEPTED, Status.REJECTED, Status.WAITLISTED][Math.floor(random() * 3)],
+			userId: (await prisma.user.findUniqueOrThrow({ where: { email: hacker.email } })).id,
+			status: randomElement([Status.ACCEPTED, Status.REJECTED, Status.WAITLISTED]),
 		});
+		if (decisions.length >= 10) break;
 	}
 	await prisma.decision.createMany({ data: decisions });
 

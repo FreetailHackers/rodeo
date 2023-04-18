@@ -9,12 +9,14 @@ const settingsSchema = z
 		applicationOpen: z.boolean().optional(),
 		confirmBy: z.date().nullable().optional(),
 		info: z.string().optional(),
-		rollingAdmissions: z.boolean().optional(),
-		acceptanceTemplate: z.string().optional(),
 		homepageText: z.string().optional(),
-		RSVPTemplate: z.string().optional(),
-		withdrawTemplate: z.string().optional(),
+		rollingAdmissions: z.boolean().optional(),
 		submitTemplate: z.string().optional(),
+		acceptTemplate: z.string().optional(),
+		rejectTemplate: z.string().optional(),
+		waitlistTemplate: z.string().optional(),
+		confirmTemplate: z.string().optional(),
+		declineTemplate: z.string().optional(),
 	})
 	.strict();
 

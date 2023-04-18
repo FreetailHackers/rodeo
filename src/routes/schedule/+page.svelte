@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { enhance } from '$app/forms';
-	import Dropdown from '$lib/components/dropdown.svelte';
 	import { Role, type Event } from '@prisma/client';
 	import type { ActionData } from './$types';
-
+	import { onMount } from 'svelte';
+	import { generateIcsContent } from '$lib/ics';
 	export let data;
 	export let form: ActionData;
 
@@ -25,15 +25,27 @@
 
 	// Loops through all events and finds the closest date to the current date
 	let displayDate = currentDateTime;
-	displayDate = data.dates.reduce((prev, curr) =>
-		Math.abs(curr.getTime() - currentDateTime.getTime()) <
-		Math.abs(prev.getTime() - currentDateTime.getTime())
-			? curr
-			: prev
-	);
+	if (data.dates.length > 0) {
+		displayDate = data.dates.reduce((prev, curr) =>
+			Math.abs(curr.getTime() - currentDateTime.getTime()) <
+			Math.abs(prev.getTime() - currentDateTime.getTime())
+				? curr
+				: prev
+		);
+	}
+
+	// Calendar functionality
+	let url: string;
+
+	onMount(() => {
+		url = generateIcsContent(data.schedule);
+	});
 </script>
 
 <h1>Schedule</h1>
+{#if url && data.schedule.length > 0}
+	<a class="calendar-export-link" href={url} download="events.ics">Download All Events</a>
+{/if}
 <div class="schedule">
 	<div>
 		<div class="key">
@@ -57,7 +69,7 @@
 			&nbsp;Workshop
 		</div>
 	</div>
-
+	<br />
 	<div class="btn-group">
 		{#each data.dates as eventDate}
 			<button
@@ -68,7 +80,6 @@
 			</button>
 		{/each}
 	</div>
-
 	<ul>
 		{#each data.schedule as event}
 			{#if event.start.toDateString() === displayDate.toDateString()}
@@ -105,19 +116,10 @@
 		{/each}
 	</ul>
 </div>
-
 {#if data.user?.role === Role.ADMIN}
 	<hr />
 	<h2>{editedEvent == null ? 'Create New Event' : 'Edit Event'}</h2>
-	<form
-		method="POST"
-		action={editedEvent == null ? '?/create' : '?/saveEdit'}
-		use:enhance={() => {
-			return async ({ update }) => {
-				update({ reset: false });
-			};
-		}}
-	>
+	<form method="POST" action={editedEvent == null ? '?/create' : '?/saveEdit'} use:enhance>
 		<input type="hidden" name="id" value={editedEvent?.id} />
 
 		<label for="name">Name</label>
@@ -148,13 +150,14 @@
 		<label for="location">Location</label>
 		<input type="text" id="location" name="location" required value={editedEvent?.location ?? ''} />
 
-		<Dropdown
-			value={editedEvent?.type ?? ''}
-			name="type"
-			label="Event Type"
-			options={['Key-Event', 'Workshop', 'Speaker-Event', 'Fun-Event', 'Regular-Event']}
-			required
-		/>
+		<label for="type">Event Type</label>
+		<select name="type" value={editedEvent?.type ?? ''} required>
+			<option value="Regular-Event">Regular Event</option>
+			<option value="Key-Event">Key Event</option>
+			<option value="Speaker-Event">Speaker Event</option>
+			<option value="Fun-Event">Fun Event</option>
+			<option value="Workshop">Workshop</option>
+		</select>
 
 		<button type="submit">Save</button>
 	</form>
@@ -165,6 +168,17 @@
 		width: 100%;
 		padding: 20px 20px 5px 20px;
 		background-color: #f5f2ee;
+	}
+
+	label {
+		display: block;
+		margin-bottom: 0.5rem;
+	}
+
+	select,
+	input,
+	textarea {
+		margin-bottom: 1rem;
 	}
 
 	div {
@@ -278,5 +292,11 @@
 
 	li button:hover {
 		background-color: #972626;
+	}
+
+	a.calendar-export-link {
+		padding-bottom: 10px;
+		display: flex;
+		justify-content: right;
 	}
 </style>

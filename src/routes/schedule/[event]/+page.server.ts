@@ -16,7 +16,6 @@ export const load = async ({ params, cookies }) => {
 			user: await trpc(cookies).users.get(),
 		};
 	}
-
 	throw error(404, 'Event not found');
 };
 

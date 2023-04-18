@@ -13,7 +13,7 @@
 	div {
 		display: flex;
 		align-items: center;
-		margin-bottom: 1rem;
+		/* margin-bottom: 1rem; */
 	}
 
 	/* Adapted from https://danklammer.com/articles/simple-css-toggle-switch */

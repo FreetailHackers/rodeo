@@ -1,6 +1,6 @@
 import authenticate from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
-import { Role } from '@prisma/client';
+import { QuestionType, Role } from '@prisma/client';
 import type { Actions } from './$types';
 
 export const load = async ({ cookies }) => {
@@ -9,8 +9,9 @@ export const load = async ({ cookies }) => {
 };
 
 export const actions: Actions = {
-	create: async ({ cookies }) => {
-		await trpc(cookies).questions.create();
+	create: async ({ cookies, request }) => {
+		const formData = await request.formData();
+		await trpc(cookies).questions.create(formData.get('type') as QuestionType);
 	},
 
 	update: async ({ cookies, request }) => {
@@ -62,6 +63,20 @@ export const actions: Actions = {
 		// Perform type conversions
 		for (const id in questions) {
 			questions[id].required = questions[id].required === 'on';
+			if (questions[id].type === 'NUMBER') {
+				const min = Number(questions[id].min);
+				const max = Number(questions[id].max);
+				questions[id].min = questions[id].min === '' || Number.isNaN(min) ? null : min;
+				questions[id].max = questions[id].max === '' || Number.isNaN(max) ? null : max;
+				if (
+					questions[id].min !== null &&
+					questions[id].max !== null &&
+					questions[id].min > questions[id].max
+				) {
+					[questions[id].min, questions[id].max] = [questions[id].max, questions[id].min];
+				}
+				questions[id].step = Number(questions[id].step) || 1;
+			}
 		}
 		await trpc(cookies).questions.update(questions);
 	},

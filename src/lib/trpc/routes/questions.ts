@@ -20,24 +20,25 @@ export const questionsRouter = t.router({
 
 	/**
 	 * Creates a new question. User must be an admin.
-	 *
-	 * TODO: Only supports SENTENCE questions for now
 	 */
-	create: t.procedure.use(authenticate).mutation(async (req): Promise<Question> => {
-		if (req.ctx.user.role !== Role.ADMIN) {
-			throw new Error('You have insufficient permissions to perform this action.');
-		}
-		// TODO: Only supports adding at end for now
-		const orders = (await getQuestions()).map((question) => question.order);
-		const lastOrder = orders.length == 0 ? 0 : Math.max(...orders);
-		return await prisma.question.create({
-			data: {
-				label: '',
-				type: QuestionType.SENTENCE,
-				order: lastOrder + 1,
-			},
-		});
-	}),
+	create: t.procedure
+		.use(authenticate)
+		.input(z.nativeEnum(QuestionType))
+		.mutation(async (req): Promise<Question> => {
+			if (req.ctx.user.role !== Role.ADMIN) {
+				throw new Error('You have insufficient permissions to perform this action.');
+			}
+			// TODO: Only supports adding at end for now
+			const orders = (await getQuestions()).map((question) => question.order);
+			const lastOrder = orders.length == 0 ? 0 : Math.max(...orders);
+			return await prisma.question.create({
+				data: {
+					label: '',
+					type: req.input,
+					order: lastOrder + 1,
+				},
+			});
+		}),
 
 	/**
 	 * Updates the given application questions. User must be an admin.
@@ -67,6 +68,6 @@ export const questionsRouter = t.router({
 			if (req.ctx.user.role !== Role.ADMIN) {
 				throw new Error('You have insufficient permissions to perform this action.');
 			}
-			await prisma.question.delete({ where: { id: req.input } });
+			await prisma.question.deleteMany({ where: { id: req.input } });
 		}),
 });
