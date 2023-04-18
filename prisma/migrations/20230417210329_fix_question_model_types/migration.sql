@@ -6,6 +6,10 @@
 
 */
 -- AlterTable
+/* We must set the default value to '' before making the column required */
+UPDATE "Question" SET "placeholder" = '' WHERE "placeholder" IS NULL;
+UPDATE "Question" SET "regex" = '' WHERE "regex" IS NULL;
+/* Prisma generated migration */
 ALTER TABLE "Question" ALTER COLUMN "placeholder" SET NOT NULL,
 ALTER COLUMN "placeholder" SET DEFAULT '',
 ALTER COLUMN "min" SET DATA TYPE DOUBLE PRECISION,
