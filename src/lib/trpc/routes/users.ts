@@ -1,6 +1,5 @@
 import { hash } from '$lib/hash';
 import { Prisma, Role, Status, type User } from '@prisma/client';
-import { group } from 'console';
 import { z } from 'zod';
 import prisma from '../db';
 import { sendEmail, sendEmailWithBody } from '../email';
