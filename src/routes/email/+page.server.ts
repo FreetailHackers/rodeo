@@ -18,11 +18,11 @@ export const actions: Actions = {
 		await trpc(cookies).users.update({ email, role });
 	},
 
-	// email: async ({ cookies, request }) => {
-	//     const formData = await request.formData();
-	//     const email = formData.get('email') as string;
-	//     const subject = formData.get('subject') as string;
-	//     const body = formData.get('body') as string;
-	//     await trpc(cookies).email.send({ email, subject, body });
-	// }
+	email: async ({ cookies, request }) => {
+		const formData = await request.formData();
+		const subject = formData.get('subject') as string;
+		const body = formData.get('email') as string;
+		const group = formData.getAll('Group') as string[];
+		await trpc(cookies).users.sendUserEmails({ subject, body, group });
+	},
 };

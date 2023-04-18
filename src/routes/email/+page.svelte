@@ -4,7 +4,7 @@
 	import Multiselect from '$lib/components/multiselect.svelte';
 
 	export let data;
-	const group = [''];
+	export let group: Array<string> = [];
 </script>
 
 {#if data.user?.role === Role.ADMIN}

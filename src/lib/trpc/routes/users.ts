@@ -1,8 +1,9 @@
 import { hash } from '$lib/hash';
 import { Prisma, Role, Status, type User } from '@prisma/client';
+import { group } from 'console';
 import { z } from 'zod';
 import prisma from '../db';
-import { sendEmail } from '../email';
+import { sendEmail, sendEmailWithBody } from '../email';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getQuestions } from './questions';
@@ -266,6 +267,45 @@ export const usersRouter = t.router({
 			If you misplace this email, you can always request a new link by registering again with this same email address.
 			Note that this will invalidate your previous link.`;
 			return await sendEmail(req.input.email, 'Welcome to Rodeo!', message, null);
+		}),
+
+	/**
+	 * Creates a new user with the given email. Logged-in user must be
+	 * an admin.
+	 */
+	sendUserEmails: t.procedure
+		.use(authenticate)
+		.input(
+			z.object({
+				subject: z.string(),
+				body: z.string(),
+				group: z.array(z.string()),
+			})
+		)
+		.mutation(async (req): Promise<void> => {
+			if (req.ctx.user.role !== Role.ADMIN) {
+				throw new Error('You have insufficient permissions to perform this action.');
+			}
+
+			const statusList: Status[] = req.input.group as Status[];
+
+			for (const status of statusList) {
+				const users = await prisma.decision.findMany({
+					where: {
+						status: status,
+					},
+				});
+				for (const user of users) {
+					const hacker = await prisma.user.findUnique({
+						where: {
+							id: user.id,
+						},
+					});
+					if (hacker) {
+						await sendEmailWithBody(hacker?.email, req.input.subject, req.input.body);
+					}
+				}
+			}
 		}),
 
 	/**
