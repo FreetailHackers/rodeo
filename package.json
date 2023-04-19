@@ -5,6 +5,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
+		"postbuild": "npx prisma generate",
 		"preview": "vite preview",
 		"test": "playwright test",
 		"prepare": "svelte-kit sync",
@@ -13,8 +14,7 @@
 		"test:unit": "vitest",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
-		"migrate": "prisma migrate dev",
-		"deploy": "npx prisma generate && npm run build"
+		"migrate": "prisma migrate dev"
 	},
 	"pre-commit": [
 		"check",
