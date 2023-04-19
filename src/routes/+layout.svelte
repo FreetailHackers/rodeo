@@ -79,9 +79,15 @@
 	}
 
 	menu {
-		display: none;
 		list-style: none;
+		margin: 0;
 		padding: 0;
+		transition: all 0.5s ease;
+		background-color: white;
+		max-height: 0;
+		overflow: hidden;
+		width: 100%;
+		transform: translateY(1px);
 	}
 
 	#hamburger {
@@ -93,12 +99,13 @@
 	#hamburgerCheckbox:checked + menu {
 		display: flex;
 		flex-direction: column;
+		max-height: 100vh;
 	}
 
 	menu a {
 		display: block;
 		width: 100%;
-		padding: 0.75rem 0;
+		padding: 0.7rem 0;
 	}
 
 	@media (min-width: 768px) {
@@ -110,6 +117,7 @@
 			margin: 0;
 			padding-top: 1rem;
 			display: flex;
+			max-height: fit-content;
 		}
 
 		menu li + li::before {
