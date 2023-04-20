@@ -7,7 +7,7 @@ import { createTRPCHandle } from 'trpc-sveltekit';
 
 export const handle: Handle = createTRPCHandle({
 	router,
-	createContext: async (event) => createContext(event.cookies),
+	createContext: async (event) => createContext(event.cookies.get('magicLink') ?? ''),
 });
 
 if (!building) {

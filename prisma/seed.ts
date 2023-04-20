@@ -27,14 +27,14 @@ async function main() {
 	await prisma.user.create({
 		data: {
 			email: 'hacker@yopmail.com',
-			magicLink: await hash('hacker'),
+			magicLink: hash('hacker'),
 			status: Status.CREATED,
 		},
 	});
 	await prisma.user.create({
 		data: {
 			email: 'admin@yopmail.com',
-			magicLink: await hash('admin'),
+			magicLink: hash('admin'),
 			role: Role.ADMIN,
 		},
 	});
@@ -187,7 +187,7 @@ async function main() {
 		}
 		hackers.push({
 			email: `hacker${i}@yopmail.com`,
-			magicLink: await hash('hacker' + i),
+			magicLink: hash('hacker' + i),
 			application,
 			role: Role.HACKER,
 			status: Status[Object.keys(Status)[Math.floor(random() * Object.keys(Status).length)]],

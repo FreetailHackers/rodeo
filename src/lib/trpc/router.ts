@@ -17,7 +17,11 @@ export const router = t.router({
 });
 
 export function trpc(cookies: Cookies) {
-	return router.createCaller(createContext(cookies));
+	return router.createCaller(createContext(cookies.get('magicLink') ?? ''));
+}
+
+export function trpcTest(magicLink: string) {
+	return router.createCaller(createContext(magicLink));
 }
 
 export type Router = typeof router;

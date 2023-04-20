@@ -18,7 +18,7 @@ export const usersRouter = t.router({
 	get: t.procedure.input(z.string().optional()).query(async (req): Promise<User | null> => {
 		return await prisma.user.findUnique({
 			where: {
-				magicLink: req.input ?? (await hash(req.ctx.magicLink)),
+				magicLink: req.input ?? hash(req.ctx.magicLink),
 			},
 		});
 	}),
@@ -50,7 +50,7 @@ export const usersRouter = t.router({
 			}
 			await prisma.user.update({
 				where: {
-					magicLink: await hash(req.ctx.magicLink),
+					magicLink: hash(req.ctx.magicLink),
 				},
 				data: { application },
 			});
@@ -107,7 +107,7 @@ export const usersRouter = t.router({
 			// Update status to applied if there are no errors
 			if (Object.keys(errors).length == 0) {
 				await prisma.user.update({
-					where: { magicLink: await hash(req.ctx.magicLink) },
+					where: { magicLink: hash(req.ctx.magicLink) },
 					data: { status: Status.APPLIED },
 				});
 
@@ -126,11 +126,14 @@ export const usersRouter = t.router({
 		if (req.ctx.user.role !== Role.HACKER) {
 			throw new Error('You have insufficient permissions to perform this action.');
 		}
+		if (!(await getSettings()).applicationOpen) {
+			throw new Error('Sorry, applications are closed.');
+		}
 		if (req.ctx.user.status !== Status.APPLIED) {
 			throw new Error('You have not submitted your application yet.');
 		}
 		await prisma.user.update({
-			where: { magicLink: await hash(req.ctx.magicLink) },
+			where: { magicLink: hash(req.ctx.magicLink) },
 			data: { status: Status.CREATED },
 		});
 	}),
@@ -153,7 +156,7 @@ export const usersRouter = t.router({
 					(deadline === null || new Date() < deadline)
 				) {
 					await prisma.user.update({
-						where: { magicLink: await hash(req.ctx.magicLink) },
+						where: { magicLink: hash(req.ctx.magicLink) },
 						data: { status: Status.CONFIRMED },
 					});
 					await sendEmail(
@@ -169,7 +172,7 @@ export const usersRouter = t.router({
 				// Hackers should be able to decline after accepting and/or the deadline
 				if (req.ctx.user.status === Status.ACCEPTED || req.ctx.user.status === Status.CONFIRMED) {
 					await prisma.user.update({
-						where: { magicLink: await hash(req.ctx.magicLink) },
+						where: { magicLink: hash(req.ctx.magicLink) },
 						data: { status: Status.DECLINED },
 					});
 					await sendEmail(
@@ -208,10 +211,10 @@ export const usersRouter = t.router({
 			where: { email },
 			create: {
 				email: email,
-				magicLink: await hash(magicLink),
+				magicLink: hash(magicLink),
 			},
 			update: {
-				magicLink: await hash(magicLink),
+				magicLink: hash(magicLink),
 			},
 		});
 
@@ -257,7 +260,7 @@ export const usersRouter = t.router({
 			// Create user and email magic link
 			try {
 				await prisma.user.create({
-					data: { magicLink: await hash(magicLink), ...req.input },
+					data: { magicLink: hash(magicLink), ...req.input },
 				});
 			} catch (e) {
 				if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {

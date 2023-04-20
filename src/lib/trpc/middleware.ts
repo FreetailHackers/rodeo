@@ -7,7 +7,7 @@ export const authenticate = t.middleware(async ({ ctx, next }) => {
 		ctx: {
 			user: await prisma.user.findUniqueOrThrow({
 				where: {
-					magicLink: await hash(ctx.magicLink),
+					magicLink: hash(ctx.magicLink),
 				},
 			}),
 		},
