@@ -8,6 +8,10 @@ generator client {
   previewFeatures = ["extendedWhereUnique"]
 }
 
+generator py_client {
+  provider        = "prisma-client-py"
+}
+
 model User {
   id          Int       @id @default(autoincrement())
   email       String    @unique
@@ -75,6 +79,14 @@ model Event {
   end         DateTime
   location    String
   type        String
+}
+
+model Discord {
+  id                Int       @id @default(autoincrement())
+  verificationRole  BigInt
+  verificationId    BigInt
+  scheduleId        BigInt
+  announcementId    BigInt
 }
 
 enum Role {
