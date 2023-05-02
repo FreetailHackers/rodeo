@@ -1,7 +1,6 @@
 import authenticate from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import { Role } from '@prisma/client';
-import type { Actions } from './$types';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -17,7 +16,7 @@ export const load = async ({ cookies }) => {
 	};
 };
 
-export const actions: Actions = {
+export const actions = {
 	settings: async ({ cookies, request }) => {
 		const formData = await request.formData();
 		const applicationOpen = formData.get('applicationOpen') === 'on';

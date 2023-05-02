@@ -1,7 +1,6 @@
 import authenticate from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import { Role, Status } from '@prisma/client';
-import type { Actions } from './$types';
 
 export const load = async ({ cookies }) => {
 	await authenticate(cookies, [Role.ADMIN]);
@@ -11,7 +10,7 @@ export const load = async ({ cookies }) => {
 	};
 };
 
-export const actions: Actions = {
+export const actions = {
 	accept: async ({ cookies, request }) => {
 		const id = Number((await request.formData()).get('id'));
 		await trpc(cookies).admissions.decide({ decision: Status.ACCEPTED, ids: [id] });

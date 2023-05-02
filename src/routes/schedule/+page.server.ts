@@ -1,5 +1,4 @@
 import { trpc } from '$lib/trpc/router';
-import type { Actions } from './$types';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -23,7 +22,7 @@ export const load = async ({ cookies }) => {
 	};
 };
 
-export const actions: Actions = {
+export const actions = {
 	create: async ({ cookies, request }) => {
 		const formData = await request.formData();
 		const fixedStartTime = dayjs

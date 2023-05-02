@@ -2,11 +2,10 @@
 	import { browser } from '$app/environment';
 	import { enhance } from '$app/forms';
 	import { Role, type Event } from '@prisma/client';
-	import type { ActionData } from './$types';
 	import { onMount } from 'svelte';
 	import { generateIcsContent } from '$lib/ics';
 	export let data;
-	export let form: ActionData;
+	export let form;
 
 	let editedEvent: Event | null = null;
 	$: if (form !== null) {

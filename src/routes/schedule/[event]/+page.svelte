@@ -1,21 +1,10 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import { enhance } from '$app/forms';
-	import { Role, type Event } from '@prisma/client';
+	import { Role } from '@prisma/client';
 	import { onMount } from 'svelte';
-	import type { ActionData } from './$types';
 	import { generateIcsContent } from '$lib/ics';
 
 	export let data;
-	export let form: ActionData;
-
-	let editedEvent: Event | null = null;
-	$: if (form !== null) {
-		editedEvent = form;
-		if (browser) {
-			window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-		}
-	}
 
 	// Calendar functionality
 	let url: string;

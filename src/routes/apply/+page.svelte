@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { Status } from '@prisma/client';
-	import type { ActionData } from './$types';
 
 	export let data;
 	$: application = data.user.application as Record<string, unknown>;
-	export let form: ActionData;
+	export let form;
 
 	let applicationForm: HTMLFormElement;
 	let focusedQuestionId: string;

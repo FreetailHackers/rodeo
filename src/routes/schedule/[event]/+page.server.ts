@@ -1,6 +1,5 @@
 import { trpc } from '$lib/trpc/router';
 import { error } from '@sveltejs/kit';
-import type { Actions } from './$types';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -19,7 +18,7 @@ export const load = async ({ params, cookies }) => {
 	throw error(404, 'Event not found');
 };
 
-export const actions: Actions = {
+export const actions = {
 	saveEdit: async ({ cookies, request }) => {
 		const formData = await request.formData();
 		const id = formData.get('id');

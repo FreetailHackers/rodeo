@@ -1,5 +1,4 @@
 import { trpc } from '$lib/trpc/router';
-import type { Actions } from './$types';
 
 export const load = async ({ cookies }) => {
 	return {
@@ -10,7 +9,7 @@ export const load = async ({ cookies }) => {
 	};
 };
 
-export const actions: Actions = {
+export const actions = {
 	login: async ({ cookies, request }) => {
 		const email = (await request.formData()).get('email');
 		if (typeof email !== 'string') {

@@ -1,14 +1,13 @@
 import authenticate from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import { QuestionType, Role } from '@prisma/client';
-import type { Actions } from './$types';
 
 export const load = async ({ cookies }) => {
 	await authenticate(cookies, [Role.ADMIN]);
 	return { questions: await trpc(cookies).questions.get() };
 };
 
-export const actions: Actions = {
+export const actions = {
 	create: async ({ cookies, request }) => {
 		const formData = await request.formData();
 		await trpc(cookies).questions.create(formData.get('type') as QuestionType);

@@ -1,6 +1,5 @@
 import authenticate from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
-import type { Actions } from './$types';
 import { Role, type Question } from '@prisma/client';
 import { redirect } from '@sveltejs/kit';
 
@@ -33,7 +32,7 @@ function formToApplication(questions: Question[], formData: FormData) {
 	return application;
 }
 
-export const actions: Actions = {
+export const actions = {
 	save: async ({ cookies, request }) => {
 		await trpc(cookies).users.update(
 			formToApplication(await trpc(cookies).questions.get(), await request.formData())

@@ -82,12 +82,11 @@
 		list-style: none;
 		margin: 0;
 		padding: 0;
-		transition: all 0.5s ease;
+		transition: all 0.5s ease-out;
 		background-color: white;
 		max-height: 0;
 		overflow: hidden;
 		width: 100%;
-		transform: translateY(1px);
 	}
 
 	#hamburger {
