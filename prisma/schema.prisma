@@ -8,6 +8,10 @@ generator client {
   previewFeatures = ["extendedWhereUnique"]
 }
 
+generator py_client {
+  provider        = "prisma-client-py"
+}
+
 model User {
   id          Int       @id @default(autoincrement())
   email       String    @unique
