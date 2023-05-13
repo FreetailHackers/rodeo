@@ -7,7 +7,7 @@
 	let canvas: HTMLCanvasElement;
 
 	onMount(() => {
-		QRCode.toCanvas(canvas, data.user.magicLink, {
+		QRCode.toCanvas(canvas, data.user.id, {
 			width: 250,
 		});
 	});

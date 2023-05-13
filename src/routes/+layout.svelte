@@ -2,7 +2,6 @@
 	import { page } from '$app/stores';
 	import Toasts from '$lib/components/toasts.svelte';
 	import { toasts } from '$lib/stores';
-	import { Role, Status } from '@prisma/client';
 	import { onMount } from 'svelte';
 	import './global.css';
 
@@ -38,15 +37,15 @@
 		<li><a href="/schedule">Schedule</a></li>
 		<li><a href="/info">Info</a></li>
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->
-		{#if data.user !== null && (data.user.role !== Role.HACKER || data.user.status === Status.CONFIRMED)}
+		{#if data.user !== null && (data.user.role !== 'HACKER' || data.user.status === 'CONFIRMED')}
 			<li><a href="/id">My Hacker ID</a></li>
 		{/if}
-		{#if data.user?.role === Role.ORGANIZER || data.user?.role === Role.ADMIN}
+		{#if data.user?.role === 'ORGANIZER' || data.user?.role === 'ADMIN'}
 			<li><a href="/scan">Scan</a></li>
 		{/if}
-		{#if data.user?.role === Role.HACKER}
+		{#if data.user?.role === 'HACKER'}
 			<li><a href="/apply">Apply</a></li>
-		{:else if data.user?.role === Role.ADMIN}
+		{:else if data.user?.role === 'ADMIN'}
 			<li><a href="/users">Users</a></li>
 			<li><a href="/admin">Admin</a></li>
 			<li><a href="/admissions">Admissions</a></li>

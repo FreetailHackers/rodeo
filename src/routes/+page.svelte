@@ -1,13 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import Announcements from '$lib/components/announcements.svelte';
-	import { Role } from '@prisma/client';
 	import SvelteMarkdown from 'svelte-markdown';
 	import { toasts } from '$lib/stores';
 	export let data;
 	import { onMount } from 'svelte';
-
-	let email: string;
 
 	onMount(() => {
 		if (location.search === '?unauthenticated') {
@@ -22,18 +19,18 @@
 	});
 </script>
 
-{#if data.user}
+{#if data.user !== null}
 	<SvelteMarkdown source={data.settings.homepageText} />
 
 	<!-- Admin announcements panel -->
 	<h2>Announcements</h2>
-	<Announcements announcements={data.announcements} admin={data.user.role === Role.ADMIN} />
+	<Announcements announcements={data.announcements} admin={data.user.role === 'ADMIN'} />
 	<form method="POST" action="?/logout" use:enhance>
 		<button type="submit" id="logout">Logout</button>
 	</form>
 {:else}
 	<!-- Signup page -->
-	{#if !data.applicationOpen}
+	{#if !data.settings.applicationOpen}
 		<p>
 			<b>
 				NOTE: Applications are closed. If you would like to be notified of future events, you may
@@ -41,22 +38,23 @@
 			</b>
 		</p>
 	{/if}
-	<form method="POST" action="?/login" use:enhance>
-		<label for="email">To get started, enter your email: </label>
-		<input
-			bind:value={email}
-			type="email"
-			name="email"
-			placeholder="student@example.edu"
-			required
-		/>
+	<h1>Login</h1>
+	<form
+		method="POST"
+		action="?/login"
+		use:enhance={() => {
+			return async ({ update }) => {
+				update({ reset: false });
+			};
+		}}
+	>
+		<label for="email">Email</label>
+		<input id="email" name="email" required />
+		<label for="password">Password</label>
+		<input type="password" id="password" name="password" required />
 		<button>Continue</button>
 	</form>
-	<p>
-		For assistance with registration, contact <a href="mailto:tech@freetailhackers.com"
-			>tech@freetailhackers.com</a
-		>.
-	</p>
+	<p>Don't have an account yet? <a href="/register">Register here!</a></p>
 	<h2>Announcements</h2>
 	<Announcements announcements={data.announcements} admin={false} />
 {/if}

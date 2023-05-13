@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import UserCard from '$lib/components/user-card.svelte';
 	import { trpc } from '$lib/trpc/client';
-	import { Role, Status, type User } from '@prisma/client';
+	import type { Prisma } from '@prisma/client';
 	import { Html5Qrcode, Html5QrcodeScannerState } from 'html5-qrcode';
 	import { onDestroy } from 'svelte';
 
@@ -12,7 +12,7 @@
 	let dialog: HTMLDialogElement;
 
 	let action = '';
-	let user: User | null = null;
+	let user: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }> | null = null;
 	let totalScans: number;
 
 	async function scan(action: string) {
@@ -57,29 +57,29 @@
 </section>
 <div id="reader" />
 {#if action !== ''}
-	<p>{totalScans} hackers have scanned for this action.</p>
+	<p>{totalScans} users have scanned for this action.</p>
 {/if}
 <dialog bind:this={dialog}>
 	{#if user === null}
 		<p class="error">Could not find this user in the database.</p>
 		<button type="button" on:click={() => dialog.close()}>Close</button>
-	{:else if user.role === Role.HACKER && user.status !== Status.CONFIRMED}
+	{:else if user.authUser.role === 'HACKER' && user.authUser.status !== 'CONFIRMED'}
 		<p class="error">This user has not confirmed their attendance.</p>
 		<button type="button" on:click={() => dialog.close()}>Close</button>
 	{:else}
 		<br />
 		<details>
-			<summary>{user.email}</summary>
+			<summary>{user.authUser.email}</summary>
 			<UserCard {user} questions={data.questions} />
 		</details>
 		<p class={(scanCount[action] ?? 0) == 0 ? 'success' : 'error'}>
 			This user has scanned for {action}
 			{scanCount[action] ?? 0} times.
 		</p>
-		<p>{totalScans} hackers have scanned for this action.</p>
+		<p>{totalScans} users have scanned for this action.</p>
 		<form method="POST" action="?/scan" use:enhance>
 			<button type="button" on:click={() => dialog.close()}>Cancel</button>
-			<input type="hidden" name="magicLink" value={user.magicLink} />
+			<input type="hidden" name="id" value={user.authUserId} />
 			<button type="submit" name="action" value={action} on:click={() => dialog.close()}
 				>Scan</button
 			>

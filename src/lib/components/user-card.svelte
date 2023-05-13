@@ -1,16 +1,16 @@
 <script lang="ts">
 	import type { Prisma, Question } from '@prisma/client';
 
-	export let user: Partial<Prisma.UserGetPayload<{ include: { decision: true } }>>;
+	export let user: Partial<Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>>;
 	export let questions: Question[];
 
 	$: application = user.application as Record<string, unknown>;
 </script>
 
-<p><b>Role</b> {user.role}</p>
+<p><b>Role</b> {user.authUser?.role}</p>
 <p>
 	<b>Status</b>
-	{user.status}
+	{user.authUser?.status}
 	{#if user.decision}(Pending {user.decision.status}){/if}
 </p>
 

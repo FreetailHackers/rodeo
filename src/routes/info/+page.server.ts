@@ -1,17 +1,17 @@
 import { trpc } from '$lib/trpc/router';
 
-export const load = async ({ cookies }) => {
+export const load = async ({ locals }) => {
 	return {
-		user: await trpc(cookies).users.get(),
-		info: (await trpc(cookies).settings.getPublic()).info,
+		user: (await locals.auth.validateUser()).user,
+		info: (await trpc(locals.auth).settings.getPublic()).info,
 	};
 };
 
 export const actions = {
-	default: async ({ cookies, request }) => {
+	default: async ({ locals, request }) => {
 		const formData = await request.formData();
 		const info = formData.get('info') as string;
-		await trpc(cookies).settings.update({ info });
+		await trpc(locals.auth).settings.update({ info });
 		return 'Saved info page!';
 	},
 };

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Status } from '@prisma/client';
 
 	export let data;
 	$: application = data.user.application as Record<string, unknown>;
@@ -20,10 +19,10 @@
 <!-- Application status dialog -->
 <div id="status">
 	<p>Your application status is:</p>
-	{#if data.user.status === Status.CREATED}
+	{#if data.user.authUser.status === 'CREATED'}
 		<h1>INCOMPLETE</h1>
 		<p>You must complete your application to be considered for admission.</p>
-	{:else if data.user.status === Status.APPLIED}
+	{:else if data.user.authUser.status === 'APPLIED'}
 		<h1>SUBMITTED</h1>
 		<p>Thanks for applying! The team will review your application soon.</p>
 		<form method="POST" action="?/withdraw" use:enhance>
@@ -33,17 +32,17 @@
 				<button disabled>Cannot edit because applications are closed.</button>
 			{/if}
 		</form>
-	{:else if data.user.status === Status.REJECTED}
+	{:else if data.user.authUser.status === 'REJECTED'}
 		<h1>REJECTED</h1>
 		<p>Unfortunately, we do not have the space to offer you admission this year.</p>
-	{:else if data.user.status === Status.WAITLISTED}
+	{:else if data.user.authUser.status === 'WAITLISTED'}
 		<h1>WAITLISTED</h1>
 		<p>
 			Unfortunately, we do not have the space to offer you admission at this time. We will contact
 			you should this situation change.
 		</p>
-	{:else if data.user.status === Status.ACCEPTED}
-		<h1>{data.user.status}</h1>
+	{:else if data.user.authUser.status === 'ACCEPTED'}
+		<h1>{data.user.authUser.status}</h1>
 		<p>
 			Congratulations! We were impressed by your application and would like to invite you to attend.
 		</p>
@@ -91,7 +90,7 @@
 				</p>
 			{/if}
 		{/if}
-	{:else if data.user.status === Status.CONFIRMED}
+	{:else if data.user.authUser.status === 'CONFIRMED'}
 		<h1>CONFIRMED</h1>
 		<p>
 			Glad you could make it! If you change your mind, please decline so we can offer your spot to
@@ -111,14 +110,14 @@
 				</form>
 			</dialog>
 		</form>
-	{:else if data.user.status === Status.DECLINED}
+	{:else if data.user.authUser.status === 'DECLINED'}
 		<h1>DECLINED</h1>
 		<p>We're sorry to hear that you will not be able to attend. We hope to see you next year!</p>
 	{/if}
 </div>
 
 <!-- The actual application -->
-{#if data.user.status === Status.CREATED}
+{#if data.user.authUser.status === 'CREATED'}
 	{#if data.settings.applicationOpen}
 		<form
 			bind:this={applicationForm}

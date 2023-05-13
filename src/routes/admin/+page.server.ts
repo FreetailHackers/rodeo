@@ -1,6 +1,5 @@
-import authenticate from '$lib/authenticate';
+import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
-import { Role } from '@prisma/client';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -8,16 +7,16 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const load = async ({ cookies }) => {
-	await authenticate(cookies, [Role.ADMIN]);
+export const load = async ({ locals }) => {
+	await authenticate(locals.auth, ['ADMIN']);
 	return {
-		decisions: await trpc(cookies).admissions.getDecisions(),
-		settings: await trpc(cookies).settings.getAll(),
+		decisions: await trpc(locals.auth).admissions.getDecisions(),
+		settings: await trpc(locals.auth).settings.getAll(),
 	};
 };
 
 export const actions = {
-	settings: async ({ cookies, request }) => {
+	settings: async ({ locals, request }) => {
 		const formData = await request.formData();
 		const applicationOpen = formData.get('applicationOpen') === 'on';
 		let confirmBy: Date | null;
@@ -35,7 +34,7 @@ export const actions = {
 		const waitlistTemplate = formData.get('waitlistTemplate') as string;
 		const confirmTemplate = formData.get('confirmTemplate') as string;
 		const declineTemplate = formData.get('declineTemplate') as string;
-		await trpc(cookies).settings.update({
+		await trpc(locals.auth).settings.update({
 			applicationOpen,
 			confirmBy,
 			homepageText,
@@ -49,8 +48,8 @@ export const actions = {
 		return 'Saved settings!';
 	},
 
-	release: async ({ cookies }) => {
-		await trpc(cookies).admissions.releaseAllDecisions();
+	release: async ({ locals }) => {
+		await trpc(locals.auth).admissions.releaseAllDecisions();
 		return 'Released all decisions!';
 	},
 };

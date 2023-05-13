@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Role } from '@prisma/client';
 	import SvelteMarkdown from 'svelte-markdown';
 
 	export let data;
@@ -30,7 +29,7 @@ print('This is a multi-line code block.')
 `;
 </script>
 
-{#if data.user?.role === Role.ADMIN}
+{#if data.user?.role === 'ADMIN'}
 	<form
 		method="POST"
 		use:enhance={() => {
