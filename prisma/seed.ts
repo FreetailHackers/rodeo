@@ -10,6 +10,7 @@
  */
 
 import lucia from 'lucia-auth';
+import 'lucia-auth/polyfill/node';
 import { firstNames, lastNames, majors } from './data';
 import { PrismaClient, Status, Prisma } from '@prisma/client';
 import prismaAdapter from '@lucia-auth/adapter-prisma';

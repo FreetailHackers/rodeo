@@ -14,12 +14,12 @@
 		"test:unit": "vitest",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
-		"migrate": "prisma migrate dev"
+		"test:unit:run": "vitest run"
 	},
 	"pre-commit": [
 		"check",
 		"lint",
-		"migrate"
+		"test:unit:run"
 	],
 	"prisma": {
 		"seed": "npx tsx prisma/seed.ts"
