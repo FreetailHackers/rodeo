@@ -54,7 +54,12 @@
 		<input type="password" id="password" name="password" required />
 		<button>Continue</button>
 	</form>
-	<p>Don't have an account yet? <a href="/register">Register here!</a></p>
+	<p>
+		Don't have an account yet? <a href="/register">Register here!</a>
+		{#if data.oauth.github}
+			Or <a href="/login/oauth?provider=github">sign in with GitHub</a>
+		{/if}
+	</p>
 	<h2>Announcements</h2>
 	<Announcements announcements={data.announcements} admin={false} />
 {/if}

@@ -16,7 +16,7 @@ export const actions = {
 		if (session !== null) {
 			locals.auth.setSession(session);
 		} else {
-			return 'That email is already in use.';
+			return 'That email is already in use, either through a previous registration or linked social (Google/GitHub/...) account.';
 		}
 	},
 };

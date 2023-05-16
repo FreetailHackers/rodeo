@@ -1,3 +1,4 @@
+import { githubAuth } from '$lib/lucia.js';
 import { trpc } from '$lib/trpc/router';
 
 export const load = async ({ locals }) => {
@@ -5,6 +6,11 @@ export const load = async ({ locals }) => {
 		user: (await locals.auth.validateUser()).user,
 		announcements: await trpc(locals.auth).announcements.getAll(),
 		settings: await trpc(locals.auth).settings.getPublic(),
+		// Check whether various OAuth providers are set up in
+		// environment variables so we can show/hide buttons.
+		oauth: {
+			github: githubAuth !== null,
+		},
 	};
 };
 
