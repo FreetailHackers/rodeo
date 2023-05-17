@@ -1,4 +1,5 @@
 import lucia from 'lucia-auth';
+import { google } from '@lucia-auth/oauth/providers';
 import { github } from '@lucia-auth/oauth/providers';
 import { sveltekit } from 'lucia-auth/middleware';
 import prismaAdapter from '@lucia-auth/adapter-prisma';
@@ -17,7 +18,24 @@ export const auth = lucia({
 	}),
 });
 
-// Abuse IIFE to conditionally export the GitHub OAuth provider hehe
+// Abuse IIFEs to conditionally export OAuth providers hehe
+
+export const googleAuth = (() => {
+	if (
+		process.env.GOOGLE_CLIENT_ID === undefined ||
+		process.env.GOOGLE_CLIENT_SECRET === undefined
+	) {
+		return null;
+	} else {
+		return google(auth, {
+			clientId: process.env.GOOGLE_CLIENT_ID,
+			clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+			redirectUri: process.env.DOMAIN_NAME + '/login/oauth/google',
+			scope: ['email'],
+		});
+	}
+})();
+
 export const githubAuth = (() => {
 	if (
 		process.env.GITHUB_CLIENT_ID === undefined ||

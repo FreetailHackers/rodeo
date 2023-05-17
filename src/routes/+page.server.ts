@@ -1,4 +1,4 @@
-import { githubAuth } from '$lib/lucia.js';
+import { googleAuth, githubAuth } from '$lib/lucia';
 import { trpc } from '$lib/trpc/router';
 
 export const load = async ({ locals }) => {
@@ -9,6 +9,7 @@ export const load = async ({ locals }) => {
 		// Check whether various OAuth providers are set up in
 		// environment variables so we can show/hide buttons.
 		oauth: {
+			google: googleAuth !== null,
 			github: githubAuth !== null,
 		},
 	};

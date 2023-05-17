@@ -1,6 +1,6 @@
 import { auth, githubAuth } from '$lib/lucia';
-import { prisma } from '$lib/trpc/db';
 import { redirect } from '@sveltejs/kit';
+import { _upsert } from '../+server.js';
 
 interface GitHubEmailResponse {
 	email: string;
@@ -14,17 +14,13 @@ export const GET = async ({ cookies, url, locals }) => {
 		return new Response(null, { status: 404 });
 	}
 	const code = url.searchParams.get('code');
-	const state = url.searchParams.get('state');
-	// Verify that the state is the same as the one we stored and
-	// generated before redirecting to the GitHub consent screen to
-	// prevent CSRF attacks.
-	const storedState = cookies.get('github_oauth_state');
-	if (code === null || state !== storedState) {
+	if (code === null || url.searchParams.get('state') !== cookies.get('state')) {
 		throw redirect(302, '/');
 	}
 
 	try {
 		const providerSession = await githubAuth.validateCallback(code);
+
 		// Get primary email (which should be verified) from GitHub API
 		const res = await fetch('https://api.github.com/user/emails', {
 			headers: { Authorization: `Bearer ${providerSession.tokens.accessToken}` },
@@ -35,21 +31,8 @@ export const GET = async ({ cookies, url, locals }) => {
 			throw redirect(302, '/');
 		}
 
-		let user = await prisma.authUser.findUnique({
-			where: { email: email.email },
-		});
-		// If no user has registered with this email, create a new user
-		if (user === null) {
-			user = await providerSession.createUser({
-				email: email.email,
-				role: 'HACKER',
-				status: 'CREATED',
-			});
-		} else if (providerSession.existingUser === null) {
-			// Otherwise, link the accounts
-			await providerSession.createPersistentKey(user.id);
-		}
-		const session = await auth.createSession(user.id);
+		const id = await _upsert(providerSession, email.email);
+		const session = await auth.createSession(id);
 		locals.auth.setSession(session);
 	} catch (e) {
 		console.error(e);
