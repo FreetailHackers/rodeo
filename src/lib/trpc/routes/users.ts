@@ -215,7 +215,7 @@ export const usersRouter = t.router({
 	 * the resulting session or null if the user already exists.
 	 */
 	register: t.procedure
-		.input(z.object({ email: z.string().trim().toLowerCase(), password: z.string() }))
+		.input(z.object({ email: z.string().trim().toLowerCase(), password: z.string().min(8) }))
 		.mutation(async (req): Promise<Session | null> => {
 			try {
 				const user = await auth.createUser({

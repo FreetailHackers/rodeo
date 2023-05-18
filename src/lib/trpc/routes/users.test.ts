@@ -144,3 +144,14 @@ describe('trpc.users.update', () => {
 		});
 	});
 });
+
+describe('trpc.users.register', () => {
+	it('should throw error if password is less than 8 characters', async () => {
+		await expect(
+			trpcTest(null).users.register({
+				email: 'hacker@yopmail.com',
+				password: '1234567',
+			})
+		).rejects.toThrow();
+	});
+});
