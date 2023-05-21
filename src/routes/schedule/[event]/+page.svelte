@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Role } from '@prisma/client';
 	import { onMount } from 'svelte';
 	import { generateIcsContent } from '$lib/ics';
 
@@ -50,7 +49,7 @@
 	<a href={url} download="event.ics">Add to Calendar</a>
 {/if}
 
-{#if data.user?.role === Role.ADMIN}
+{#if data.user?.role === 'ADMIN'}
 	<hr />
 	<h1>Edit Event</h1>
 	<form

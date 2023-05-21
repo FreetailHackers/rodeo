@@ -37,8 +37,9 @@ Now run `npm install` to download our dependencies, `npx prisma migrate dev` to 
 # Conventions
 
 - Use the `import/export` ESM syntax instead of `require` CommonJS syntax
+- Avoid default exports (stick with named)
 - Prefer `async/await` over Promises
-- Always comment and annotate return type for all TRPC endpoints
+- Always comment and annotate return type for all tRPC endpoints
 - Compare enums to strings instead of enums
 - When you change the Prisma schema, update the seed script as well so we always have an easy way to generate fake data
 
@@ -61,7 +62,7 @@ To get acquainted with the codebase, here's how to add a silly Easter egg settin
 3. **Perform the migration**: Run `npx prisma migrate dev` and give the migration a sensible name. Refer to the [Prisma Migrate documentation](https://www.prisma.io/docs/concepts/components/prisma-migrate/migrate-development-production) to learn more about migrations. You must also restart the development server by pressing CTRL-C and running `npm run dev` again. This is very important: the development server can usually pick up changes and automatically hot reload, but after performing a migration is a case where you must restart the server manually.
 4. **Update the backend**: See the `update` function `src/lib/trpc/routes/settings.ts`. Since it doesn't do anything special besides saving any new settings to the database, the only thing you need to do here is update the Zod schema for Settings to include your new field. Refer to the [Zod documentation](https://zod.dev/?id=basic-usage) to see what validators are available. Since SpongeBob Case should be visible to everybody, you must also add it to the `getPublic` function.
 5. **Update the frontend**: In `src/routes/admin/+page.svelte`, add a `<Toggle>` for your new setting under the main `<form>`. The key part is to set the `name` prop of the `<Toggle>` to match the name in the Prisma schema and its `checked` prop to `{data.settings.spongebobCase}`.
-6. **Update the form action**: In the `settings` action in `src/routes/admin/+page.server.ts`, add a new key-value pair to the call to `trpc(cookies).settings.update` that sets your setting's name to the value of the `<Toggle>`, which can be retrieved with `formData.get('spongebobCase') === 'on'`.
+6. **Update the form action**: In the `settings` action in `src/routes/admin/+page.server.ts`, add a new key-value pair to the call to `trpc(locals.auth).settings.update` that sets your setting's name to the value of the `<Toggle>`, which can be retrieved with `formData.get('spongebobCase') === 'on'`.
 
 Now if you switch the toggle and press save, it should now persist between refreshes. Let's take a break now to look at the bigger picture of data flow in a SvelteKit app, beginning with loading the admin panel and ending with toggling the SpongeBob Case setting:
 

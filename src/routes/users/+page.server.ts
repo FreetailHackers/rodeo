@@ -1,49 +1,41 @@
-import authenticate from '$lib/authenticate';
+import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
-import { Role, Status } from '@prisma/client';
+import type { Role, Status } from '@prisma/client';
 
-export const load = async ({ cookies }) => {
-	const user = await authenticate(cookies, [Role.ADMIN]);
+export const load = async ({ locals }) => {
+	const user = await authenticate(locals.auth, ['ADMIN']);
 	return {
-		questions: await trpc(cookies).questions.get(),
-		users: await trpc(cookies).users.getAll(),
+		questions: await trpc(locals.auth).questions.get(),
+		users: await trpc(locals.auth).users.getAll(),
 		user,
 	};
 };
 
 export const actions = {
-	create: async ({ cookies, request }) => {
-		const formData = await request.formData();
-		const email = formData.get('email') as string;
-		const role = formData.get('role') as Role;
-		return await trpc(cookies).users.create({ email, role });
-	},
-
-	bulk: async ({ cookies, request }) => {
+	bulk: async ({ locals, request }) => {
 		const formData = await request.formData();
 		const action = formData.get('action') as string;
-		const ids: number[] = [];
+		const ids: string[] = [];
 		for (const key of formData.keys()) {
 			if (key.startsWith('id')) {
-				ids.push(Number(key.split('.')[1]));
+				ids.push(key.split('.')[1]);
 			}
 		}
 		if (action === 'admissions') {
 			const decision = formData.get('user-admissions') as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED';
-			await trpc(cookies).admissions.decide({ decision, ids });
+			await trpc(locals.auth).admissions.decide({ decision, ids });
+			return 'Saved decisions!';
 		} else if (action === 'status') {
 			const status = formData.get('user-status') as Status;
-			await trpc(cookies).users.setStatuses({ status, ids });
+			await trpc(locals.auth).users.setStatuses({ status, ids });
+			return 'Saved statuses!';
 		} else if (action === 'role') {
 			const role = formData.get('user-role') as Role;
-			await trpc(cookies).users.setRoles({ role, ids });
+			await trpc(locals.auth).users.setRoles({ role, ids });
+			return 'Saved roles!';
 		} else if (action === 'release') {
-			await trpc(cookies).admissions.releaseDecisions(ids);
+			await trpc(locals.auth).admissions.releaseDecisions(ids);
+			return 'Released decisions!';
 		}
-	},
-
-	accept: async ({ cookies, request }) => {
-		const ids = [...(await request.formData()).keys()].map((id) => Number(id));
-		await trpc(cookies).admissions.decide({ decision: Status.ACCEPTED, ids });
 	},
 };

@@ -1,28 +1,27 @@
-import authenticate from '$lib/authenticate';
+import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
-import { Role, Status } from '@prisma/client';
 
-export const load = async ({ cookies }) => {
-	await authenticate(cookies, [Role.ADMIN]);
+export const load = async ({ locals }) => {
+	await authenticate(locals.auth, ['ADMIN']);
 	return {
-		user: await trpc(cookies).admissions.getAppliedUser(),
-		questions: await trpc(cookies).questions.get(),
+		user: await trpc(locals.auth).admissions.getAppliedUser(),
+		questions: await trpc(locals.auth).questions.get(),
 	};
 };
 
 export const actions = {
-	accept: async ({ cookies, request }) => {
-		const id = Number((await request.formData()).get('id'));
-		await trpc(cookies).admissions.decide({ decision: Status.ACCEPTED, ids: [id] });
+	accept: async ({ locals, request }) => {
+		const id = (await request.formData()).get('id') as string;
+		await trpc(locals.auth).admissions.decide({ decision: 'ACCEPTED', ids: [id] });
 	},
 
-	reject: async ({ cookies, request }) => {
-		const id = Number((await request.formData()).get('id'));
-		await trpc(cookies).admissions.decide({ decision: Status.REJECTED, ids: [id] });
+	reject: async ({ locals, request }) => {
+		const id = (await request.formData()).get('id') as string;
+		await trpc(locals.auth).admissions.decide({ decision: 'REJECTED', ids: [id] });
 	},
 
-	waitlist: async ({ cookies, request }) => {
-		const id = Number((await request.formData()).get('id'));
-		await trpc(cookies).admissions.decide({ decision: Status.WAITLISTED, ids: [id] });
+	waitlist: async ({ locals, request }) => {
+		const id = (await request.formData()).get('id') as string;
+		await trpc(locals.auth).admissions.decide({ decision: 'WAITLISTED', ids: [id] });
 	},
 };

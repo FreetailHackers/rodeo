@@ -1,17 +1,16 @@
-import authenticate from '$lib/authenticate';
+import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
-import { Role } from '@prisma/client';
 
-export const load = async ({ cookies }) => {
-	await authenticate(cookies, [Role.ORGANIZER, Role.ADMIN]);
-	return { questions: await trpc(cookies).questions.get() };
+export const load = async ({ locals }) => {
+	await authenticate(locals.auth, ['ORGANIZER', 'ADMIN']);
+	return { questions: await trpc(locals.auth).questions.get() };
 };
 
 export const actions = {
-	scan: async ({ cookies, request }) => {
+	scan: async ({ locals, request }) => {
 		const formData = await request.formData();
-		const magicLink = formData.get('magicLink') as string;
+		const id = formData.get('id') as string;
 		const action = formData.get('action') as string;
-		await trpc(cookies).users.scan({ magicLink, action });
+		await trpc(locals.auth).users.scan({ id, action });
 	},
 };

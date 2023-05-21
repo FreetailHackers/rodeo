@@ -7,24 +7,21 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const load = async ({ params, cookies }) => {
-	const event = await trpc(cookies).events.get(Number(params.event));
+export const load = async ({ locals, params }) => {
+	const event = await trpc(locals.auth).events.get(Number(params.event));
 	if (event !== null) {
 		return {
 			event,
-			user: await trpc(cookies).users.get(),
+			user: (await locals.auth.validateUser()).user,
 		};
 	}
 	throw error(404, 'Event not found');
 };
 
 export const actions = {
-	saveEdit: async ({ cookies, request }) => {
+	saveEdit: async ({ locals, request }) => {
 		const formData = await request.formData();
-		const id = formData.get('id');
-		if (typeof id !== 'string') {
-			throw new Error('Invalid event ID.');
-		}
+		const id = formData.get('id') as string;
 
 		const fixedStartTime = dayjs
 			.tz(formData.get('start') as string, formData.get('timezone') as string)
@@ -34,7 +31,7 @@ export const actions = {
 			.tz(formData.get('end') as string, formData.get('timezone') as string)
 			.toDate();
 
-		await trpc(cookies).events.update({
+		await trpc(locals.auth).events.update({
 			id: Number(id),
 			name: formData.get('name') as string,
 			description: formData.get('description') as string,

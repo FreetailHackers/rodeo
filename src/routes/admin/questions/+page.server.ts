@@ -1,19 +1,19 @@
-import authenticate from '$lib/authenticate';
+import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
-import { QuestionType, Role } from '@prisma/client';
+import type { QuestionType } from '@prisma/client';
 
-export const load = async ({ cookies }) => {
-	await authenticate(cookies, [Role.ADMIN]);
-	return { questions: await trpc(cookies).questions.get() };
+export const load = async ({ locals }) => {
+	await authenticate(locals.auth, ['ADMIN']);
+	return { questions: await trpc(locals.auth).questions.get() };
 };
 
 export const actions = {
-	create: async ({ cookies, request }) => {
+	create: async ({ locals, request }) => {
 		const formData = await request.formData();
-		await trpc(cookies).questions.create(formData.get('type') as QuestionType);
+		await trpc(locals.auth).questions.create(formData.get('type') as QuestionType);
 	},
 
-	update: async ({ cookies, request }) => {
+	update: async ({ locals, request }) => {
 		const formData = Object.fromEntries(await request.formData());
 		// We have to do a bit of transformation on the form data to
 		// get it into the format that the tRPC endpoint expects.
@@ -77,11 +77,11 @@ export const actions = {
 				questions[id].step = Number(questions[id].step) || 1;
 			}
 		}
-		await trpc(cookies).questions.update(questions);
+		await trpc(locals.auth).questions.update(questions);
 	},
 
-	delete: async ({ cookies, request }) => {
+	delete: async ({ locals, request }) => {
 		const formData = await request.formData();
-		await trpc(cookies).questions.delete(formData.get('id') as string);
+		await trpc(locals.auth).questions.delete(formData.get('id') as string);
 	},
 };

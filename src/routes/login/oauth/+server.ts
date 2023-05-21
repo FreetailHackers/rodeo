@@ -1,0 +1,79 @@
+/**
+ * Here is an overview of Rodeo's OAuth architecture:
+ *
+ * 1. The user clicks the "Sign in with ..." button on the login page.
+ * 2. That button links to a route like /login/oauth?provider=... which
+ *    corresponds to the GET function below.
+ * 3. The GET function selects the correct provider depending on the
+ *    provider query parameter and redirects the user to the provider's
+ *    consent screen (after setting a cookie with a random state to
+ *    prevent CSRF).
+ * 4. The user consents to the permissions requested by Rodeo (currently
+ *    just their email address) and is redirected back to the
+ *    /login/oauth/[provider] route, which corresponds to the GET
+ *    function in the provider's +server.ts file.
+ * 5. That GET function validates the state and callback and extracts
+ *    the user's email from the provider's API if necessary (how this is
+ *    done depends on the provider).
+ * 6. The GET function then calls the _upsert function below to create
+ *    or link accounts as needed, sets up a session, and redirects the
+ *    user to the home page.
+ */
+import { githubAuth, googleAuth } from '$lib/lucia';
+import { prisma } from '$lib/trpc/db';
+import type { Key, User } from 'lucia-auth';
+
+export const GET = async ({ cookies, url }) => {
+	const provider = getProvider(url.searchParams.get('provider'));
+	if (provider === null) {
+		return new Response(null, { status: 404 });
+	}
+	const [redirect, state] = await provider.getAuthorizationUrl();
+	cookies.set('state', state, { path: '/', maxAge: 60 });
+	return new Response(null, {
+		status: 302,
+		headers: { location: redirect.toString() },
+	});
+};
+
+function getProvider(provider: string | null) {
+	if (provider === 'google') {
+		return googleAuth;
+	} else if (provider === 'github') {
+		return githubAuth;
+	} else {
+		return null;
+	}
+}
+
+// It seems like Lucia doesn't export ProviderSession, so I've just
+// copied the properties we need from the docs at
+// https://lucia-auth.com/reference/oauth/providersession
+type ProviderSession = {
+	existingUser: User | null;
+	createUser: (userAttributes: Lucia.UserAttributes) => Promise<User>;
+	createPersistentKey: (userId: string) => Promise<Key>;
+};
+
+/**
+ * "Upserts" a user; that is, creates a new user if no user has
+ * registered with this email, or links a provider account as a new
+ * login method for an existing user.
+ */
+export async function _upsert(providerSession: ProviderSession, email: string) {
+	let user = await prisma.authUser.findUnique({
+		where: { email },
+	});
+	// If no user has registered with this email, create a new user
+	if (user === null) {
+		user = await providerSession.createUser({
+			email,
+			role: 'HACKER',
+			status: 'CREATED',
+		});
+	} else if (providerSession.existingUser === null) {
+		// Otherwise, link the accounts
+		await providerSession.createPersistentKey(user.id);
+	}
+	return user.id;
+}

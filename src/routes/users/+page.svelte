@@ -78,7 +78,7 @@
 	// Throws an error if the action is invalid, otherwise returns a string
 	function validateSelection(
 		action: string,
-		filtered: Prisma.UserGetPayload<{ include: { decision: true } }>[],
+		filtered: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[],
 		selected: boolean[]
 	) {
 		if (action === '') {
@@ -90,7 +90,10 @@
 		if (action === 'admissions') {
 			if (
 				filtered.filter(
-					(user, i) => selected[i] && user.status !== 'APPLIED' && user.status !== 'WAITLISTED'
+					(user, i) =>
+						selected[i] &&
+						user.authUser.status !== 'APPLIED' &&
+						user.authUser.status !== 'WAITLISTED'
 				).length > 0
 			) {
 				throw 'You can only perform admissions on users that have applied or are waitlisted.';
@@ -107,7 +110,9 @@
 					This will NOT send any notifications and WILL delete any pending (unreleased) decisions.`;
 		}
 		if (action === 'role') {
-			if (filtered.filter((user, i) => selected[i] && user.id === data.user.id).length > 0) {
+			if (
+				filtered.filter((user, i) => selected[i] && user.authUserId === data.user.id).length > 0
+			) {
 				throw 'You cannot change your own role.';
 			}
 			return `${selected.filter(Boolean).length} selected users will have their role set.`;
@@ -122,29 +127,6 @@
 		}
 	}
 </script>
-
-<h1>Add New User</h1>
-<form method="POST" action="?/create" use:enhance>
-	<label for="email">Email</label>
-	<input
-		type="email"
-		name="email"
-		id="email"
-		placeholder="email@example.com"
-		required
-		class="margin-bottom-1"
-	/>
-	<label for="role">Role</label>
-	<select name="role" id="role" required class="margin-bottom-1">
-		<option value="HACKER">Hacker</option>
-		<option value="ADMIN">Admin</option>
-		<option value="ORGANIZER">Organizer</option>
-		<option value="JUDGE">Judge</option>
-		<option value="VOLUNTEER">Volunteer</option>
-		<option value="SPONSOR">Sponsor</option>
-	</select>
-	<button type="submit" value="Create">Create User</button>
-</form>
 
 <h1>Master Database</h1>
 
@@ -279,7 +261,7 @@
 					<summary class="flex-align-center">
 						<input
 							type="checkbox"
-							name={'id.' + user.id}
+							name={'id.' + user.authUserId}
 							checked={selected[i]}
 							on:click={() => {
 								selected[i] = !selected[i];
@@ -295,9 +277,12 @@
 								}
 							}}
 						/>
-						<a href="mailto:{user.email}">{user.email}</a>
+						<a href="mailto:{user.authUser.email}">{user.authUser.email}</a>
 						<span class="grow" />
-						<span class="{user.decision?.status.toLowerCase() ?? user.status.toLowerCase()} dot" />
+						<span
+							class="{user.decision?.status.toLowerCase() ??
+								user.authUser.status.toLowerCase()} dot"
+						/>
 					</summary>
 					<div class="user">
 						<UserCard {user} questions={data.questions} />

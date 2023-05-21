@@ -1,5 +1,5 @@
-import authenticate from '$lib/authenticate';
+import { authenticate } from '$lib/authenticate';
 
-export const load = async ({ cookies }) => {
-	return { user: await authenticate(cookies) };
+export const load = async ({ locals }) => {
+	return { user: await authenticate(locals.auth) };
 };

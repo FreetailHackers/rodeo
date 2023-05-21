@@ -4,16 +4,52 @@ datasource db {
 }
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["extendedWhereUnique"]
+  provider = "prisma-client-js"
+}
+
+// The following three tables starting in "Auth" are managed by Lucia Auth
+
+model AuthUser {
+  // Required by Lucia Auth
+  id           String        @id @unique
+  auth_session AuthSession[]
+  auth_key     AuthKey[]
+  // Custom attributes required for authentication/authorization flows
+  email        String        @unique
+  role         Role          @default(HACKER)
+  status       Status        @default(CREATED)
+  user         User?
+
+  @@map("auth_user")
+}
+
+model AuthSession {
+  id             String   @id @unique
+  user_id        String
+  active_expires BigInt
+  idle_expires   BigInt
+  auth_user      AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("auth_session")
+}
+
+model AuthKey {
+  id              String   @id @unique
+  hashed_password String?
+  user_id         String
+  primary_key     Boolean
+  expires         BigInt?
+  auth_user       AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("auth_key")
 }
 
 model User {
-  id          Int       @id @default(autoincrement())
-  email       String    @unique
-  magicLink   String    @unique
-  role        Role      @default(HACKER)
-  status      Status    @default(CREATED)
+  // Data about the user that is not used in authentication or authorization
+  authUserId  String    @id @unique
+  authUser    AuthUser  @relation(fields: [authUserId], references: [id], onDelete: Cascade)
   decision    Decision?
   application Json      @default("{}")
   scanCount   Json      @default("{}")
@@ -27,9 +63,8 @@ model Announcement {
 
 // Store unreleased decisions in their own table
 model Decision {
-  id     Int    @id @default(autoincrement())
-  user   User   @relation(fields: [userId], references: [id])
-  userId Int    @unique
+  user   User   @relation(fields: [userId], references: [authUserId], onDelete: Cascade)
+  userId String @id @unique
   status Status
 }
 

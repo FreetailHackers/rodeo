@@ -1,42 +1,46 @@
+import { googleAuth, githubAuth } from '$lib/lucia';
 import { trpc } from '$lib/trpc/router';
 
-export const load = async ({ cookies }) => {
+export const load = async ({ locals }) => {
 	return {
-		user: trpc(cookies).users.get(),
-		announcements: trpc(cookies).announcements.getAll(),
-		settings: await trpc(cookies).settings.getPublic(),
-		applicationOpen: (await trpc(cookies).settings.getPublic()).applicationOpen,
+		user: (await locals.auth.validateUser()).user,
+		announcements: await trpc(locals.auth).announcements.getAll(),
+		settings: await trpc(locals.auth).settings.getPublic(),
+		// Check whether various OAuth providers are set up in
+		// environment variables so we can show/hide buttons.
+		oauth: {
+			google: googleAuth !== null,
+			github: githubAuth !== null,
+		},
 	};
 };
 
 export const actions = {
-	login: async ({ cookies, request }) => {
-		const email = (await request.formData()).get('email');
-		if (typeof email !== 'string') {
-			return { success: false, message: 'Please enter a valid email address.' };
-		}
-		return await trpc(cookies).users.register(email);
-	},
-
-	logout: ({ cookies }) => {
-		cookies.delete('magicLink');
-	},
-
-	announce: async ({ cookies, request }) => {
+	login: async ({ locals, request }) => {
 		const formData = await request.formData();
-		const body = formData.get('announcement');
-		if (typeof body !== 'string') {
-			throw new Error('Invalid announcement body.');
+		const email = formData.get('email') as string;
+		const password = formData.get('password') as string;
+		try {
+			locals.auth.setSession(await trpc(locals.auth).users.login({ email, password }));
+		} catch (error) {
+			return 'Invalid email or password.';
 		}
-		await trpc(cookies).announcements.create(body);
 	},
 
-	unannounce: async ({ cookies, request }) => {
+	logout: async ({ locals }) => {
+		await trpc(locals.auth).users.logout();
+		locals.auth.setSession(null);
+	},
+
+	announce: async ({ locals, request }) => {
 		const formData = await request.formData();
-		const id = formData.get('id');
-		if (typeof id !== 'string') {
-			throw new Error('Invalid announcement ID.');
-		}
-		await trpc(cookies).announcements.delete(Number(id));
+		const body = formData.get('announcement') as string;
+		await trpc(locals.auth).announcements.create(body);
+	},
+
+	unannounce: async ({ locals, request }) => {
+		const formData = await request.formData();
+		const id = formData.get('id') as string;
+		await trpc(locals.auth).announcements.delete(Number(id));
 	},
 };

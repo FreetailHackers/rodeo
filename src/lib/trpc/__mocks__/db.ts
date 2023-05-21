@@ -6,5 +6,4 @@ beforeEach(() => {
 	mockReset(prisma);
 });
 
-const prisma = mockDeep<PrismaClient>();
-export default prisma;
+export const prisma = mockDeep<PrismaClient>();
