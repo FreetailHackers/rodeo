@@ -11,6 +11,7 @@
   - You are about to drop the column `status` on the `User` table. All the data in the column will be lost.
   - A unique constraint covering the columns `[authUserId]` on the table `User` will be added. If there are existing duplicate values, this will fail.
   - Added the required column `authUserId` to the `User` table without a default value. This is not possible if the table is not empty.
+    > Solved by renaming id to authUserId
 
 */
 -- DropForeignKey
@@ -31,11 +32,12 @@ ADD CONSTRAINT "Decision_pkey" PRIMARY KEY ("userId");
 -- AlterTable
 ALTER TABLE "User" DROP CONSTRAINT "User_pkey",
 DROP COLUMN "email",
-DROP COLUMN "id",
+-- DROP COLUMN "id",
 DROP COLUMN "magicLink",
 DROP COLUMN "role",
 DROP COLUMN "status",
-ADD COLUMN     "authUserId" TEXT NOT NULL,
+-- ADD COLUMN     "authUserId" TEXT NOT NULL,
+ALTER COLUMN "id" RENAME TO "authUserId",
 ADD CONSTRAINT "User_pkey" PRIMARY KEY ("authUserId");
 
 -- CreateTable
