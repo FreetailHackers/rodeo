@@ -1,14 +1,14 @@
-import authenticate from '$lib/authenticate';
+import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
-import { Role, type Question } from '@prisma/client';
+import type { Question } from '@prisma/client';
 import { redirect } from '@sveltejs/kit';
 
-export const load = async ({ cookies }) => {
-	const user = await authenticate(cookies, [Role.HACKER]);
+export const load = async ({ locals }) => {
+	await authenticate(locals.auth, ['HACKER']);
 	return {
-		user,
-		questions: await trpc(cookies).questions.get(),
-		settings: await trpc(cookies).settings.getPublic(),
+		user: await trpc(locals.auth).users.get(),
+		questions: await trpc(locals.auth).questions.get(),
+		settings: await trpc(locals.auth).settings.getPublic(),
 	};
 };
 
@@ -33,34 +33,34 @@ function formToApplication(questions: Question[], formData: FormData) {
 }
 
 export const actions = {
-	save: async ({ cookies, request }) => {
-		await trpc(cookies).users.update(
-			formToApplication(await trpc(cookies).questions.get(), await request.formData())
+	save: async ({ locals, request }) => {
+		await trpc(locals.auth).users.update(
+			formToApplication(await trpc(locals.auth).questions.get(), await request.formData())
 		);
 	},
 
-	finish: async ({ cookies, request }) => {
-		if (!(await trpc(cookies).settings.getPublic()).applicationOpen) {
+	finish: async ({ locals, request }) => {
+		if (!(await trpc(locals.auth).settings.getPublic()).applicationOpen) {
 			throw redirect(301, '/apply');
 		}
-		await trpc(cookies).users.update(
-			formToApplication(await trpc(cookies).questions.get(), await request.formData())
+		await trpc(locals.auth).users.update(
+			formToApplication(await trpc(locals.auth).questions.get(), await request.formData())
 		);
-		return await trpc(cookies).users.submitApplication();
+		return await trpc(locals.auth).users.submitApplication();
 	},
 
-	withdraw: async ({ cookies }) => {
-		if (!(await trpc(cookies).settings.getPublic()).applicationOpen) {
+	withdraw: async ({ locals }) => {
+		if (!(await trpc(locals.auth).settings.getPublic()).applicationOpen) {
 			throw redirect(301, '/apply');
 		}
-		await trpc(cookies).users.withdrawApplication();
+		await trpc(locals.auth).users.withdrawApplication();
 	},
 
-	confirm: async ({ cookies }) => {
-		await trpc(cookies).users.rsvp('CONFIRMED');
+	confirm: async ({ locals }) => {
+		await trpc(locals.auth).users.rsvp('CONFIRMED');
 	},
 
-	decline: async ({ cookies }) => {
-		await trpc(cookies).users.rsvp('DECLINED');
+	decline: async ({ locals }) => {
+		await trpc(locals.auth).users.rsvp('DECLINED');
 	},
 };

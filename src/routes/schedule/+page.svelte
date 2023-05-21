@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { enhance } from '$app/forms';
-	import { Role, type Event } from '@prisma/client';
+	import type { Event } from '@prisma/client';
 	import { onMount } from 'svelte';
 	import { generateIcsContent } from '$lib/ics';
 	export let data;
@@ -84,7 +84,7 @@
 			{#if event.start.toDateString() === displayDate.toDateString()}
 				<li class={currentDateTime > event.end ? event.type + ' passed' : event.type}>
 					<!-- Element removal box -->
-					{#if data.user?.role === Role.ADMIN}
+					{#if data.user?.role === 'ADMIN'}
 						<div class="modification-buttons">
 							<form method="POST" use:enhance>
 								<input type="hidden" name="id" value={event.id} />
@@ -115,7 +115,7 @@
 		{/each}
 	</ul>
 </div>
-{#if data.user?.role === Role.ADMIN}
+{#if data.user?.role === 'ADMIN'}
 	<hr />
 	<h2>{editedEvent == null ? 'Create New Event' : 'Edit Event'}</h2>
 	<form method="POST" action={editedEvent == null ? '?/create' : '?/saveEdit'} use:enhance>

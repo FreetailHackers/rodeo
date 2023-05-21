@@ -9,10 +9,36 @@
  * http://localhost:5173/login/admin (sample admin account)
  */
 
+import lucia from 'lucia-auth';
+import 'lucia-auth/polyfill/node';
 import { firstNames, lastNames, majors } from './data';
-import { hash } from '../src/lib/hash';
-import { PrismaClient, Role, Status, Prisma, QuestionType } from '@prisma/client';
+import { PrismaClient, Status, Prisma } from '@prisma/client';
+import prismaAdapter from '@lucia-auth/adapter-prisma';
+import { node } from 'lucia-auth/middleware';
 const prisma = new PrismaClient();
+
+const auth = lucia({ adapter: prismaAdapter(new PrismaClient()), middleware: node(), env: 'DEV' });
+
+async function register(email: string, password: string): Promise<string> {
+	const user = await auth.createUser({
+		primaryKey: {
+			providerId: 'email',
+			providerUserId: email,
+			password: password,
+		},
+		attributes: {
+			email: email,
+			role: 'HACKER',
+			status: 'CREATED',
+		},
+	});
+	await prisma.user.create({
+		data: {
+			authUserId: user.userId,
+		},
+	});
+	return user.userId;
+}
 
 async function main() {
 	// Reset database
@@ -22,22 +48,14 @@ async function main() {
 	await prisma.question.deleteMany();
 	await prisma.settings.deleteMany();
 	await prisma.user.deleteMany();
+	await prisma.authUser.deleteMany();
+	await prisma.authSession.deleteMany();
+	await prisma.authKey.deleteMany();
 
 	// Create example hacker and admin
-	await prisma.user.create({
-		data: {
-			email: 'hacker@yopmail.com',
-			magicLink: hash('hacker'),
-			status: Status.CREATED,
-		},
-	});
-	await prisma.user.create({
-		data: {
-			email: 'admin@yopmail.com',
-			magicLink: hash('admin'),
-			role: Role.ADMIN,
-		},
-	});
+	await register('hacker@yopmail.com', 'hacker@yopmail.com');
+	const adminId = await register('admin@yopmail.com', 'admin@yopmail.com');
+	await prisma.authUser.update({ where: { id: adminId }, data: { role: 'ADMIN' } });
 
 	// Create example announcement
 	await prisma.announcement.deleteMany();
@@ -52,7 +70,7 @@ async function main() {
 		{
 			order: 0,
 			label: 'Name',
-			type: QuestionType.SENTENCE,
+			type: 'SENTENCE',
 			required: true,
 			placeholder: 'J. Random Hacker',
 			generate: () => `${randomElement(firstNames)} ${randomElement(lastNames)}`,
@@ -60,28 +78,28 @@ async function main() {
 		{
 			order: 1,
 			label: 'Classification',
-			type: QuestionType.DROPDOWN,
+			type: 'DROPDOWN',
 			required: true,
 			generate: () => randomElement(['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate']),
 		},
 		{
 			order: 2,
 			label: 'Major',
-			type: QuestionType.MULTISELECT,
+			type: 'MULTISELECT',
 			required: true,
 			generate: () => randomElement(majors),
 		},
 		{
 			order: 3,
 			label: 'I agree to sell my data.',
-			type: QuestionType.CHECKBOX,
+			type: 'CHECKBOX',
 			required: true,
 			generate: () => true,
 		},
 		{
 			order: 4,
 			label: 'How many hackathons have you attended?',
-			type: QuestionType.NUMBER,
+			type: 'NUMBER',
 			required: true,
 			placeholder: '0',
 			generate: () => Math.floor(random() * 10),
@@ -89,7 +107,7 @@ async function main() {
 		{
 			order: 5,
 			label: 'Why do you want to attend HackTX?',
-			type: QuestionType.PARAGRAPH,
+			type: 'PARAGRAPH',
 			required: true,
 			placeholder: 'I love hackathons!',
 			generate: () => 'I want to attend HackTX because I love hackathons!',
@@ -97,14 +115,14 @@ async function main() {
 		{
 			order: 6,
 			label: 'Resume',
-			type: QuestionType.FILE,
+			type: 'FILE',
 			required: false,
 			generate: () => 'https://example.com/resume.pdf',
 		},
 		{
 			order: 7,
 			label: 'Shirt size',
-			type: QuestionType.RADIO,
+			type: 'RADIO',
 			required: true,
 			generate: () => randomElement(['XS', 'S', 'M', 'L', 'XL', 'XXL']),
 		},
@@ -177,34 +195,40 @@ async function main() {
 	];
 	await prisma.event.createMany({ data: events });
 
-	// Generate 1000 random hackers with a seeded random number generator for reproducibility
-	const hackers: Prisma.UserCreateInput[] = [];
-	for (let i = 0; i < 1000; i++) {
+	// Generate 10 random hackers with a seeded random number generator for reproducibility
+	// XXX: Used to be 1000, but auth.createUser seems to be prohibitively slow
+	const ids: string[] = [];
+	for (let i = 0; i < 10; i++) {
+		// Generate a completed application for each hacker
 		const application = {};
 		for (const question of createdQuestions) {
 			// IMPORTANT: This assumes that the questions variable is ordered by the order field!!
 			application[question.id] = questions[question.order].generate();
 		}
-		hackers.push({
-			email: `hacker${i}@yopmail.com`,
-			magicLink: hash('hacker' + i),
-			application,
-			role: Role.HACKER,
-			status: Status[Object.keys(Status)[Math.floor(random() * Object.keys(Status).length)]],
+		const email = `hacker${i}@yopmail.com`;
+		const id = await register(email, email);
+		ids.push(id);
+		// Give each hacker a random status
+		await prisma.authUser.update({
+			where: { id },
+			data: {
+				status: Status[Object.keys(Status)[Math.floor(random() * Object.keys(Status).length)]],
+			},
 		});
+		await prisma.user.update({ where: { authUserId: id }, data: { application } });
 	}
-	await prisma.user.createMany({ data: hackers });
 
 	// Generate up to 10 decisions (not randomized so I don't have to worry about duplicates)
 	const decisions: Prisma.DecisionCreateManyInput[] = [];
-	for (const hacker of hackers) {
+	for (const id of ids) {
 		// Only decide on hackers with status APPLIED or WAITLISTED
-		if (hacker.status !== Status.APPLIED && hacker.status !== Status.WAITLISTED) {
+		const hacker = await prisma.authUser.findUniqueOrThrow({ where: { id } });
+		if (hacker.status !== 'APPLIED' && hacker.status !== 'WAITLISTED') {
 			continue;
 		}
 		decisions.push({
-			userId: (await prisma.user.findUniqueOrThrow({ where: { email: hacker.email } })).id,
-			status: randomElement([Status.ACCEPTED, Status.REJECTED, Status.WAITLISTED]),
+			userId: hacker.id,
+			status: randomElement(['ACCEPTED', 'REJECTED', 'WAITLISTED']),
 		});
 		if (decisions.length >= 10) break;
 	}

@@ -1,6 +1,6 @@
-import type { Role, User } from '.prisma/client';
-import { type Cookies, redirect } from '@sveltejs/kit';
-import { trpc } from './trpc/router';
+import type { Role } from '.prisma/client';
+import { redirect } from '@sveltejs/kit';
+import type { AuthRequest, UserSchema } from 'lucia-auth';
 
 /**
  * Authenticates a user. Returns their magic link if successful; throws
@@ -10,8 +10,8 @@ import { trpc } from './trpc/router';
  * +page.server.ts, not in TRPC routes. Use `authenticate` from
  * src/lib/trpc/middleware instead.
  */
-export default async function authenticate(cookies: Cookies, roles?: Role[]): Promise<User> {
-	const user = await trpc(cookies).users.get();
+export async function authenticate(auth: AuthRequest, roles?: Role[]): Promise<UserSchema> {
+	const { user } = await auth.validateUser();
 	if (user === null) {
 		throw redirect(303, '/?unauthenticated');
 	}

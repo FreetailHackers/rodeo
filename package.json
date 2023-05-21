@@ -5,7 +5,7 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"postbuild": "npx prisma generate",
+		"postinstall": "npx prisma generate",
 		"preview": "vite preview",
 		"test": "playwright test",
 		"prepare": "svelte-kit sync",
@@ -14,12 +14,12 @@
 		"test:unit": "vitest",
 		"lint": "prettier --plugin-search-dir . --check . && eslint .",
 		"format": "prettier --plugin-search-dir . --write .",
-		"migrate": "prisma migrate dev"
+		"test:unit:run": "vitest run"
 	},
 	"pre-commit": [
 		"check",
 		"lint",
-		"migrate"
+		"test:unit:run"
 	],
 	"prisma": {
 		"seed": "npx tsx prisma/seed.ts"
@@ -53,6 +53,8 @@
 	"type": "module",
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.267.0",
+		"@lucia-auth/adapter-prisma": "^2.0.0",
+		"@lucia-auth/oauth": "^1.0.1",
 		"@prisma/client": "^4.7.1",
 		"@sendgrid/mail": "^7.7.0",
 		"@trpc/client": "^10.7.0",
@@ -61,6 +63,7 @@
 		"dayjs": "^1.11.7",
 		"fuzzysort": "^2.0.4",
 		"html5-qrcode": "^2.3.7",
+		"lucia-auth": "^1.5.0",
 		"nodemailer": "^6.9.1",
 		"prisma": "^4.7.1",
 		"qrcode": "^1.5.1",

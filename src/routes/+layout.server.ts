@@ -1,5 +1,5 @@
-import { trpc } from '$lib/trpc/router';
-
-export const load = async ({ cookies }) => {
-	return { user: await trpc(cookies).users.get() };
+export const load = async ({ locals }) => {
+	return {
+		user: (await locals.auth.validateUser()).user,
+	};
 };

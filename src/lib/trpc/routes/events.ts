@@ -1,6 +1,6 @@
-import { Role, type Event } from '@prisma/client';
+import type { Event } from '@prisma/client';
 import { z } from 'zod';
-import prisma from '../db';
+import { prisma } from '../db';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 
@@ -36,28 +36,19 @@ export const eventsRouter = t.router({
 	 * Adds an event to the schedule. User must be an admin.
 	 */
 	create: t.procedure
-		.use(authenticate)
+		.use(authenticate(['ADMIN']))
 		.input(eventSchema)
 		.mutation(async (req): Promise<void> => {
-			if (req.ctx.user.role !== Role.ADMIN) {
-				throw new Error('You have insufficient permissions to perform this action.');
-			}
-
-			await prisma.event.create({
-				data: { ...req.input },
-			});
+			await prisma.event.create({ data: { ...req.input } });
 		}),
 
 	/**
 	 * Updates an event in the schedule by ID. User must be an admin.
 	 */
 	update: t.procedure
-		.use(authenticate)
+		.use(authenticate(['ADMIN']))
 		.input(eventSchema.merge(z.object({ id: z.number() })))
 		.mutation(async (req): Promise<void> => {
-			if (req.ctx.user.role !== Role.ADMIN) {
-				throw new Error('You have insufficient permissions to perform this action.');
-			}
 			await prisma.event.update({
 				where: { id: req.input.id },
 				data: { ...req.input },
@@ -68,12 +59,9 @@ export const eventsRouter = t.router({
 	 * Deletes an event from the schedule. User must be an admin.
 	 */
 	delete: t.procedure
-		.use(authenticate)
+		.use(authenticate(['ADMIN']))
 		.input(z.number())
 		.mutation(async (req): Promise<void> => {
-			if (req.ctx.user.role !== Role.ADMIN) {
-				throw new Error('You have insufficient permissions to perform this action.');
-			}
 			await prisma.event.delete({ where: { id: req.input } });
 		}),
 });

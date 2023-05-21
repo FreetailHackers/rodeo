@@ -1,6 +1,6 @@
-import { Role, type Settings } from '@prisma/client';
+import type { Settings } from '@prisma/client';
 import { z } from 'zod';
-import prisma from '../db';
+import { prisma } from '../db';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 
@@ -48,10 +48,7 @@ export const settingsRouter = t.router({
 	/**
 	 * Get all settings. User must be an admin.
 	 */
-	getAll: t.procedure.use(authenticate).query(async (req): Promise<Settings> => {
-		if (req.ctx.user.role !== Role.ADMIN) {
-			throw new Error('You have insufficient permissions to perform this action.');
-		}
+	getAll: t.procedure.use(authenticate(['ADMIN'])).query(async (): Promise<Settings> => {
 		return await getSettings();
 	}),
 
@@ -60,12 +57,9 @@ export const settingsRouter = t.router({
 	 * admin.
 	 */
 	update: t.procedure
-		.use(authenticate)
+		.use(authenticate(['ADMIN']))
 		.input(settingsSchema)
 		.mutation(async (req): Promise<void> => {
-			if (req.ctx.user.role !== Role.ADMIN) {
-				throw new Error('You have insufficient permissions to perform this action.');
-			}
 			await prisma.settings.upsert({
 				where: { id: 0 },
 				update: req.input,
