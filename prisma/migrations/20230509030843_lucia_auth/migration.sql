@@ -11,7 +11,6 @@
   - You are about to drop the column `status` on the `User` table. All the data in the column will be lost.
   - A unique constraint covering the columns `[authUserId]` on the table `User` will be added. If there are existing duplicate values, this will fail.
   - Added the required column `authUserId` to the `User` table without a default value. This is not possible if the table is not empty.
-    > Solved by renaming id to authUserId
 
 */
 -- DropForeignKey
@@ -29,6 +28,13 @@ DROP COLUMN "id",
 ALTER COLUMN "userId" SET DATA TYPE TEXT,
 ADD CONSTRAINT "Decision_pkey" PRIMARY KEY ("userId");
 
+SELECT "id", "email", "role", "status" INTO "auth_user" FROM "User";
+ALTER TABLE "auth_user"
+    ALTER COLUMN "id" SET DATA TYPE TEXT,
+    ADD CONSTRAINT "auth_user_pkey" PRIMARY KEY ("id");
+
+ALTER TABLE "User" RENAME COLUMN "id" TO "authUserId";
+
 -- AlterTable
 ALTER TABLE "User" DROP CONSTRAINT "User_pkey",
 DROP COLUMN "email",
@@ -37,18 +43,18 @@ DROP COLUMN "magicLink",
 DROP COLUMN "role",
 DROP COLUMN "status",
 -- ADD COLUMN     "authUserId" TEXT NOT NULL,
-ALTER COLUMN "id" RENAME TO "authUserId",
+ALTER COLUMN "authUserId" SET DATA TYPE TEXT,
 ADD CONSTRAINT "User_pkey" PRIMARY KEY ("authUserId");
 
--- CreateTable
-CREATE TABLE "auth_user" (
-    "id" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
-    "role" "Role" NOT NULL DEFAULT 'HACKER',
-    "status" "Status" NOT NULL DEFAULT 'CREATED',
+-- -- CreateTable
+-- CREATE TABLE "auth_user" (
+--     "id" TEXT NOT NULL,
+--     "email" TEXT NOT NULL,
+--     "role" "Role" NOT NULL DEFAULT 'HACKER',
+--     "status" "Status" NOT NULL DEFAULT 'CREATED',
 
-    CONSTRAINT "auth_user_pkey" PRIMARY KEY ("id")
-);
+--     CONSTRAINT "auth_user_pkey" PRIMARY KEY ("id")
+-- );
 
 -- CreateTable
 CREATE TABLE "auth_session" (
