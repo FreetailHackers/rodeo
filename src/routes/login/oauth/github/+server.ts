@@ -27,6 +27,9 @@ export const GET = async ({ cookies, url, locals }) => {
 		});
 		const emails: GitHubEmailResponse[] = await res.json();
 		const email = emails.find((e) => e.primary);
+
+		// GitHub docs says OAuth is only enabled when the user has
+		// verified their email, but we'll check anyway
 		if (email === undefined || !email.verified) {
 			throw redirect(302, '/');
 		}

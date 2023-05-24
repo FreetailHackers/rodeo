@@ -81,7 +81,7 @@
 	>
 		<label for="email">Email</label>
 		<input id="email" name="email" required />
-		<label for="password">Password</label>
+		<label for="password">Password (<a href="/login/reset-password">forgot?</a>)</label>
 		<input type="password" id="password" name="password" required />
 		<button>Continue</button>
 	</form>

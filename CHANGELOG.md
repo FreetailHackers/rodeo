@@ -17,6 +17,7 @@
 - Editing events no longer requires client side JavaScript
 - Schedule only shows one day at a time and no longer hardcodes days
 - More user friendly message for 401 and 403 errors
+- Login system now uses email-password/OAuth instead of magic links
 
 [FIXED]
 
