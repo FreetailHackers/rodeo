@@ -3,8 +3,9 @@ import { redirect } from '@sveltejs/kit';
 import type { AuthRequest, UserSchema } from 'lucia-auth';
 
 /**
- * Authenticates a user. Returns their magic link if successful; throws
- * an error otherwise.
+ * Authenticates and authorizes a user, redirecting to the login page if
+ * they are not logged in or are not one of the specified roles. Returns
+ * the user object if successful.
  *
  * NOTE: This is intended for use in Svelte/SvelteKit files like
  * +page.server.ts, not in TRPC routes. Use `authenticate` from
