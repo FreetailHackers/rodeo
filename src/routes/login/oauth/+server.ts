@@ -14,7 +14,9 @@
  *    function in the provider's +server.ts file.
  * 5. That GET function validates the state and callback and extracts
  *    the user's email from the provider's API if necessary (how this is
- *    done depends on the provider).
+ *    done depends on the provider), making sure that the email is
+ *    verified as well. This is required because every account must have
+ *    an email associated with it for receiving communications.
  * 6. The GET function then calls the _upsert function below to create
  *    or link accounts as needed, sets up a session, and redirects the
  *    user to the home page.

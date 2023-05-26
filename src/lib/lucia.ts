@@ -5,6 +5,7 @@ import { sveltekit } from 'lucia-auth/middleware';
 import prismaAdapter from '@lucia-auth/adapter-prisma';
 import { dev } from '$app/environment';
 import { prisma } from './trpc/db';
+import { idToken } from '@lucia-auth/tokens';
 
 export const auth = lucia({
 	adapter: prismaAdapter(prisma),
@@ -46,9 +47,12 @@ export const githubAuth = (() => {
 		return github(auth, {
 			clientId: process.env.GITHUB_CLIENT_ID,
 			clientSecret: process.env.GITHUB_CLIENT_SECRET,
+			redirectUri: process.env.DOMAIN_NAME + '/login/oauth/github',
 			scope: ['user:email'],
 		});
 	}
 })();
+
+export const resetPasswordToken = idToken(auth, 'reset-password', { expiresIn: 10 * 60 });
 
 export type Auth = typeof auth;

@@ -6,7 +6,7 @@ import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getQuestions } from './questions';
 import { getSettings } from './settings';
-import { auth } from '$lib/lucia';
+import { auth, resetPasswordToken } from '$lib/lucia';
 import type { Session } from 'lucia-auth';
 
 export const usersRouter = t.router({
@@ -246,6 +246,43 @@ export const usersRouter = t.router({
 		.mutation(async (req): Promise<Session> => {
 			const key = await auth.useKey('email', req.input.email, req.input.password);
 			return await auth.createSession(key.userId);
+		}),
+
+	/**
+	 * Sends a password reset email to the given email address.
+	 * Invalidates all other password reset tokens for the user.
+	 */
+	sendPasswordResetEmail: t.procedure
+		.input(z.object({ email: z.string().trim().toLowerCase() }))
+		.mutation(async (req): Promise<void> => {
+			const user = await prisma.authUser.findUnique({
+				where: { email: req.input.email },
+			});
+			if (user !== null) {
+				await resetPasswordToken.invalidateAllUserTokens(user.id);
+				const token = await resetPasswordToken.issue(user.id);
+				let link = `${process.env.DOMAIN_NAME}/login/reset-password/${token}`;
+				link = `<a href="${link}">${link}</a>`;
+				const body =
+					'Click on the following link to reset your password (valid for 10 minutes):<br><br>' +
+					link;
+				await sendEmail(user.email, 'Password Reset', body, null);
+			}
+		}),
+
+	/**
+	 * Resets the password for the given user, invalidating all other
+	 * sessions and password reset tokens. Returns a new session.
+	 */
+	resetPassword: t.procedure
+		.input(z.object({ token: z.string(), password: z.string().min(8) }))
+		.mutation(async (req): Promise<Session> => {
+			const token = await resetPasswordToken.validate(req.input.token);
+			const user = await auth.getUser(token.userId);
+			await auth.invalidateAllUserSessions(user.id);
+			await resetPasswordToken.invalidateAllUserTokens(user.id);
+			await auth.updateKeyPassword('email', user.email, req.input.password);
+			return await auth.createSession(user.id);
 		}),
 
 	/**
