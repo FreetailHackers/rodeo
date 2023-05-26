@@ -122,7 +122,7 @@ enum Role {
 }
 
 enum Status {
-  CREATED // User has entered email but has not opened their magic link
+  CREATED // User has created account
   APPLIED // User has finished application
   ACCEPTED // User has been accepted but has not yet confirmed
   REJECTED // User has been rejected

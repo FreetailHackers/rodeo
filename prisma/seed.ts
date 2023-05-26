@@ -3,10 +3,11 @@
  * WARNING: This script will reset the database before seeding.
  * To use it, run `npx prisma db seed`
  *
- * You can then log in to some test accounts with:
+ * You can then log in to some test accounts with the following emails
+ * (password is the same as the email):
  *
- * http://localhost:5173/login/hacker (sample hacker account)
- * http://localhost:5173/login/admin (sample admin account)
+ * hacker@yopmail.com (sample hacker account)
+ * admin@yopmail.com (sample admin account)
  */
 
 import lucia from 'lucia-auth';

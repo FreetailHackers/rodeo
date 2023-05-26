@@ -6,15 +6,12 @@
 	export let data;
 	import { onMount } from 'svelte';
 
+	// Some helpful error messages triggered in /src/lib/authenticate.ts
 	onMount(() => {
 		if (location.search === '?unauthenticated') {
 			toasts.notify('You must be logged in to do perform that action.');
 		} else if (location.search === '?forbidden') {
 			toasts.notify('You do not have permissions to do that.');
-		} else if (location.search === '?magiclink') {
-			toasts.notify(
-				'That magic link either never existed or expired. You can request a new one by reregistering with your email.'
-			);
 		}
 	});
 </script>
@@ -81,7 +78,7 @@
 	>
 		<label for="email">Email</label>
 		<input id="email" name="email" required />
-		<label for="password">Password</label>
+		<label for="password">Password (<a href="/login/reset-password">forgot?</a>)</label>
 		<input type="password" id="password" name="password" required />
 		<button>Continue</button>
 	</form>
