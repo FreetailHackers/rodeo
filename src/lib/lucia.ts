@@ -53,6 +53,9 @@ export const githubAuth = (() => {
 	}
 })();
 
+export const emailVerificationToken = idToken(auth, 'email-verification', {
+	expiresIn: 7 * 24 * 60 * 60,
+});
 export const resetPasswordToken = idToken(auth, 'reset-password', { expiresIn: 10 * 60 });
 
 export type Auth = typeof auth;

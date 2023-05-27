@@ -61,6 +61,8 @@ type ProviderSession = {
  * "Upserts" a user; that is, creates a new user if no user has
  * registered with this email, or links a provider account as a new
  * login method for an existing user.
+ *
+ * NOTE: Make sure the email is verified before calling this function!
  */
 export async function _upsert(providerSession: ProviderSession, email: string) {
 	let user = await prisma.authUser.findUnique({
@@ -71,7 +73,7 @@ export async function _upsert(providerSession: ProviderSession, email: string) {
 		user = await providerSession.createUser({
 			email,
 			role: 'HACKER',
-			status: 'CREATED',
+			status: 'VERIFIED',
 		});
 	} else if (providerSession.existingUser === null) {
 		// Otherwise, link the accounts

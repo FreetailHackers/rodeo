@@ -19,7 +19,7 @@
 <!-- Application status dialog -->
 <div id="status">
 	<p>Your application status is:</p>
-	{#if data.user.authUser.status === 'CREATED'}
+	{#if data.user.authUser.status === 'VERIFIED'}
 		<h1>INCOMPLETE</h1>
 		<p>You must complete your application to be considered for admission.</p>
 	{:else if data.user.authUser.status === 'APPLIED'}
@@ -117,7 +117,7 @@
 </div>
 
 <!-- The actual application -->
-{#if data.user.authUser.status === 'CREATED'}
+{#if data.user.authUser.status === 'VERIFIED'}
 	{#if data.settings.applicationOpen}
 		<form
 			bind:this={applicationForm}
