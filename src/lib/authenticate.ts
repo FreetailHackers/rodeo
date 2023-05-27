@@ -19,5 +19,8 @@ export async function authenticate(auth: AuthRequest, roles?: Role[]): Promise<U
 	if (roles !== undefined && !roles.includes(user.role)) {
 		throw redirect(303, '/?forbidden');
 	}
+	if (user.status === 'CREATED') {
+		throw redirect(303, '/unverified');
+	}
 	return user;
 }

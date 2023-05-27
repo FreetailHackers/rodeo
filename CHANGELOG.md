@@ -27,7 +27,6 @@
 
 [REMOVED]
 
-- The VERIFIED status
 - The MENTOR role
 
 ## v0.3.5

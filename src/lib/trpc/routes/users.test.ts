@@ -11,7 +11,7 @@ const sampleHacker: Prisma.UserGetPayload<{ include: { authUser: true } }> = {
 		id: 'hacker',
 		email: 'hacker@yopmail.com',
 		role: 'HACKER',
-		status: 'CREATED',
+		status: 'VERIFIED',
 	},
 	application: {},
 	scanCount: {},

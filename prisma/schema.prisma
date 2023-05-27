@@ -122,7 +122,8 @@ enum Role {
 }
 
 enum Status {
-  CREATED // User has created account
+  CREATED // User has created account but has not yet verified email
+  VERIFIED // User has verified email
   APPLIED // User has finished application
   ACCEPTED // User has been accepted but has not yet confirmed
   REJECTED // User has been rejected

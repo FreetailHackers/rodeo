@@ -6,7 +6,7 @@ import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getQuestions } from './questions';
 import { getSettings } from './settings';
-import { auth, resetPasswordToken } from '$lib/lucia';
+import { auth, emailVerificationToken, resetPasswordToken } from '$lib/lucia';
 import type { Session } from 'lucia-auth';
 
 export const usersRouter = t.router({
@@ -71,7 +71,7 @@ export const usersRouter = t.router({
 			if (!(await getSettings()).applicationOpen) {
 				throw new Error('Sorry, applications are closed.');
 			}
-			if (req.ctx.user.status !== 'CREATED') {
+			if (req.ctx.user.status !== 'VERIFIED') {
 				throw new Error('You have already submitted your application.');
 			}
 
@@ -103,7 +103,7 @@ export const usersRouter = t.router({
 			if (!(await getSettings()).applicationOpen) {
 				throw new Error('Sorry, applications are closed.');
 			}
-			if (req.ctx.user.status !== 'CREATED') {
+			if (req.ctx.user.status !== 'VERIFIED') {
 				throw new Error('You have already submitted your application.');
 			}
 
@@ -163,7 +163,7 @@ export const usersRouter = t.router({
 			}
 			await prisma.authUser.update({
 				where: { id: req.ctx.user.id },
-				data: { status: 'CREATED' },
+				data: { status: 'VERIFIED' },
 			});
 		}),
 
@@ -249,6 +249,26 @@ export const usersRouter = t.router({
 		}),
 
 	/**
+	 * Sends an email verification link to the logged in user.
+	 * Invalidates all other email verification tokens for the user.
+	 * Throws an error if the user is already verified.
+	 */
+	sendVerificationEmail: t.procedure.use(authenticate()).mutation(async (req): Promise<void> => {
+		if (req.ctx.user.status !== 'CREATED') {
+			throw new Error('Your email is already verified.');
+		}
+		await emailVerificationToken.invalidateAllUserTokens(req.ctx.user.id);
+		const token = await emailVerificationToken.issue(req.ctx.user.id);
+		let link = `${process.env.DOMAIN_NAME}/login/verify-email/${token}`;
+		link = `<a href="${link}">${link}</a>`;
+		const body =
+			'Click on the following link to verify your email address:<br><br>' +
+			link +
+			'<br><br>If you did not request this email, please ignore it.';
+		await sendEmail(req.ctx.user.email, 'Email Verification', body, null);
+	}),
+
+	/**
 	 * Sends a password reset email to the given email address.
 	 * Invalidates all other password reset tokens for the user.
 	 */
@@ -271,8 +291,23 @@ export const usersRouter = t.router({
 		}),
 
 	/**
+	 * Verifies the email address for the given user, invalidating all
+	 * other email verification tokens. Throws an error if the token is
+	 * invalid or expired.
+	 */
+	verifyEmail: t.procedure.input(z.string()).mutation(async (req): Promise<void> => {
+		const token = await emailVerificationToken.validate(req.input);
+		await emailVerificationToken.invalidateAllUserTokens(token.userId);
+		await prisma.authUser.update({
+			where: { id: token.userId },
+			data: { status: 'VERIFIED' },
+		});
+	}),
+
+	/**
 	 * Resets the password for the given user, invalidating all other
-	 * sessions and password reset tokens. Returns a new session.
+	 * sessions and password reset tokens. Returns a new session. Throws
+	 * an error if the token is invalid or expired.
 	 */
 	resetPassword: t.procedure
 		.input(z.object({ token: z.string(), password: z.string().min(8) }))

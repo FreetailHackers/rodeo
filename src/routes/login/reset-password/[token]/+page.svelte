@@ -13,7 +13,7 @@
 	</form>
 {:else}
 	<p>
-		That password reset token either never existed or expired. You can <a
+		This password reset token either never existed or expired. You can <a
 			href="/login/reset-password">request a new one</a
 		>.
 	</p>
