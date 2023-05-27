@@ -30,7 +30,7 @@ async function register(email: string, password: string): Promise<string> {
 		attributes: {
 			email: email,
 			role: 'HACKER',
-			status: 'CREATED',
+			status: 'VERIFIED',
 		},
 	});
 	await prisma.user.create({
