@@ -1,3 +1,4 @@
+import { githubAuth, googleAuth } from '$lib/lucia';
 import { trpc } from '$lib/trpc/router';
 import { redirect } from '@sveltejs/kit';
 
@@ -5,6 +6,12 @@ export const load = async ({ locals }) => {
 	if (await locals.auth.validate()) {
 		throw redirect(303, '/');
 	}
+	return {
+		providers: {
+			google: googleAuth !== null,
+			github: githubAuth !== null,
+		},
+	};
 };
 
 export const actions = {

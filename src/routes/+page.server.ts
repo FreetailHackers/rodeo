@@ -8,7 +8,7 @@ export const load = async ({ locals }) => {
 		settings: await trpc(locals.auth).settings.getPublic(),
 		// Check whether various OAuth providers are set up in
 		// environment variables so we can show/hide buttons.
-		oauth: {
+		providers: {
 			google: googleAuth !== null,
 			github: githubAuth !== null,
 		},
