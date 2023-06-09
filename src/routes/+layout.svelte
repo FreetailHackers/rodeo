@@ -8,6 +8,7 @@
 	import { cubicIn, cubicOut } from 'svelte/easing';
 	import Loader from '$lib/components/loader.svelte';
 	import { beforeNavigate, afterNavigate } from '$app/navigation';
+	import { activeTab } from '$lib/navStore';
 
 	export let data;
 
@@ -29,6 +30,16 @@
 			});
 		}
 	});
+
+	function setActiveTab(tab: string) {
+		activeTab.set(tab);
+	}
+
+	function handleKeyPress(event: KeyboardEvent, tab: string) {
+		if (event.key === 'Enter' || event.key === ' ') {
+			setActiveTab(tab);
+		}
+	}
 </script>
 
 <nav>
@@ -40,24 +51,104 @@
 		style="display: none"
 	/>
 	<menu id="menu" bind:this={menu}>
-		<li><a href="/">Home</a></li>
-		<li><a href="/schedule">Schedule</a></li>
-		<li><a href="/info">Info</a></li>
+		<li class:selected={$activeTab === 'home'}>
+			<a
+				href="/"
+				on:click={() => setActiveTab('home')}
+				on:keydown={(e) => handleKeyPress(e, 'home')}
+			>
+				Home
+			</a>
+		</li>
+		<li class:selected={$activeTab === 'schedule'}>
+			<a
+				href="/schedule"
+				on:click={() => setActiveTab('schedule')}
+				on:keydown={(e) => handleKeyPress(e, 'schedule')}
+			>
+				Schedule
+			</a>
+		</li>
+		<li class:selected={$activeTab === 'info'}>
+			<a
+				href="/info"
+				on:click={() => setActiveTab('info')}
+				on:keydown={(e) => handleKeyPress(e, 'info')}
+			>
+				Info
+			</a>
+		</li>
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->
 		{#if data.user !== null && (data.user.role !== 'HACKER' || data.user.status === 'CONFIRMED')}
-			<li><a href="/id">My Hacker ID</a></li>
+			<li class:selected={$activeTab === 'id'}>
+				<a
+					href="/id"
+					on:click={() => setActiveTab('id')}
+					on:keydown={(e) => handleKeyPress(e, 'id')}
+				>
+					My Hacker ID
+				</a>
+			</li>
 		{/if}
 		{#if data.user?.role === 'ORGANIZER' || data.user?.role === 'ADMIN'}
-			<li><a href="/scan">Scan</a></li>
+			<li class:selected={$activeTab === 'scan'}>
+				<a
+					href="/scan"
+					on:click={() => setActiveTab('scan')}
+					on:keydown={(e) => handleKeyPress(e, 'scan')}
+				>
+					Scan
+				</a>
+			</li>
 		{/if}
 		{#if data.user?.role === 'HACKER'}
-			<li><a href="/apply">Apply</a></li>
+			<li class:selected={$activeTab === 'scan'}>
+				<a
+					href="/apply"
+					on:click={() => setActiveTab('apply')}
+					on:keydown={(e) => handleKeyPress(e, 'apply')}
+				>
+					Apply
+				</a>
+			</li>
 		{:else if data.user?.role === 'ADMIN'}
-			<li><a href="/users">Users</a></li>
-			<li><a href="/admin">Admin</a></li>
-			<li><a href="/admissions">Admissions</a></li>
+			<li class:selected={$activeTab === 'user'}>
+				<a
+					href="/user"
+					on:click={() => setActiveTab('user')}
+					on:keydown={(e) => handleKeyPress(e, 'user')}
+				>
+					User
+				</a>
+			</li>
+			<li class:selected={$activeTab === 'admin'}>
+				<a
+					href="/admin"
+					on:click={() => setActiveTab('admin')}
+					on:keydown={(e) => handleKeyPress(e, 'admin')}
+				>
+					Admin
+				</a>
+			</li>
+			<li class:selected={$activeTab === 'admissions'}>
+				<a
+					href="/admissions"
+					on:click={() => setActiveTab('admissions')}
+					on:keydown={(e) => handleKeyPress(e, 'admissions')}
+				>
+					Admissions
+				</a>
+			</li>
 		{/if}
-		<li><a href="/feedback">Feedback</a></li>
+		<li class:selected={$activeTab === 'feedback'}>
+			<a
+				href="/feedback"
+				on:click={() => setActiveTab('feedback')}
+				on:keydown={(e) => handleKeyPress(e, 'feedback')}
+			>
+				Feedback
+			</a>
+		</li>
 	</menu>
 	<hr />
 
@@ -164,5 +255,9 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+	}
+
+	.selected {
+		font-weight: bolder;
 	}
 </style>
