@@ -64,7 +64,7 @@
 		"dayjs": "^1.11.7",
 		"fuzzysort": "^2.0.4",
 		"html5-qrcode": "^2.3.7",
-		"lucia-auth": "^1.5.0",
+		"lucia-auth": "^1.7.1",
 		"nodemailer": "^6.9.1",
 		"prisma": "^4.7.1",
 		"qrcode": "^1.5.1",
