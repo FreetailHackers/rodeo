@@ -4,6 +4,10 @@
 	import { toasts } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import './global.css';
+	import { fly } from 'svelte/transition';
+	import { cubicIn, cubicOut } from 'svelte/easing';
+	import Loader from '$lib/components/loader.svelte';
+	import { beforeNavigate, afterNavigate } from '$app/navigation';
 
 	export let data;
 
@@ -14,6 +18,9 @@
 
 	let menu: HTMLMenuElement;
 	let hamburgerCheckbox: HTMLInputElement;
+	let isLoading = false;
+	beforeNavigate(() => (isLoading = true));
+	afterNavigate(() => (isLoading = false));
 
 	onMount(() => {
 		for (const link of menu.childNodes) {
@@ -53,9 +60,22 @@
 		<li><a href="/feedback">Feedback</a></li>
 	</menu>
 	<hr />
+
+	{#if isLoading}
+		<div class="overlay">
+			<Loader />
+		</div>
+	{/if}
 </nav>
 
-<slot />
+{#key data.pathname}
+	<div
+		in:fly={{ easing: cubicOut, y: 10, duration: 300, delay: 400 }}
+		out:fly={{ easing: cubicIn, y: -10, duration: 300 }}
+	>
+		<slot />
+	</div>
+{/key}
 
 <Toasts />
 
@@ -131,5 +151,18 @@
 
 	hr {
 		margin-top: 1rem;
+	}
+
+	.overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 9999; /* Set a high z-index to ensure the overlay appears on top */
+		background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background color */
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 </style>
