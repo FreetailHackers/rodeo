@@ -132,6 +132,10 @@ export const usersRouter = t.router({
 					} else if (question.max !== null && answer > question.max) {
 						errors[question.label] = `This field must be at most ${question.max}.`;
 					}
+				} else if (question.type === 'DROPDOWN') {
+					if (!question.options.includes(answer)) {
+						errors[question.label] = 'This field must be one of the given options.';
+					}
 				}
 			}
 			// Update status to applied if there are no errors

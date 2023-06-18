@@ -67,6 +67,7 @@ export const actions = {
 				const max = Number(questions[id].max);
 				questions[id].min = questions[id].min === '' || Number.isNaN(min) ? null : min;
 				questions[id].max = questions[id].max === '' || Number.isNaN(max) ? null : max;
+				// If min > max, swap them
 				if (
 					questions[id].min !== null &&
 					questions[id].max !== null &&
@@ -75,6 +76,8 @@ export const actions = {
 					[questions[id].min, questions[id].max] = [questions[id].max, questions[id].min];
 				}
 				questions[id].step = Number(questions[id].step) || 1;
+			} else if (questions[id].type === 'DROPDOWN') {
+				questions[id].options = questions[id].options.split('\r\n');
 			}
 		}
 		await trpc(locals.auth).questions.update(questions);

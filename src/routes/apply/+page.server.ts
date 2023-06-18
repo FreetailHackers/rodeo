@@ -20,7 +20,11 @@ function formToApplication(questions: Question[], formData: FormData) {
 			application[question.id] = undefined;
 			continue;
 		}
-		if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
+		if (
+			question.type === 'SENTENCE' ||
+			question.type === 'PARAGRAPH' ||
+			question.type === 'DROPDOWN'
+		) {
 			application[question.id] = formData.get(question.id);
 		} else if (question.type === 'NUMBER') {
 			application[question.id] = Number(formData.get(question.id));
