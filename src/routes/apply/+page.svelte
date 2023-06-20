@@ -181,6 +181,18 @@
 						autofocus={question.id === focusedQuestionId}
 						on:focus={() => (focusedQuestionId = question.id)}
 					/>
+				{:else if question.type === 'DROPDOWN'}
+					<select
+						name={question.id}
+						id={question.id}
+						bind:value={application[question.id]}
+						autofocus={question.id === focusedQuestionId}
+						on:focus={() => (focusedQuestionId = question.id)}
+					>
+						{#each question.options as option}
+							<option value={option}>{option}</option>
+						{/each}
+					</select>
 				{/if}
 			{/each}
 
@@ -223,11 +235,9 @@
 	}
 
 	input,
-	textarea {
-		margin-bottom: 1rem;
-	}
-
-	button {
+	textarea,
+	button,
+	select {
 		margin-bottom: 1rem;
 	}
 

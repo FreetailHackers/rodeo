@@ -81,6 +81,7 @@ async function main() {
 			label: 'Classification',
 			type: 'DROPDOWN',
 			required: true,
+			options: ['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate'],
 			generate: () => randomElement(['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate']),
 		},
 		{
