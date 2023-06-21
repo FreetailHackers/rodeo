@@ -117,7 +117,10 @@ export const usersRouter = t.router({
 			const application = user.application as Record<string, any>;
 			for (const question of questions) {
 				const answer = application[question.id];
-				if (question.required && (answer === undefined || answer === null)) {
+				if (
+					question.required &&
+					(answer === undefined || answer === null || answer === false || answer === '')
+				) {
 					errors[question.label] = 'This field is required.';
 				} else if (
 					(question.type === 'SENTENCE' || question.type === 'PARAGRAPH') &&

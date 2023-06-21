@@ -22,6 +22,7 @@ export const actions = {
 		const session = await trpc(locals.auth).users.register({ email, password });
 		if (session !== null) {
 			locals.auth.setSession(session);
+			await trpc(locals.auth).users.sendVerificationEmail();
 		} else {
 			return 'That email is already in use, either through a previous registration or linked social (Google/GitHub/...) account.';
 		}
