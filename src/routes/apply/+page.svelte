@@ -190,6 +190,7 @@
 							autofocus={question.id === focusedQuestionId}
 							on:focus={() => (focusedQuestionId = question.id)}
 						>
+							<option value="">Select...</option>
 							{#each question.options as option}
 								<option value={option}>{option}</option>
 							{/each}
