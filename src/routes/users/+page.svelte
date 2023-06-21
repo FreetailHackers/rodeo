@@ -298,10 +298,6 @@
 		margin-bottom: 1rem;
 	}
 
-	label {
-		margin-bottom: 0.5rem;
-	}
-
 	ul {
 		list-style: none;
 		margin: 0;

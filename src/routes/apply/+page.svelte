@@ -144,56 +144,68 @@
 			autocomplete="off"
 		>
 			{#each data.questions as question}
-				<label for={question.id}>
-					{question.label}
-					{#if question.required}*{/if}
-				</label>
-				<!-- svelte-ignore a11y-autofocus -->
-				{#if question.type === 'SENTENCE'}
-					<input
-						type="text"
-						name={question.id}
-						id={question.id}
-						bind:value={application[question.id]}
-						placeholder={question.placeholder}
-						autofocus={question.id === focusedQuestionId}
-						on:focus={() => (focusedQuestionId = question.id)}
-					/>
-				{:else if question.type === 'PARAGRAPH'}
-					<textarea
-						name={question.id}
-						id={question.id}
-						bind:value={application[question.id]}
-						placeholder={question.placeholder}
-						autofocus={question.id === focusedQuestionId}
-						on:focus={() => (focusedQuestionId = question.id)}
-					/>
-				{:else if question.type === 'NUMBER'}
-					<input
-						type="number"
-						name={question.id}
-						id={question.id}
-						min={question.min}
-						max={question.max}
-						step={question.step}
-						bind:value={application[question.id]}
-						placeholder={question.placeholder}
-						autofocus={question.id === focusedQuestionId}
-						on:focus={() => (focusedQuestionId = question.id)}
-					/>
-				{:else if question.type === 'DROPDOWN'}
-					<select
-						name={question.id}
-						id={question.id}
-						bind:value={application[question.id]}
-						autofocus={question.id === focusedQuestionId}
-						on:focus={() => (focusedQuestionId = question.id)}
-					>
-						{#each question.options as option}
-							<option value={option}>{option}</option>
-						{/each}
-					</select>
-				{/if}
+				<div class={'question ' + question.type.toLowerCase()}>
+					<label for={question.id}>
+						{question.label}
+						{#if question.required}*{/if}
+					</label>
+					<!-- svelte-ignore a11y-autofocus -->
+					{#if question.type === 'SENTENCE'}
+						<input
+							type="text"
+							name={question.id}
+							id={question.id}
+							bind:value={application[question.id]}
+							placeholder={question.placeholder}
+							autofocus={question.id === focusedQuestionId}
+							on:focus={() => (focusedQuestionId = question.id)}
+						/>
+					{:else if question.type === 'PARAGRAPH'}
+						<textarea
+							name={question.id}
+							id={question.id}
+							bind:value={application[question.id]}
+							placeholder={question.placeholder}
+							autofocus={question.id === focusedQuestionId}
+							on:focus={() => (focusedQuestionId = question.id)}
+						/>
+					{:else if question.type === 'NUMBER'}
+						<input
+							type="number"
+							name={question.id}
+							id={question.id}
+							min={question.min}
+							max={question.max}
+							step={question.step}
+							bind:value={application[question.id]}
+							placeholder={question.placeholder}
+							autofocus={question.id === focusedQuestionId}
+							on:focus={() => (focusedQuestionId = question.id)}
+						/>
+					{:else if question.type === 'DROPDOWN'}
+						<select
+							name={question.id}
+							id={question.id}
+							bind:value={application[question.id]}
+							autofocus={question.id === focusedQuestionId}
+							on:focus={() => (focusedQuestionId = question.id)}
+						>
+							<option value="">Select...</option>
+							{#each question.options as option}
+								<option value={option}>{option}</option>
+							{/each}
+						</select>
+					{:else if question.type === 'CHECKBOX'}
+						<input
+							type="checkbox"
+							name={question.id}
+							id={question.id}
+							checked={Boolean(application[question.id])}
+							autofocus={question.id === focusedQuestionId}
+							on:focus={() => (focusedQuestionId = question.id)}
+						/>
+					{/if}
+				</div>
 			{/each}
 
 			<button bind:this={saveButton}>{saveButtonText}</button>
@@ -225,20 +237,27 @@
 		gap: 1rem;
 	}
 
-	label {
-		display: block;
+	.question {
+		display: flex;
+		flex-direction: column;
+		margin-bottom: 1rem;
+		gap: 0.5rem;
+	}
+
+	.checkbox {
+		display: flex;
+		flex-direction: row-reverse;
+		align-items: center;
+		justify-content: start;
+		gap: 0;
+	}
+
+	button {
 		margin-bottom: 0.5rem;
 	}
 
 	#rsvp > * {
 		flex-grow: 1;
-	}
-
-	input,
-	textarea,
-	button,
-	select {
-		margin-bottom: 1rem;
 	}
 
 	#submit {
