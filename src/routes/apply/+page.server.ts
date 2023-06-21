@@ -31,6 +31,8 @@ function formToApplication(questions: Question[], formData: FormData) {
 			if (isNaN(application[question.id])) {
 				application[question.id] = undefined;
 			}
+		} else if (question.type === 'CHECKBOX') {
+			application[question.id] = formData.get(question.id) === 'on';
 		}
 	}
 	return application;
