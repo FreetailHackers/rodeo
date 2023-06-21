@@ -215,8 +215,9 @@ export const usersRouter = t.router({
 		}),
 
 	/**
-	 * Creates a new user with the given email and password. Returns
-	 * the resulting session or null if the user already exists.
+	 * Creates a new user with the given email and password and sends a
+	 * verification link to that email. Returns the resulting session or
+	 * null if the user already exists.
 	 */
 	register: t.procedure
 		.input(z.object({ email: z.string().trim().toLowerCase(), password: z.string().min(8) }))
