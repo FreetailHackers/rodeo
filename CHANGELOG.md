@@ -1,11 +1,23 @@
 # Changelog
 
+## v0.4.1
+
+[ADDED]
+
+- Checkbox questions
+
+[FIXED]
+
+- Creating an account would not automatically send a verification email
+- No show password button on reset page
+- Password resets not working for users who used Google/GitHub login
+
 ## v0.4.0
 
 [ADDED]
 
 - Global toast notification system for form action results
-- Custom registration questions for text, paragraph, number inputs
+- Custom registration questions for short/long text, dropdown, numbers
 - Customizable homepage text
 - Automatic email receipts for submitting/confirming/declining
 - Export schedule to .ics

@@ -2,12 +2,25 @@
 	import { enhance } from '$app/forms';
 
 	export let data;
+
+	let hidden = true;
 </script>
 
 {#if data.token}
 	<form method="POST" use:enhance>
-		<label for="password">Enter a new password:</label>
-		<input type="password" id="password" name="password" required minlength="8" />
+		<label for="password">
+			<!-- svelte-ignore a11y-invalid-attribute -->
+			Enter a new password (<a href="javascript:;" on:click={() => (hidden = !hidden)}>
+				{#if hidden}show{:else}hide{/if}</a
+			>):
+		</label>
+		<input
+			type={hidden ? 'password' : 'text'}
+			id="password"
+			name="password"
+			required
+			minlength="8"
+		/>
 		<input type="hidden" name="token" value={data.token} />
 		<button type="submit">Reset</button>
 	</form>
