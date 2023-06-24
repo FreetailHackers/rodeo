@@ -8,6 +8,7 @@
 	export let form;
 
 	let editedEvent: Event | null = null;
+	// Possibly a HACK: we return an Event if the user has clicked edit and null otherwise
 	$: if (form !== null) {
 		editedEvent = form;
 		if (browser) {

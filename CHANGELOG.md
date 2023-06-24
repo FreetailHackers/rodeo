@@ -1,16 +1,24 @@
 # Changelog
 
+## v0.4.2
+
+[FIXED]
+
+- No show password button on reset page
+- Password resets not working for users who used Google/GitHub login
+- Schedule page scrolling to bottom after deleting an event
+
 ## v0.4.1
 
 [ADDED]
 
+- A default Select... option for dropdowns
 - Checkbox questions
 
 [FIXED]
 
 - Creating an account would not automatically send a verification email
-- No show password button on reset page
-- Password resets not working for users who used Google/GitHub login
+- /unverified route did not actually check if user was unverified
 
 ## v0.4.0
 
