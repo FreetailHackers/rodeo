@@ -22,16 +22,18 @@ const auth = lucia({ adapter: prismaAdapter(new PrismaClient()), middleware: nod
 
 async function register(email: string, password: string): Promise<string> {
 	const user = await auth.createUser({
-		primaryKey: {
-			providerId: 'email',
-			providerUserId: email,
-			password: password,
-		},
+		primaryKey: null,
 		attributes: {
 			email: email,
 			role: 'HACKER',
 			status: 'VERIFIED',
 		},
+	});
+	await auth.createKey(user.id, {
+		type: 'persistent',
+		providerId: 'email',
+		providerUserId: email,
+		password: password,
 	});
 	await prisma.user.create({
 		data: {
