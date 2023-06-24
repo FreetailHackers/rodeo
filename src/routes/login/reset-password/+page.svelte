@@ -18,8 +18,7 @@
 	<p>
 		If there is an account at the address you entered, an email has been sent with a single-use link
 		to reset your password. It will expire in 10 minutes. Make sure to check your spam folder. If
-		you do not receive an email, it may be because you entered the wrong address or because you
-		signed up with a different address or third-party service like Google.
+		you do not receive an email, it may be because you signed up with a different address.
 	</p>
 	<a href="/">Back to home</a>
 {/if}
