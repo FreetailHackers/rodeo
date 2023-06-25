@@ -6,7 +6,9 @@
 
 - No show password button on reset page
 - Password resets not working for users who used Google/GitHub login
+- Refreshing a password reset prompt would invalidate the reset token
 - Schedule page scrolling to bottom after deleting an event
+- CSS issues on application page
 
 ## v0.4.1
 

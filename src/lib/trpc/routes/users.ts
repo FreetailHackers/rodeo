@@ -290,7 +290,7 @@ export const usersRouter = t.router({
 			if (user !== null) {
 				await resetPasswordToken.invalidateAllUserTokens(user.id);
 				const token = await resetPasswordToken.issue(user.id);
-				let link = `${process.env.DOMAIN_NAME}/login/reset-password/${token}`;
+				let link = `${process.env.DOMAIN_NAME}/login/reset-password?token=${token}`;
 				link = `<a href="${link}">${link}</a>`;
 				const body =
 					'Click on the following link to reset your password (valid for 10 minutes):<br><br>' +
