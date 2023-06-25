@@ -29,7 +29,10 @@ async function register(email: string, password: string): Promise<string> {
 			status: 'VERIFIED',
 		},
 	});
-	await auth.createKey(user.id, {
+	// XXX: Since we didn't define transformDatabaseUser in the lucia() config,
+	// Lucia returns the ID in the user.userId property by default
+	// (as opposed to the rest of the codebase, which uses user.id)
+	await auth.createKey(user.userId, {
 		type: 'persistent',
 		providerId: 'email',
 		providerUserId: email,
