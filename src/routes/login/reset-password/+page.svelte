@@ -1,27 +1,47 @@
 <script>
 	import { enhance } from '$app/forms';
+	import { page } from '$app/stores';
 
-	export let form;
+	let hidden = true;
 </script>
 
-{#if form === null}
+{#if $page.url.search === ''}
 	<h1>Reset Password</h1>
-	<form method="POST" use:enhance>
+	<form method="POST" action="?/email" use:enhance>
 		<label for="email">Enter the email you used to register:</label>
 		<input id="email" name="email" type="email" required />
 		<button>Continue</button>
 	</form>
-{:else if form === undefined}
-	<!-- Abuse the fact that ActionData is null before a form action is
-	triggered cuz I don't wanna write a separate route for the success
-	message -->
+{:else if $page.url.search === '?submitted'}
 	<p>
 		If there is an account at the address you entered, an email has been sent with a single-use link
 		to reset your password. It will expire in 10 minutes. Make sure to check your spam folder. If
-		you do not receive an email, it may be because you entered the wrong address or because you
-		signed up with a different address or third-party service like Google.
+		you do not receive an email, it may be because you signed up with a different address.
 	</p>
-	<a href="/">Back to home</a>
+{:else if $page.url.search.startsWith('?token')}
+	<form method="POST" action="?/reset" use:enhance>
+		<label for="password">
+			<!-- svelte-ignore a11y-invalid-attribute -->
+			Enter a new password (<a href="javascript:;" on:click={() => (hidden = !hidden)}>
+				{#if hidden}show{:else}hide{/if}</a
+			>):
+		</label>
+		<input
+			type={hidden ? 'password' : 'text'}
+			id="password"
+			name="password"
+			required
+			minlength="8"
+		/>
+		<input type="hidden" name="token" value={$page.url.searchParams.get('token')} />
+		<button type="submit">Reset</button>
+	</form>
+{:else if $page.url.search === '?invalid'}
+	<p>
+		This password reset token either never existed or expired. You can <a
+			href="/login/reset-password">request a new one</a
+		>.
+	</p>
 {/if}
 
 <style>
