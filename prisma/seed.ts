@@ -22,16 +22,21 @@ const auth = lucia({ adapter: prismaAdapter(new PrismaClient()), middleware: nod
 
 async function register(email: string, password: string): Promise<string> {
 	const user = await auth.createUser({
-		primaryKey: {
-			providerId: 'email',
-			providerUserId: email,
-			password: password,
-		},
+		primaryKey: null,
 		attributes: {
 			email: email,
 			role: 'HACKER',
 			status: 'VERIFIED',
 		},
+	});
+	// XXX: Since we didn't define transformDatabaseUser in the lucia() config,
+	// Lucia returns the ID in the user.userId property by default
+	// (as opposed to the rest of the codebase, which uses user.id)
+	await auth.createKey(user.userId, {
+		type: 'persistent',
+		providerId: 'email',
+		providerUserId: email,
+		password: password,
 	});
 	await prisma.user.create({
 		data: {

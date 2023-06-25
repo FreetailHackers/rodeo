@@ -76,5 +76,7 @@ export const actions = {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 		await trpc(locals.auth).events.delete(Number(id));
+		// Possibly a HACK: return null to prevent page from scrolling to bottom
+		return null;
 	},
 };

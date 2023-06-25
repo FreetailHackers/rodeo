@@ -226,16 +226,18 @@ export const usersRouter = t.router({
 		.mutation(async (req): Promise<Session | null> => {
 			try {
 				const user = await auth.createUser({
-					primaryKey: {
-						providerId: 'email',
-						providerUserId: req.input.email,
-						password: req.input.password,
-					},
+					primaryKey: null,
 					attributes: {
 						email: req.input.email,
 						role: 'HACKER',
 						status: 'CREATED',
 					},
+				});
+				await auth.createKey(user.id, {
+					type: 'persistent',
+					providerId: 'email',
+					providerUserId: req.input.email,
+					password: req.input.password,
 				});
 				return await auth.createSession(user.id);
 			} catch (e) {
@@ -288,7 +290,7 @@ export const usersRouter = t.router({
 			if (user !== null) {
 				await resetPasswordToken.invalidateAllUserTokens(user.id);
 				const token = await resetPasswordToken.issue(user.id);
-				let link = `${process.env.DOMAIN_NAME}/login/reset-password/${token}`;
+				let link = `${process.env.DOMAIN_NAME}/login/reset-password?token=${token}`;
 				link = `<a href="${link}">${link}</a>`;
 				const body =
 					'Click on the following link to reset your password (valid for 10 minutes):<br><br>' +
@@ -323,7 +325,18 @@ export const usersRouter = t.router({
 			const user = await auth.getUser(token.userId);
 			await auth.invalidateAllUserSessions(user.id);
 			await resetPasswordToken.invalidateAllUserTokens(user.id);
-			await auth.updateKeyPassword('email', user.email, req.input.password);
+			try {
+				await auth.updateKeyPassword('email', user.email, req.input.password);
+			} catch (e) {
+				// If the user doesn't have a password (because they
+				// signed up through a third-party provider), create one
+				await auth.createKey(user.id, {
+					type: 'persistent',
+					providerId: 'email',
+					providerUserId: user.email,
+					password: req.input.password,
+				});
+			}
 			return await auth.createSession(user.id);
 		}),
 
