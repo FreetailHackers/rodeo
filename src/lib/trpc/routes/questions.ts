@@ -53,6 +53,43 @@ export const questionsRouter = t.router({
 		}),
 
 	/**
+	 * Takes two question orders (indices) and swaps the questions at
+	 * those orders. User must be an admin.
+	 */
+	swap: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(z.array(z.number()))
+		.mutation(async (req): Promise<void> => {
+			if (req.input.length != 2) {
+				throw new Error('Expected exactly two question orders.');
+			}
+			const questions = await getQuestions();
+			if (
+				req.input[0] < 0 ||
+				req.input[0] >= questions.length ||
+				req.input[1] < 0 ||
+				req.input[1] >= questions.length
+			) {
+				throw new Error('Question order out of bounds.');
+			}
+			// We must temporarily set the first question's order to -1
+			// to avoid a unique constraint violation.
+			const clearX = prisma.question.update({
+				where: { order: req.input[0] },
+				data: { order: -1 },
+			});
+			const setYtoX = prisma.question.update({
+				where: { order: req.input[1] },
+				data: { order: req.input[0] },
+			});
+			const setXtoY = prisma.question.update({
+				where: { order: -1 },
+				data: { order: req.input[1] },
+			});
+			await prisma.$transaction([clearX, setYtoX, setXtoY]);
+		}),
+
+	/**
 	 * Deletes a question. User must be an admin.
 	 */
 	delete: t.procedure

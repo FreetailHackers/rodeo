@@ -13,6 +13,12 @@ export const actions = {
 		await trpc(locals.auth).questions.create(formData.get('type') as QuestionType);
 	},
 
+	swap: async ({ locals, request }) => {
+		const formData = await request.formData();
+		const order = Number(formData.get('order'));
+		await trpc(locals.auth).questions.swap([order, order + 1]);
+	},
+
 	update: async ({ locals, request }) => {
 		const formData = Object.fromEntries(await request.formData());
 		// We have to do a bit of transformation on the form data to
