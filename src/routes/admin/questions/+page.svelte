@@ -16,22 +16,38 @@
 		}}
 >
 	<!-- NOTE: see corresponding +page.server.ts to see how form data is structured and parsed -->
-	{#each data.questions as question}
-		<input type="hidden" name={question.id + '_type'} value={question.type} />
+	{#each data.questions as question, i (question.id)}
 		<fieldset>
+			<input type="hidden" name={question.id + '_type'} value={question.type} />
 			<!-- Fields common to all question types -->
 			<div class="flex-row">
 				<Toggle name={question.id + '_required'} label="Required" checked={question.required} />
-				<!-- Put a hidden disabled button before the delete button
-					 to prevent enter from deleting the first question -->
-				<button type="submit" disabled style="display: none" aria-hidden="true" />
-				<button
-					type="submit"
-					name="id"
-					value={question.id}
-					formaction="?/delete"
-					class="deleteButton">✕</button
-				>
+				<!-- Put a hidden disabled button before the these
+					 buttons to prevent enter from triggering them -->
+				<div class="flex-row actions">
+					<button type="submit" disabled style="display: none" aria-hidden="true" />
+					<button
+						type="submit"
+						name="id"
+						value={question.id}
+						formaction="?/moveUp"
+						disabled={i === 0}>↑</button
+					>
+					<button
+						type="submit"
+						name="id"
+						value={question.id}
+						formaction="?/moveDown"
+						disabled={i === data.questions.length - 1}>↓</button
+					>
+					<button
+						type="submit"
+						name="id"
+						value={question.id}
+						formaction="?/delete"
+						class="deleteButton">✕</button
+					>
+				</div>
 			</div>
 			<div>
 				<label for={question.id}><b>{question.type}</b> Label</label>
@@ -167,7 +183,7 @@
 	}
 
 	fieldset button {
-		padding: 0 1rem;
+		width: 2.5rem;
 	}
 
 	#addQuestion {
@@ -194,5 +210,10 @@
 
 	.flex-row > div {
 		flex-grow: 1;
+	}
+
+	.actions {
+		justify-content: end;
+		gap: 0.5rem;
 	}
 </style>
