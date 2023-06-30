@@ -13,10 +13,14 @@ export const actions = {
 		await trpc(locals.auth).questions.create(formData.get('type') as QuestionType);
 	},
 
-	swap: async ({ locals, request }) => {
+	moveDown: async ({ locals, request }) => {
 		const formData = await request.formData();
-		const order = Number(formData.get('order'));
-		await trpc(locals.auth).questions.swap([order, order + 1]);
+		await trpc(locals.auth).questions.moveDown(formData.get('id') as string);
+	},
+
+	moveUp: async ({ locals, request }) => {
+		const formData = await request.formData();
+		await trpc(locals.auth).questions.moveUp(formData.get('id') as string);
 	},
 
 	update: async ({ locals, request }) => {

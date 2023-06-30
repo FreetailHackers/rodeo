@@ -16,7 +16,7 @@
 		}}
 >
 	<!-- NOTE: see corresponding +page.server.ts to see how form data is structured and parsed -->
-	{#each data.questions as question (question.id)}
+	{#each data.questions as question, i (question.id)}
 		<fieldset>
 			<input type="hidden" name={question.id + '_type'} value={question.type} />
 			<!-- Fields common to all question types -->
@@ -28,17 +28,17 @@
 					<button type="submit" disabled style="display: none" aria-hidden="true" />
 					<button
 						type="submit"
-						name="order"
-						value={question.order - 1}
-						formaction="?/swap"
-						disabled={question.order === 0}>↑</button
+						name="id"
+						value={question.id}
+						formaction="?/moveUp"
+						disabled={i === 0}>↑</button
 					>
 					<button
 						type="submit"
-						name="order"
-						value={question.order}
-						formaction="?/swap"
-						disabled={question.order === data.questions.length - 1}>↓</button
+						name="id"
+						value={question.id}
+						formaction="?/moveDown"
+						disabled={i === data.questions.length - 1}>↓</button
 					>
 					<button
 						type="submit"

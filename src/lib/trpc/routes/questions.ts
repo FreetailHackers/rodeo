@@ -53,38 +53,71 @@ export const questionsRouter = t.router({
 		}),
 
 	/**
-	 * Takes two question orders (indices) and swaps the questions at
-	 * those orders. User must be an admin.
+	 * Moves a question one position down. User must be an admin. Does
+	 * nothing if the question is already at the bottom.
 	 */
-	swap: t.procedure
+	moveDown: t.procedure
 		.use(authenticate(['ADMIN']))
-		.input(z.array(z.number()))
+		.input(z.string())
 		.mutation(async (req): Promise<void> => {
-			if (req.input.length != 2) {
-				throw new Error('Expected exactly two question orders.');
+			const question = await prisma.question.findUniqueOrThrow({
+				where: { id: req.input },
+			});
+			const nextQuestion = await prisma.question.findFirst({
+				where: { order: { gt: question.order } },
+				orderBy: [{ order: 'asc' }],
+			});
+			if (nextQuestion === null) {
+				return;
 			}
-			const questions = await getQuestions();
-			if (
-				req.input[0] < 0 ||
-				req.input[0] >= questions.length ||
-				req.input[1] < 0 ||
-				req.input[1] >= questions.length
-			) {
-				throw new Error('Question order out of bounds.');
-			}
-			// We must temporarily set the first question's order to -1
-			// to avoid a unique constraint violation.
+			// To swap the question orders, we must temporarily set the first
+			// question's order to -1 to avoid a unique constraint violation.
 			const clearX = prisma.question.update({
-				where: { order: req.input[0] },
+				where: { id: question.id },
 				data: { order: -1 },
 			});
 			const setYtoX = prisma.question.update({
-				where: { order: req.input[1] },
-				data: { order: req.input[0] },
+				where: { id: nextQuestion.id },
+				data: { order: question.order },
 			});
 			const setXtoY = prisma.question.update({
 				where: { order: -1 },
-				data: { order: req.input[1] },
+				data: { order: nextQuestion.order },
+			});
+			await prisma.$transaction([clearX, setYtoX, setXtoY]);
+		}),
+
+	/**
+	 * Moves a question one position up. User must be an admin. Does
+	 * nothing if the question is already at the top.
+	 */
+	moveUp: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(z.string())
+		.mutation(async (req): Promise<void> => {
+			const question = await prisma.question.findUniqueOrThrow({
+				where: { id: req.input },
+			});
+			const prevQuestion = await prisma.question.findFirst({
+				where: { order: { lt: question.order } },
+				orderBy: [{ order: 'desc' }],
+			});
+			if (prevQuestion === null) {
+				return;
+			}
+			// To swap the question orders, we must temporarily set the first
+			// question's order to -1 to avoid a unique constraint violation.
+			const clearX = prisma.question.update({
+				where: { id: question.id },
+				data: { order: -1 },
+			});
+			const setYtoX = prisma.question.update({
+				where: { id: prevQuestion.id },
+				data: { order: question.order },
+			});
+			const setXtoY = prisma.question.update({
+				where: { order: -1 },
+				data: { order: prevQuestion.order },
 			});
 			await prisma.$transaction([clearX, setYtoX, setXtoY]);
 		}),
