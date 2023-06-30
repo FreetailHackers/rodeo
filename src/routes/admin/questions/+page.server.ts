@@ -13,6 +13,16 @@ export const actions = {
 		await trpc(locals.auth).questions.create(formData.get('type') as QuestionType);
 	},
 
+	moveDown: async ({ locals, request }) => {
+		const formData = await request.formData();
+		await trpc(locals.auth).questions.moveDown(formData.get('id') as string);
+	},
+
+	moveUp: async ({ locals, request }) => {
+		const formData = await request.formData();
+		await trpc(locals.auth).questions.moveUp(formData.get('id') as string);
+	},
+
 	update: async ({ locals, request }) => {
 		const formData = Object.fromEntries(await request.formData());
 		// We have to do a bit of transformation on the form data to
