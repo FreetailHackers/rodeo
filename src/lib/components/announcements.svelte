@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import type { Announcement } from '@prisma/client';
 	import SvelteMarkdown from 'svelte-markdown';
+	import MarkdownEditor from './markdown-editor.svelte';
 
 	export let admin: boolean;
 
@@ -10,7 +11,8 @@
 
 {#if admin}
 	<form method="POST" action="?/announce" use:enhance>
-		<textarea name="announcement" placeholder="Make an announcement here..." required />
+		<MarkdownEditor name="announcement" placeholder="Make an announcement here..." required />
+		<br />
 		<button>Announce</button>
 	</form>
 {/if}
@@ -65,10 +67,6 @@
 
 	span {
 		display: flex;
-	}
-
-	textarea {
-		margin-bottom: 1rem;
 	}
 
 	.deleteButton {

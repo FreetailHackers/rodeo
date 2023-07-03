@@ -132,15 +132,6 @@
 						name={question.id + '_options'}
 						id={question.id + '_options'}
 						placeholder="Write one option per line, like this:&#13;OPTION 1&#13;OPTION 2&#13;OPTION 3"
-						on:input={() => {
-							// Auto resize textarea to fit content
-							const textarea = document.getElementById(question.id + '_options');
-							// Height should be at least 4 lines for placeholder text, plus 2 lines of padding
-							// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-							// @ts-ignore (can't type this because Svelte doesn't support TS in HTML)
-							textarea.style.height = Math.max(4, textarea.value.split('\n').length) + 2 + 'lh';
-						}}
-						style="height: {Math.max(4, question.options.length) + 2}lh"
 					/>
 				</div>
 			{/if}
