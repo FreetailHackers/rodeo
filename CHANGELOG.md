@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.5.0
+
+[ADDED]
+
+- Registration questions can now be reordered
+- Ability for admins to export hacker applications to a CSV
+
 ## v0.4.2
 
 [FIXED]

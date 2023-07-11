@@ -3,6 +3,8 @@
 	import fuzzysort from 'fuzzysort';
 	import UserCard from '$lib/components/user-card.svelte';
 	import type { Prisma } from '@prisma/client';
+	import { Parser } from '@json2csv/plainjs';
+	import { onMount } from 'svelte';
 
 	export let data;
 
@@ -29,7 +31,7 @@
 	} else {
 		filter = 'UNSUPPORTED';
 	}
-	$: filtered = data.users;
+	let filtered = data.users;
 	$: selected = filtered.map(() => false).slice(0, DISPLAY_LIMIT);
 	let selectAll: HTMLInputElement;
 
@@ -73,6 +75,31 @@
 			selectAll.indeterminate = false;
 		}
 	}
+
+	// Helper function to replace question IDs with their labels
+	function prepare(user: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>) {
+		function prepareApplication(application: Record<string, unknown>) {
+			let prepared: Record<string, unknown> = {};
+			for (const question of data.questions) {
+				prepared[question.label] = application[question.id];
+			}
+			return prepared;
+		}
+		// "Flatten" User object so CSV is generated correctly
+		return {
+			...user.authUser,
+			...prepareApplication(user.application as Record<string, unknown>),
+			decision: user.decision?.status,
+			...(user.scanCount as object),
+		};
+	}
+
+	let url: string;
+	onMount(() => {
+		const parser = new Parser();
+		const csv = parser.parse(filtered.map(prepare));
+		url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+	});
 
 	// Validate that the selected action can be applied to the selected users
 	// Throws an error if the action is invalid, otherwise returns a string
@@ -129,6 +156,7 @@
 </script>
 
 <h1>Master Database</h1>
+<p><a href={url} download="users.csv">Export as CSV</a></p>
 
 <!-- Search filters -->
 <fieldset id="filter">
