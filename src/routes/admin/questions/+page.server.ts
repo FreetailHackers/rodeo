@@ -91,6 +91,7 @@ export const actions = {
 			}
 		}
 		await trpc(locals.auth).questions.update(questions);
+		return 'Saved questions!';
 	},
 
 	delete: async ({ locals, request }) => {

@@ -6,6 +6,7 @@
 
 - Registration questions can now be reordered
 - Ability for admins to export hacker applications to a CSV
+- Question labels support Markdown
 
 ## v0.4.2
 

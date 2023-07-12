@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import SvelteMarkdown from 'svelte-markdown';
 
 	export let data;
 	$: application = data.user.application as Record<string, unknown>;
@@ -10,7 +11,6 @@
 
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 	let saveButton: HTMLButtonElement;
-	let saveButtonText = typeof form === 'string' ? form : 'Save';
 
 	let confirmAction = '';
 	let dialog: HTMLDialogElement;
@@ -130,7 +130,7 @@
 			}}
 			on:input={() => {
 				saveButton.disabled = true;
-				saveButtonText = 'Autosaving...';
+				saveButton.textContent = 'Autosaving...';
 				if (debounceTimer !== undefined) {
 					clearTimeout(debounceTimer);
 				}
@@ -138,7 +138,7 @@
 					debounceTimer = undefined;
 					applicationForm.requestSubmit();
 					saveButton.disabled = false;
-					saveButtonText = 'Save';
+					saveButton.textContent = 'Save and finish later';
 				}, 1000);
 			}}
 			autocomplete="off"
@@ -146,7 +146,7 @@
 			{#each data.questions as question}
 				<div class={'question ' + question.type.toLowerCase()}>
 					<label for={question.id}>
-						{question.label}
+						<SvelteMarkdown source={question.label} isInline />
 						{#if question.required}*{/if}
 					</label>
 					<!-- svelte-ignore a11y-autofocus -->
@@ -208,8 +208,12 @@
 				</div>
 			{/each}
 
-			<button bind:this={saveButton}>{saveButtonText}</button>
-			<button id="submit" formaction="?/finish">Submit Application</button>
+			<div id="actions-container">
+				<div id="actions">
+					<button bind:this={saveButton}>Save and finish later</button>
+					<button id="submit" formaction="?/finish">Submit application</button>
+				</div>
+			</div>
 		</form>
 
 		<!-- Feedback -->
@@ -252,22 +256,39 @@
 		gap: 0;
 	}
 
-	button {
-		margin-bottom: 0.5rem;
-	}
-
 	#rsvp > * {
 		flex-grow: 1;
-	}
-
-	#submit {
-		margin: 0;
 	}
 
 	#status {
 		border: 2px solid black;
 		padding: 0 1rem;
 		text-align: center;
+		margin-bottom: 1rem;
+	}
+
+	#actions-container {
+		position: sticky;
+		bottom: 0;
+		padding-top: 1rem;
+		background: linear-gradient(transparent, white);
+	}
+
+	#actions {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		gap: 0.5rem;
+		position: sticky;
+		padding-bottom: 1rem;
+		background: white;
+	}
+
+	#actions > * {
+		flex: 1;
+	}
+
+	#status button {
 		margin-bottom: 1rem;
 	}
 </style>
