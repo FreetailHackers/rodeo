@@ -159,6 +159,7 @@
 							placeholder={question.placeholder}
 							autofocus={question.id === focusedQuestionId}
 							on:focus={() => (focusedQuestionId = question.id)}
+							required={question.required}
 						/>
 					{:else if question.type === 'PARAGRAPH'}
 						<textarea
@@ -168,6 +169,7 @@
 							placeholder={question.placeholder}
 							autofocus={question.id === focusedQuestionId}
 							on:focus={() => (focusedQuestionId = question.id)}
+							required={question.required}
 						/>
 					{:else if question.type === 'NUMBER'}
 						<input
@@ -181,6 +183,7 @@
 							placeholder={question.placeholder}
 							autofocus={question.id === focusedQuestionId}
 							on:focus={() => (focusedQuestionId = question.id)}
+							required={question.required}
 						/>
 					{:else if question.type === 'DROPDOWN'}
 						<select
@@ -189,6 +192,7 @@
 							bind:value={application[question.id]}
 							autofocus={question.id === focusedQuestionId}
 							on:focus={() => (focusedQuestionId = question.id)}
+							required={question.required}
 						>
 							<option value="">Select...</option>
 							{#each question.options as option}
@@ -203,6 +207,7 @@
 							checked={Boolean(application[question.id])}
 							autofocus={question.id === focusedQuestionId}
 							on:focus={() => (focusedQuestionId = question.id)}
+							required={question.required}
 						/>
 					{/if}
 				</div>
@@ -211,7 +216,15 @@
 			<div id="actions-container">
 				<div id="actions">
 					<button bind:this={saveButton}>Save and finish later</button>
-					<button id="submit" formaction="?/finish">Submit application</button>
+					<button
+						id="submit"
+						formaction="?/finish"
+						on:click={() => {
+							clearTimeout(debounceTimer);
+							saveButton.disabled = false;
+							saveButton.textContent = 'Save and finish later';
+						}}>Submit application</button
+					>
 				</div>
 			</div>
 		</form>
