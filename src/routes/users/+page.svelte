@@ -310,6 +310,7 @@
 						<span
 							class="{user.decision?.status.toLowerCase() ??
 								user.authUser.status.toLowerCase()} dot"
+							title={user.decision?.status ?? user.authUser.status}
 						/>
 					</summary>
 					<div class="user">
@@ -334,7 +335,6 @@
 
 	li {
 		border: 2px solid black;
-		padding: 1rem;
 		/* simulate border-collapse */
 		margin-top: -2px;
 	}
@@ -342,6 +342,7 @@
 	#header {
 		display: flex;
 		flex-direction: column;
+		padding: 1rem;
 	}
 
 	#actions select {
@@ -379,6 +380,9 @@
 
 	summary {
 		list-style: none;
+		padding: 1rem;
+		cursor: pointer;
+		transition: margin 0.1s ease-out;
 	}
 
 	summary a {
@@ -401,6 +405,22 @@
 		max-width: 20px;
 	}
 
+	details[open] summary {
+		margin-bottom: 2rem;
+	}
+
+	.user {
+		/*
+		Possible HACK: for reasons I don't fully understand, the above
+		selector needs a sufficiently large margin-bottom for the
+		<details> opening animation to work. However, this leaves too
+		much space between the <details> and the <div> below it, so we
+		compensate for that here.
+		*/
+		margin-top: -2rem;
+		margin-bottom: 1rem;
+	}
+
 	summary::after {
 		content: ' ►';
 	}
@@ -411,10 +431,6 @@
 
 	details > div {
 		padding: 0 1rem 0 1rem;
-	}
-
-	.user {
-		padding-left: 1rem;
 	}
 
 	.accepted {
