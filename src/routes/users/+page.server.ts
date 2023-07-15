@@ -31,7 +31,7 @@ export const actions = {
 			return 'Saved statuses!';
 		} else if (action === 'role') {
 			const roles = [formData.get('user-role') as Role];
-			await trpc(locals.auth).users.setRoles({ roles, ids }); 		
+			await trpc(locals.auth).users.setRoles({ roles, ids });
 			return 'Saved roles!';
 		} else if (action === 'release') {
 			await trpc(locals.auth).admissions.releaseDecisions(ids);

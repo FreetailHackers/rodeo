@@ -26,5 +26,5 @@ export async function authenticate(auth: AuthRequest, roles?: Role[]): Promise<U
 }
 
 function hasAllRoles(userRoles: Role[], allowedRoles: Role[]): boolean {
-	return userRoles.every(userRole => allowedRoles.includes(userRole));
+	return userRoles.every((userRole) => allowedRoles.includes(userRole));
 }

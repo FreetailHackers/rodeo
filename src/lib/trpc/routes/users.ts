@@ -432,61 +432,61 @@ export const usersRouter = t.router({
 	 * Bulk sets the roles of all the users. User must be an admin.
 	 */
 	setRoles: t.procedure
-	.use(authenticate(['ADMIN']))
-	.input(
-	  z.object({
-		roles: z.array(z.nativeEnum(Role)),
-		ids: z.array(z.string()),
-	  })
-	)
-	.mutation(async (req): Promise<void> => {
-	  if (req.input.ids.includes(req.ctx.user.id)) {
-		throw new Error('You cannot change your own roles.');
-	  }
-  
-	  const users = await prisma.authUser.findMany({
-		where: { id: { in: req.input.ids } },
-		select: { id: true, role: true },
-	  });
-  
-	  const updatedUsers = users.map((user) => ({
-		...user,
-		role: req.input.roles.filter((role) => !user.role.includes(role)),
-	  }));
-  
-	  await prisma.authUser.updateMany({
-		data: updatedUsers.map(({ id, role }) => ({
-		  where: { id },
-		  data: { role: { set: role } },
-		})),
-	  });
-	}),
+		.use(authenticate(['ADMIN']))
+		.input(
+			z.object({
+				roles: z.array(z.nativeEnum(Role)),
+				ids: z.array(z.string()),
+			})
+		)
+		.mutation(async (req): Promise<void> => {
+			if (req.input.ids.includes(req.ctx.user.id)) {
+				throw new Error('You cannot change your own roles.');
+			}
+
+			const users = await prisma.authUser.findMany({
+				where: { id: { in: req.input.ids } },
+				select: { id: true, role: true },
+			});
+
+			const updatedUsers = users.map((user) => ({
+				...user,
+				role: req.input.roles.filter((role) => !user.role.includes(role)),
+			}));
+
+			await prisma.authUser.updateMany({
+				data: updatedUsers.map(({ id, role }) => ({
+					where: { id },
+					data: { role: { set: role } },
+				})),
+			});
+		}),
 
 	/**
 	 * Bulk removes the roles of all the users. User must be an admin.
 	 */
 	removeRoles: t.procedure
-	.use(authenticate(['ADMIN']))
-	.input(
-		z.object({
-			roles: z.array(z.nativeEnum(Role)),
-			ids: z.array(z.string()),
-		})
-	)
-	.mutation(async (req): Promise<void> => {
-		if (req.input.ids.includes(req.ctx.user.id)) {
-			throw new Error('You cannot change your own roles.');
-		}
-		const users = await prisma.authUser.findMany({
-			where: { id: { in: req.input.ids } },
-		});
-
-		for (const user of users) {
-			const updatedRoles = user.role.filter((role) => !req.input.roles.includes(role));
-			await prisma.authUser.update({
-				where: { id: user.id },
-				data: { role: updatedRoles },
+		.use(authenticate(['ADMIN']))
+		.input(
+			z.object({
+				roles: z.array(z.nativeEnum(Role)),
+				ids: z.array(z.string()),
+			})
+		)
+		.mutation(async (req): Promise<void> => {
+			if (req.input.ids.includes(req.ctx.user.id)) {
+				throw new Error('You cannot change your own roles.');
+			}
+			const users = await prisma.authUser.findMany({
+				where: { id: { in: req.input.ids } },
 			});
-		}
-	}),	
+
+			for (const user of users) {
+				const updatedRoles = user.role.filter((role) => !req.input.roles.includes(role));
+				await prisma.authUser.update({
+					where: { id: user.id },
+					data: { role: updatedRoles },
+				});
+			}
+		}),
 });

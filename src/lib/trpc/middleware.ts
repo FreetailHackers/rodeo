@@ -22,5 +22,5 @@ export function authenticate(roles?: Role[]) {
 }
 
 function hasAllRoles(userRoles: Role[], allowedRoles: Role[]): boolean {
-	return userRoles.every(userRole => allowedRoles.includes(userRole));
+	return userRoles.every((userRole) => allowedRoles.includes(userRole));
 }
