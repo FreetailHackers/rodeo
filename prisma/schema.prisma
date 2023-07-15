@@ -16,7 +16,7 @@ model AuthUser {
   auth_key     AuthKey[]
   // Custom attributes required for authentication/authorization flows
   email        String        @unique
-  role         Role          @default(HACKER)
+  role         Role[]          @default([HACKER])
   status       Status        @default(CREATED)
   user         User?
 

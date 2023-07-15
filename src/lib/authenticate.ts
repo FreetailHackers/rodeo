@@ -16,11 +16,15 @@ export async function authenticate(auth: AuthRequest, roles?: Role[]): Promise<U
 	if (user === null) {
 		throw redirect(303, '/?unauthenticated');
 	}
-	if (roles !== undefined && !roles.includes(user.role)) {
+	if (roles !== undefined && !hasAllRoles(user.role, roles)) {
 		throw redirect(303, '/?forbidden');
 	}
 	if (user.status === 'CREATED') {
 		throw redirect(303, '/unverified');
 	}
 	return user;
+}
+
+function hasAllRoles(userRoles: Role[], allowedRoles: Role[]): boolean {
+	return userRoles.every(userRole => allowedRoles.includes(userRole));
 }

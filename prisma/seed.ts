@@ -25,7 +25,7 @@ async function register(email: string, password: string): Promise<string> {
 		primaryKey: null,
 		attributes: {
 			email: email,
-			role: 'HACKER',
+			role: ['HACKER'],
 			status: 'VERIFIED',
 		},
 	});
