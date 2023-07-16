@@ -12,11 +12,15 @@ export function authenticate(roles?: Role[]) {
 		if (user === null) {
 			throw new Error('Unauthorized');
 		}
-		if (roles !== undefined && !roles.includes(user.role)) {
+		if (roles !== undefined && !hasAnyRole(user.roles, roles)) {
 			throw new Error('Forbidden');
 		}
 		return next({
 			ctx: { user },
 		});
 	});
+}
+
+function hasAnyRole(userRoles: Role[], allowedRoles: Role[]): boolean {
+	return userRoles.some((userRole) => allowedRoles.includes(userRole));
 }

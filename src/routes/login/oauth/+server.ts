@@ -72,7 +72,7 @@ export async function _upsert(providerSession: ProviderSession, email: string) {
 	if (user === null) {
 		user = await providerSession.createUser({
 			email,
-			role: 'HACKER',
+			roles: ['HACKER'],
 			status: 'VERIFIED',
 		});
 	} else if (providerSession.existingUser === null) {
