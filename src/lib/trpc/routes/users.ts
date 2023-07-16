@@ -429,13 +429,39 @@ export const usersRouter = t.router({
 		}),
 
 	/**
-	 * Bulk sets the roles of all the users. User must be an admin.
+	 * Bulk adds a role to all users. User must be an admin.
 	 */
-	setRoles: t.procedure
+	addRole: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(
 			z.object({
-				roles: z.array(z.nativeEnum(Role)),
+				role: z.nativeEnum(Role),
+				ids: z.array(z.string()),
+			})
+		)
+		.mutation(async (req): Promise<void> => {
+			if (req.input.ids.includes(req.ctx.user.id)) {
+				throw new Error('You cannot change your own role.');
+			}
+
+			await prisma.authUser.updateMany({
+				where: { id: { in: req.input.ids } },
+				data: {
+					roles: {
+						push: req.input.role,
+					},
+				},
+			});
+		}),
+
+	/**
+	 * Bulk removes a role from all users. The user must be an admin.
+	 */
+	removeRole: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(
+			z.object({
+				role: z.nativeEnum(Role),
 				ids: z.array(z.string()),
 			})
 		)
@@ -449,43 +475,11 @@ export const usersRouter = t.router({
 				select: { id: true, roles: true },
 			});
 
-			const updatedUsers = users.map((user) => ({
-				...user,
-				roles: req.input.roles.filter((role) => !user.roles.includes(role)),
-			}));
-
-			await prisma.authUser.updateMany({
-				data: updatedUsers.map(({ id, roles }) => ({
-					where: { id },
-					data: { roles: { set: roles } },
-				})),
-			});
-		}),
-
-	/**
-	 * Bulk removes the roles of all the users. User must be an admin.
-	 */
-	removeRoles: t.procedure
-		.use(authenticate(['ADMIN']))
-		.input(
-			z.object({
-				roles: z.array(z.nativeEnum(Role)),
-				ids: z.array(z.string()),
-			})
-		)
-		.mutation(async (req): Promise<void> => {
-			if (req.input.ids.includes(req.ctx.user.id)) {
-				throw new Error('You cannot change your own roles.');
-			}
-			const users = await prisma.authUser.findMany({
-				where: { id: { in: req.input.ids } },
-			});
-
 			for (const user of users) {
-				const updatedRoles = user.roles.filter((role) => !req.input.roles.includes(role));
+				const updatedRoles = user.roles.filter((role) => role !== req.input.role);
 				await prisma.authUser.update({
 					where: { id: user.id },
-					data: { roles: updatedRoles },
+					data: { roles: { set: updatedRoles } },
 				});
 			}
 		}),

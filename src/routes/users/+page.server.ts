@@ -29,10 +29,14 @@ export const actions = {
 			const status = formData.get('user-status') as Status;
 			await trpc(locals.auth).users.setStatuses({ status, ids });
 			return 'Saved statuses!';
-		} else if (action === 'role') {
-			const roles = [formData.get('user-role') as Role];
-			await trpc(locals.auth).users.setRoles({ roles, ids });
-			return 'Saved roles!';
+		} else if (action === 'add-role') {
+			const role = formData.get('user-role') as Role;
+			await trpc(locals.auth).users.addRole({ role, ids });
+			return 'Added roles!';
+		} else if (action === 'remove-role') {
+			const role = formData.get('user-role') as Role;
+			await trpc(locals.auth).users.removeRole({ role, ids });
+			return 'Removed roles!';
 		} else if (action === 'release') {
 			await trpc(locals.auth).admissions.releaseDecisions(ids);
 			return 'Released decisions!';
