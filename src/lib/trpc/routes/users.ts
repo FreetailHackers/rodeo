@@ -49,7 +49,7 @@ export const usersRouter = t.router({
 						});
 					}
 				} else {
-					if (!user.role.includes('ADMIN')) {
+					if (!user.roles.includes('ADMIN')) {
 						throw new Error('Forbidden');
 					}
 					return await prisma.user.findUniqueOrThrow({
@@ -229,7 +229,7 @@ export const usersRouter = t.router({
 					primaryKey: null,
 					attributes: {
 						email: req.input.email,
-						role: ['HACKER'],
+						roles: ['HACKER'],
 						status: 'CREATED',
 					},
 				});
@@ -446,18 +446,18 @@ export const usersRouter = t.router({
 
 			const users = await prisma.authUser.findMany({
 				where: { id: { in: req.input.ids } },
-				select: { id: true, role: true },
+				select: { id: true, roles: true },
 			});
 
 			const updatedUsers = users.map((user) => ({
 				...user,
-				role: req.input.roles.filter((role) => !user.role.includes(role)),
+				roles: req.input.roles.filter((role) => !user.roles.includes(role)),
 			}));
 
 			await prisma.authUser.updateMany({
-				data: updatedUsers.map(({ id, role }) => ({
+				data: updatedUsers.map(({ id, roles }) => ({
 					where: { id },
-					data: { role: { set: role } },
+					data: { roles: { set: roles } },
 				})),
 			});
 		}),
@@ -482,10 +482,10 @@ export const usersRouter = t.router({
 			});
 
 			for (const user of users) {
-				const updatedRoles = user.role.filter((role) => !req.input.roles.includes(role));
+				const updatedRoles = user.roles.filter((role) => !req.input.roles.includes(role));
 				await prisma.authUser.update({
 					where: { id: user.id },
-					data: { role: updatedRoles },
+					data: { roles: updatedRoles },
 				});
 			}
 		}),

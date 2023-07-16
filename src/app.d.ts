@@ -22,7 +22,7 @@ declare global {
 declare global {
 	namespace Lucia {
 		type Auth = import('$lib/lucia').Auth;
-		type UserAttributes = { email: string; role: Role[]; status: Status };
+		type UserAttributes = { email: string; roles: Role[]; status: Status };
 	}
 }
 export {};

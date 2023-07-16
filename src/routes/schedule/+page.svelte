@@ -85,7 +85,7 @@
 			{#if event.start.toDateString() === displayDate.toDateString()}
 				<li class={currentDateTime > event.end ? event.type + ' passed' : event.type}>
 					<!-- Element removal box -->
-					{#if data.user?.role.includes('ADMIN')}
+					{#if data.user?.roles.includes('ADMIN')}
 						<div class="modification-buttons">
 							<form method="POST" use:enhance>
 								<input type="hidden" name="id" value={event.id} />
@@ -116,7 +116,7 @@
 		{/each}
 	</ul>
 </div>
-{#if data.user?.role.includes('ADMIN')}
+{#if data.user?.roles.includes('ADMIN')}
 	<hr />
 	<h2>{editedEvent == null ? 'Create New Event' : 'Edit Event'}</h2>
 	<form method="POST" action={editedEvent == null ? '?/create' : '?/saveEdit'} use:enhance>

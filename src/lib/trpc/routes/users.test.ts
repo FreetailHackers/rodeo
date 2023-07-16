@@ -10,7 +10,7 @@ const sampleHacker: Prisma.UserGetPayload<{ include: { authUser: true } }> = {
 	authUser: {
 		id: 'hacker',
 		email: 'hacker@yopmail.com',
-		role: ['HACKER'],
+		roles: ['HACKER'],
 		status: 'VERIFIED',
 	},
 	application: {},
@@ -22,7 +22,7 @@ const sampleAdmin: Prisma.UserGetPayload<{ include: { authUser: true } }> = {
 	authUser: {
 		id: 'admin',
 		email: 'admin@yopmail.com',
-		role: ['ADMIN'],
+		roles: ['ADMIN'],
 		status: 'CREATED',
 	},
 	application: {},

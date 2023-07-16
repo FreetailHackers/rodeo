@@ -30,7 +30,7 @@ print('This is a multi-line code block.')
 `;
 </script>
 
-{#if data.user?.role.includes('ADMIN')}
+{#if data.user?.roles.includes('ADMIN')}
 	<form
 		method="POST"
 		use:enhance={() => {

@@ -16,7 +16,7 @@ export async function authenticate(auth: AuthRequest, roles?: Role[]): Promise<U
 	if (user === null) {
 		throw redirect(303, '/?unauthenticated');
 	}
-	if (roles !== undefined && !hasAllRoles(user.role, roles)) {
+	if (roles !== undefined && !hasAnyRole(user.roles, roles)) {
 		throw redirect(303, '/?forbidden');
 	}
 	if (user.status === 'CREATED') {
@@ -25,6 +25,6 @@ export async function authenticate(auth: AuthRequest, roles?: Role[]): Promise<U
 	return user;
 }
 
-function hasAllRoles(userRoles: Role[], allowedRoles: Role[]): boolean {
-	return userRoles.every((userRole) => allowedRoles.includes(userRole));
+function hasAnyRole(userRoles: Role[], allowedRoles: Role[]): boolean {
+	return userRoles.some((userRole) => allowedRoles.includes(userRole));
 }

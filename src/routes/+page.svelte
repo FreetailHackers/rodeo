@@ -22,7 +22,7 @@
 
 	<!-- Admin announcements panel -->
 	<h2>Announcements</h2>
-	<Announcements announcements={data.announcements} admin={data.user.role.includes('ADMIN')} />
+	<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
 	<form method="POST" action="?/logout" use:enhance>
 		<button type="submit" id="logout">Logout</button>
 	</form>

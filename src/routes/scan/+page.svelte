@@ -63,7 +63,7 @@
 	{#if user === null}
 		<p class="error">Could not find this user in the database.</p>
 		<button type="button" on:click={() => dialog.close()}>Close</button>
-	{:else if user.authUser.role.includes('HACKER') && user.authUser.status !== 'CONFIRMED'}
+	{:else if user.authUser.roles.includes('HACKER') && user.authUser.status !== 'CONFIRMED'}
 		<p class="error">This user has not confirmed their attendance.</p>
 		<button type="button" on:click={() => dialog.close()}>Close</button>
 	{:else}

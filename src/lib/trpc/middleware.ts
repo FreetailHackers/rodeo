@@ -12,7 +12,7 @@ export function authenticate(roles?: Role[]) {
 		if (user === null) {
 			throw new Error('Unauthorized');
 		}
-		if (roles !== undefined && !hasAllRoles(user.role, roles)) {
+		if (roles !== undefined && !hasAnyRole(user.roles, roles)) {
 			throw new Error('Forbidden');
 		}
 		return next({
@@ -21,6 +21,6 @@ export function authenticate(roles?: Role[]) {
 	});
 }
 
-function hasAllRoles(userRoles: Role[], allowedRoles: Role[]): boolean {
-	return userRoles.every((userRole) => allowedRoles.includes(userRole));
+function hasAnyRole(userRoles: Role[], allowedRoles: Role[]): boolean {
+	return userRoles.some((userRole) => allowedRoles.includes(userRole));
 }
