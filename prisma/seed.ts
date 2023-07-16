@@ -25,7 +25,7 @@ async function register(email: string, password: string): Promise<string> {
 		primaryKey: null,
 		attributes: {
 			email: email,
-			role: 'HACKER',
+			roles: ['HACKER'],
 			status: 'VERIFIED',
 		},
 	});
@@ -61,7 +61,7 @@ async function main() {
 	// Create example hacker and admin
 	await register('hacker@yopmail.com', 'hacker@yopmail.com');
 	const adminId = await register('admin@yopmail.com', 'admin@yopmail.com');
-	await prisma.authUser.update({ where: { id: adminId }, data: { role: 'ADMIN' } });
+	await prisma.authUser.update({ where: { id: adminId }, data: { roles: ['ADMIN'] } });
 
 	// Create example announcement
 	await prisma.announcement.deleteMany();
