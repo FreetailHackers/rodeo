@@ -61,7 +61,7 @@ async function main() {
 	// Create example hacker and admin
 	await register('hacker@yopmail.com', 'hacker@yopmail.com');
 	const adminId = await register('admin@yopmail.com', 'admin@yopmail.com');
-	await prisma.authUser.update({ where: { id: adminId }, data: { roles: 'ADMIN' } });
+	await prisma.authUser.update({ where: { id: adminId }, data: { roles: ['ADMIN'] } });
 
 	// Create example announcement
 	await prisma.announcement.deleteMany();

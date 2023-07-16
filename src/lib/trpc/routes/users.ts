@@ -444,14 +444,20 @@ export const usersRouter = t.router({
 				throw new Error('You cannot change your own role.');
 			}
 
-			await prisma.authUser.updateMany({
+			const users = await prisma.authUser.findMany({
 				where: { id: { in: req.input.ids } },
-				data: {
-					roles: {
-						push: req.input.role,
-					},
-				},
+				select: { id: true, roles: true },
 			});
+
+			for (const user of users) {
+				if (!user.roles.includes(req.input.role)) {
+					const updatedRoles = [...user.roles, req.input.role];
+					await prisma.authUser.update({
+						where: { id: user.id },
+						data: { roles: { set: updatedRoles } },
+					});
+				}
+			}
 		}),
 
 	/**

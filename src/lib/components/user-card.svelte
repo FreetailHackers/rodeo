@@ -7,7 +7,7 @@
 	$: application = user.application as Record<string, unknown>;
 </script>
 
-<p><b>Role</b> {user.authUser?.roles}</p>
+<p><b>Role</b> {user.authUser?.roles.join(', ')}</p>
 <p>
 	<b>Status</b>
 	{user.authUser?.status}

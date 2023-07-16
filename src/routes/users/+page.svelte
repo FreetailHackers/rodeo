@@ -136,13 +136,23 @@
 			} selected users will have their status immediately set.
 					This will NOT send any notifications and WILL delete any pending (unreleased) decisions.`;
 		}
-		if (action === 'role') {
+		if (action === 'add-role') {
 			if (
 				filtered.filter((user, i) => selected[i] && user.authUserId === data.user.id).length > 0
 			) {
 				throw 'You cannot change your own role.';
 			}
-			return `${selected.filter(Boolean).length} selected users will have their role set.`;
+			return `${
+				selected.filter(Boolean).length
+			} selected users will have the chosen role assigned to them.`;
+		}
+		if (action === 'remove-role') {
+			if (
+				filtered.filter((user, i) => selected[i] && user.authUserId === data.user.id).length > 0
+			) {
+				throw 'You cannot change your own role.';
+			}
+			return `${selected.filter(Boolean).length} selected users will have the chosen role removed.`;
 		}
 		if (action === 'release') {
 			if (filtered.filter((user, i) => selected[i] && user.decision === null).length > 0) {
@@ -246,7 +256,7 @@
 					<input type="radio" name="action" id="add-role" bind:group={action} value="add-role" />
 					<label for="add-role">Add role:&nbsp;</label>
 					<span class="grow" />
-					<select name="user-role">
+					<select name="role-to-add">
 						<option value="HACKER">Hacker</option>
 						<option value="ADMIN">Admin</option>
 						<option value="ORGANIZER">Organizer</option>
@@ -265,7 +275,7 @@
 					/>
 					<label for="remove-role">Remove role:&nbsp;</label>
 					<span class="grow" />
-					<select name="user-role">
+					<select name="role-to-remove">
 						<option value="HACKER">Hacker</option>
 						<option value="ADMIN">Admin</option>
 						<option value="ORGANIZER">Organizer</option>
