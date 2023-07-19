@@ -217,13 +217,17 @@
 						<Select
 							name={question.id}
 							id={question.id}
-							containerStyles="border: 2px solid gray; border-radius: 0; padding-left: 5px;"
+							containerStyles="border: 2px solid gray; border-radius: 0; padding-left: 1rem; margin-top: 0px; min-height: 2.5rem;"
 							items={question.options.map((option) => ({ label: option, value: option }))}
 							on:change={(event) => {
 								handleMultipleSelection(event, question.id);
 							}}
-							multiple
+							on:clear={(event) => {
+								applicationForm.dispatchEvent(new Event('input'));
+							}}
 							value={application[question.id] || []}
+							required={question.required}
+							multiple
 						/>
 						{#if values[question.id]}
 							{#each values[question.id] as selectedValue}
