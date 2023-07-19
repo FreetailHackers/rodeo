@@ -124,7 +124,7 @@
 						/>
 					</div>
 				</div>
-			{:else if question.type === 'DROPDOWN'}
+			{:else if question.type === 'DROPDOWN' || question.type === 'MULTISELECT'}
 				<div>
 					<label for={question.id}>Options</label>
 					<textarea

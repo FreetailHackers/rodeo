@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import Select from 'svelte-select';
 
 	export let data;
 	$: application = data.user.application as Record<string, unknown>;
@@ -14,6 +15,14 @@
 
 	let confirmAction = '';
 	let dialog: HTMLDialogElement;
+
+	let values = {};
+
+	function handleMultipleSelection(event, questionId) {
+		const selectedValues = event.detail.map((option) => option.value);
+		application[questionId] = selectedValues;
+		applicationForm.dispatchEvent(new Event('input'));
+	}
 </script>
 
 <!-- Application status dialog -->
@@ -204,6 +213,23 @@
 							autofocus={question.id === focusedQuestionId}
 							on:focus={() => (focusedQuestionId = question.id)}
 						/>
+					{:else if question.type === 'MULTISELECT'}
+						<Select
+							name={question.id}
+							id={question.id}
+							containerStyles="border: 2px solid gray; border-radius: 0; padding-left: 5px;"
+							items={question.options.map((option) => ({ label: option, value: option }))}
+							on:change={(event) => {
+								handleMultipleSelection(event, question.id);
+							}}
+							multiple
+							value={application[question.id] || []}
+						/>
+						{#if values[question.id]}
+							{#each values[question.id] as selectedValue}
+								<input type="hidden" name={question.id} value={selectedValue} />
+							{/each}
+						{/if}
 					{/if}
 				</div>
 			{/each}
