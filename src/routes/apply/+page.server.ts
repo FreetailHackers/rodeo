@@ -43,7 +43,7 @@ function formToApplication(questions: Question[], formData: FormData) {
 				if (typeof firstValue === 'string') {
 					try {
 						const parsedValues = JSON.parse(firstValue);
-						selectedValues = parsedValues.map((item) => item.value);
+						selectedValues = parsedValues.map((item: { value: string }) => item.value);
 						application[question.id] = selectedValues;
 					} catch (error) {
 						console.error('Error parsing JSON:', error);
@@ -52,7 +52,6 @@ function formToApplication(questions: Question[], formData: FormData) {
 			}
 		}
 	}
-	console.log(application);
 	return application;
 }
 
