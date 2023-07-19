@@ -21,6 +21,7 @@
 	function handleMultipleSelection(event: CustomEvent<{ value: string }[]>, questionId: string) {
 		const selectedValues = event.detail.map((option) => option.value);
 		application[questionId] = selectedValues;
+		applicationForm.dispatchEvent(new Event('input'));
 	}
 </script>
 
