@@ -15,14 +15,6 @@
 
 	let confirmAction = '';
 	let dialog: HTMLDialogElement;
-
-	let values: Record<string, string[]> = {};
-
-	function handleMultipleSelection(event: CustomEvent<{ value: string }[]>, questionId: string) {
-		const selectedValues = event.detail.map((option) => option.value);
-		application[questionId] = selectedValues;
-		applicationForm.dispatchEvent(new Event('input'));
-	}
 </script>
 
 <!-- Application status dialog -->
@@ -217,24 +209,18 @@
 						<Select
 							name={question.id}
 							id={question.id}
-							items={question.options.map((option) => ({ label: option, value: option }))}
+							items={question.options}
 							on:change={(event) => {
-								handleMultipleSelection(event, question.id);
-							}}
-							on:clear={(event) => {
+								application[question.id] = event.detail;
 								applicationForm.dispatchEvent(new Event('input'));
 							}}
-							value={application[question.id] || []}
+							on:clear={() => applicationForm.dispatchEvent(new Event('input'))}
+							value={application[question.id]}
 							required={question.required}
 							multiple
-							containerStyles="border: 2px solid gray; border-radius: 0; padding-left: 1rem; margin-top: 0px; min-height: 2.5rem;"
-							inputStyles="align-items: center; height: inherit;"
+							containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem; padding-left: 10px;"
+							inputStyles="align-items: center; height: inherit; margin: 0;"
 						/>
-						{#if values[question.id]}
-							{#each values[question.id] as selectedValue}
-								<input type="hidden" name={question.id} value={selectedValue} />
-							{/each}
-						{/if}
 					{/if}
 				</div>
 			{/each}
