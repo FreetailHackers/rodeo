@@ -6,6 +6,11 @@
 
 - Registration questions can now be reordered
 - Ability for admins to export hacker applications to a CSV
+- Question labels support Markdown
+
+[FIXED]
+
+- Non-hackers showing up on admissions widget
 
 ## v0.4.2
 
