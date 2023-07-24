@@ -93,6 +93,7 @@ async function main() {
 			order: 2,
 			label: 'Major',
 			type: 'MULTISELECT',
+			options: majors,
 			required: true,
 			generate: () => randomElement(majors),
 		},

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import Select from 'svelte-select';
 	import SvelteMarkdown from 'svelte-markdown';
 
 	export let data;
@@ -7,7 +8,6 @@
 	export let form;
 
 	let applicationForm: HTMLFormElement;
-	let focusedQuestionId: string;
 
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 	let saveButton: HTMLButtonElement;
@@ -123,9 +123,11 @@
 			bind:this={applicationForm}
 			method="POST"
 			action="?/save"
-			use:enhance={() => {
+			use:enhance={({ action }) => {
 				return async ({ update }) => {
-					update({ reset: false });
+					if (action.search === '?/finish') {
+						update({ reset: false });
+					}
 				};
 			}}
 			on:input={() => {
@@ -149,7 +151,6 @@
 						<SvelteMarkdown source={question.label} isInline />
 						{#if question.required}*{/if}
 					</label>
-					<!-- svelte-ignore a11y-autofocus -->
 					{#if question.type === 'SENTENCE'}
 						<input
 							type="text"
@@ -157,9 +158,6 @@
 							id={question.id}
 							bind:value={application[question.id]}
 							placeholder={question.placeholder}
-							autofocus={question.id === focusedQuestionId}
-							on:focus={() => (focusedQuestionId = question.id)}
-							required={question.required}
 						/>
 					{:else if question.type === 'PARAGRAPH'}
 						<textarea
@@ -167,9 +165,6 @@
 							id={question.id}
 							bind:value={application[question.id]}
 							placeholder={question.placeholder}
-							autofocus={question.id === focusedQuestionId}
-							on:focus={() => (focusedQuestionId = question.id)}
-							required={question.required}
 						/>
 					{:else if question.type === 'NUMBER'}
 						<input
@@ -181,19 +176,9 @@
 							step={question.step}
 							bind:value={application[question.id]}
 							placeholder={question.placeholder}
-							autofocus={question.id === focusedQuestionId}
-							on:focus={() => (focusedQuestionId = question.id)}
-							required={question.required}
 						/>
 					{:else if question.type === 'DROPDOWN'}
-						<select
-							name={question.id}
-							id={question.id}
-							bind:value={application[question.id]}
-							autofocus={question.id === focusedQuestionId}
-							on:focus={() => (focusedQuestionId = question.id)}
-							required={question.required}
-						>
+						<select name={question.id} id={question.id} bind:value={application[question.id]}>
 							<option value="">Select...</option>
 							{#each question.options as option}
 								<option value={option}>{option}</option>
@@ -205,9 +190,21 @@
 							name={question.id}
 							id={question.id}
 							checked={Boolean(application[question.id])}
-							autofocus={question.id === focusedQuestionId}
-							on:focus={() => (focusedQuestionId = question.id)}
-							required={question.required}
+						/>
+					{:else if question.type === 'MULTISELECT'}
+						<Select
+							name={question.id}
+							id={question.id}
+							items={question.options}
+							on:change={(event) => {
+								application[question.id] = event.detail;
+								applicationForm.dispatchEvent(new Event('input'));
+							}}
+							on:clear={() => applicationForm.dispatchEvent(new Event('input'))}
+							value={application[question.id]}
+							multiple
+							containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem; padding-left: 10px;"
+							inputStyles="align-items: center; height: inherit; margin: 0;"
 						/>
 					{/if}
 				</div>
@@ -217,7 +214,6 @@
 				<div id="actions">
 					<button bind:this={saveButton}>Save and finish later</button>
 					<button
-						id="submit"
 						formaction="?/finish"
 						on:click={() => {
 							clearTimeout(debounceTimer);

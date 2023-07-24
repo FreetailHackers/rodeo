@@ -35,6 +35,16 @@ function formToApplication(questions: Question[], formData: FormData) {
 			}
 		} else if (question.type === 'CHECKBOX') {
 			application[question.id] = formData.get(question.id) === 'on';
+		} else if (question.type === 'MULTISELECT') {
+			const formValue = formData.get(question.id);
+			if (formValue) {
+				try {
+					const parsedValues = JSON.parse(formValue as string);
+					application[question.id] = parsedValues.map((item: { value: string }) => item.value);
+				} catch (error) {
+					console.error('Error parsing JSON:', error);
+				}
+			}
 		}
 	}
 	return application;
