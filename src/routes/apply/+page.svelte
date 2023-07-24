@@ -177,13 +177,6 @@
 							bind:value={application[question.id]}
 							placeholder={question.placeholder}
 						/>
-					{:else if question.type === 'DROPDOWN'}
-						<select name={question.id} id={question.id} bind:value={application[question.id]}>
-							<option value="">Select...</option>
-							{#each question.options as option}
-								<option value={option}>{option}</option>
-							{/each}
-						</select>
 					{:else if question.type === 'CHECKBOX'}
 						<input
 							type="checkbox"
@@ -191,7 +184,7 @@
 							id={question.id}
 							checked={Boolean(application[question.id])}
 						/>
-					{:else if question.type === 'MULTISELECT'}
+					{:else if question.type === 'DROPDOWN' || question.type === 'MULTISELECT'}
 						<Select
 							name={question.id}
 							id={question.id}
@@ -202,7 +195,7 @@
 							}}
 							on:clear={() => applicationForm.dispatchEvent(new Event('input'))}
 							value={application[question.id]}
-							multiple
+							multiple={question.type === 'MULTISELECT'}
 							containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem; padding-left: 10px;"
 							inputStyles="align-items: center; height: inherit; margin: 0;"
 						/>
