@@ -93,22 +93,9 @@ async function main() {
 			order: 2,
 			label: 'Major',
 			type: 'MULTISELECT',
-			options: [
-				'Computer Science',
-				'Mathematics',
-				'Statistics and Data Science',
-				'Undeclared',
-				'Chemistry',
-			],
+			options: majors,
 			required: true,
-			generate: () =>
-				randomElement([
-					'Computer Science',
-					'Mathematics',
-					'Statistics and Data Science',
-					'Undeclared',
-					'Chemistry',
-				]),
+			generate: () => randomElement(majors),
 		},
 		{
 			order: 3,
