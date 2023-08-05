@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.5.1
+
+[ADDED]
+
+- Support for custom responses in dropdowns
+
 ## v0.5.0
 
 [ADDED]
