@@ -2,9 +2,11 @@
 	import { enhance } from '$app/forms';
 	import Select from 'svelte-select';
 	import SvelteMarkdown from 'svelte-markdown';
+	import FileInput from '$lib/components/file-input.svelte';
 
 	export let data;
-	$: application = data.user.application as Record<string, unknown>;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const application = data.user.application as Record<string, any>;
 	export let form;
 
 	let applicationForm: HTMLFormElement;
@@ -198,6 +200,13 @@
 							multiple={question.type === 'MULTISELECT'}
 							containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem; padding-left: 10px;"
 							inputStyles="align-items: center; height: inherit; margin: 0;"
+						/>
+					{:else if question.type === 'FILE'}
+						<FileInput
+							name={question.id}
+							selectedFile={application[question.id]?.split('/')?.slice(-1)?.pop()}
+							accept={question.accept}
+							maxSizeMB={question.maxSizeMB}
 						/>
 					{/if}
 				</div>

@@ -88,6 +88,8 @@ export const actions = {
 				questions[id].step = Number(questions[id].step) || 1;
 			} else if (questions[id].type === 'DROPDOWN' || questions[id].type === 'MULTISELECT') {
 				questions[id].options = questions[id].options.split('\r\n');
+			} else if (questions[id].type === 'FILE') {
+				questions[id].maxSizeMB = Number(questions[id].maxSizeMB) || 1;
 			}
 		}
 		await trpc(locals.auth).questions.update(questions);

@@ -58,6 +58,8 @@ const sampleQuestions: Question[] = [
 		max: null,
 		step: null,
 		regex: '',
+		accept: '',
+		maxSizeMB: 1,
 	},
 	{
 		id: 'classification',
@@ -71,6 +73,8 @@ const sampleQuestions: Question[] = [
 		max: null,
 		step: null,
 		regex: '',
+		accept: '',
+		maxSizeMB: 1,
 	},
 ];
 

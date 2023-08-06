@@ -16,7 +16,11 @@
 </p>
 {#each questions as question}
 	<SvelteMarkdown source={question.label} />
-	<blockquote>{application[question.id]}</blockquote>
+	{#if application[question.id] === undefined || application[question.id] === ''}
+		<blockquote><i>No answer given</i></blockquote>
+	{:else}
+		<blockquote>{application[question.id]}</blockquote>
+	{/if}
 {/each}
 
 <style>

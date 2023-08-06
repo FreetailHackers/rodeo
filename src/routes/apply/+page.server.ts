@@ -33,6 +33,8 @@ function formToApplication(questions: Question[], formData: FormData) {
 				// Needed because JSON.parse on an empty string errors
 				console.error(e);
 			}
+		} else if (question.type === 'FILE') {
+			application[question.id] = formData.get(question.id);
 		}
 		if (question.type === 'MULTISELECT') {
 			const selected = formData.get(question.id) as string;
