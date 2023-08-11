@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import Select from 'svelte-select';
+	import SvelteMarkdown from 'svelte-markdown';
 
 	export let data;
 	$: application = data.user.application as Record<string, unknown>;
 	export let form;
 
 	let applicationForm: HTMLFormElement;
-	let focusedQuestionId: string;
 
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 	let saveButton: HTMLButtonElement;
-	let saveButtonText = typeof form === 'string' ? form : 'Save';
 
 	let confirmAction = '';
 	let dialog: HTMLDialogElement;
@@ -123,14 +123,16 @@
 			bind:this={applicationForm}
 			method="POST"
 			action="?/save"
-			use:enhance={() => {
+			use:enhance={({ action }) => {
 				return async ({ update }) => {
-					update({ reset: false });
+					if (action.search === '?/finish') {
+						update({ reset: false });
+					}
 				};
 			}}
 			on:input={() => {
 				saveButton.disabled = true;
-				saveButtonText = 'Autosaving...';
+				saveButton.textContent = 'Autosaving...';
 				if (debounceTimer !== undefined) {
 					clearTimeout(debounceTimer);
 				}
@@ -138,66 +140,82 @@
 					debounceTimer = undefined;
 					applicationForm.requestSubmit();
 					saveButton.disabled = false;
-					saveButtonText = 'Save';
+					saveButton.textContent = 'Save and finish later';
 				}, 1000);
 			}}
 			autocomplete="off"
 		>
 			{#each data.questions as question}
-				<label for={question.id}>
-					{question.label}
-					{#if question.required}*{/if}
-				</label>
-				<!-- svelte-ignore a11y-autofocus -->
-				{#if question.type === 'SENTENCE'}
-					<input
-						type="text"
-						name={question.id}
-						id={question.id}
-						bind:value={application[question.id]}
-						placeholder={question.placeholder}
-						autofocus={question.id === focusedQuestionId}
-						on:focus={() => (focusedQuestionId = question.id)}
-					/>
-				{:else if question.type === 'PARAGRAPH'}
-					<textarea
-						name={question.id}
-						id={question.id}
-						bind:value={application[question.id]}
-						placeholder={question.placeholder}
-						autofocus={question.id === focusedQuestionId}
-						on:focus={() => (focusedQuestionId = question.id)}
-					/>
-				{:else if question.type === 'NUMBER'}
-					<input
-						type="number"
-						name={question.id}
-						id={question.id}
-						min={question.min}
-						max={question.max}
-						step={question.step}
-						bind:value={application[question.id]}
-						placeholder={question.placeholder}
-						autofocus={question.id === focusedQuestionId}
-						on:focus={() => (focusedQuestionId = question.id)}
-					/>
-				{:else if question.type === 'DROPDOWN'}
-					<select
-						name={question.id}
-						id={question.id}
-						bind:value={application[question.id]}
-						autofocus={question.id === focusedQuestionId}
-						on:focus={() => (focusedQuestionId = question.id)}
-					>
-						{#each question.options as option}
-							<option value={option}>{option}</option>
-						{/each}
-					</select>
-				{/if}
+				<div class={'question ' + question.type.toLowerCase()}>
+					<label for={question.id}>
+						<SvelteMarkdown source={question.label} isInline />
+						{#if question.required}*{/if}
+					</label>
+					{#if question.type === 'SENTENCE'}
+						<input
+							type="text"
+							name={question.id}
+							id={question.id}
+							bind:value={application[question.id]}
+							placeholder={question.placeholder}
+						/>
+					{:else if question.type === 'PARAGRAPH'}
+						<textarea
+							name={question.id}
+							id={question.id}
+							bind:value={application[question.id]}
+							placeholder={question.placeholder}
+						/>
+					{:else if question.type === 'NUMBER'}
+						<input
+							type="number"
+							name={question.id}
+							id={question.id}
+							min={question.min}
+							max={question.max}
+							step={question.step}
+							bind:value={application[question.id]}
+							placeholder={question.placeholder}
+						/>
+					{:else if question.type === 'CHECKBOX'}
+						<input
+							type="checkbox"
+							name={question.id}
+							id={question.id}
+							checked={Boolean(application[question.id])}
+						/>
+					{:else if question.type === 'DROPDOWN' || question.type === 'MULTISELECT'}
+						<Select
+							name={question.id}
+							id={question.id}
+							items={question.options}
+							on:change={(event) => {
+								application[question.id] = event.detail;
+								applicationForm.dispatchEvent(new Event('input'));
+							}}
+							on:clear={() => applicationForm.dispatchEvent(new Event('input'))}
+							value={application[question.id]}
+							multiple={question.type === 'MULTISELECT'}
+							containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem; padding-left: 10px;"
+							inputStyles="align-items: center; height: inherit; margin: 0;"
+						/>
+					{/if}
+				</div>
 			{/each}
 
-			<button bind:this={saveButton}>{saveButtonText}</button>
-			<button id="submit" formaction="?/finish">Submit Application</button>
+			<div id="actions-container">
+				<div id="actions">
+					<button bind:this={saveButton}>Save and finish later</button>
+					<button
+						formaction="?/finish"
+						on:click={() => {
+							clearTimeout(debounceTimer);
+							saveButton.disabled = false;
+							saveButton.textContent = 'Save and finish later';
+						}}>Submit application</button
+					>
+				</div>
+			</div>
 		</form>
 
 		<!-- Feedback -->
@@ -225,30 +243,54 @@
 		gap: 1rem;
 	}
 
-	label {
-		display: block;
-		margin-bottom: 0.5rem;
+	.question {
+		display: flex;
+		flex-direction: column;
+		margin-bottom: 1rem;
+		gap: 0.5rem;
+	}
+
+	.checkbox {
+		display: flex;
+		flex-direction: row-reverse;
+		align-items: center;
+		justify-content: start;
+		gap: 0;
 	}
 
 	#rsvp > * {
 		flex-grow: 1;
 	}
 
-	input,
-	textarea,
-	button,
-	select {
-		margin-bottom: 1rem;
-	}
-
-	#submit {
-		margin: 0;
-	}
-
 	#status {
 		border: 2px solid black;
 		padding: 0 1rem;
 		text-align: center;
+		margin-bottom: 1rem;
+	}
+
+	#actions-container {
+		position: sticky;
+		bottom: 0;
+		padding-top: 1rem;
+		background: linear-gradient(transparent, white);
+	}
+
+	#actions {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		gap: 0.5rem;
+		position: sticky;
+		padding-bottom: 1rem;
+		background: white;
+	}
+
+	#actions > * {
+		flex: 1;
+	}
+
+	#status button {
 		margin-bottom: 1rem;
 	}
 </style>

@@ -8,7 +8,6 @@
 	import { cubicIn, cubicOut } from 'svelte/easing';
 	import Loader from '$lib/components/loader.svelte';
 	import { beforeNavigate, afterNavigate } from '$app/navigation';
-	import { activeTab } from '$lib/navStore';
 
 	export let data;
 
@@ -31,18 +30,14 @@
 		}
 	});
 
-	function setActiveTab(tab: string) {
-		activeTab.set(tab);
-	}
-
-	function handleKeyPress(event: KeyboardEvent, tab: string) {
-		if (event.key === 'Enter' || event.key === ' ') {
-			setActiveTab(tab);
-		}
+	let currentPathname: string;
+	$: {
+		currentPathname = $page.url.pathname;
 	}
 </script>
 
 <nav>
+	currentPathname: {currentPathname}
 	<label for="hamburgerCheckbox" id="hamburger"><b>MENU</b></label>
 	<input
 		type="checkbox"
@@ -51,104 +46,28 @@
 		style="display: none"
 	/>
 	<menu id="menu" bind:this={menu}>
-		<li class:selected={$activeTab === 'home'}>
-			<a
-				href="/"
-				on:click={() => setActiveTab('home')}
-				on:keydown={(e) => handleKeyPress(e, 'home')}
-			>
-				Home
-			</a>
+		<li>
+			<a href="/" class:active={$page.url.pathname === '/'}>Home</a>
 		</li>
-		<li class:selected={$activeTab === 'schedule'}>
-			<a
-				href="/schedule"
-				on:click={() => setActiveTab('schedule')}
-				on:keydown={(e) => handleKeyPress(e, 'schedule')}
-			>
-				Schedule
-			</a>
-		</li>
-		<li class:selected={$activeTab === 'info'}>
-			<a
-				href="/info"
-				on:click={() => setActiveTab('info')}
-				on:keydown={(e) => handleKeyPress(e, 'info')}
-			>
-				Info
-			</a>
-		</li>
+		<li><a href="/schedule" class:active={$page.url.pathname === '/schedule'}>Schedule</a></li>
+		<li><a href="/info" class:active={$page.url.pathname === '/info'}>Info</a></li>
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->
-		{#if data.user !== null && (data.user.role !== 'HACKER' || data.user.status === 'CONFIRMED')}
-			<li class:selected={$activeTab === 'id'}>
-				<a
-					href="/id"
-					on:click={() => setActiveTab('id')}
-					on:keydown={(e) => handleKeyPress(e, 'id')}
-				>
-					My Hacker ID
-				</a>
+		{#if data.user !== null && (!data.user.roles.includes('HACKER') || data.user.status === 'CONFIRMED')}
+			<li><a href="/id" class:active={$page.url.pathname === '/id'}>My Hacker ID</a></li>
+		{/if}
+		{#if data.user?.roles.includes('ORGANIZER') || data.user?.roles.includes('ADMIN')}
+			<li><a href="/scan" class:active={$page.url.pathname === '/scan'}>Scan</a></li>
+		{/if}
+		{#if data.user?.roles.includes('HACKER')}
+			<li><a href="/apply" class:active={$page.url.pathname === '/apply'}>Apply</a></li>
+		{:else if data.user?.roles.includes('ADMIN')}
+			<li><a href="/users" class:active={$page.url.pathname === '/users'}>Users</a></li>
+			<li><a href="/admin" class:active={$page.url.pathname === '/admin'}>Admin</a></li>
+			<li>
+				<a href="/admissions" class:active={$page.url.pathname === '/admissions'}>Admissions</a>
 			</li>
 		{/if}
-		{#if data.user?.role === 'ORGANIZER' || data.user?.role === 'ADMIN'}
-			<li class:selected={$activeTab === 'scan'}>
-				<a
-					href="/scan"
-					on:click={() => setActiveTab('scan')}
-					on:keydown={(e) => handleKeyPress(e, 'scan')}
-				>
-					Scan
-				</a>
-			</li>
-		{/if}
-		{#if data.user?.role === 'HACKER'}
-			<li class:selected={$activeTab === 'scan'}>
-				<a
-					href="/apply"
-					on:click={() => setActiveTab('apply')}
-					on:keydown={(e) => handleKeyPress(e, 'apply')}
-				>
-					Apply
-				</a>
-			</li>
-		{:else if data.user?.role === 'ADMIN'}
-			<li class:selected={$activeTab === 'user'}>
-				<a
-					href="/user"
-					on:click={() => setActiveTab('user')}
-					on:keydown={(e) => handleKeyPress(e, 'user')}
-				>
-					User
-				</a>
-			</li>
-			<li class:selected={$activeTab === 'admin'}>
-				<a
-					href="/admin"
-					on:click={() => setActiveTab('admin')}
-					on:keydown={(e) => handleKeyPress(e, 'admin')}
-				>
-					Admin
-				</a>
-			</li>
-			<li class:selected={$activeTab === 'admissions'}>
-				<a
-					href="/admissions"
-					on:click={() => setActiveTab('admissions')}
-					on:keydown={(e) => handleKeyPress(e, 'admissions')}
-				>
-					Admissions
-				</a>
-			</li>
-		{/if}
-		<li class:selected={$activeTab === 'feedback'}>
-			<a
-				href="/feedback"
-				on:click={() => setActiveTab('feedback')}
-				on:keydown={(e) => handleKeyPress(e, 'feedback')}
-			>
-				Feedback
-			</a>
-		</li>
+		<li><a href="/feedback" class:active={$page.url.pathname === '/feedback'}>Feedback</a></li>
 	</menu>
 	<hr />
 
@@ -251,13 +170,13 @@
 		width: 100%;
 		height: 100%;
 		z-index: 9999; /* Set a high z-index to ensure the overlay appears on top */
-		background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background color */
+		background-color: rgba(0, 0, 0, 0.05); /* Semi-transparent background color */
 		display: flex;
 		justify-content: center;
 		align-items: center;
 	}
 
-	.selected {
-		font-weight: bolder;
+	.active {
+		font-weight: bold;
 	}
 </style>

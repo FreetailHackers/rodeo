@@ -1,11 +1,48 @@
 # Changelog
 
+## v0.5.0
+
+[ADDED]
+
+- Registration questions can now be reordered
+- Ability for admins to export hacker applications to a CSV
+- Question labels support Markdown
+- Multiselect questions
+- Typeahead filtering for dropdowns
+- Users can have multiple roles
+
+[FIXED]
+
+- Non-hackers showing up on admissions widget
+
+## v0.4.2
+
+[FIXED]
+
+- No show password button on reset page
+- Password resets not working for users who used Google/GitHub login
+- Refreshing a password reset prompt would invalidate the reset token
+- Schedule page scrolling to bottom after deleting an event
+- CSS issues on application page
+
+## v0.4.1
+
+[ADDED]
+
+- A default Select... option for dropdowns
+- Checkbox questions
+
+[FIXED]
+
+- Creating an account would not automatically send a verification email
+- /unverified route did not actually check if user was unverified
+
 ## v0.4.0
 
 [ADDED]
 
 - Global toast notification system for form action results
-- Custom registration questions for text, paragraph, number inputs
+- Custom registration questions for short/long text, dropdown, numbers
 - Customizable homepage text
 - Automatic email receipts for submitting/confirming/declining
 - Export schedule to .ics

@@ -3,6 +3,8 @@
 	import fuzzysort from 'fuzzysort';
 	import UserCard from '$lib/components/user-card.svelte';
 	import type { Prisma } from '@prisma/client';
+	import { Parser } from '@json2csv/plainjs';
+	import { onMount } from 'svelte';
 
 	export let data;
 
@@ -29,7 +31,7 @@
 	} else {
 		filter = 'UNSUPPORTED';
 	}
-	$: filtered = data.users;
+	let filtered = data.users;
 	$: selected = filtered.map(() => false).slice(0, DISPLAY_LIMIT);
 	let selectAll: HTMLInputElement;
 
@@ -74,6 +76,31 @@
 		}
 	}
 
+	// Helper function to replace question IDs with their labels
+	function prepare(user: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>) {
+		function prepareApplication(application: Record<string, unknown>) {
+			let prepared: Record<string, unknown> = {};
+			for (const question of data.questions) {
+				prepared[question.label] = application[question.id];
+			}
+			return prepared;
+		}
+		// "Flatten" User object so CSV is generated correctly
+		return {
+			...user.authUser,
+			...prepareApplication(user.application as Record<string, unknown>),
+			decision: user.decision?.status,
+			...(user.scanCount as object),
+		};
+	}
+
+	let url: string;
+	onMount(() => {
+		const parser = new Parser();
+		const csv = parser.parse(filtered.map(prepare));
+		url = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+	});
+
 	// Validate that the selected action can be applied to the selected users
 	// Throws an error if the action is invalid, otherwise returns a string
 	function validateSelection(
@@ -109,13 +136,23 @@
 			} selected users will have their status immediately set.
 					This will NOT send any notifications and WILL delete any pending (unreleased) decisions.`;
 		}
-		if (action === 'role') {
+		if (action === 'add-role') {
 			if (
 				filtered.filter((user, i) => selected[i] && user.authUserId === data.user.id).length > 0
 			) {
 				throw 'You cannot change your own role.';
 			}
-			return `${selected.filter(Boolean).length} selected users will have their role set.`;
+			return `${
+				selected.filter(Boolean).length
+			} selected users will have the chosen role assigned to them.`;
+		}
+		if (action === 'remove-role') {
+			if (
+				filtered.filter((user, i) => selected[i] && user.authUserId === data.user.id).length > 0
+			) {
+				throw 'You cannot change your own role.';
+			}
+			return `${selected.filter(Boolean).length} selected users will have the chosen role removed.`;
 		}
 		if (action === 'release') {
 			if (filtered.filter((user, i) => selected[i] && user.decision === null).length > 0) {
@@ -129,6 +166,7 @@
 </script>
 
 <h1>Master Database</h1>
+<p><a href={url} download="users.csv">Export as CSV</a></p>
 
 <!-- Search filters -->
 <fieldset id="filter">
@@ -215,10 +253,29 @@
 					</select>
 				</div>
 				<div class="flex-align-center">
-					<input type="radio" name="action" id="user-role" bind:group={action} value="role" />
-					<label for="user-role">Set role:&nbsp;</label>
+					<input type="radio" name="action" id="add-role" bind:group={action} value="add-role" />
+					<label for="add-role">Add role:&nbsp;</label>
 					<span class="grow" />
-					<select name="user-role">
+					<select name="role-to-add">
+						<option value="HACKER">Hacker</option>
+						<option value="ADMIN">Admin</option>
+						<option value="ORGANIZER">Organizer</option>
+						<option value="JUDGE">Judge</option>
+						<option value="VOLUNTEER">Volunteer</option>
+						<option value="SPONSOR">Sponsor</option>
+					</select>
+				</div>
+				<div class="flex-align-center">
+					<input
+						type="radio"
+						name="action"
+						id="remove-role"
+						bind:group={action}
+						value="remove-role"
+					/>
+					<label for="remove-role">Remove role:&nbsp;</label>
+					<span class="grow" />
+					<select name="role-to-remove">
 						<option value="HACKER">Hacker</option>
 						<option value="ADMIN">Admin</option>
 						<option value="ORGANIZER">Organizer</option>
@@ -282,6 +339,7 @@
 						<span
 							class="{user.decision?.status.toLowerCase() ??
 								user.authUser.status.toLowerCase()} dot"
+							title={user.decision?.status ?? user.authUser.status}
 						/>
 					</summary>
 					<div class="user">
@@ -298,10 +356,6 @@
 		margin-bottom: 1rem;
 	}
 
-	label {
-		margin-bottom: 0.5rem;
-	}
-
 	ul {
 		list-style: none;
 		margin: 0;
@@ -310,7 +364,6 @@
 
 	li {
 		border: 2px solid black;
-		padding: 1rem;
 		/* simulate border-collapse */
 		margin-top: -2px;
 	}
@@ -318,6 +371,7 @@
 	#header {
 		display: flex;
 		flex-direction: column;
+		padding: 1rem;
 	}
 
 	#actions select {
@@ -355,6 +409,9 @@
 
 	summary {
 		list-style: none;
+		padding: 1rem;
+		cursor: pointer;
+		transition: margin 0.1s ease-out;
 	}
 
 	summary a {
@@ -377,6 +434,22 @@
 		max-width: 20px;
 	}
 
+	details[open] summary {
+		margin-bottom: 2rem;
+	}
+
+	.user {
+		/*
+		Possible HACK: for reasons I don't fully understand, the above
+		selector needs a sufficiently large margin-bottom for the
+		<details> opening animation to work. However, this leaves too
+		much space between the <details> and the <div> below it, so we
+		compensate for that here.
+		*/
+		margin-top: -2rem;
+		margin-bottom: 1rem;
+	}
+
 	summary::after {
 		content: ' ►';
 	}
@@ -387,10 +460,6 @@
 
 	details > div {
 		padding: 0 1rem 0 1rem;
-	}
-
-	.user {
-		padding-left: 1rem;
 	}
 
 	.accepted {

@@ -13,6 +13,16 @@ export const actions = {
 		await trpc(locals.auth).questions.create(formData.get('type') as QuestionType);
 	},
 
+	moveDown: async ({ locals, request }) => {
+		const formData = await request.formData();
+		await trpc(locals.auth).questions.moveDown(formData.get('id') as string);
+	},
+
+	moveUp: async ({ locals, request }) => {
+		const formData = await request.formData();
+		await trpc(locals.auth).questions.moveUp(formData.get('id') as string);
+	},
+
 	update: async ({ locals, request }) => {
 		const formData = Object.fromEntries(await request.formData());
 		// We have to do a bit of transformation on the form data to
@@ -76,11 +86,12 @@ export const actions = {
 					[questions[id].min, questions[id].max] = [questions[id].max, questions[id].min];
 				}
 				questions[id].step = Number(questions[id].step) || 1;
-			} else if (questions[id].type === 'DROPDOWN') {
+			} else if (questions[id].type === 'DROPDOWN' || questions[id].type === 'MULTISELECT') {
 				questions[id].options = questions[id].options.split('\r\n');
 			}
 		}
 		await trpc(locals.auth).questions.update(questions);
+		return 'Saved questions!';
 	},
 
 	delete: async ({ locals, request }) => {

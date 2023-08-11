@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
 
 	export let data;
@@ -29,7 +30,7 @@ print('This is a multi-line code block.')
 `;
 </script>
 
-{#if data.user?.role === 'ADMIN'}
+{#if data.user?.roles.includes('ADMIN')}
 	<form
 		method="POST"
 		use:enhance={() => {
@@ -38,15 +39,15 @@ print('This is a multi-line code block.')
 			};
 		}}
 	>
-		<textarea id="info" name="info" {placeholder} rows="100">{data.info}</textarea>
+		<MarkdownEditor name="info" {placeholder} rows={25} value={data.info} />
 		<button type="submit">Save</button>
 	</form>
+{:else}
+	<SvelteMarkdown source={data.info} />
 {/if}
-<SvelteMarkdown source={data.info} />
 
 <style>
-	textarea {
-		height: 32rem;
-		margin-bottom: 1rem;
+	button {
+		margin-top: 1rem;
 	}
 </style>

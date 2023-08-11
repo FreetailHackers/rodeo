@@ -144,6 +144,7 @@ export const admissionsRouter = t.router({
 			return await prisma.user.findFirst({
 				where: {
 					authUser: {
+						roles: { has: 'HACKER' },
 						status: { in: ['APPLIED', 'WAITLISTED'] },
 					},
 					decision: null,

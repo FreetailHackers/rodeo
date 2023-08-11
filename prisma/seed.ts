@@ -22,16 +22,21 @@ const auth = lucia({ adapter: prismaAdapter(new PrismaClient()), middleware: nod
 
 async function register(email: string, password: string): Promise<string> {
 	const user = await auth.createUser({
-		primaryKey: {
-			providerId: 'email',
-			providerUserId: email,
-			password: password,
-		},
+		primaryKey: null,
 		attributes: {
 			email: email,
-			role: 'HACKER',
+			roles: ['HACKER'],
 			status: 'VERIFIED',
 		},
+	});
+	// XXX: Since we didn't define transformDatabaseUser in the lucia() config,
+	// Lucia returns the ID in the user.userId property by default
+	// (as opposed to the rest of the codebase, which uses user.id)
+	await auth.createKey(user.userId, {
+		type: 'persistent',
+		providerId: 'email',
+		providerUserId: email,
+		password: password,
 	});
 	await prisma.user.create({
 		data: {
@@ -56,7 +61,7 @@ async function main() {
 	// Create example hacker and admin
 	await register('hacker@yopmail.com', 'hacker@yopmail.com');
 	const adminId = await register('admin@yopmail.com', 'admin@yopmail.com');
-	await prisma.authUser.update({ where: { id: adminId }, data: { role: 'ADMIN' } });
+	await prisma.authUser.update({ where: { id: adminId }, data: { roles: ['ADMIN'] } });
 
 	// Create example announcement
 	await prisma.announcement.deleteMany();
@@ -88,6 +93,7 @@ async function main() {
 			order: 2,
 			label: 'Major',
 			type: 'MULTISELECT',
+			options: majors,
 			required: true,
 			generate: () => randomElement(majors),
 		},

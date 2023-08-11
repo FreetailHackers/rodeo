@@ -49,7 +49,7 @@
 	<a href={url} download="event.ics">Add to Calendar</a>
 {/if}
 
-{#if data.user?.role === 'ADMIN'}
+{#if data.user?.roles.includes('ADMIN')}
 	<hr />
 	<h1>Edit Event</h1>
 	<form
