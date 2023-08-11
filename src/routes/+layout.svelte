@@ -73,10 +73,7 @@
 </nav>
 
 {#key $page.url.pathname}
-	<div
-		in:fly={{ easing: cubicOut, y: 10, duration: 300, delay: 400 }}
-		out:fly={{ easing: cubicIn, y: -10, duration: 300 }}
-	>
+	<div in:fly={{ easing: cubicOut, y: 10, duration: 300 }}>
 		<slot />
 	</div>
 {/key}
