@@ -43,6 +43,14 @@ function formToApplication(questions: Question[], formData: FormData) {
 			} catch (e) {
 				console.error(e);
 			}
+		} else if (question.type === 'RADIO') {
+			const selected = formData.get(question.id) as string;
+			console.log(selected);
+			try {
+				application[question.id] = selected;
+			} catch (e) {
+				console.error(e);
+			}
 		}
 	}
 	return application;
