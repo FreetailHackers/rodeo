@@ -1,8 +1,5 @@
-export const load = async ({ locals, url }) => {
-	const { pathname } = url;
-	
+export const load = async ({ locals }) => {
 	return {
 		user: (await locals.auth.validateUser()).user,
-		pathname: pathname
 	};
-}
+};

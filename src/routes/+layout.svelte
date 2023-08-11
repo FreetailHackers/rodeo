@@ -29,15 +29,9 @@
 			});
 		}
 	});
-
-	let currentPathname: string;
-	$: {
-		currentPathname = $page.url.pathname;
-	}
 </script>
 
 <nav>
-	currentPathname: {currentPathname}
 	<label for="hamburgerCheckbox" id="hamburger"><b>MENU</b></label>
 	<input
 		type="checkbox"
@@ -78,7 +72,7 @@
 	{/if}
 </nav>
 
-{#key data.pathname}
+{#key $page.url.pathname}
 	<div
 		in:fly={{ easing: cubicOut, y: 10, duration: 300, delay: 400 }}
 		out:fly={{ easing: cubicIn, y: -10, duration: 300 }}
