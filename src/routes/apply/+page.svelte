@@ -201,7 +201,7 @@
 							bind:filterText={dropdownFilterTexts[question.id]}
 							multiple={Boolean(question.multiple)}
 							containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem; padding-left: 10px;"
-							inputStyles="align-items: center; height: inherit; margin: 0;"
+							inputStyles="margin: 0;"
 						>
 							<div slot="item" let:item>
 								{question.options.includes(item.label) ? '' : 'Other: '}
