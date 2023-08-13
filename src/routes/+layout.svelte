@@ -4,6 +4,10 @@
 	import { toasts } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import './global.css';
+	import { fly } from 'svelte/transition';
+	import { cubicIn, cubicOut } from 'svelte/easing';
+	import Loader from '$lib/components/loader.svelte';
+	import { beforeNavigate, afterNavigate } from '$app/navigation';
 
 	export let data;
 
@@ -14,6 +18,9 @@
 
 	let menu: HTMLMenuElement;
 	let hamburgerCheckbox: HTMLInputElement;
+	let isLoading = false;
+	beforeNavigate(() => (isLoading = true));
+	afterNavigate(() => (isLoading = false));
 
 	onMount(() => {
 		for (const link of menu.childNodes) {
@@ -33,29 +40,43 @@
 		style="display: none"
 	/>
 	<menu id="menu" bind:this={menu}>
-		<li><a href="/">Home</a></li>
-		<li><a href="/schedule">Schedule</a></li>
-		<li><a href="/info">Info</a></li>
+		<li>
+			<a href="/" class:active={$page.url.pathname === '/'}>Home</a>
+		</li>
+		<li><a href="/schedule" class:active={$page.url.pathname === '/schedule'}>Schedule</a></li>
+		<li><a href="/info" class:active={$page.url.pathname === '/info'}>Info</a></li>
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->
 		{#if data.user !== null && (!data.user.roles.includes('HACKER') || data.user.status === 'CONFIRMED')}
-			<li><a href="/id">My Hacker ID</a></li>
+			<li><a href="/id" class:active={$page.url.pathname === '/id'}>My Hacker ID</a></li>
 		{/if}
 		{#if data.user?.roles.includes('ORGANIZER') || data.user?.roles.includes('ADMIN')}
-			<li><a href="/scan">Scan</a></li>
+			<li><a href="/scan" class:active={$page.url.pathname === '/scan'}>Scan</a></li>
 		{/if}
 		{#if data.user?.roles.includes('HACKER')}
-			<li><a href="/apply">Apply</a></li>
+			<li><a href="/apply" class:active={$page.url.pathname === '/apply'}>Apply</a></li>
 		{:else if data.user?.roles.includes('ADMIN')}
-			<li><a href="/users">Users</a></li>
-			<li><a href="/admin">Admin</a></li>
-			<li><a href="/admissions">Admissions</a></li>
+			<li><a href="/users" class:active={$page.url.pathname === '/users'}>Users</a></li>
+			<li><a href="/admin" class:active={$page.url.pathname === '/admin'}>Admin</a></li>
+			<li>
+				<a href="/admissions" class:active={$page.url.pathname === '/admissions'}>Admissions</a>
+			</li>
 		{/if}
-		<li><a href="/feedback">Feedback</a></li>
+		<li><a href="/feedback" class:active={$page.url.pathname === '/feedback'}>Feedback</a></li>
 	</menu>
 	<hr />
+
+	{#if isLoading}
+		<div class="overlay">
+			<Loader />
+		</div>
+	{/if}
 </nav>
 
-<slot />
+{#key $page.url.pathname}
+	<div in:fly={{ easing: cubicOut, y: 10, duration: 300 }}>
+		<slot />
+	</div>
+{/key}
 
 <Toasts />
 
@@ -131,5 +152,22 @@
 
 	hr {
 		margin-top: 1rem;
+	}
+
+	.overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 9999; /* Set a high z-index to ensure the overlay appears on top */
+		background-color: rgba(0, 0, 0, 0.05); /* Semi-transparent background color */
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.active {
+		font-weight: bold;
 	}
 </style>
