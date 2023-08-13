@@ -86,7 +86,11 @@ export const actions = {
 					[questions[id].min, questions[id].max] = [questions[id].max, questions[id].min];
 				}
 				questions[id].step = Number(questions[id].step) || 1;
-			} else if (questions[id].type === 'DROPDOWN' || questions[id].type === 'MULTISELECT') {
+			} else if (
+				questions[id].type === 'DROPDOWN' ||
+				questions[id].type === 'MULTISELECT' ||
+				questions[id].type === 'RADIO'
+			) {
 				questions[id].options = questions[id].options.split('\r\n');
 			}
 		}
