@@ -208,7 +208,7 @@
 									value={option}
 									bind:group={application[question.id]}
 								/>
-								<label for={option.toLowerCase()}>{option}</label>
+								<label for={question.id}>{option}</label>
 							</div>
 						{/each}
 					{/if}

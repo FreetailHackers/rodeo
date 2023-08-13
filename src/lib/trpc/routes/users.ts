@@ -117,6 +117,7 @@ export const usersRouter = t.router({
 			const application = user.application as Record<string, any>;
 			for (const question of questions) {
 				const answer = application[question.id];
+				console.log(answer);
 				if (
 					question.required &&
 					(answer === undefined || answer === null || answer === false || answer === '')
@@ -136,6 +137,10 @@ export const usersRouter = t.router({
 						errors[question.label] = `This field must be at most ${question.max}.`;
 					}
 				} else if (question.type === 'DROPDOWN') {
+					if (!question.options.includes(answer)) {
+						errors[question.label] = 'This field must be one of the given options.';
+					}
+				} else if (question.type === 'RADIO') {
 					if (!question.options.includes(answer)) {
 						errors[question.label] = 'This field must be one of the given options.';
 					}
