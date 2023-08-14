@@ -7,7 +7,7 @@
  * (password is the same as the email):
  *
  * hacker@yopmail.com (sample hacker account)
- * admin@yopmail.com (sample admin account)
+ * c (sample admin account)
  */
 
 import lucia from 'lucia-auth';

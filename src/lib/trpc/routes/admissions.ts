@@ -62,6 +62,9 @@ export const admissionsRouter = t.router({
 						create: { userId: id, status: req.input.decision },
 						update: { status: req.input.decision },
 					});
+					await prisma.statusChange.create({
+						data: { newStatus: req.input.decision, userId: id },
+					});
 				}
 			}
 		}),
