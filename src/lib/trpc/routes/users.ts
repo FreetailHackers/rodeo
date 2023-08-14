@@ -117,7 +117,6 @@ export const usersRouter = t.router({
 			const application = user.application as Record<string, any>;
 			for (const question of questions) {
 				const answer = application[question.id];
-				console.log(answer);
 				if (
 					question.required &&
 					(answer === undefined || answer === null || answer === false || answer === '')
