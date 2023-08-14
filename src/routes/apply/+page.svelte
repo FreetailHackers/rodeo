@@ -205,11 +205,11 @@
 								<input
 									type="radio"
 									name={question.id}
-									id={option}
+									id={question.id + option}
 									value={option}
 									bind:group={application[question.id]}
 								/>
-								<label for={option}>{option}</label>
+								<label for={question.id + option}>{option}</label>
 							</div>
 						{/each}
 					{/if}
