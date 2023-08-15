@@ -201,6 +201,19 @@
 							containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem; padding-left: 10px;"
 							inputStyles="align-items: center; height: inherit; margin: 0;"
 						/>
+					{:else if question.type === 'RADIO'}
+						{#each question.options as option}
+							<div class="radio-buttons">
+								<input
+									type="radio"
+									name={question.id}
+									id={question.id + option}
+									value={option}
+									bind:group={application[question.id]}
+								/>
+								<label for={question.id + option}>{option}</label>
+							</div>
+						{/each}
 					{:else if question.type === 'FILE'}
 						<FileInput
 							name={question.id}
@@ -301,5 +314,11 @@
 
 	#status button {
 		margin-bottom: 1rem;
+	}
+
+	.radio-buttons {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
 	}
 </style>

@@ -134,6 +134,7 @@ async function main() {
 			label: 'Shirt size',
 			type: 'RADIO',
 			required: true,
+			options: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
 			generate: () => randomElement(['XS', 'S', 'M', 'L', 'XL', 'XXL']),
 		},
 	];
