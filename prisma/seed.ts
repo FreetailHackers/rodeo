@@ -7,13 +7,13 @@
  * (password is the same as the email):
  *
  * hacker@yopmail.com (sample hacker account)
- * c (sample admin account)
+ * admin@yopmail.com (sample admin account)
  */
 
 import lucia from 'lucia-auth';
 import 'lucia-auth/polyfill/node';
 import { firstNames, lastNames, majors } from './data';
-import { PrismaClient, Status, Prisma } from '@prisma/client';
+import { PrismaClient, Status, Prisma, StatusChange } from '@prisma/client';
 import prismaAdapter from '@lucia-auth/adapter-prisma';
 import { node } from 'lucia-auth/middleware';
 const prisma = new PrismaClient();
@@ -244,6 +244,31 @@ async function main() {
 
 	// Create default settings
 	await prisma.settings.create({ data: {} });
+
+	// Generate random status changes
+	const startDate = new Date('2023-08-01');
+	const endDate = new Date('2023-08-03');
+	const timeDiff = endDate.getTime() - startDate.getTime();
+	for (const id of ids) {
+		for (let i = 0; i < 50; i++) {
+			await prisma.statusChange.create({
+				data: {
+					userId: id,
+					newStatus: randomElement([
+						'CREATED',
+						'VERIFIED',
+						'APPLIED',
+						'ACCEPTED',
+						'REJECTED',
+						'WAITLISTED',
+						'CONFIRMED',
+						'DECLINED',
+					]),
+					timestamp: new Date(startDate.getTime() + Math.random() * timeDiff),
+				},
+			});
+		}
+	}
 }
 
 // Quick and dirty seedable random number generator taken from https://stackoverflow.com/a/19303725/16458492

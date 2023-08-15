@@ -115,7 +115,7 @@ model Event {
 
 model StatusChange {
   id        Int      @id @default(autoincrement())
-  newStatus String
+  newStatus Status
   timestamp DateTime @default(now())
   userId    String
   user      User     @relation(fields: [userId], references: [authUserId], onDelete: Cascade)

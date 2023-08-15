@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
 	import Toggle from '$lib/components/toggle.svelte';
+	import Graph from './line-graph.svelte';
 
 	export let data;
 
@@ -29,6 +30,8 @@
 		checked={data.settings.applicationOpen}
 	/>
 
+	<label for="statusChangeText"><h2>Status Change Tracking Graph</h2></label>
+	<Graph fullEntry={data.graph} />
 	<label for="homepageText"><h2>Homepage Text</h2></label>
 	<MarkdownEditor
 		placeholder="Modify the homepage text here (Markdown is supported)."

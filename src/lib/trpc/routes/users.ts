@@ -1,5 +1,5 @@
-import { Prisma, Role, Status } from '@prisma/client';
-import { string, z } from 'zod';
+import { Prisma, Role, Status, type StatusChange } from '@prisma/client';
+import { z } from 'zod';
 import { prisma } from '../db';
 import { sendEmail } from '../email';
 import { authenticate } from '../middleware';
@@ -148,7 +148,7 @@ export const usersRouter = t.router({
 					data: { status: 'APPLIED' },
 				});
 				await prisma.statusChange.create({
-					data: { newStatus: 'APPLIED', userId: req.ctx.user.id },
+					data: { newStatus: 'APPLIED' as Status, userId: req.ctx.user.id },
 				});
 				// notify user through their email on successful application submission
 				const subject = 'Thanks for submitting!';
@@ -175,7 +175,7 @@ export const usersRouter = t.router({
 				data: { status: 'VERIFIED' },
 			});
 			await prisma.statusChange.create({
-				data: { newStatus: 'VERIFIED', userId: req.ctx.user.id },
+				data: { newStatus: 'VERIFIED' as Status, userId: req.ctx.user.id },
 			});
 		}),
 
@@ -195,7 +195,7 @@ export const usersRouter = t.router({
 						data: { status: 'CONFIRMED' },
 					});
 					await prisma.statusChange.create({
-						data: { newStatus: 'CONFIMED', userId: req.ctx.user.id },
+						data: { newStatus: 'CONFIRMED' as Status, userId: req.ctx.user.id },
 					});
 					await sendEmail(
 						req.ctx.user.email,
@@ -214,7 +214,7 @@ export const usersRouter = t.router({
 						data: { status: 'DECLINED' },
 					});
 					await prisma.statusChange.create({
-						data: { newStatus: 'DECLINED', userId: req.ctx.user.id },
+						data: { newStatus: 'DECLINED' as Status, userId: req.ctx.user.id },
 					});
 					await sendEmail(
 						req.ctx.user.email,
@@ -251,7 +251,7 @@ export const usersRouter = t.router({
 					password: req.input.password,
 				});
 				await prisma.statusChange.create({
-					data: { newStatus: 'CREATED', userId: user.id },
+					data: { newStatus: 'CREATED' as Status, userId: user.id },
 				});
 				return await auth.createSession(user.id);
 			} catch (e) {
@@ -326,7 +326,7 @@ export const usersRouter = t.router({
 			data: { status: 'VERIFIED' },
 		});
 		await prisma.statusChange.create({
-			data: { newStatus: 'VERIFIED', userId: token.userId },
+			data: { newStatus: 'VERIFIED' as Status, userId: token.userId },
 		});
 	}),
 
@@ -510,5 +510,11 @@ export const usersRouter = t.router({
 					data: { roles: { set: updatedRoles } },
 				});
 			}
+		}),
+
+	fetchGraphData: t.procedure
+		.use(authenticate(['ADMIN']))
+		.query(async (): Promise<StatusChange[]> => {
+			return await prisma.statusChange.findMany({});
 		}),
 });

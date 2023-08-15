@@ -1,4 +1,4 @@
-import type { Decision, Prisma } from '@prisma/client';
+import type { Decision, Prisma, Status } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
 import { sendEmail } from '../email';
@@ -63,7 +63,7 @@ export const admissionsRouter = t.router({
 						update: { status: req.input.decision },
 					});
 					await prisma.statusChange.create({
-						data: { newStatus: req.input.decision, userId: id },
+						data: { newStatus: 'CONFIRMED' as Status, userId: id },
 					});
 				}
 			}
