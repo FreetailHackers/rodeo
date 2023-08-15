@@ -208,6 +208,19 @@
 								{item.label}
 							</div>
 						</Select>
+					{:else if question.type === 'RADIO'}
+						{#each question.options as option}
+							<div class="radio-buttons">
+								<input
+									type="radio"
+									name={question.id}
+									id={question.id + option}
+									value={option}
+									bind:group={application[question.id]}
+								/>
+								<label for={question.id + option}>{option}</label>
+							</div>
+						{/each}
 					{/if}
 				</div>
 			{/each}
@@ -301,5 +314,11 @@
 
 	#status button {
 		margin-bottom: 1rem;
+	}
+
+	.radio-buttons {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
 	}
 </style>

@@ -38,6 +38,9 @@ function formToApplication(questions: Question[], formData: FormData) {
 			} catch (ignore) {
 				// empty try-catch needed because JSON.parse on an empty string errors
 			}
+		} else if (question.type === 'RADIO') {
+			const selected = formData.get(question.id) as string;
+			application[question.id] = selected;
 		}
 	}
 	return application;

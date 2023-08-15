@@ -153,6 +153,10 @@ export const usersRouter = t.router({
 					} else if (!question.multiple && !question.custom && !question.options.includes(answer)) {
 						errors[question.label] = 'This field must be one of the given options.';
 					}
+				} else if (question.type === 'RADIO') {
+					if (!question.options.includes(answer)) {
+						errors[question.label] = 'This field must be one of the given options.';
+					}
 				}
 			}
 			// Update status to applied if there are no errors
