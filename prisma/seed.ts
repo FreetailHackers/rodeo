@@ -127,7 +127,7 @@ async function main() {
 			required: false,
 			accept: '.doc, .docx, .pdf',
 			maxSizeMB: 1,
-			generate: () => 'https://example.com/resume.pdf',
+			generate: () => undefined,
 		},
 		{
 			order: 7,
