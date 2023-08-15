@@ -26,7 +26,9 @@
 	{#if tooBig}
 		<span class="error">File too big! Max size is {maxSizeMB} MB.</span>
 	{:else}
-		<span class:empty={!selectedFile}>{selectedFile ?? 'Allowed types are ' + accept}</span>
+		<span class:empty={!selectedFile}
+			>{selectedFile ?? (accept ? 'Allowed types are ' + accept : 'No file selected')}</span
+		>
 	{/if}
 	<input type="file" {id} {name} {accept} bind:this={input} on:change={checkSize} />
 </div>

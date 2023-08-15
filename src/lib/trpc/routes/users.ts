@@ -8,12 +8,7 @@ import { getQuestions } from './questions';
 import { getSettings } from './settings';
 import { auth, emailVerificationToken, resetPasswordToken } from '$lib/lucia';
 import type { Session } from 'lucia-auth';
-import {
-	DeleteObjectCommand,
-	ListObjectsV2Command,
-	PutObjectCommand,
-	S3Client,
-} from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
@@ -87,27 +82,25 @@ export const usersRouter = t.router({
 			const questions = await getQuestions();
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const application: Record<string, any> = {};
+			const oldApplication = (
+				await prisma.user.findUniqueOrThrow({
+					where: { authUserId: req.ctx.user.id },
+				})
+			).application as Record<string, unknown>;
 			for (const question of questions) {
 				if (question.type === 'FILE') {
-					// Get previous response files and delete them
-					const listObjectsCommand = new ListObjectsV2Command({
-						Bucket: process.env.S3_BUCKET,
-						Prefix: `${req.ctx.user.id}/${question.id}/`,
-					});
-					const { Contents } = await s3Client.send(listObjectsCommand);
+					// Get previously uploaded file and delete it
 					if (
 						req.input[question.id] instanceof File &&
 						req.input[question.id].size > 0 &&
 						req.input[question.id].size <= question.maxSizeMB * 1024 * 1024
 					) {
-						for (const file of Contents ?? []) {
-							const deleteObjectCommand = new DeleteObjectCommand({
-								Bucket: process.env.S3_BUCKET,
-								Key: file.Key,
-							});
-							await s3Client.send(deleteObjectCommand);
-						}
-						const key = `${req.ctx.user.id}/${question.id}/${req.input[question.id].name}`;
+						const key = `${req.ctx.user.id}/${question.id}`;
+						const deleteObjectCommand = new DeleteObjectCommand({
+							Bucket: process.env.S3_BUCKET,
+							Key: key,
+						});
+						await s3Client.send(deleteObjectCommand);
 						const putObjectCommand = new PutObjectCommand({
 							Bucket: process.env.S3_BUCKET,
 							Key: key,
@@ -115,10 +108,9 @@ export const usersRouter = t.router({
 							ContentType: req.input[question.id].type,
 						});
 						await s3Client.send(putObjectCommand);
-						application[question.id] = `https://s3.amazonaws.com/${process.env.S3_BUCKET}/${key}`;
+						application[question.id] = req.input[question.id].name;
 					} else {
-						const oldValue = `https://s3.amazonaws.com/${process.env.S3_BUCKET}/${Contents?.[0].Key}`;
-						application[question.id] = Contents === undefined ? undefined : oldValue;
+						application[question.id] = oldApplication[question.id];
 					}
 				} else {
 					application[question.id] = req.input[question.id];

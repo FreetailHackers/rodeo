@@ -5,7 +5,8 @@
 	export let user: Partial<Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>>;
 	export let questions: Question[];
 
-	$: application = user.application as Record<string, unknown>;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const application = user.application as Record<string, any>;
 </script>
 
 <p><b>Role</b> {user.authUser?.roles.join(', ')}</p>
@@ -16,11 +17,20 @@
 </p>
 {#each questions as question}
 	<SvelteMarkdown source={question.label} />
-	{#if application[question.id] === undefined || application[question.id] === ''}
-		<blockquote><i>No answer given</i></blockquote>
-	{:else}
-		<blockquote>{application[question.id]}</blockquote>
-	{/if}
+	<blockquote>
+		{#if application[question.id] === undefined || application[question.id] === ''}
+			<i>No answer given</i>
+		{:else if question.type === 'FILE'}
+			<a
+				href={`/files/${user.authUserId}/${question.id}`}
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				{`/files/${user.authUserId}/${question.id}`}</a
+			>
+		{:else}
+			{application[question.id]}{/if}
+	</blockquote>
 {/each}
 
 <style>
