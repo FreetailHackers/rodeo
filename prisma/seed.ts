@@ -245,28 +245,61 @@ async function main() {
 	// Create default settings
 	await prisma.settings.create({ data: {} });
 
-	// Generate random status changes
-	const startDate = new Date('2023-08-01');
-	const endDate = new Date('2023-08-03');
-	const timeDiff = endDate.getTime() - startDate.getTime();
-	for (const id of ids) {
-		for (let i = 0; i < 50; i++) {
+	// Generate random StatusChanges
+	const statusFlow = ['CREATED', 'VERIFIED', 'APPLIED'];
+
+	const afterStatusApplied = ['ACCEPTED', 'REJECTED', 'WAITLISTED'];
+
+	const afterStatusAccepted = ['CONFIRMED', 'DECLINED'];
+
+	const intervalInMinutes = 300; // Customize the interval in minutes
+
+	for (let i = 0; i < 1; i++) {
+		const currentTime = new Date();
+		for (const id of ids) {
+			let lastTimestamp = currentTime;
+			for (const status of statusFlow) {
+				lastTimestamp = new Date(
+					lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * Math.random()
+				);
+
+				await prisma.statusChange.create({
+					data: {
+						newStatus: status as Status,
+						timestamp: lastTimestamp,
+						userId: id,
+					},
+				});
+			}
+
+			// choose one out of afterStatusApplied
+			const afterStatusAppliedRandom =
+				afterStatusApplied[Math.floor(Math.random() * afterStatusApplied.length)];
+			lastTimestamp = new Date(
+				lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * Math.random()
+			);
 			await prisma.statusChange.create({
 				data: {
+					newStatus: afterStatusAppliedRandom as Status,
+					timestamp: lastTimestamp,
 					userId: id,
-					newStatus: randomElement([
-						'CREATED',
-						'VERIFIED',
-						'APPLIED',
-						'ACCEPTED',
-						'REJECTED',
-						'WAITLISTED',
-						'CONFIRMED',
-						'DECLINED',
-					]),
-					timestamp: new Date(startDate.getTime() + Math.random() * timeDiff),
 				},
 			});
+
+			if (afterStatusAppliedRandom == 'ACCEPTED') {
+				const afterStatusAcceptedRandom =
+					afterStatusAccepted[Math.floor(Math.random() * afterStatusAccepted.length)];
+				lastTimestamp = new Date(
+					lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * Math.random()
+				);
+				await prisma.statusChange.create({
+					data: {
+						newStatus: afterStatusAcceptedRandom as Status,
+						timestamp: lastTimestamp,
+						userId: id,
+					},
+				});
+			}
 		}
 	}
 }
