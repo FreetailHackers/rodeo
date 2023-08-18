@@ -5,7 +5,7 @@
 	export let data;
 </script>
 
-<h1>Registration Questions</h1>
+<!-- <h1>Registration Questions</h1> -->
 
 <form
 	action="?/update"
