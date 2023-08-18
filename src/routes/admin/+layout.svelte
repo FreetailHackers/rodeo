@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { page } from '$app/stores';
-	import Toasts from '$lib/components/toasts.svelte';
-	import { toasts } from '$lib/stores';
 	import { onMount } from 'svelte';
 	// import '../global.css';
 	import { fly } from 'svelte/transition';
@@ -10,11 +8,6 @@
 	import { beforeNavigate, afterNavigate } from '$app/navigation';
 
 	// export let data;
-
-	// Automatically display a toast if a form action returns a string
-	$: if (typeof $page.form === 'string') {
-		toasts.notify($page.form);
-	}
 
 	let menu: HTMLMenuElement;
 	let hamburgerCheckbox: HTMLInputElement;
