@@ -9,8 +9,6 @@
 	import Loader from '$lib/components/loader.svelte';
 	import { beforeNavigate, afterNavigate } from '$app/navigation';
 
-	export let data;
-
 	// Automatically display a toast if a form action returns a string
 	$: if (typeof $page.form === 'string') {
 		toasts.notify($page.form);
