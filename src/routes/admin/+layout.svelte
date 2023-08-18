@@ -69,8 +69,6 @@
 	</div>
 {/key}
 
-<Toasts />
-
 <style>
 	nav {
 		position: sticky;
