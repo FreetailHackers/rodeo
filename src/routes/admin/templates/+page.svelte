@@ -52,30 +52,10 @@
 		name="declineTemplate"
 		id="declineTemplate"
 	/>
-
-	<label for="confirmBy">
-		<h2>RSVP deadline (leaving empty will disable RSVPs):</h2>
-	</label>
-	<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
-	<input
-		type="datetime-local"
-		id="confirmBy"
-		name="confirmBy"
-		value={data.settings.confirmBy?.toLocaleString('sv').replace(' ', 'T').slice(0, -3)}
-	/>
-	<button type="submit">Save</button>
 </form>
 
 <style>
 	label {
 		display: block;
-	}
-
-	input {
-		margin-bottom: 1rem;
-	}
-
-	button {
-		width: 100%;
 	}
 </style>

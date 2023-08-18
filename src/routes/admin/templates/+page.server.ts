@@ -10,7 +10,6 @@ dayjs.extend(timezone);
 export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['ADMIN']);
 	return {
-		decisions: await trpc(locals.auth).admissions.getDecisions(),
 		settings: await trpc(locals.auth).settings.getAll(),
 	};
 };
@@ -18,15 +17,6 @@ export const load = async ({ locals }) => {
 export const actions = {
 	settings: async ({ locals, request }) => {
 		const formData = await request.formData();
-		const applicationOpen = formData.get('applicationOpen') === 'on';
-		let confirmBy: Date | null;
-		try {
-			confirmBy = dayjs
-				.tz(formData.get('confirmBy') as string, formData.get('timezone') as string)
-				.toDate();
-		} catch (e) {
-			confirmBy = null;
-		}
 		const homepageText = formData.get('homepageText') as string;
 		const submitTemplate = formData.get('submitTemplate') as string;
 		const acceptTemplate = formData.get('acceptTemplate') as string;
@@ -35,8 +25,6 @@ export const actions = {
 		const confirmTemplate = formData.get('confirmTemplate') as string;
 		const declineTemplate = formData.get('declineTemplate') as string;
 		await trpc(locals.auth).settings.update({
-			applicationOpen,
-			confirmBy,
 			homepageText,
 			submitTemplate,
 			acceptTemplate,

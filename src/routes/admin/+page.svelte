@@ -23,7 +23,7 @@
 	/>
 </form>
 
-<h1>Pending Decisions</h1>
+<h2>Pending Decisions</h2>
 <form
 	method="POST"
 	action="?/release"
@@ -44,6 +44,28 @@
 			decisions</button
 		>
 	{/if}
+</form>
+
+<form
+	method="POST"
+	action="?/settings"
+	use:enhance={() => {
+		return async ({ update }) => {
+			update({ reset: false });
+		};
+	}}
+>
+	<label for="confirmBy">
+		<h2>RSVP deadline (leaving empty will disable RSVPs):</h2>
+	</label>
+	<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
+	<input
+		type="datetime-local"
+		id="confirmBy"
+		name="confirmBy"
+		value={data.settings.confirmBy?.toLocaleString('sv').replace(' ', 'T').slice(0, -3)}
+	/>
+	<button type="submit">Save</button>
 </form>
 
 <style>

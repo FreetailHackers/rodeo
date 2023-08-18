@@ -16,8 +16,21 @@ export const load = async ({ locals }) => {
 };
 
 export const actions = {
-	release: async ({ locals }) => {
-		await trpc(locals.auth).admissions.releaseAllDecisions();
-		return 'Released all decisions!';
+	settings: async ({ locals, request }) => {
+		const formData = await request.formData();
+		const applicationOpen = formData.get('applicationOpen') === 'on';
+		let confirmBy: Date | null;
+		try {
+			confirmBy = dayjs
+				.tz(formData.get('confirmBy') as string, formData.get('timezone') as string)
+				.toDate();
+		} catch (e) {
+			confirmBy = null;
+		}
+		await trpc(locals.auth).settings.update({
+			applicationOpen,
+			confirmBy,
+		});
+		return 'Saved settings!';
 	},
 };
