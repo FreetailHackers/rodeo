@@ -85,6 +85,8 @@ async function main() {
 			order: 1,
 			label: 'Classification',
 			type: 'DROPDOWN',
+			multiple: false,
+			custom: false,
 			required: true,
 			options: ['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate'],
 			generate: () => randomElement(['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate']),
@@ -92,7 +94,9 @@ async function main() {
 		{
 			order: 2,
 			label: 'Major',
-			type: 'MULTISELECT',
+			type: 'DROPDOWN',
+			multiple: true,
+			custom: true,
 			options: majors,
 			required: true,
 			generate: () => randomElement(majors),
@@ -110,6 +114,8 @@ async function main() {
 			type: 'NUMBER',
 			required: true,
 			placeholder: '0',
+			min: 0,
+			step: 1,
 			generate: () => Math.floor(random() * 10),
 		},
 		{
