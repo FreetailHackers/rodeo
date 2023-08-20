@@ -61,4 +61,8 @@
 	label {
 		margin: 0 0 0 0.5rem;
 	}
+
+	input {
+		padding: 0;
+	}
 </style>
