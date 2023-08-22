@@ -19,7 +19,8 @@ function formToApplication(questions: Question[], formData: FormData) {
 		if (
 			question.type === 'SENTENCE' ||
 			question.type === 'PARAGRAPH' ||
-			question.type === 'RADIO'
+			question.type === 'RADIO' ||
+			question.type === 'FILE'
 		) {
 			application[question.id] = formData.get(question.id);
 		} else if (question.type === 'NUMBER') {

@@ -225,7 +225,7 @@
 					{:else if question.type === 'FILE'}
 						<FileInput
 							name={question.id}
-							selectedFile={application[question.id]}
+							bind:selectedFile={application[question.id]}
 							accept={question.accept}
 							maxSizeMB={question.maxSizeMB}
 						/>
