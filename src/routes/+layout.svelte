@@ -43,25 +43,31 @@
 		<li>
 			<a href="/" class:active={$page.url.pathname === '/'}>Home</a>
 		</li>
-		<li><a href="/schedule" class:active={$page.url.pathname === '/schedule'}>Schedule</a></li>
-		<li><a href="/info" class:active={$page.url.pathname === '/info'}>Info</a></li>
+		<li>
+			<a href="/schedule" class:active={$page.url.pathname.startsWith('/schedule')}>Schedule</a>
+		</li>
+		<li><a href="/info" class:active={$page.url.pathname.startsWith('/info')}>Info</a></li>
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->
 		{#if data.user !== null && (!data.user.roles.includes('HACKER') || data.user.status === 'CONFIRMED')}
-			<li><a href="/id" class:active={$page.url.pathname === '/id'}>My Hacker ID</a></li>
+			<li><a href="/id" class:active={$page.url.pathname.startsWith('/id')}>My Hacker ID</a></li>
 		{/if}
 		{#if data.user?.roles.includes('ORGANIZER') || data.user?.roles.includes('ADMIN')}
-			<li><a href="/scan" class:active={$page.url.pathname === '/scan'}>Scan</a></li>
+			<li><a href="/scan" class:active={$page.url.pathname.startsWith('/scan')}>Scan</a></li>
 		{/if}
 		{#if data.user?.roles.includes('HACKER')}
-			<li><a href="/apply" class:active={$page.url.pathname === '/apply'}>Apply</a></li>
+			<li><a href="/apply" class:active={$page.url.pathname.startsWith('/apply')}>Apply</a></li>
 		{:else if data.user?.roles.includes('ADMIN')}
-			<li><a href="/users" class:active={$page.url.pathname === '/users'}>Users</a></li>
-			<li><a href="/admin" class:active={$page.url.pathname === '/admin'}>Admin</a></li>
+			<li><a href="/users" class:active={$page.url.pathname.startsWith('/users')}>Users</a></li>
+			<li><a href="/admin" class:active={$page.url.pathname.startsWith('/admin')}>Admin</a></li>
 			<li>
-				<a href="/admissions" class:active={$page.url.pathname === '/admissions'}>Admissions</a>
+				<a href="/admissions" class:active={$page.url.pathname.startsWith('/admissions')}
+					>Admissions</a
+				>
 			</li>
 		{/if}
-		<li><a href="/feedback" class:active={$page.url.pathname === '/feedback'}>Feedback</a></li>
+		<li>
+			<a href="/feedback" class:active={$page.url.pathname.startsWith('/feedback')}>Feedback</a>
+		</li>
 	</menu>
 	<hr />
 
