@@ -124,7 +124,7 @@
 						/>
 					</div>
 				</div>
-			{:else if question.type === 'DROPDOWN' || question.type === 'MULTISELECT' || question.type === 'RADIO'}
+			{:else if question.type === 'DROPDOWN' || question.type === 'RADIO'}
 				<div>
 					<label for={question.id + '_options'}>Options</label>
 					<textarea
@@ -132,6 +132,18 @@
 						name={question.id + '_options'}
 						id={question.id + '_options'}
 						placeholder="Write one option per line, like this:&#13;OPTION 1&#13;OPTION 2&#13;OPTION 3"
+					/>
+				</div>
+				<div class="flex-row">
+					<Toggle
+						name={question.id + '_multiple'}
+						label="Allow multiple selections"
+						checked={Boolean(question.multiple)}
+					/>
+					<Toggle
+						name={question.id + '_custom'}
+						label="Allow custom response entry"
+						checked={Boolean(question.custom)}
 					/>
 				</div>
 			{:else if question.type === 'FILE'}
@@ -167,7 +179,6 @@
 			<option value="PARAGRAPH">Paragraph</option>
 			<option value="NUMBER">Number</option>
 			<option value="DROPDOWN">Dropdown</option>
-			<option value="MULTISELECT">Multiselect</option>
 			<option value="CHECKBOX">Checkbox</option>
 			<option value="RADIO">Radio</option>
 			<option value="FILE">File</option>
@@ -217,7 +228,7 @@
 
 	.flex-row {
 		display: flex;
-		flex-direction: row;
+		flex-flow: row wrap;
 		justify-content: space-between;
 		gap: 1rem;
 	}

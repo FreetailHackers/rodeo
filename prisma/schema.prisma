@@ -95,7 +95,9 @@ model Question {
   required    Boolean      @default(false)
   order       Int          @unique
   placeholder String       @default("") // For sentences, paragraphs, and numbers
-  options     String[] // For dropdowns, multiselects, checkboxes, and radios
+  multiple    Boolean? // For dropdowns to allow multiple selections
+  custom      Boolean? // For dropdowns to allow user to enter custom option
+  options     String[] // For dropdowns, checkboxes, and radios
   min         Float? // For numbers
   max         Float? // For numbers
   step        Float? // For numbers
@@ -139,7 +141,6 @@ enum QuestionType {
   PARAGRAPH
   NUMBER
   DROPDOWN
-  MULTISELECT
   CHECKBOX
   RADIO
   FILE

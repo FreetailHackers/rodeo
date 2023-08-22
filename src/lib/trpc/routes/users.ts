@@ -66,6 +66,9 @@ export const usersRouter = t.router({
 	/**
 	 * Sets the logged in user to the given data. If the user has
 	 * finished their application, they will be un-applied.
+	 *
+	 * NOTE: This function does not perform any input validations.
+	 * Maybe it should?
 	 */
 	update: t.procedure
 		.use(authenticate(['HACKER']))
@@ -142,6 +145,8 @@ export const usersRouter = t.router({
 			}
 
 			// Validate the user's data
+			// TODO: We assume the data is the correct type here. Maybe we should validate it?
+			// Better yet, we can validate it in trpc.users.update
 			const errors: Record<string, string> = {};
 			const questions = await prisma.question.findMany();
 			const user = await prisma.user.findUniqueOrThrow({
@@ -169,20 +174,33 @@ export const usersRouter = t.router({
 					} else if (question.max !== null && answer > question.max) {
 						errors[question.label] = `This field must be at most ${question.max}.`;
 					}
-				} else if (question.type === 'DROPDOWN' || question.type === 'RADIO') {
+					// Possible TODO: Also check step? I invoke YAGNI for now
+					// If you're a future programmer and you need step validation,
+					// do be mindful of floating point imprecision
+				} else if (question.type === 'DROPDOWN') {
+					if (
+						question.multiple &&
+						!question.custom &&
+						answer.some((item: string) => !question.options.includes(item))
+					) {
+						errors[question.label] = 'This field must be one of the given options.';
+					} else if (!question.multiple && !question.custom && !question.options.includes(answer)) {
+						errors[question.label] = 'This field must be one of the given options.';
+					}
+				} else if (question.type === 'RADIO') {
 					if (!question.options.includes(answer)) {
 						errors[question.label] = 'This field must be one of the given options.';
 					}
 				}
 			}
 			// Update status to applied if there are no errors
-			if (Object.keys(errors).length == 0) {
+			if (Object.keys(errors).length === 0) {
 				await prisma.authUser.update({
 					where: { id: req.ctx.user.id },
 					data: { status: 'APPLIED' },
 				});
 
-				// notify user through their email on successful application submission
+				// Notify user through their email on successful application submission
 				const subject = 'Thanks for submitting!';
 				await sendEmail(req.ctx.user.email, subject, (await getSettings()).submitTemplate, null);
 			}

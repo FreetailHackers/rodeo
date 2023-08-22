@@ -34,6 +34,8 @@
 			>
 				{`${origin}/files/${user.authUserId}/${question.id}`}</a
 			>
+		{:else if Array.isArray(application[question.id])}
+			{application[question.id].join(', ')}
 		{:else}
 			{application[question.id]}{/if}
 	</blockquote>
