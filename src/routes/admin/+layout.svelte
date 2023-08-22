@@ -9,7 +9,7 @@
 <nav>
 	<input type="checkbox" id="administration" bind:this={hamburgerCheckbox} style="display: none" />
 	<ul>
-		<li><a href="/admin" class:active={$page.url.pathname === '/admin'}>Admin Settings</a></li>
+		<li><a href="/admin" class:active={$page.url.pathname === '/admin'}>Admissions</a></li>
 		<li>
 			<a href="/admin/templates" class:active={$page.url.pathname === '/admin/templates'}
 				>Email Templates</a
@@ -35,6 +35,11 @@
 	ul a {
 		display: inline;
 		width: initial;
+		margin-top: 20px;
+	}
+
+	ul li {
+		padding-top: 15px;
 	}
 
 	.active {
