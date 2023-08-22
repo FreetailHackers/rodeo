@@ -131,7 +131,9 @@ async function main() {
 			label: 'Resume',
 			type: 'FILE',
 			required: false,
-			generate: () => 'https://example.com/resume.pdf',
+			accept: '.doc, .docx, .pdf',
+			maxSizeMB: 1,
+			generate: () => undefined,
 		},
 		{
 			order: 7,

@@ -48,18 +48,18 @@
 				</div>
 			</div>
 			<div>
-				<label for={question.id}><b>{question.type}</b> Label</label>
+				<label for={question.id + '_label'}><b>{question.type}</b> Label</label>
 				<input
 					value={question.label}
 					name={question.id + '_label'}
-					id={question.id}
+					id={question.id + '_label'}
 					placeholder="What is your name?"
 				/>
 			</div>
 			<!-- Question-type-specific fields -->
 			{#if question.type === 'SENTENCE' || question.type === 'PARAGRAPH'}
 				<div>
-					<label for={question.id}>Placeholder</label>
+					<label for={question.id + '_placeholder'}>Placeholder</label>
 					<input
 						value={question.placeholder}
 						name={question.id + '_placeholder'}
@@ -68,7 +68,7 @@
 					/>
 				</div>
 				<div>
-					<label for={question.id}>Response must match regex:</label>
+					<label for={question.id + '_regex'}>Response must match regex:</label>
 					<input
 						value={question.regex}
 						name={question.id + '_regex'}
@@ -78,7 +78,7 @@
 				</div>
 			{:else if question.type === 'NUMBER'}
 				<div>
-					<label for={question.id}>Placeholder</label>
+					<label for={question.id + '_placeholder'}>Placeholder</label>
 					<input
 						value={question.placeholder}
 						type="number"
@@ -89,7 +89,7 @@
 				</div>
 				<div class="flex-row">
 					<div>
-						<label for={question.id}>Minimum</label>
+						<label for={question.id + '_min'}>Minimum</label>
 						<input
 							value={question.min}
 							type="number"
@@ -100,7 +100,7 @@
 						/>
 					</div>
 					<div>
-						<label for={question.id}>Maximum</label>
+						<label for={question.id + '_max'}>Maximum</label>
 						<input
 							value={question.max}
 							type="number"
@@ -111,7 +111,7 @@
 						/>
 					</div>
 					<div>
-						<label for={question.id}>Step</label>
+						<label for={question.id + '_step'}>Step</label>
 						<input
 							value={question.step}
 							type="number"
@@ -124,7 +124,7 @@
 				</div>
 			{:else if question.type === 'DROPDOWN' || question.type === 'RADIO'}
 				<div>
-					<label for={question.id}>Options</label>
+					<label for={question.id + '_options'}>Options</label>
 					<textarea
 						value={question.options.join('\n')}
 						name={question.id + '_options'}
@@ -143,6 +143,29 @@
 						label="Allow custom response entry"
 						checked={Boolean(question.custom)}
 					/>
+				</div>
+			{:else if question.type === 'FILE'}
+				<div class="flex-row">
+					<div>
+						<label for={question.id + '_accept'}>Accepted types:</label>
+						<input
+							value={question.accept}
+							name={question.id + '_accept'}
+							id={question.id + '_accept'}
+							placeholder=".doc, .docx, .pdf"
+						/>
+					</div>
+					<div>
+						<label for={question.id + '_maxSizeMB'}>Max file size (MB)</label>
+						<input
+							value={question.maxSizeMB}
+							type="number"
+							name={question.id + '_maxSizeMB'}
+							id={question.id + '_maxSizeMB'}
+							placeholder="10"
+							step="any"
+						/>
+					</div>
 				</div>
 			{/if}
 		</fieldset>

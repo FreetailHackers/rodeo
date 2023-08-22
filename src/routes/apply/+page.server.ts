@@ -16,7 +16,12 @@ function formToApplication(questions: Question[], formData: FormData) {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const application: Record<string, any> = {};
 	for (const question of questions) {
-		if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
+		if (
+			question.type === 'SENTENCE' ||
+			question.type === 'PARAGRAPH' ||
+			question.type === 'RADIO' ||
+			question.type === 'FILE'
+		) {
 			application[question.id] = formData.get(question.id);
 		} else if (question.type === 'NUMBER') {
 			application[question.id] = Number(formData.get(question.id));
@@ -38,9 +43,6 @@ function formToApplication(questions: Question[], formData: FormData) {
 			} catch (ignore) {
 				// empty try-catch needed because JSON.parse on an empty string errors
 			}
-		} else if (question.type === 'RADIO') {
-			const selected = formData.get(question.id) as string;
-			application[question.id] = selected;
 		}
 	}
 	return application;

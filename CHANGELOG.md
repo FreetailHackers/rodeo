@@ -1,10 +1,16 @@
 # Changelog
 
+## v0.6.0
+
+- Custom file upload questions
+
 ## v0.5.1
 
 [ADDED]
 
 - Support for custom responses in dropdowns
+- Custom radio questions
+- Page transitions
 
 ## v0.5.0
 

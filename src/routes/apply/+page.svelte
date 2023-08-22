@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import Select from 'svelte-select';
 	import SvelteMarkdown from 'svelte-markdown';
+	import FileInput from '$lib/components/file-input.svelte';
 
 	export let data;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -221,6 +222,13 @@
 								<label for={question.id + option}>{option}</label>
 							</div>
 						{/each}
+					{:else if question.type === 'FILE'}
+						<FileInput
+							name={question.id}
+							bind:selectedFile={application[question.id]}
+							accept={question.accept}
+							maxSizeMB={question.maxSizeMB}
+						/>
 					{/if}
 				</div>
 			{/each}
