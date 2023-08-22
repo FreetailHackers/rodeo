@@ -102,6 +102,8 @@ model Question {
   max         Float? // For numbers
   step        Float? // For numbers
   regex       String       @default("") // For sentences and paragraphs
+  accept      String       @default("") // For files
+  maxSizeMB   Float        @default(1) // For files
 }
 
 model Event {

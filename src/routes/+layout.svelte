@@ -25,6 +25,7 @@
 	onMount(() => {
 		for (const link of menu.childNodes) {
 			link.addEventListener('click', () => {
+				// Close the menu when a link is clicked on mobile
 				hamburgerCheckbox.checked = false;
 			});
 		}

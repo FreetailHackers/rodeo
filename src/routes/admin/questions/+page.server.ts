@@ -97,6 +97,8 @@ export const actions = {
 				]; // Remove only whitespace options
 				questions[id].multiple = questions[id].multiple === 'on';
 				questions[id].custom = questions[id].custom === 'on';
+			} else if (questions[id].type === 'FILE') {
+				questions[id].maxSizeMB = Number(questions[id].maxSizeMB) || 1;
 			}
 		}
 		await trpc(locals.auth).questions.update(questions);
