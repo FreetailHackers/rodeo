@@ -59,13 +59,19 @@
 </form>
 
 <style>
+	form {
+		padding-top: 10px;
+	}
+
 	button {
+		margin-top: 30px;
 		width: 100%;
 	}
 
 	#release {
 		font-weight: bold;
 		margin-top: 0;
+		padding-top: 0;
 		text-transform: uppercase;
 	}
 </style>
