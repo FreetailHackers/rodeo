@@ -52,10 +52,15 @@
 		name="declineTemplate"
 		id="declineTemplate"
 	/>
+	<button type="submit">Save</button>
 </form>
 
 <style>
 	label {
 		display: block;
+	}
+
+	button {
+		margin-top: 10px;
 	}
 </style>
