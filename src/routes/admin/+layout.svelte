@@ -35,7 +35,6 @@
 	ul a {
 		display: inline;
 		width: initial;
-		padding-top: 100px;
 	}
 
 	.active {
