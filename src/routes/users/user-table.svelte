@@ -251,6 +251,10 @@
 		gap: 0.5rem;
 	}
 
+	#actions > * {
+		height: 2.5rem;
+	}
+
 	summary {
 		list-style: none;
 		padding: 1rem;

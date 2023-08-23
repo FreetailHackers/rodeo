@@ -36,24 +36,63 @@
 <p><a href={csvDownloadLink} download="users.csv">Export search results as CSV</a></p>
 
 <!-- Search filters -->
-<form id="filter">
-	<select name="key">
-		<option value="email">Email</option>
-	</select>
-	<input
-		type="text"
-		id="search"
-		name="search"
-		placeholder="Search"
-		autocomplete="off"
-		value={data.query.search}
-	/>
-	<button>Search</button>
+<form>
+	<fieldset id="filter">
+		<select name="key">
+			<option value="email">Email</option>
+		</select>
+		<input
+			type="text"
+			id="search"
+			name="search"
+			placeholder="Search"
+			autocomplete="off"
+			value={data.query.search ?? ''}
+		/>
+		<button>Search</button>
+	</fieldset>
+
+	<br />
+
+	<UserTable users={data.users} selfID={data.user.id} questions={data.questions} />
+
+	<p id="page">
+		<a
+			data-sveltekit-noscroll
+			href={(() => {
+				const query = new URLSearchParams(data.query);
+				query.set('page', '1');
+				return `?${query}`;
+			})()}>&lt;&lt;</a
+		>
+		<a
+			data-sveltekit-noscroll
+			href={(() => {
+				const query = new URLSearchParams(data.query);
+				query.set('page', `${Math.max(1, Number(data.query.page) - 1)}`);
+				return `?${query}`;
+			})()}>&lt;</a
+		>
+		Page <input type="number" name="page" min="1" max={data.pages} value={data.query.page ?? 1} />
+		of {data.pages}
+		<a
+			data-sveltekit-noscroll
+			href={(() => {
+				const query = new URLSearchParams(data.query);
+				query.set('page', `${Math.min(data.pages, Number(data.query.page) + 1)}`);
+				return `?${query}`;
+			})()}>&gt;</a
+		>
+		<a
+			data-sveltekit-noscroll
+			href={(() => {
+				const query = new URLSearchParams(data.query);
+				query.set('page', `${data.pages}`);
+				return `?${query}`;
+			})()}>&gt;&gt;</a
+		>
+	</p>
 </form>
-
-<br />
-
-<UserTable users={data.users} selfID={data.user.id} questions={data.questions} />
 
 <style>
 	#filter {
@@ -62,13 +101,29 @@
 		justify-content: space-between;
 		gap: 0.5rem;
 		width: 100%;
+		min-width: 0;
 	}
 
 	#filter input {
 		min-width: 0;
+		flex: 1;
 	}
 
 	#filter button {
 		min-width: 5rem;
+	}
+
+	#page {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0.5rem;
+		width: 100%;
+		justify-content: center;
+	}
+
+	#page input {
+		width: 3rem;
 	}
 </style>
