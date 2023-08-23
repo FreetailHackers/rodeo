@@ -254,52 +254,50 @@ async function main() {
 
 	const intervalInMinutes = 300; // Customize the interval in minutes
 
-	for (let i = 0; i < 1; i++) {
-		const currentTime = new Date();
-		for (const id of ids) {
-			let lastTimestamp = currentTime;
-			for (const status of statusFlow) {
-				lastTimestamp = new Date(
-					lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * Math.random()
-				);
+	const currentTime = new Date();
+	for (const id of ids) {
+		let lastTimestamp = currentTime;
+		for (const status of statusFlow) {
+			lastTimestamp = new Date(
+				lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * Math.random()
+			);
 
-				await prisma.statusChange.create({
-					data: {
-						newStatus: status as Status,
-						timestamp: lastTimestamp,
-						userId: id,
-					},
-				});
-			}
+			await prisma.statusChange.create({
+				data: {
+					newStatus: status as Status,
+					timestamp: lastTimestamp,
+					userId: id,
+				},
+			});
+		}
 
-			// choose one out of afterStatusApplied
-			const afterStatusAppliedRandom =
-				afterStatusApplied[Math.floor(Math.random() * afterStatusApplied.length)];
+		// choose one out of afterStatusApplied
+		const afterStatusAppliedRandom =
+			afterStatusApplied[Math.floor(Math.random() * afterStatusApplied.length)];
+		lastTimestamp = new Date(
+			lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * Math.random()
+		);
+		await prisma.statusChange.create({
+			data: {
+				newStatus: afterStatusAppliedRandom as Status,
+				timestamp: lastTimestamp,
+				userId: id,
+			},
+		});
+
+		if (afterStatusAppliedRandom == 'ACCEPTED') {
+			const afterStatusAcceptedRandom =
+				afterStatusAccepted[Math.floor(Math.random() * afterStatusAccepted.length)];
 			lastTimestamp = new Date(
 				lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * Math.random()
 			);
 			await prisma.statusChange.create({
 				data: {
-					newStatus: afterStatusAppliedRandom as Status,
+					newStatus: afterStatusAcceptedRandom as Status,
 					timestamp: lastTimestamp,
 					userId: id,
 				},
 			});
-
-			if (afterStatusAppliedRandom == 'ACCEPTED') {
-				const afterStatusAcceptedRandom =
-					afterStatusAccepted[Math.floor(Math.random() * afterStatusAccepted.length)];
-				lastTimestamp = new Date(
-					lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * Math.random()
-				);
-				await prisma.statusChange.create({
-					data: {
-						newStatus: afterStatusAcceptedRandom as Status,
-						timestamp: lastTimestamp,
-						userId: id,
-					},
-				});
-			}
 		}
 	}
 }
