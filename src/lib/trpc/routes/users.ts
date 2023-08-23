@@ -446,16 +446,18 @@ export const usersRouter = t.router({
 		}),
 
 	/**
-	 * Gets all users. User must be an admin.
+	 * Searches all users by email. User must be an admin.
 	 */
-	getAll: t.procedure
+	search: t.procedure
 		.use(authenticate(['ADMIN']))
+		.input(z.string())
 		.query(
-			async (): Promise<
-				Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[]
-			> => {
+			async (
+				req
+			): Promise<Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[]> => {
 				return await prisma.user.findMany({
 					include: { authUser: true, decision: true },
+					where: { authUser: { email: { contains: req.input } } },
 				});
 			}
 		),

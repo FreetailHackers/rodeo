@@ -2,7 +2,17 @@
 
 ## v0.6.0
 
+[ADDED]
+
 - Custom file upload questions
+
+[FIXED]
+
+- Searching by email
+
+[REMOVED]
+
+- Searching by SENTENCE or PARAGRAPH questions
 
 ## v0.5.1
 

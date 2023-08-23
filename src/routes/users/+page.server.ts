@@ -2,12 +2,13 @@ import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import type { Role, Status } from '@prisma/client';
 
-export const load = async ({ locals }) => {
+export const load = async ({ locals, url }) => {
 	const user = await authenticate(locals.auth, ['ADMIN']);
 	return {
 		questions: await trpc(locals.auth).questions.get(),
-		users: await trpc(locals.auth).users.getAll(),
+		users: await trpc(locals.auth).users.search(url.searchParams.get('search') ?? ''),
 		user,
+		query: Object.fromEntries(url.searchParams),
 	};
 };
 
