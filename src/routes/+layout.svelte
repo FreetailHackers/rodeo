@@ -101,6 +101,7 @@
 		position: sticky;
 		top: 0;
 		margin-top: 0;
+		background-color: white;
 		z-index: 99;
 	}
 
@@ -109,6 +110,7 @@
 		margin: 0;
 		padding: 0;
 		transition: all 0.5s ease-out;
+		background-color: white;
 		max-height: 0;
 		overflow: hidden;
 		width: 100%;

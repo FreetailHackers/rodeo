@@ -6,7 +6,6 @@
 </script>
 
 <form
-	id="show-questions"
 	action="?/update"
 	method="POST"
 	use:enhance={() =>
@@ -188,10 +187,6 @@
 </form>
 
 <style>
-	#show-questions {
-		margin-top: 20px;
-	}
-
 	fieldset {
 		display: flex;
 		flex-direction: column;
