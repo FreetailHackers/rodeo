@@ -52,6 +52,8 @@
 		name="declineTemplate"
 		id="declineTemplate"
 	/>
+
+	<button type="submit">Save</button>
 </form>
 
 <style>
