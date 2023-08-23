@@ -12,6 +12,7 @@ export const load = async ({ locals, url }) => {
 		questions: await trpc(locals.auth).questions.get(),
 		users: results.users,
 		pages: results.pages,
+		start: results.start,
 		user,
 		query: Object.fromEntries(url.searchParams),
 	};

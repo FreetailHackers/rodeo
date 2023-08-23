@@ -51,48 +51,62 @@
 		/>
 		<button>Search</button>
 	</fieldset>
+</form>
 
-	<br />
-
+{#if data.users.length === 0}
+	<p>No results found.</p>
+{:else}
+	<p>Showing results {data.start} through {data.start + data.users.length - 1}:</p>
 	<UserTable users={data.users} selfID={data.user.id} questions={data.questions} />
 
-	<p id="page">
-		<a
-			data-sveltekit-noscroll
-			href={(() => {
-				const query = new URLSearchParams(data.query);
-				query.set('page', '1');
-				return `?${query}`;
-			})()}>&lt;&lt;</a
-		>
-		<a
-			data-sveltekit-noscroll
-			href={(() => {
-				const query = new URLSearchParams(data.query);
-				query.set('page', `${Math.max(1, Number(data.query.page) - 1)}`);
-				return `?${query}`;
-			})()}>&lt;</a
-		>
-		Page <input type="number" name="page" min="1" max={data.pages} value={data.query.page ?? 1} />
-		of {data.pages}
-		<a
-			data-sveltekit-noscroll
-			href={(() => {
-				const query = new URLSearchParams(data.query);
-				query.set('page', `${Math.min(data.pages, Number(data.query.page) + 1)}`);
-				return `?${query}`;
-			})()}>&gt;</a
-		>
-		<a
-			data-sveltekit-noscroll
-			href={(() => {
-				const query = new URLSearchParams(data.query);
-				query.set('page', `${data.pages}`);
-				return `?${query}`;
-			})()}>&gt;&gt;</a
-		>
-	</p>
-</form>
+	<form>
+		<p id="page">
+			<a
+				class:disabled={Number(data.query.page ?? 1) === 1}
+				data-sveltekit-noscroll
+				href={(() => {
+					const query = new URLSearchParams(data.query);
+					query.set('page', '1');
+					return `?${query}`;
+				})()}>&lt;&lt;</a
+			>
+			<a
+				class:disabled={Number(data.query.page ?? 1) === 1}
+				data-sveltekit-noscroll
+				href={(() => {
+					const query = new URLSearchParams(data.query);
+					query.set('page', `${Math.max(1, Number(data.query.page ?? 1) - 1)}`);
+					return `?${query}`;
+				})()}>&lt;</a
+			>
+			Page <input type="number" name="page" min="1" max={data.pages} value={data.query.page ?? 1} />
+			of {data.pages}
+			<a
+				class:disabled={Number(data.query.page ?? 1) >= data.pages}
+				data-sveltekit-noscroll
+				href={(() => {
+					const query = new URLSearchParams(data.query);
+					query.set('page', `${Math.min(data.pages, Number(data.query.page ?? 1) + 1)}`);
+					return `?${query}`;
+				})()}>&gt;</a
+			>
+			<a
+				class:disabled={Number(data.query.page ?? 1) >= data.pages}
+				data-sveltekit-noscroll
+				href={(() => {
+					const query = new URLSearchParams(data.query);
+					query.set('page', `${data.pages}`);
+					return `?${query}`;
+				})()}>&gt;&gt;</a
+			>
+		</p>
+		{#each Object.entries(data.query) as [key, value]}
+			{#if key !== 'page'}
+				<input type="hidden" name={key} {value} />
+			{/if}
+		{/each}
+	</form>
+{/if}
 
 <style>
 	#filter {
@@ -125,5 +139,11 @@
 
 	#page input {
 		width: 3rem;
+	}
+
+	.disabled {
+		pointer-events: none;
+		text-decoration: none;
+		opacity: 0.5;
 	}
 </style>

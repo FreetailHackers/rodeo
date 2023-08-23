@@ -456,18 +456,21 @@ export const usersRouter = t.router({
 				req
 			): Promise<{
 				pages: number;
+				start: number;
 				users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
 			}> => {
-				const RESULTS_PER_PAGE = 5;
+				const RESULTS_PER_PAGE = 100;
 				const where = { authUser: { email: { contains: req.input.search } } };
 				const count = await prisma.user.count({ where });
 				return {
 					pages: Math.ceil(count / RESULTS_PER_PAGE),
+					start: (req.input.page - 1) * RESULTS_PER_PAGE + 1,
 					users: await prisma.user.findMany({
 						include: { authUser: true, decision: true },
 						where,
 						skip: (req.input.page - 1) * RESULTS_PER_PAGE,
 						take: RESULTS_PER_PAGE,
+						orderBy: { authUser: { email: 'asc' } },
 					}),
 				};
 			}
