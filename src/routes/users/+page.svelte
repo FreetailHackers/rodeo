@@ -6,6 +6,9 @@
 
 	export let data;
 
+	let key = data.query.key ?? 'email';
+	let search = data.query.search ?? '';
+
 	// Helper function to replace question IDs with their labels
 	function prepare(user: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>) {
 		function prepareApplication(application: Record<string, unknown>) {
@@ -38,17 +41,50 @@
 <!-- Search filters -->
 <form>
 	<fieldset id="filter">
-		<select name="key">
+		<select
+			name="key"
+			bind:value={key}
+			on:change={() => {
+				if (key === 'role') search = 'HACKER';
+				else if (key === 'status') search = 'CREATED';
+				else search = '';
+			}}
+		>
 			<option value="email">Email</option>
+			<option value="role">Role</option>
+			<option value="status">Status</option>
 		</select>
-		<input
-			type="text"
-			id="search"
-			name="search"
-			placeholder="Search"
-			autocomplete="off"
-			value={data.query.search ?? ''}
-		/>
+		{#if key === 'role'}
+			<select name="search" bind:value={search} class="search">
+				<option value="HACKER">HACKER</option>
+				<option value="ADMIN">ADMIN</option>
+				<option value="ORGANIZER">ORGANIZER</option>
+				<option value="JUDGE">JUDGE</option>
+				<option value="VOLUNTEER">VOLUNTEER</option>
+				<option value="SPONSOR">SPONSOR</option>
+			</select>
+		{:else if key === 'status'}
+			<select name="search" bind:value={search} class="search">
+				<option value="CREATED">CREATED</option>
+				<option value="VERIFIED">VERIFIED</option>
+				<option value="APPLIED">APPLIED</option>
+				<option value="ACCEPTED">ACCEPTED</option>
+				<option value="REJECTED">REJECTED</option>
+				<option value="WAITLISTED">WAITLISTED</option>
+				<option value="CONFIRMED">CONFIRMED</option>
+				<option value="DECLINED">DECLINED</option>
+			</select>
+		{:else}
+			<input
+				type="text"
+				id="search"
+				name="search"
+				placeholder="Search"
+				autocomplete="off"
+				bind:value={search}
+				class="search"
+			/>
+		{/if}
 		<button>Search</button>
 	</fieldset>
 </form>
@@ -56,48 +92,40 @@
 {#if data.users.length === 0}
 	<p>No results found.</p>
 {:else}
-	<p>Showing results {data.start} through {data.start + data.users.length - 1}:</p>
+	<p>Showing results {data.start} through {data.start + data.users.length - 1} of {data.count}:</p>
+
 	<UserTable users={data.users} selfID={data.user.id} questions={data.questions} />
 
+	<!-- Pagination -->
 	<form>
 		<p id="page">
 			<a
 				class:disabled={Number(data.query.page ?? 1) === 1}
 				data-sveltekit-noscroll
-				href={(() => {
-					const query = new URLSearchParams(data.query);
-					query.set('page', '1');
-					return `?${query}`;
-				})()}>&lt;&lt;</a
+				href={`?${new URLSearchParams({ ...data.query, page: '1' })}`}>&lt;&lt;</a
 			>
 			<a
 				class:disabled={Number(data.query.page ?? 1) === 1}
 				data-sveltekit-noscroll
-				href={(() => {
-					const query = new URLSearchParams(data.query);
-					query.set('page', `${Math.max(1, Number(data.query.page ?? 1) - 1)}`);
-					return `?${query}`;
-				})()}>&lt;</a
+				href={`?${new URLSearchParams({
+					...data.query,
+					page: String(Number(data.query.page ?? 1) - 1),
+				})}`}>&lt;</a
 			>
 			Page <input type="number" name="page" min="1" max={data.pages} value={data.query.page ?? 1} />
 			of {data.pages}
 			<a
 				class:disabled={Number(data.query.page ?? 1) >= data.pages}
 				data-sveltekit-noscroll
-				href={(() => {
-					const query = new URLSearchParams(data.query);
-					query.set('page', `${Math.min(data.pages, Number(data.query.page ?? 1) + 1)}`);
-					return `?${query}`;
-				})()}>&gt;</a
+				href={`?${new URLSearchParams({
+					...data.query,
+					page: String(Number(data.query.page ?? 1) + 1),
+				})}`}>&gt;</a
 			>
 			<a
 				class:disabled={Number(data.query.page ?? 1) >= data.pages}
 				data-sveltekit-noscroll
-				href={(() => {
-					const query = new URLSearchParams(data.query);
-					query.set('page', `${data.pages}`);
-					return `?${query}`;
-				})()}>&gt;&gt;</a
+				href={`?${new URLSearchParams({ ...data.query, page: String(data.pages) })}`}>&gt;&gt;</a
 			>
 		</p>
 		{#each Object.entries(data.query) as [key, value]}
@@ -118,7 +146,7 @@
 		min-width: 0;
 	}
 
-	#filter input {
+	.search {
 		min-width: 0;
 		flex: 1;
 	}

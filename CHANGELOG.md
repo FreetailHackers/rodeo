@@ -8,7 +8,7 @@
 
 [FIXED]
 
-- Searching by email
+- Searching by email, status, role
 
 [REMOVED]
 

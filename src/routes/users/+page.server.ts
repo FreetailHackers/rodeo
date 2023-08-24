@@ -6,6 +6,7 @@ export const load = async ({ locals, url }) => {
 	const user = await authenticate(locals.auth, ['ADMIN']);
 	const results = await trpc(locals.auth).users.search({
 		page: Number(url.searchParams.get('page') ?? 1),
+		key: url.searchParams.get('key') ?? '',
 		search: url.searchParams.get('search') ?? '',
 	});
 	return {
@@ -13,6 +14,7 @@ export const load = async ({ locals, url }) => {
 		users: results.users,
 		pages: results.pages,
 		start: results.start,
+		count: results.count,
 		user,
 		query: Object.fromEntries(url.searchParams),
 	};

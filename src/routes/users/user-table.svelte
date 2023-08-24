@@ -202,8 +202,7 @@
 						<a href="mailto:{user.authUser.email}">{user.authUser.email}</a>
 						<span class="grow" />
 						<span
-							class="{user.decision?.status.toLowerCase() ??
-								user.authUser.status.toLowerCase()} dot"
+							class="{user.authUser.status.toLowerCase()} dot"
 							title={user.decision?.status ?? user.authUser.status}
 						/>
 					</summary>

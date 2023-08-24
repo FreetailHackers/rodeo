@@ -450,25 +450,45 @@ export const usersRouter = t.router({
 	 */
 	search: t.procedure
 		.use(authenticate(['ADMIN']))
-		.input(z.object({ search: z.string(), page: z.number() }))
+		.input(
+			z.object({
+				key: z.string(),
+				search: z.string(),
+				page: z.number().transform((page) => page - 1),
+			})
+		)
 		.query(
 			async (
 				req
 			): Promise<{
 				pages: number;
 				start: number;
+				count: number;
 				users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
 			}> => {
-				const RESULTS_PER_PAGE = 100;
-				const where = { authUser: { email: { contains: req.input.search } } };
+				const RESULTS_PER_PAGE = 5;
+				// Convert key to Prisma where filter
+				let where: Prisma.UserWhereInput = {};
+				if (req.input.key === 'email') {
+					where = { authUser: { email: { contains: req.input.search } } };
+				} else if (req.input.key === 'status') {
+					where = { authUser: { status: req.input.search as Status } };
+				} else if (req.input.key === 'role') {
+					where = { authUser: { roles: { has: req.input.search as Role } } };
+				} else if (req.input.key === 'decision') {
+					where = {
+						decision: { status: req.input.search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },
+					};
+				}
 				const count = await prisma.user.count({ where });
 				return {
 					pages: Math.ceil(count / RESULTS_PER_PAGE),
-					start: (req.input.page - 1) * RESULTS_PER_PAGE + 1,
+					start: req.input.page * RESULTS_PER_PAGE + 1,
+					count,
 					users: await prisma.user.findMany({
 						include: { authUser: true, decision: true },
 						where,
-						skip: (req.input.page - 1) * RESULTS_PER_PAGE,
+						skip: req.input.page * RESULTS_PER_PAGE,
 						take: RESULTS_PER_PAGE,
 						orderBy: { authUser: { email: 'asc' } },
 					}),
