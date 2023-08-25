@@ -2,12 +2,22 @@ import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import type { Role, Status } from '@prisma/client';
 
-export const load = async ({ locals }) => {
+export const load = async ({ locals, url }) => {
 	const user = await authenticate(locals.auth, ['ADMIN']);
+	const results = await trpc(locals.auth).users.search({
+		page: Number(url.searchParams.get('page') ?? 1),
+		key: url.searchParams.get('key') ?? '',
+		search: url.searchParams.get('search') ?? '',
+		limit: Number(url.searchParams.get('limit') ?? 10),
+	});
 	return {
 		questions: await trpc(locals.auth).questions.get(),
-		users: await trpc(locals.auth).users.getAll(),
+		users: results.users,
+		pages: results.pages,
+		start: results.start,
+		count: results.count,
 		user,
+		query: Object.fromEntries(url.searchParams),
 	};
 };
 
@@ -18,7 +28,7 @@ export const actions = {
 		const ids: string[] = [];
 		for (const key of formData.keys()) {
 			if (key.startsWith('id')) {
-				ids.push(key.split('.')[1]);
+				ids.push(key.split(' ')[1]);
 			}
 		}
 		if (action === 'admissions') {
