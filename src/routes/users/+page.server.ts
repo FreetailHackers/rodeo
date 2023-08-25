@@ -28,7 +28,7 @@ export const actions = {
 		const ids: string[] = [];
 		for (const key of formData.keys()) {
 			if (key.startsWith('id')) {
-				ids.push(key.split('.')[1]);
+				ids.push(key.split(' ')[1]);
 			}
 		}
 		if (action === 'admissions') {

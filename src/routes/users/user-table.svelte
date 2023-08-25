@@ -8,9 +8,13 @@
 	export let questions: Question[];
 
 	let action = 'admissions';
-	let selected = users.map(() => false);
-
+	$: selected = users.map(() => false);
 	let selectAll: HTMLInputElement;
+	$: if (selectAll) {
+		selectAll.indeterminate =
+			selected.filter(Boolean).length > 0 && selected.filter(Boolean).length < users.length;
+		selectAll.checked = selected.filter(Boolean).length === users.length;
+	}
 
 	// Validate that the selected action can be applied to the selected users
 	// Throws an error if the action is invalid, otherwise returns a string
@@ -111,6 +115,7 @@
 					<span class="grow" />
 					<select name="user-status">
 						<option value="CREATED">Created</option>
+						<option value="VERIFIED">Verified</option>
 						<option value="APPLIED">Applied</option>
 						<option value="ACCEPTED">Accepted</option>
 						<option value="REJECTED">Rejected</option>
@@ -185,19 +190,9 @@
 					<summary class="flex-align-center">
 						<input
 							type="checkbox"
-							name={'id.' + user.authUserId}
+							name={'id ' + user.authUserId}
 							checked={selected[i]}
-							on:click={() => {
-								selected[i] = !selected[i];
-								selectAll.indeterminate = false;
-								if (selected.filter(Boolean).length === users.length) {
-									selectAll.checked = true;
-								} else if (selected.filter(Boolean).length === 0) {
-									selectAll.checked = false;
-								} else {
-									selectAll.indeterminate = true;
-								}
-							}}
+							on:click={() => (selected[i] = !selected[i])}
 						/>
 						<a href="mailto:{user.authUser.email}">{user.authUser.email}</a>
 						<span class="grow" />

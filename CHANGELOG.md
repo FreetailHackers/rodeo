@@ -5,6 +5,7 @@
 [ADDED]
 
 - Custom file upload questions
+- Pagination in user table
 
 [FIXED]
 
