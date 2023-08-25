@@ -2,7 +2,18 @@
 
 ## v0.6.0
 
+[ADDED]
+
 - Custom file upload questions
+- Pagination in user table
+
+[FIXED]
+
+- Searching by email, status, role
+
+[REMOVED]
+
+- Searching by SENTENCE or PARAGRAPH questions
 
 ## v0.5.1
 

@@ -212,10 +212,13 @@ async function main() {
 	];
 	await prisma.event.createMany({ data: events });
 
-	// Generate 10 random hackers with a seeded random number generator for reproducibility
-	// XXX: Used to be 1000, but auth.createUser seems to be prohibitively slow
+	// Create example users
+	// NOTE: There is no way to sign in as these users, since they don't have passwords
+	// and hashing passwords is slow by design
+	const authUsers: Prisma.AuthUserCreateInput[] = [];
+	const users: Prisma.UserUncheckedCreateInput[] = [];
 	const ids: string[] = [];
-	for (let i = 0; i < 10; i++) {
+	for (let i = 0; i < 1000; i++) {
 		// Generate a completed application for each hacker
 		const application = {};
 		for (const question of createdQuestions) {
@@ -223,31 +226,30 @@ async function main() {
 			application[question.id] = questions[question.order].generate();
 		}
 		const email = `hacker${i}@yopmail.com`;
-		const id = await register(email, email);
-		ids.push(id);
-		// Give each hacker a random status
-		await prisma.authUser.update({
-			where: { id },
-			data: {
-				status: Status[Object.keys(Status)[Math.floor(random() * Object.keys(Status).length)]],
-			},
+		authUsers.push({
+			id: email,
+			email,
+			roles: ['HACKER'],
+			status: Status[randomElement(Object.keys(Status))],
 		});
-		await prisma.user.update({ where: { authUserId: id }, data: { application } });
+		users.push({ authUserId: email, application });
+		ids.push(email);
 	}
+	await prisma.authUser.createMany({ data: authUsers });
+	await prisma.user.createMany({ data: users });
 
-	// Generate up to 10 decisions (not randomized so I don't have to worry about duplicates)
+	// Generate decisions (not randomized so I don't have to worry about duplicates)
 	const decisions: Prisma.DecisionCreateManyInput[] = [];
 	for (const id of ids) {
-		// Only decide on hackers with status APPLIED or WAITLISTED
+		// Only decide on hackers with status APPLIED or WAITLISTED with 50% probability
 		const hacker = await prisma.authUser.findUniqueOrThrow({ where: { id } });
-		if (hacker.status !== 'APPLIED' && hacker.status !== 'WAITLISTED') {
+		if ((hacker.status !== 'APPLIED' && hacker.status !== 'WAITLISTED') || random() < 0.5) {
 			continue;
 		}
 		decisions.push({
 			userId: hacker.id,
 			status: randomElement(['ACCEPTED', 'REJECTED', 'WAITLISTED']),
 		});
-		if (decisions.length >= 10) break;
 	}
 	await prisma.decision.createMany({ data: decisions });
 
