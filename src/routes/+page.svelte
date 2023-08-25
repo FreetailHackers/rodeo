@@ -20,12 +20,12 @@
 {#if data.user !== null}
 	<SvelteMarkdown source={data.settings.homepageText} />
 
-	<!-- Admin announcements panel -->
-	<h2>Announcements</h2>
-	<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
 	<form method="POST" action="?/logout" use:enhance>
 		<button type="submit" id="logout">Logout</button>
 	</form>
+	<!-- Admin announcements panel -->
+	<h2>Announcements</h2>
+	<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
 {:else}
 	<!-- Signup page -->
 	{#if !data.settings.applicationOpen}
