@@ -8,6 +8,7 @@ export const load = async ({ locals, url }) => {
 		page: Number(url.searchParams.get('page') ?? 1),
 		key: url.searchParams.get('key') ?? '',
 		search: url.searchParams.get('search') ?? '',
+		limit: Number(url.searchParams.get('limit') ?? 10),
 	});
 	return {
 		questions: await trpc(locals.auth).questions.get(),

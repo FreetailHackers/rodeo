@@ -454,6 +454,7 @@ export const usersRouter = t.router({
 			z.object({
 				key: z.string(),
 				search: z.string(),
+				limit: z.number().transform((limit) => (limit === 0 ? Number.MAX_SAFE_INTEGER : limit)),
 				page: z.number().transform((page) => page - 1),
 			})
 		)
@@ -466,7 +467,6 @@ export const usersRouter = t.router({
 				count: number;
 				users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
 			}> => {
-				const RESULTS_PER_PAGE = 5;
 				// Convert key to Prisma where filter
 				let where: Prisma.UserWhereInput = {};
 				if (req.input.key === 'email') {
@@ -482,14 +482,14 @@ export const usersRouter = t.router({
 				}
 				const count = await prisma.user.count({ where });
 				return {
-					pages: Math.ceil(count / RESULTS_PER_PAGE),
-					start: req.input.page * RESULTS_PER_PAGE + 1,
+					pages: Math.ceil(count / req.input.limit),
+					start: req.input.page * req.input.limit + 1,
 					count,
 					users: await prisma.user.findMany({
 						include: { authUser: true, decision: true },
 						where,
-						skip: req.input.page * RESULTS_PER_PAGE,
-						take: RESULTS_PER_PAGE,
+						skip: req.input.page * req.input.limit,
+						take: req.input.limit,
 						orderBy: { authUser: { email: 'asc' } },
 					}),
 				};

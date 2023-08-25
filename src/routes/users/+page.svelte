@@ -3,11 +3,13 @@
 	import { Parser } from '@json2csv/plainjs';
 	import UserTable from './user-table.svelte';
 	import { browser } from '$app/environment';
+	import { goto } from '$app/navigation';
 
 	export let data;
 
 	let key = data.query.key ?? 'email';
 	let search = data.query.search ?? '';
+	let limit = data.query.limit ?? '10';
 
 	// Helper function to replace question IDs with their labels
 	function prepare(user: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>) {
@@ -40,7 +42,7 @@
 
 <!-- Search filters -->
 <form>
-	<fieldset id="filter">
+	<fieldset class="filter">
 		<select
 			name="key"
 			bind:value={key}
@@ -85,6 +87,7 @@
 				class="search"
 			/>
 		{/if}
+		<input type="hidden" name="limit" value={limit} />
 		<button>Search</button>
 	</fieldset>
 </form>
@@ -92,8 +95,26 @@
 {#if data.users.length === 0}
 	<p>No results found.</p>
 {:else}
-	<p>Showing results {data.start} through {data.start + data.users.length - 1} of {data.count}:</p>
-
+	<div class="filter">
+		<p>
+			Results {data.start} through {data.start + data.users.length - 1} of {data.count}:
+		</p>
+		<select
+			name="limit"
+			bind:value={limit}
+			on:change={() => {
+				goto(`${location.pathname}?${new URLSearchParams({ ...data.query, limit })}`, {
+					noScroll: true,
+				});
+			}}
+		>
+			<option value="10">Show 10</option>
+			<option value="25">Show 25</option>
+			<option value="50">Show 50</option>
+			<option value="100">Show 100</option>
+			<option value="0">Show all</option>
+		</select>
+	</div>
 	<UserTable users={data.users} selfID={data.user.id} questions={data.questions} />
 
 	<!-- Pagination -->
@@ -137,10 +158,11 @@
 {/if}
 
 <style>
-	#filter {
+	.filter {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
+		align-items: center;
 		gap: 0.5rem;
 		width: 100%;
 		min-width: 0;
@@ -151,7 +173,7 @@
 		flex: 1;
 	}
 
-	#filter button {
+	.filter button {
 		min-width: 5rem;
 	}
 
@@ -166,7 +188,7 @@
 	}
 
 	#page input {
-		width: 3rem;
+		width: 3.5rem;
 	}
 
 	.disabled {
