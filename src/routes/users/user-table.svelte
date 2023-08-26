@@ -184,7 +184,7 @@
 		</li>
 
 		<!-- Data -->
-		{#each users as user, i}
+		{#each users as user, i (user.authUserId)}
 			<li>
 				<details>
 					<summary class="flex-align-center">

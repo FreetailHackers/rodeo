@@ -5,6 +5,7 @@
 [FIXED]
 
 - Errors when leaving an unanswered not-required non-custom-entry multiselect blank
+- User table showing out-of-order/mismatched data after searching
 
 ## v0.6.0
 
