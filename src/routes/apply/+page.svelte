@@ -150,6 +150,9 @@
 					<label for={question.id}>
 						<SvelteMarkdown source={question.label} isInline />
 						{#if question.required}*{/if}
+						{#if form !== null && typeof form === 'object' && question.id in form}
+							<span class="error">{form[question.id]}</span>
+						{/if}
 					</label>
 					{#if question.type === 'SENTENCE'}
 						<input
@@ -171,8 +174,6 @@
 							type="number"
 							name={question.id}
 							id={question.id}
-							min={question.min}
-							max={question.max}
 							step={question.step}
 							bind:value={application[question.id]}
 							placeholder={question.placeholder}
@@ -202,7 +203,7 @@
 							bind:filterText={dropdownFilterTexts[question.id]}
 							multiple={Boolean(question.multiple)}
 							containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem; padding-left: 10px;"
-							inputStyles="margin: 0;"
+							inputStyles="margin: 0; height: initial"
 						>
 							<div slot="item" let:item>
 								{question.options.includes(item.label) ? '' : 'Other: '}
@@ -247,17 +248,6 @@
 				</div>
 			</div>
 		</form>
-
-		<!-- Feedback -->
-		{#if form !== null && typeof form === 'object'}
-			<p>Please fix the following problems before submitting your application:</p>
-			{#each Object.entries(form) as [key, value]}
-				<p>
-					<b class="error">{key}</b>
-					{value}
-				</p>
-			{/each}
-		{/if}
 	{:else}
 		<p>
 			Sorry, applications have closed. If space permits, you may sign up as a walk-in at the doors
@@ -273,19 +263,28 @@
 		gap: 1rem;
 	}
 
+	form {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
 	.question {
 		display: flex;
 		flex-direction: column;
-		margin-bottom: 1rem;
 		gap: 0.5rem;
 	}
 
 	.checkbox {
 		display: flex;
-		flex-direction: row-reverse;
+		flex-direction: row;
 		align-items: center;
 		justify-content: start;
 		gap: 0;
+	}
+
+	input[type='checkbox'] {
+		order: -1;
 	}
 
 	#rsvp > * {
@@ -302,7 +301,6 @@
 	#actions-container {
 		position: sticky;
 		bottom: 0;
-		padding-top: 1rem;
 		background: linear-gradient(transparent, white);
 	}
 
@@ -328,5 +326,11 @@
 		display: flex;
 		flex-direction: row;
 		align-items: center;
+	}
+
+	.error {
+		color: red;
+		margin: 0;
+		order: 1;
 	}
 </style>

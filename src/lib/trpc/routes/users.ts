@@ -150,23 +150,27 @@ export const usersRouter = t.router({
 			const application = user.application as Record<string, any>;
 			for (const question of questions) {
 				const answer = application[question.id];
-				if (
-					question.required &&
-					(answer === undefined || answer === null || answer === false || answer === '')
-				) {
-					errors[question.label] = 'This field is required.';
+				if (answer === undefined || answer === null || answer === false || answer === '') {
+					if (question.required) {
+						errors[question.id] = 'This field is required.';
+					}
+					// Must skip validation for unanswered questions, not only to avoid type errors,
+					// but also because it doesn't make sense to validate an unanswered question
+					// (for example, telling the user their file doesn't end in the right extension
+					// when they haven't uploaded a file yet)
+					continue;
 				} else if (
 					(question.type === 'SENTENCE' || question.type === 'PARAGRAPH') &&
 					question.regex !== null
 				) {
 					if (!new RegExp(question.regex).test(answer)) {
-						errors[question.label] = 'This field must match the given pattern: ' + question.regex;
+						errors[question.id] = 'This field must match the given pattern: ' + question.regex;
 					}
 				} else if (question.type === 'NUMBER') {
 					if (question.min !== null && answer < question.min) {
-						errors[question.label] = `This field must be at least ${question.min}.`;
+						errors[question.id] = `This field must be at least ${question.min}.`;
 					} else if (question.max !== null && answer > question.max) {
-						errors[question.label] = `This field must be at most ${question.max}.`;
+						errors[question.id] = `This field must be at most ${question.max}.`;
 					}
 					// Possible TODO: Also check step? I invoke YAGNI for now
 					// If you're a future programmer and you need step validation,
@@ -177,13 +181,13 @@ export const usersRouter = t.router({
 						!question.custom &&
 						answer.some((item: string) => !question.options.includes(item))
 					) {
-						errors[question.label] = 'This field must be one of the given options.';
+						errors[question.id] = 'This field must be one of the given options.';
 					} else if (!question.multiple && !question.custom && !question.options.includes(answer)) {
-						errors[question.label] = 'This field must be one of the given options.';
+						errors[question.id] = 'This field must be one of the given options.';
 					}
 				} else if (question.type === 'RADIO') {
 					if (!question.options.includes(answer)) {
-						errors[question.label] = 'This field must be one of the given options.';
+						errors[question.id] = 'This field must be one of the given options.';
 					}
 				} else if (question.type === 'FILE') {
 					if (
@@ -193,7 +197,7 @@ export const usersRouter = t.router({
 							.split(',')
 							.some((type) => new RegExp(type + '$').test(answer))
 					) {
-						errors[question.label] =
+						errors[question.id] =
 							'This file must end with one of the following extensions: ' + question.accept;
 					}
 				}

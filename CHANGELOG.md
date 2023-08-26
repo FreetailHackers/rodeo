@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.6.1
+
+[FIXED]
+
+- Errors when leaving an unanswered not-required non-custom-entry multiselect blank
+
 ## v0.6.0
 
 [ADDED]
