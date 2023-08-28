@@ -16,7 +16,12 @@ function formToApplication(questions: Question[], formData: FormData) {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const application: Record<string, any> = {};
 	for (const question of questions) {
-		if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
+		if (
+			question.type === 'SENTENCE' ||
+			question.type === 'PARAGRAPH' ||
+			question.type === 'RADIO' ||
+			question.type === 'FILE'
+		) {
 			application[question.id] = formData.get(question.id);
 		} else if (question.type === 'NUMBER') {
 			application[question.id] = Number(formData.get(question.id));
@@ -28,20 +33,15 @@ function formToApplication(questions: Question[], formData: FormData) {
 		} else if (question.type === 'DROPDOWN') {
 			const selected = formData.get(question.id) as string;
 			try {
-				application[question.id] = JSON.parse(selected).value;
-			} catch (e) {
-				// Needed because JSON.parse on an empty string errors
-				console.error(e);
-			}
-		}
-		if (question.type === 'MULTISELECT') {
-			const selected = formData.get(question.id) as string;
-			try {
-				application[question.id] = JSON.parse(selected).map(
-					(item: { value: string }) => item.value
-				);
-			} catch (e) {
-				console.error(e);
+				if (question.multiple) {
+					application[question.id] = JSON.parse(selected).map(
+						(item: { value: string }) => item.value
+					);
+				} else {
+					application[question.id] = JSON.parse(selected).value;
+				}
+			} catch (ignore) {
+				// empty try-catch needed because JSON.parse on an empty string errors
 			}
 		}
 	}

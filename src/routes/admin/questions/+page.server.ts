@@ -86,8 +86,19 @@ export const actions = {
 					[questions[id].min, questions[id].max] = [questions[id].max, questions[id].min];
 				}
 				questions[id].step = Number(questions[id].step) || 1;
-			} else if (questions[id].type === 'DROPDOWN' || questions[id].type === 'MULTISELECT') {
-				questions[id].options = questions[id].options.split('\r\n');
+			} else if (questions[id].type === 'DROPDOWN' || questions[id].type === 'RADIO') {
+				questions[id].options = [
+					...new Set(
+						questions[id].options
+							.split('\r\n')
+							.map((option: string) => option.trim())
+							.filter(Boolean)
+					),
+				]; // Remove only whitespace options
+				questions[id].multiple = questions[id].multiple === 'on';
+				questions[id].custom = questions[id].custom === 'on';
+			} else if (questions[id].type === 'FILE') {
+				questions[id].maxSizeMB = Number(questions[id].maxSizeMB) || 1;
 			}
 		}
 		await trpc(locals.auth).questions.update(questions);

@@ -1,5 +1,35 @@
 # Changelog
 
+## v0.6.1
+
+[FIXED]
+
+- Errors when leaving an unanswered not-required non-custom-entry multiselect blank
+- User table showing out-of-order/mismatched data after searching
+
+## v0.6.0
+
+[ADDED]
+
+- Custom file upload questions
+- Pagination in user table
+
+[FIXED]
+
+- Searching by email, status, role
+
+[REMOVED]
+
+- Searching by SENTENCE or PARAGRAPH questions
+
+## v0.5.1
+
+[ADDED]
+
+- Support for custom responses in dropdowns
+- Custom radio questions
+- Page transitions
+
 ## v0.5.0
 
 [ADDED]

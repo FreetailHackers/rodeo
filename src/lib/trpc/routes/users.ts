@@ -8,6 +8,9 @@ import { getQuestions } from './questions';
 import { getSettings } from './settings';
 import { auth, emailVerificationToken, resetPasswordToken } from '$lib/lucia';
 import type { Session } from 'lucia-auth';
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+
+const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
 export const usersRouter = t.router({
 	/**
@@ -63,24 +66,55 @@ export const usersRouter = t.router({
 	/**
 	 * Sets the logged in user to the given data. If the user has
 	 * finished their application, they will be un-applied.
+	 *
+	 * NOTE: This function does not perform any input validations.
+	 * Maybe it should?
 	 */
 	update: t.procedure
 		.use(authenticate(['HACKER']))
 		.input(z.record(z.any()))
 		.mutation(async (req): Promise<void> => {
-			if (!(await getSettings()).applicationOpen) {
-				throw new Error('Sorry, applications are closed.');
-			}
-			if (req.ctx.user.status !== 'VERIFIED') {
-				throw new Error('You have already submitted your application.');
+			if (!(await getSettings()).applicationOpen || req.ctx.user.status !== 'VERIFIED') {
+				return;
 			}
 
 			// Validate application
 			const questions = await getQuestions();
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			const application: Record<string, any> = {};
+			const oldApplication = (
+				await prisma.user.findUniqueOrThrow({
+					where: { authUserId: req.ctx.user.id },
+				})
+			).application as Record<string, unknown>;
 			for (const question of questions) {
-				application[question.id] = req.input[question.id];
+				if (question.type === 'FILE') {
+					// Get previously uploaded file and delete it
+					if (
+						req.input[question.id] instanceof File &&
+						req.input[question.id].size > 0 &&
+						req.input[question.id].size <= question.maxSizeMB * 1024 * 1024
+					) {
+						const key = `${req.ctx.user.id}/${question.id}`;
+						const deleteObjectCommand = new DeleteObjectCommand({
+							Bucket: process.env.S3_BUCKET,
+							Key: key,
+						});
+						await s3Client.send(deleteObjectCommand);
+						const putObjectCommand = new PutObjectCommand({
+							Bucket: process.env.S3_BUCKET,
+							Key: key,
+							Body: Buffer.from(await req.input[question.id].arrayBuffer()),
+							ContentType: req.input[question.id].type,
+						});
+						await s3Client.send(putObjectCommand);
+						application[question.id] = req.input[question.id].name;
+					} else {
+						application[question.id] = oldApplication[question.id];
+					}
+				} else {
+					application[question.id] = req.input[question.id];
+				}
 			}
 			await prisma.user.update({
 				where: { authUserId: req.ctx.user.id },
@@ -100,14 +134,13 @@ export const usersRouter = t.router({
 		.use(authenticate(['HACKER']))
 		.mutation(async (req): Promise<Record<string, string>> => {
 			// Ensure applications are open and the user has not received a decision yet
-			if (!(await getSettings()).applicationOpen) {
-				throw new Error('Sorry, applications are closed.');
-			}
-			if (req.ctx.user.status !== 'VERIFIED') {
-				throw new Error('You have already submitted your application.');
+			if (!(await getSettings()).applicationOpen || req.ctx.user.status !== 'VERIFIED') {
+				return {};
 			}
 
 			// Validate the user's data
+			// TODO: We assume the data is the correct type here. Maybe we should validate it?
+			// Better yet, we can validate it in trpc.users.update
 			const errors: Record<string, string> = {};
 			const questions = await prisma.question.findMany();
 			const user = await prisma.user.findUniqueOrThrow({
@@ -117,32 +150,60 @@ export const usersRouter = t.router({
 			const application = user.application as Record<string, any>;
 			for (const question of questions) {
 				const answer = application[question.id];
-				if (
-					question.required &&
-					(answer === undefined || answer === null || answer === false || answer === '')
-				) {
-					errors[question.label] = 'This field is required.';
+				if (answer === undefined || answer === null || answer === false || answer === '') {
+					if (question.required) {
+						errors[question.id] = 'This field is required.';
+					}
+					// Must skip validation for unanswered questions, not only to avoid type errors,
+					// but also because it doesn't make sense to validate an unanswered question
+					// (for example, telling the user their file doesn't end in the right extension
+					// when they haven't uploaded a file yet)
+					continue;
 				} else if (
 					(question.type === 'SENTENCE' || question.type === 'PARAGRAPH') &&
 					question.regex !== null
 				) {
 					if (!new RegExp(question.regex).test(answer)) {
-						errors[question.label] = 'This field must match the given pattern: ' + question.regex;
+						errors[question.id] = 'This field must match the given pattern: ' + question.regex;
 					}
 				} else if (question.type === 'NUMBER') {
 					if (question.min !== null && answer < question.min) {
-						errors[question.label] = `This field must be at least ${question.min}.`;
+						errors[question.id] = `This field must be at least ${question.min}.`;
 					} else if (question.max !== null && answer > question.max) {
-						errors[question.label] = `This field must be at most ${question.max}.`;
+						errors[question.id] = `This field must be at most ${question.max}.`;
 					}
+					// Possible TODO: Also check step? I invoke YAGNI for now
+					// If you're a future programmer and you need step validation,
+					// do be mindful of floating point imprecision
 				} else if (question.type === 'DROPDOWN') {
+					if (
+						question.multiple &&
+						!question.custom &&
+						answer.some((item: string) => !question.options.includes(item))
+					) {
+						errors[question.id] = 'This field must be one of the given options.';
+					} else if (!question.multiple && !question.custom && !question.options.includes(answer)) {
+						errors[question.id] = 'This field must be one of the given options.';
+					}
+				} else if (question.type === 'RADIO') {
 					if (!question.options.includes(answer)) {
-						errors[question.label] = 'This field must be one of the given options.';
+						errors[question.id] = 'This field must be one of the given options.';
+					}
+				} else if (question.type === 'FILE') {
+					if (
+						question.accept !== '' &&
+						!question.accept
+							.replaceAll(' ', '')
+							.split(',')
+							.some((type) => new RegExp(type + '$').test(answer))
+					) {
+						errors[question.id] =
+							'This file must end with one of the following extensions: ' + question.accept;
 					}
 				}
 			}
 			// Update status to applied if there are no errors
-			if (Object.keys(errors).length == 0) {
+			if (Object.keys(errors).length === 0) {
 				await prisma.authUser.update({
 					where: { id: req.ctx.user.id },
 					data: { status: 'APPLIED' },
@@ -164,11 +225,8 @@ export const usersRouter = t.router({
 	withdrawApplication: t.procedure
 		.use(authenticate(['HACKER']))
 		.mutation(async (req): Promise<void> => {
-			if (!(await getSettings()).applicationOpen) {
-				throw new Error('Sorry, applications are closed.');
-			}
-			if (req.ctx.user.status !== 'APPLIED') {
-				throw new Error('You have not submitted your application yet.');
+			if (!(await getSettings()).applicationOpen || req.ctx.user.status !== 'APPLIED') {
+				return;
 			}
 			await prisma.authUser.update({
 				where: { id: req.ctx.user.id },
@@ -278,7 +336,7 @@ export const usersRouter = t.router({
 	 */
 	sendVerificationEmail: t.procedure.use(authenticate()).mutation(async (req): Promise<void> => {
 		if (req.ctx.user.status !== 'CREATED') {
-			throw new Error('Your email is already verified.');
+			return;
 		}
 		await emailVerificationToken.invalidateAllUserTokens(req.ctx.user.id);
 		const token = await emailVerificationToken.issue(req.ctx.user.id);
@@ -409,17 +467,53 @@ export const usersRouter = t.router({
 		}),
 
 	/**
-	 * Gets all users. User must be an admin.
+	 * Searches all users by email. User must be an admin.
 	 */
-	getAll: t.procedure
+	search: t.procedure
 		.use(authenticate(['ADMIN']))
+		.input(
+			z.object({
+				key: z.string(),
+				search: z.string(),
+				limit: z.number().transform((limit) => (limit === 0 ? Number.MAX_SAFE_INTEGER : limit)),
+				page: z.number().transform((page) => page - 1),
+			})
+		)
 		.query(
-			async (): Promise<
-				Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[]
-			> => {
-				return await prisma.user.findMany({
-					include: { authUser: true, decision: true },
-				});
+			async (
+				req
+			): Promise<{
+				pages: number;
+				start: number;
+				count: number;
+				users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
+			}> => {
+				// Convert key to Prisma where filter
+				let where: Prisma.UserWhereInput = {};
+				if (req.input.key === 'email') {
+					where = { authUser: { email: { contains: req.input.search } } };
+				} else if (req.input.key === 'status') {
+					where = { authUser: { status: req.input.search as Status } };
+				} else if (req.input.key === 'role') {
+					where = { authUser: { roles: { has: req.input.search as Role } } };
+				} else if (req.input.key === 'decision') {
+					where = {
+						decision: { status: req.input.search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },
+					};
+				}
+				const count = await prisma.user.count({ where });
+				return {
+					pages: Math.ceil(count / req.input.limit),
+					start: req.input.page * req.input.limit + 1,
+					count,
+					users: await prisma.user.findMany({
+						include: { authUser: true, decision: true },
+						where,
+						skip: req.input.page * req.input.limit,
+						take: req.input.limit,
+						orderBy: { authUser: { email: 'asc' } },
+					}),
+				};
 			}
 		),
 

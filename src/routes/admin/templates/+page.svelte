@@ -1,12 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import Toggle from '$lib/components/toggle.svelte';
-	import Graph from './line-graph.svelte';
 	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
 
 	export let data;
-
-	let releaseConfirm = false;
 </script>
 
 <form
@@ -18,14 +14,6 @@
 		};
 	}}
 >
-	<Toggle
-		name="applicationOpen"
-		label="Accept new applications"
-		checked={data.settings.applicationOpen}
-	/>
-
-	<label for="statusChangeText"><h2>User Status Count Over Time</h2></label>
-	<Graph fullEntry={data.graph} />
 	<label for="homepageText"><h2>Homepage Text</h2></label>
 	<MarkdownEditor
 		placeholder="Modify the homepage text here (Markdown is supported)."
@@ -65,56 +53,15 @@
 		id="declineTemplate"
 	/>
 
-	<label for="confirmBy">
-		<h2>RSVP deadline (leaving empty will disable RSVPs):</h2>
-	</label>
-	<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
-	<input
-		type="datetime-local"
-		id="confirmBy"
-		name="confirmBy"
-		value={data.settings.confirmBy?.toLocaleString('sv').replace(' ', 'T').slice(0, -3)}
-	/>
-	<button type="submit">Save</button>
-</form>
-
-<h2>Pending Decisions</h2>
-<form
-	method="POST"
-	action="?/release"
-	use:enhance={({ cancel }) => {
-		if (!releaseConfirm) {
-			cancel();
-			releaseConfirm = true;
-		} else {
-			releaseConfirm = false;
-		}
-	}}
->
-	{#if releaseConfirm}
-		<button type="submit" id="release">Are you sure? This is irreversible!</button>
-	{:else}
-		<button type="submit" id="release"
-			>Release all {Object.values(data.decisions).reduce((sum, array) => sum + array.length, 0)} pending
-			decisions</button
-		>
-	{/if}
+	<button id="save-templates" type="submit">Save</button>
 </form>
 
 <style>
-	form {
-		padding-top: 10px;
+	label {
+		display: block;
 	}
 
-	button {
-		margin-top: 30px;
-		width: 100%;
-	}
-
-	#release {
-		font-weight: bold;
-		margin-top: 0;
-		padding-top: 0;
-		text-transform: uppercase;
+	#save-templates {
+		margin-top: 20px;
 	}
 </style>

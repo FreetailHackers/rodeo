@@ -2,9 +2,11 @@
 	import { enhance } from '$app/forms';
 	import Select from 'svelte-select';
 	import SvelteMarkdown from 'svelte-markdown';
+	import FileInput from '$lib/components/file-input.svelte';
 
 	export let data;
-	$: application = data.user.application as Record<string, unknown>;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const application = data.user.application as Record<string, any>;
 	export let form;
 
 	let applicationForm: HTMLFormElement;
@@ -14,6 +16,8 @@
 
 	let confirmAction = '';
 	let dialog: HTMLDialogElement;
+
+	const dropdownFilterTexts: Record<string, string> = {};
 </script>
 
 <!-- Application status dialog -->
@@ -97,11 +101,7 @@
 			someone else. We look forward to seeing you at the event!
 		</p>
 		<form method="POST" use:enhance={({ cancel }) => cancel()} action="?/decline">
-			<button
-				on:click={() => {
-					dialog.showModal();
-				}}>Decline</button
-			>
+			<button on:click={() => dialog.showModal()}>Decline</button>
 			<dialog bind:this={dialog}>
 				<p>Are you sure you want to decline your attendance?</p>
 				<form method="POST" use:enhance>
@@ -150,6 +150,9 @@
 					<label for={question.id}>
 						<SvelteMarkdown source={question.label} isInline />
 						{#if question.required}*{/if}
+						{#if form !== null && typeof form === 'object' && question.id in form}
+							<span class="error">{form[question.id]}</span>
+						{/if}
 					</label>
 					{#if question.type === 'SENTENCE'}
 						<input
@@ -171,8 +174,6 @@
 							type="number"
 							name={question.id}
 							id={question.id}
-							min={question.min}
-							max={question.max}
 							step={question.step}
 							bind:value={application[question.id]}
 							placeholder={question.placeholder}
@@ -182,22 +183,52 @@
 							type="checkbox"
 							name={question.id}
 							id={question.id}
-							checked={Boolean(application[question.id])}
+							checked={application[question.id]}
 						/>
-					{:else if question.type === 'DROPDOWN' || question.type === 'MULTISELECT'}
+					{:else if question.type === 'DROPDOWN'}
 						<Select
 							name={question.id}
 							id={question.id}
-							items={question.options}
-							on:change={(event) => {
-								application[question.id] = event.detail;
+							items={question.custom && dropdownFilterTexts[question.id]
+								? [...new Set([...question.options, dropdownFilterTexts[question.id]])]
+								: question.options}
+							on:change={() => {
+								if (question.custom) {
+									question.options.push(dropdownFilterTexts[question.id]);
+								}
 								applicationForm.dispatchEvent(new Event('input'));
 							}}
 							on:clear={() => applicationForm.dispatchEvent(new Event('input'))}
-							value={application[question.id]}
-							multiple={question.type === 'MULTISELECT'}
+							bind:value={application[question.id]}
+							bind:filterText={dropdownFilterTexts[question.id]}
+							multiple={Boolean(question.multiple)}
 							containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem; padding-left: 10px;"
-							inputStyles="align-items: center; height: inherit; margin: 0;"
+							inputStyles="margin: 0; height: initial"
+						>
+							<div slot="item" let:item>
+								{question.options.includes(item.label) ? '' : 'Other: '}
+								{item.label}
+							</div>
+						</Select>
+					{:else if question.type === 'RADIO'}
+						{#each question.options as option}
+							<div class="radio-buttons">
+								<input
+									type="radio"
+									name={question.id}
+									id={question.id + option}
+									value={option}
+									bind:group={application[question.id]}
+								/>
+								<label for={question.id + option}>{option}</label>
+							</div>
+						{/each}
+					{:else if question.type === 'FILE'}
+						<FileInput
+							name={question.id}
+							bind:selectedFile={application[question.id]}
+							accept={question.accept}
+							maxSizeMB={question.maxSizeMB}
 						/>
 					{/if}
 				</div>
@@ -217,17 +248,6 @@
 				</div>
 			</div>
 		</form>
-
-		<!-- Feedback -->
-		{#if form !== null && typeof form === 'object'}
-			<p>Please fix the following problems before submitting your application:</p>
-			{#each Object.entries(form) as [key, value]}
-				<p>
-					<b class="error">{key}</b>
-					{value}
-				</p>
-			{/each}
-		{/if}
 	{:else}
 		<p>
 			Sorry, applications have closed. If space permits, you may sign up as a walk-in at the doors
@@ -243,19 +263,28 @@
 		gap: 1rem;
 	}
 
+	form {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
 	.question {
 		display: flex;
 		flex-direction: column;
-		margin-bottom: 1rem;
 		gap: 0.5rem;
 	}
 
 	.checkbox {
 		display: flex;
-		flex-direction: row-reverse;
+		flex-direction: row;
 		align-items: center;
 		justify-content: start;
 		gap: 0;
+	}
+
+	input[type='checkbox'] {
+		order: -1;
 	}
 
 	#rsvp > * {
@@ -272,7 +301,6 @@
 	#actions-container {
 		position: sticky;
 		bottom: 0;
-		padding-top: 1rem;
 		background: linear-gradient(transparent, white);
 	}
 
@@ -292,5 +320,17 @@
 
 	#status button {
 		margin-bottom: 1rem;
+	}
+
+	.radio-buttons {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+
+	.error {
+		color: red;
+		margin: 0;
+		order: 1;
 	}
 </style>
