@@ -1,4 +1,4 @@
-import type { Decision, Prisma, Status } from '@prisma/client';
+import type { Decision, Prisma } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
 import { sendEmail } from '../email';
