@@ -112,14 +112,7 @@
 	layout={{
 		xaxis: { title: 'Time Interval' },
 		yaxis: { title: 'Count' },
-		legend: {
-			font: {
-				size: 10,
-			},
-		},
-		autosize: false,
-		width: 800,
-		height: 400,
+		showlegend: false,
 		margin: {
 			t: 20,
 			r: 0,
@@ -127,6 +120,8 @@
 			l: 50,
 			pad: 5,
 		},
+		hovermode: 'x unified',
+		hoverdistance: -1,
 	}}
 	fillParent="width"
 	debounce={250}

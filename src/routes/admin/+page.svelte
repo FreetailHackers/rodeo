@@ -30,7 +30,7 @@
 		checked={data.settings.applicationOpen}
 	/>
 
-	<label for="statusChangeText"><h2>Status Change Tracking Graph</h2></label>
+	<label for="statusChangeText"><h2>User Status Count Over Time</h2></label>
 	<Graph fullEntry={data.graph} />
 	<label for="homepageText"><h2>Homepage Text</h2></label>
 	<MarkdownEditor
