@@ -17,6 +17,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Rodeo | Home</title>
+</svelte:head>
+
 {#if data.user !== null}
 	<SvelteMarkdown source={data.settings.homepageText} />
 

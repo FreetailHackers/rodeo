@@ -13,6 +13,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Rodeo | Schedule - {data.event.name}</title>
+</svelte:head>
+
 <h1>{data.event.name}&nbsp;<span class={data.event.type}>{data.event.type}</span></h1>
 <h2>📍&nbsp;{data.event.location}</h2>
 <h2>

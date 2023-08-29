@@ -9,6 +9,10 @@
 	let releaseConfirm = false;
 </script>
 
+<svelte:head>
+	<title>Rodeo | Admin - Admissions</title>
+</svelte:head>
+
 <form
 	method="POST"
 	action="?/settings"

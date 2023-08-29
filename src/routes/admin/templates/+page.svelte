@@ -5,6 +5,10 @@
 	export let data;
 </script>
 
+<svelte:head>
+	<title>Rodeo | Admin - Email Templates</title>
+</svelte:head>
+
 <form
 	method="POST"
 	action="?/settings"
