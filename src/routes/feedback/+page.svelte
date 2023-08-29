@@ -1,3 +1,7 @@
+<svelte:head>
+	<title>Rodeo | Feedback</title>
+</svelte:head>
+
 <p>
 	Rodeo is our brand new hackathon management platform and we would appreciate any feedback you had
 	about it!

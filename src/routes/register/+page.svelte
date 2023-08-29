@@ -7,6 +7,10 @@
 	let hidden = true;
 </script>
 
+<svelte:head>
+	<title>Rodeo | Register</title>
+</svelte:head>
+
 <SocialLogin providers={data.providers} />
 
 <h1>Register</h1>

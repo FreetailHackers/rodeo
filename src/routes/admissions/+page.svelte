@@ -5,6 +5,10 @@
 	export let data;
 </script>
 
+<svelte:head>
+	<title>Rodeo | Admissions</title>
+</svelte:head>
+
 {#if data.user === null}
 	<p>Congratulations! You've read every application.</p>
 {:else}

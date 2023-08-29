@@ -30,6 +30,10 @@ print('This is a multi-line code block.')
 `;
 </script>
 
+<svelte:head>
+	<title>Rodeo | Info</title>
+</svelte:head>
+
 {#if data.user?.roles.includes('ADMIN')}
 	<form
 		method="POST"
