@@ -42,6 +42,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Rodeo | Schedule</title>
+</svelte:head>
+
 <h1>Schedule</h1>
 {#if url && data.schedule.length > 0}
 	<a class="calendar-export-link" href={url} download="events.ics">Download All Events</a>

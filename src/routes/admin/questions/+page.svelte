@@ -5,6 +5,10 @@
 	export let data;
 </script>
 
+<svelte:head>
+	<title>Rodeo | Admin - Registration Questions</title>
+</svelte:head>
+
 <form
 	action="?/update"
 	method="POST"

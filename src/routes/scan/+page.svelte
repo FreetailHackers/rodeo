@@ -46,6 +46,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Rodeo | Scan</title>
+</svelte:head>
+
 <section>
 	{#if action === ''}
 		<button on:click={() => (action = 'check-in')}>Check-In</button>
