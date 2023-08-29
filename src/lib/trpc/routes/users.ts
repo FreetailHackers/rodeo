@@ -606,9 +606,11 @@ export const usersRouter = t.router({
 			}
 		}),
 
-	fetchGraphData: t.procedure
+	getStatusChanges: t.procedure
 		.use(authenticate(['ADMIN']))
 		.query(async (): Promise<StatusChange[]> => {
-			return await prisma.statusChange.findMany({});
+			return await prisma.statusChange.findMany({
+				orderBy: { timestamp: 'asc' },
+			});
 		}),
 });

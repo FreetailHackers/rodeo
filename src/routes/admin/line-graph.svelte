@@ -1,20 +1,12 @@
 <script lang="ts">
-	import type { StatusChange, Status } from '@prisma/client';
+	import type { StatusChange } from '@prisma/client';
+	import { Status } from '@prisma/client';
 	import Plot from 'svelte-plotly.js';
-	export let fullEntry: StatusChange[];
+	export let statusChanges: StatusChange[];
 
-	var statuses: Status[] = [
-		'CREATED',
-		'VERIFIED',
-		'APPLIED',
-		'ACCEPTED',
-		'REJECTED',
-		'WAITLISTED',
-		'CONFIRMED',
-		'DECLINED',
-	];
+	const statuses: Status[] = Object.keys(Status) as Status[];
 
-	var statusColorMap = new Map<string, string>([
+	const statusColorMap = new Map<Status, string>([
 		['CREATED', 'lightgray'],
 		['VERIFIED', 'rgb(135, 135, 135)'],
 		['APPLIED', 'rgb(63, 63, 63)'],
@@ -27,50 +19,46 @@
 
 	// Track statusChange for every timestamp in all status changes recorded
 	function polishData() {
-		fullEntry.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
-		console.log(fullEntry);
 		// [key is status] : array of counts with index corresponding to timestamp
-		const polishedData: Record<Status, number[]> = {
-			CREATED: [0],
-			VERIFIED: [0],
-			APPLIED: [0],
-			ACCEPTED: [0],
-			REJECTED: [0],
-			WAITLISTED: [0],
-			CONFIRMED: [0],
-			DECLINED: [0],
-		};
+
+		const polishedData: Record<Status, number[]> = Object.fromEntries(
+			statuses.map((status) => [status, [0]])
+		) as Record<Status, number[]>;
+
 		// [key is status] : Set of userIds
-		const userStatuses: { [key: string]: Set<string> } = {};
+		const userStatuses = new Map<Status, Set<string>>();
+
+		for (const status of statuses) {
+			userStatuses.set(status, new Set());
+		}
 		const timestamps = [];
 
-		timestamps.push(fullEntry[0].timestamp);
+		timestamps.push(statusChanges[0].timestamp);
 
-		for (var i = 0; i < fullEntry.length; i++) {
-			const { newStatus, timestamp, userId } = fullEntry[i];
+		for (let entry of statusChanges) {
+			const { newStatus, timestamp, userId } = entry;
 			timestamps.push(timestamp);
 
 			statuses.forEach((status) => {
-				if (!userStatuses[status]) {
-					userStatuses[status] = new Set();
-				}
-				if (userStatuses[status].has(userId)) {
-					userStatuses[status].delete(userId);
+				if (userStatuses.get(status)!.has(userId)) {
+					userStatuses.get(status)!.delete(userId);
 				}
 			});
 
-			userStatuses[newStatus].add(userId);
+			userStatuses.get(newStatus)!.add(userId);
 			statuses.forEach((status) => {
-				polishedData[status].push(userStatuses[status].size);
+				polishedData[status].push(userStatuses.get(status)!.size);
 			});
 		}
-
-		timestamps.sort((a, b) => a.getTime() - b.getTime());
-		return [polishedData, timestamps] as const;
+		return polishedData;
 	}
 
 	function generatePlotlyData() {
-		const [polishedData, timestamps] = polishData();
+		const polishedData = polishData();
+		const timestamps = Array.prototype.map.call(
+			statusChanges,
+			(entry: StatusChange) => entry.timestamp
+		);
 		const plotlyData = [];
 
 		for (const status in polishedData) {
@@ -80,7 +68,7 @@
 				mode: 'lines',
 				name: status,
 				line: {
-					color: statusColorMap.get(status),
+					color: statusColorMap.get(status as Status),
 				},
 			};
 			plotlyData.push(plotlyDatum);
@@ -90,7 +78,7 @@
 		const totalLine = {
 			x: timestamps,
 			y: timestamps.map((timestamp, i) => {
-				return Object.values(polishedData).reduce((sum, statusArray) => sum + statusArray[i], 0);
+				return Object.values(polishedData).reduce((sum, status) => sum + status[i], 0);
 			}),
 			mode: 'lines',
 			name: 'TOTAL',
@@ -110,8 +98,8 @@
 <Plot
 	data={plotlyData}
 	layout={{
-		xaxis: { title: 'Time Interval' },
-		yaxis: { title: 'Count' },
+		xaxis: { title: 'Time' },
+		yaxis: { title: 'User Count' },
 		showlegend: false,
 		margin: {
 			t: 20,

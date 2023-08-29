@@ -25,7 +25,7 @@
 	/>
 
 	<label for="statusChangeText"><h2>User Status Count Over Time</h2></label>
-	<Graph fullEntry={data.graph} />
+	<Graph statusChanges={data.graph} />
 	<label for="homepageText"><h2>Homepage Text</h2></label>
 	<MarkdownEditor
 		placeholder="Modify the homepage text here (Markdown is supported)."

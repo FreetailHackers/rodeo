@@ -257,12 +257,9 @@ async function main() {
 	await prisma.settings.create({ data: {} });
 
 	// Generate random StatusChanges
-	const statusFlow = ['CREATED', 'VERIFIED', 'APPLIED'];
-
-	const afterStatusApplied = ['ACCEPTED', 'REJECTED', 'WAITLISTED'];
-
-	const afterStatusAccepted = ['CONFIRMED', 'DECLINED'];
-
+	const statusFlow: Status[] = ['CREATED', 'VERIFIED', 'APPLIED'];
+	const afterStatusApplied: Status[] = ['ACCEPTED', 'REJECTED', 'WAITLISTED'];
+	const afterStatusAccepted: Status[] = ['CONFIRMED', 'DECLINED'];
 	const intervalInMinutes = 300; // Customize the interval in minutes
 
 	const currentTime = new Date('2023-08-01');
@@ -270,10 +267,9 @@ async function main() {
 		let lastTimestamp = currentTime;
 		for (const status of statusFlow) {
 			lastTimestamp = new Date(lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * random());
-
 			await prisma.statusChange.create({
 				data: {
-					newStatus: status as Status,
+					newStatus: status,
 					timestamp: lastTimestamp,
 					userId: id,
 				},
@@ -285,22 +281,30 @@ async function main() {
 		lastTimestamp = new Date(lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * random());
 		await prisma.statusChange.create({
 			data: {
-				newStatus: afterStatusAppliedRandom as Status,
+				newStatus: afterStatusAppliedRandom,
 				timestamp: lastTimestamp,
 				userId: id,
 			},
 		});
 
 		if (afterStatusAppliedRandom == 'ACCEPTED') {
-			const afterStatusAcceptedRandom =
-				afterStatusAccepted[Math.floor(random() * afterStatusAccepted.length)];
+			const afterStatusAcceptedRandom = randomElement(afterStatusAccepted);
 			lastTimestamp = new Date(lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * random());
 			await prisma.statusChange.create({
 				data: {
-					newStatus: afterStatusAcceptedRandom as Status,
+					newStatus: afterStatusAcceptedRandom,
 					timestamp: lastTimestamp,
 					userId: id,
 				},
+			});
+			await prisma.authUser.update({
+				where: { id: id },
+				data: { status: afterStatusAcceptedRandom },
+			});
+		} else {
+			await prisma.authUser.update({
+				where: { id: id },
+				data: { status: afterStatusAppliedRandom },
 			});
 		}
 	}
