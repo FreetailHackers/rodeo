@@ -13,6 +13,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Rodeo | Hacker ID</title>
+</svelte:head>
+
 <canvas bind:this={canvas} id="qrcode" />
 
 <style>

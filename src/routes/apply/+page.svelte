@@ -20,6 +20,10 @@
 	const dropdownFilterTexts: Record<string, string> = {};
 </script>
 
+<svelte:head>
+	<title>Rodeo | Apply</title>
+</svelte:head>
+
 <!-- Application status dialog -->
 <div id="status">
 	<p>Your application status is:</p>

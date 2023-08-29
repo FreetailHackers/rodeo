@@ -5,6 +5,10 @@
 	let hidden = true;
 </script>
 
+<svelte:head>
+	<title>Rodeo | Reset Password</title>
+</svelte:head>
+
 {#if $page.url.search === ''}
 	<h1>Reset Password</h1>
 	<form method="POST" action="?/email" use:enhance>

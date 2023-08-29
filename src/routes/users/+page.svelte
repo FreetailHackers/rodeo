@@ -37,6 +37,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Rodeo | Users</title>
+</svelte:head>
+
 <h1>Master Database</h1>
 <p><a href={csvDownloadLink} download="users.csv">Export search results as CSV</a></p>
 
