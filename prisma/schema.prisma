@@ -48,11 +48,12 @@ model AuthKey {
 
 model User {
   // Data about the user that is not used in authentication or authorization
-  authUserId  String    @id @unique
-  authUser    AuthUser  @relation(fields: [authUserId], references: [id], onDelete: Cascade)
-  decision    Decision?
-  application Json      @default("{}")
-  scanCount   Json      @default("{}")
+  authUserId    String         @id @unique
+  authUser      AuthUser       @relation(fields: [authUserId], references: [id], onDelete: Cascade)
+  decision      Decision?
+  application   Json           @default("{}")
+  scanCount     Json           @default("{}")
+  statusChanges StatusChange[]
 }
 
 model Announcement {
@@ -114,6 +115,14 @@ model Event {
   end         DateTime
   location    String
   type        String
+}
+
+model StatusChange {
+  id        Int      @id @default(autoincrement())
+  newStatus Status
+  timestamp DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [authUserId], onDelete: Cascade)
 }
 
 enum Role {

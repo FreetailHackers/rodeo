@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import Toggle from '$lib/components/toggle.svelte';
-
+	import Graph from './line-graph.svelte';
 	export let data;
 
 	let releaseConfirm = false;
@@ -26,6 +26,8 @@
 		checked={data.settings.applicationOpen}
 	/>
 
+	<label for="statusChangeText"><h2>User Status Count Over Time</h2></label>
+	<Graph statusChanges={data.graph} />
 	<label for="confirmBy">
 		<h2>RSVP deadline (leaving empty will disable RSVPs):</h2>
 	</label>

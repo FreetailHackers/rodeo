@@ -1,4 +1,4 @@
-import { Prisma, Role, Status } from '@prisma/client';
+import { Prisma, Role, Status, type StatusChange } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
 import { sendEmail } from '../email';
@@ -208,8 +208,10 @@ export const usersRouter = t.router({
 					where: { id: req.ctx.user.id },
 					data: { status: 'APPLIED' },
 				});
-
-				// Notify user through their email on successful application submission
+				await prisma.statusChange.create({
+					data: { newStatus: 'APPLIED', userId: req.ctx.user.id },
+				});
+				// notify user through their email on successful application submission
 				const subject = 'Thanks for submitting!';
 				await sendEmail(req.ctx.user.email, subject, (await getSettings()).submitTemplate, null);
 			}
@@ -230,6 +232,9 @@ export const usersRouter = t.router({
 				where: { id: req.ctx.user.id },
 				data: { status: 'VERIFIED' },
 			});
+			await prisma.statusChange.create({
+				data: { newStatus: 'VERIFIED', userId: req.ctx.user.id },
+			});
 		}),
 
 	/**
@@ -247,6 +252,9 @@ export const usersRouter = t.router({
 						where: { id: req.ctx.user.id },
 						data: { status: 'CONFIRMED' },
 					});
+					await prisma.statusChange.create({
+						data: { newStatus: 'CONFIRMED', userId: req.ctx.user.id },
+					});
 					await sendEmail(
 						req.ctx.user.email,
 						'Thanks for your RSVP!',
@@ -262,6 +270,9 @@ export const usersRouter = t.router({
 					await prisma.authUser.update({
 						where: { id: req.ctx.user.id },
 						data: { status: 'DECLINED' },
+					});
+					await prisma.statusChange.create({
+						data: { newStatus: 'DECLINED', userId: req.ctx.user.id },
 					});
 					await sendEmail(
 						req.ctx.user.email,
@@ -296,6 +307,9 @@ export const usersRouter = t.router({
 					providerId: 'email',
 					providerUserId: req.input.email,
 					password: req.input.password,
+				});
+				await prisma.statusChange.create({
+					data: { newStatus: 'CREATED', userId: user.id },
 				});
 				return await auth.createSession(user.id);
 			} catch (e) {
@@ -368,6 +382,9 @@ export const usersRouter = t.router({
 		await prisma.authUser.update({
 			where: { id: token.userId },
 			data: { status: 'VERIFIED' },
+		});
+		await prisma.statusChange.create({
+			data: { newStatus: 'VERIFIED', userId: token.userId },
 		});
 	}),
 
@@ -516,6 +533,11 @@ export const usersRouter = t.router({
 				where: { id: { in: req.input.ids } },
 				data: { status: req.input.status },
 			});
+			for (const id of req.input.ids) {
+				await prisma.statusChange.create({
+					data: { newStatus: req.input.status, userId: id },
+				});
+			}
 			const deleteDecisions = prisma.decision.deleteMany({
 				where: { userId: { in: req.input.ids } },
 			});
@@ -582,5 +604,13 @@ export const usersRouter = t.router({
 					data: { roles: { set: updatedRoles } },
 				});
 			}
+		}),
+
+	getStatusChanges: t.procedure
+		.use(authenticate(['ADMIN']))
+		.query(async (): Promise<StatusChange[]> => {
+			return await prisma.statusChange.findMany({
+				orderBy: { timestamp: 'asc' },
+			});
 		}),
 });
