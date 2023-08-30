@@ -613,4 +613,19 @@ export const usersRouter = t.router({
 				orderBy: { timestamp: 'asc' },
 			});
 		}),
+
+	sendEmailByStatus: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(
+			z.object({ status: z.nativeEnum(Status), emailTitle: z.string(), emailBody: z.string() })
+		)
+		.mutation(async (req): Promise<void> => {
+			const users = await prisma.authUser.findMany({
+				where: { status: req.input.status },
+				select: { email: true },
+			});
+			for (const user of users) {
+				await sendEmail(user.email, req.input.emailTitle, req.input.emailBody, null);
+			}
+		}),
 });
