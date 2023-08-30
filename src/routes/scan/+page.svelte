@@ -48,9 +48,9 @@
 
 <section>
 	{#if action === ''}
-		<button on:click={() => (action = 'check-in')}>Check-In</button>
-		<button on:click={() => (action = 'lunch')}>Lunch</button>
-		<button on:click={() => (action = 'dinner')}>Dinner</button>
+		{#each data.settings.scanActions as option}
+			<button on:click={() => (action = option)}>{option}</button>
+		{/each}
 	{:else}
 		<button on:click={() => (action = '')}>Back</button>
 	{/if}

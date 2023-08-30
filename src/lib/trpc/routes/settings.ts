@@ -17,6 +17,7 @@ const settingsSchema = z
 		waitlistTemplate: z.string().optional(),
 		confirmTemplate: z.string().optional(),
 		declineTemplate: z.string().optional(),
+		scanActions: z.string().array().optional(),
 	})
 	.strict();
 
