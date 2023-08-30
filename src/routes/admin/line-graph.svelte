@@ -3,9 +3,7 @@
 	import { Status } from '@prisma/client';
 	import Plot from 'svelte-plotly.js';
 	export let statusChanges: StatusChange[];
-
 	const statuses: Status[] = Object.keys(Status) as Status[];
-
 	const statusColorMap = new Map<Status, string>([
 		['CREATED', 'lightgray'],
 		['VERIFIED', 'rgb(135, 135, 135)'],
@@ -18,10 +16,10 @@
 	]);
 
 	// Track statusChange for every timestamp in all status changes recorded
-	function polishData() {
+	function statusChangesToStatusCounts(statusChanges: StatusChange[]) {
 		// [key is status] : array of counts with index corresponding to timestamp
 
-		const polishedData: Record<Status, number[]> = Object.fromEntries(
+		const statusCounts: Record<Status, number[]> = Object.fromEntries(
 			statuses.map((status) => [status, [0]])
 		) as Record<Status, number[]>;
 
@@ -31,13 +29,9 @@
 		for (const status of statuses) {
 			userStatuses.set(status, new Set());
 		}
-		const timestamps = [];
-
-		timestamps.push(statusChanges[0].timestamp);
 
 		for (let entry of statusChanges) {
-			const { newStatus, timestamp, userId } = entry;
-			timestamps.push(timestamp);
+			const { newStatus, userId } = entry;
 
 			statuses.forEach((status) => {
 				if (userStatuses.get(status)!.has(userId)) {
@@ -47,38 +41,33 @@
 
 			userStatuses.get(newStatus)!.add(userId);
 			statuses.forEach((status) => {
-				polishedData[status].push(userStatuses.get(status)!.size);
+				statusCounts[status].push(userStatuses.get(status)!.size);
 			});
 		}
-		return polishedData;
+		return statusCounts;
 	}
 
-	function generatePlotlyData() {
-		const polishedData = polishData();
-		const timestamps = Array.prototype.map.call(
-			statusChanges,
-			(entry: StatusChange) => entry.timestamp
-		);
-		const plotlyData = [];
+	function generateStatusCountHistory(statusCounts: Record<Status, number[]>) {
+		const timestamps = statusChanges.map((statusChange) => statusChange.timestamp);
 
-		for (const status in polishedData) {
+		const plotlyData = Object.keys(statusCounts).map((status) => {
 			const plotlyDatum = {
 				x: timestamps,
-				y: polishedData[status as Status],
+				y: statusCounts[status as Status],
 				mode: 'lines',
 				name: status,
 				line: {
 					color: statusColorMap.get(status as Status),
 				},
 			};
-			plotlyData.push(plotlyDatum);
-		}
+			return plotlyDatum;
+		});
 
 		// TOTAL line
 		const totalLine = {
 			x: timestamps,
 			y: timestamps.map((timestamp, i) => {
-				return Object.values(polishedData).reduce((sum, status) => sum + status[i], 0);
+				return Object.values(statusCounts).reduce((sum, statusCount) => sum + statusCount[i], 0);
 			}),
 			mode: 'lines',
 			name: 'TOTAL',
@@ -91,26 +80,34 @@
 		plotlyData.push(totalLine);
 		return plotlyData;
 	}
-
-	let plotlyData = generatePlotlyData();
 </script>
 
-<Plot
-	data={plotlyData}
-	layout={{
-		xaxis: { title: 'Time' },
-		yaxis: { title: 'User Count' },
-		showlegend: false,
-		margin: {
-			t: 20,
-			r: 0,
-			b: 80,
-			l: 50,
-			pad: 5,
-		},
-		hovermode: 'x unified',
-		hoverdistance: -1,
-	}}
-	fillParent="width"
-	debounce={250}
-/>
+<div class="graph-container">
+	<Plot
+		data={generateStatusCountHistory(statusChangesToStatusCounts(statusChanges))}
+		layout={{
+			xaxis: { title: 'Time' },
+			yaxis: { title: 'User Count' },
+			showlegend: false,
+			margin: {
+				t: 20,
+				r: 0,
+				b: 80,
+				l: 50,
+				pad: 5,
+			},
+			hovermode: 'x unified',
+			hoverdistance: -1,
+		}}
+		fillParent="width"
+		debounce={250}
+	/>
+</div>
+
+<style>
+	.graph-container {
+		width: 100%;
+		height: 300px;
+		overflow: hidden;
+	}
+</style>

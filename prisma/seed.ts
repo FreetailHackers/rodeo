@@ -230,7 +230,7 @@ async function main() {
 			id: email,
 			email,
 			roles: ['HACKER'],
-			status: Status[randomElement(Object.keys(Status))],
+			status: 'CREATED',
 		});
 		users.push({ authUserId: email, application });
 		ids.push(email);
@@ -238,28 +238,20 @@ async function main() {
 	await prisma.authUser.createMany({ data: authUsers });
 	await prisma.user.createMany({ data: users });
 
-	// Generate decisions (not randomized so I don't have to worry about duplicates)
-	const decisions: Prisma.DecisionCreateManyInput[] = [];
-	for (const id of ids) {
-		// Only decide on hackers with status APPLIED or WAITLISTED with 50% probability
-		const hacker = await prisma.authUser.findUniqueOrThrow({ where: { id } });
-		if ((hacker.status !== 'APPLIED' && hacker.status !== 'WAITLISTED') || random() < 0.5) {
-			continue;
-		}
-		decisions.push({
-			userId: hacker.id,
-			status: randomElement(['ACCEPTED', 'REJECTED', 'WAITLISTED']),
-		});
-	}
-	await prisma.decision.createMany({ data: decisions });
-
 	// Create default settings
 	await prisma.settings.create({ data: {} });
 
 	// Generate random StatusChanges
 	const statusFlow: Status[] = ['CREATED', 'VERIFIED', 'APPLIED'];
-	const afterStatusApplied: Status[] = ['ACCEPTED', 'REJECTED', 'WAITLISTED'];
-	const afterStatusAccepted: Status[] = ['CONFIRMED', 'DECLINED'];
+	const afterStatusApplied: Status[] = [
+		'CREATED',
+		'VERIFIED',
+		'APPLIED',
+		'ACCEPTED',
+		'REJECTED',
+		'WAITLISTED',
+	];
+	const afterStatusAccepted: Status[] = ['CONFIRMED', 'DECLINED', 'ACCEPTED'];
 	const intervalInMinutes = 300; // Customize the interval in minutes
 
 	const currentTime = new Date('2023-08-01');
@@ -308,6 +300,21 @@ async function main() {
 			});
 		}
 	}
+
+	// Generate decisions (not randomized so I don't have to worry about duplicates)
+	const decisions: Prisma.DecisionCreateManyInput[] = [];
+	for (const id of ids) {
+		// Only decide on hackers with status APPLIED or WAITLISTED with 50% probability
+		const hacker = await prisma.authUser.findUniqueOrThrow({ where: { id } });
+		if ((hacker.status !== 'APPLIED' && hacker.status !== 'WAITLISTED') || random() < 0.5) {
+			continue;
+		}
+		decisions.push({
+			userId: hacker.id,
+			status: randomElement(['ACCEPTED', 'REJECTED', 'WAITLISTED']),
+		});
+	}
+	await prisma.decision.createMany({ data: decisions });
 }
 
 // Quick and dirty seedable random number generator taken from https://stackoverflow.com/a/19303725/16458492

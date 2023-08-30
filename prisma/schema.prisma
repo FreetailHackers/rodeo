@@ -48,12 +48,12 @@ model AuthKey {
 
 model User {
   // Data about the user that is not used in authentication or authorization
-  authUserId   String         @id @unique
-  authUser     AuthUser       @relation(fields: [authUserId], references: [id], onDelete: Cascade)
-  decision     Decision?
-  application  Json           @default("{}")
-  scanCount    Json           @default("{}")
-  statusChange StatusChange[]
+  authUserId    String         @id @unique
+  authUser      AuthUser       @relation(fields: [authUserId], references: [id], onDelete: Cascade)
+  decision      Decision?
+  application   Json           @default("{}")
+  scanCount     Json           @default("{}")
+  statusChanges StatusChange[]
 }
 
 model Announcement {
