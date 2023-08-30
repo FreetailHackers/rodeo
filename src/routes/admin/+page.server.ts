@@ -33,4 +33,9 @@ export const actions = {
 		});
 		return 'Saved settings!';
 	},
+
+	release: async ({ locals }) => {
+		await trpc(locals.auth).admissions.releaseAllDecisions();
+		return 'Released all decisions!';
+	},
 };
