@@ -75,6 +75,9 @@ export async function _upsert(providerSession: ProviderSession, email: string) {
 			roles: ['HACKER'],
 			status: 'VERIFIED',
 		});
+		await prisma.statusChange.create({
+			data: { newStatus: 'VERIFIED', userId: user.id },
+		});
 	} else if (providerSession.existingUser === null) {
 		// Otherwise, link the accounts
 		await providerSession.createPersistentKey(user.id);

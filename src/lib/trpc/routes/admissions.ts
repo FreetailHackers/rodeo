@@ -15,6 +15,9 @@ async function releaseDecision(decision: Decision): Promise<void> {
 			where: { id: decision.userId },
 			data: { status: decision.status },
 		});
+		await prisma.statusChange.create({
+			data: { newStatus: decision.status, userId: decision.userId },
+		});
 		const deleteDecision = prisma.decision.delete({
 			where: { userId: decision.userId },
 		});

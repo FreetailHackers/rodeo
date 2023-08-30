@@ -230,13 +230,73 @@ async function main() {
 			id: email,
 			email,
 			roles: ['HACKER'],
-			status: Status[randomElement(Object.keys(Status))],
+			status: 'CREATED',
 		});
 		users.push({ authUserId: email, application });
 		ids.push(email);
 	}
 	await prisma.authUser.createMany({ data: authUsers });
 	await prisma.user.createMany({ data: users });
+
+	// Create default settings
+	await prisma.settings.create({ data: {} });
+
+	// Generate random StatusChanges
+	const statuses: Prisma.StatusChangeCreateManyInput[] = [];
+	const statusFlow: Status[] = ['CREATED', 'VERIFIED', 'APPLIED'];
+	const afterStatusApplied: Status[] = [
+		'CREATED',
+		'VERIFIED',
+		'APPLIED',
+		'ACCEPTED',
+		'REJECTED',
+		'WAITLISTED',
+	];
+	const afterStatusAccepted: Status[] = ['CONFIRMED', 'DECLINED', 'ACCEPTED'];
+	const intervalInMinutes = 300; // Customize the interval in minutes
+
+	const currentTime = new Date('2023-08-01');
+	for (const id of ids) {
+		let lastTimestamp = currentTime;
+		for (const status of statusFlow) {
+			lastTimestamp = new Date(lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * random());
+			statuses.push({
+				newStatus: status,
+				timestamp: lastTimestamp,
+				userId: id,
+			});
+		}
+
+		// choose one out of afterStatusApplied
+		const afterStatusAppliedRandom = randomElement(afterStatusApplied);
+		lastTimestamp = new Date(lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * random());
+		statuses.push({
+			newStatus: afterStatusAppliedRandom,
+			timestamp: lastTimestamp,
+			userId: id,
+		});
+
+		if (afterStatusAppliedRandom == 'ACCEPTED') {
+			const afterStatusAcceptedRandom = randomElement(afterStatusAccepted);
+			lastTimestamp = new Date(lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * random());
+			statuses.push({
+				newStatus: afterStatusAcceptedRandom,
+				timestamp: lastTimestamp,
+				userId: id,
+			});
+			await prisma.authUser.update({
+				where: { id: id },
+				data: { status: afterStatusAcceptedRandom },
+			});
+		} else {
+			await prisma.authUser.update({
+				where: { id: id },
+				data: { status: afterStatusAppliedRandom },
+			});
+		}
+	}
+
+	await prisma.statusChange.createMany({ data: statuses });
 
 	// Generate decisions (not randomized so I don't have to worry about duplicates)
 	const decisions: Prisma.DecisionCreateManyInput[] = [];
@@ -252,9 +312,6 @@ async function main() {
 		});
 	}
 	await prisma.decision.createMany({ data: decisions });
-
-	// Create default settings
-	await prisma.settings.create({ data: {} });
 }
 
 // Quick and dirty seedable random number generator taken from https://stackoverflow.com/a/19303725/16458492
