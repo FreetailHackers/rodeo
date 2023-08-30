@@ -34,14 +34,14 @@
 			const { newStatus, userId } = entry;
 
 			statuses.forEach((status) => {
-				if (userStatuses.get(status)!.has(userId)) {
-					userStatuses.get(status)!.delete(userId);
+				if (userStatuses.get(status)?.has(userId)) {
+					userStatuses.get(status)?.delete(userId);
 				}
 			});
 
-			userStatuses.get(newStatus)!.add(userId);
+			userStatuses.get(newStatus)?.add(userId);
 			statuses.forEach((status) => {
-				statusCounts[status].push(userStatuses.get(status)!.size);
+				statusCounts[status].push(userStatuses.get(status)?.size ?? 0);
 			});
 		}
 		return statusCounts;
