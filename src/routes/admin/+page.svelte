@@ -28,7 +28,6 @@
 
 	<label for="statusChangeText"><h2>User Status Count Over Time</h2></label>
 	<Graph statusChanges={data.graph} />
-	<label for="homepageText"><h2>Homepage Text</h2></label>
 	<label for="confirmBy">
 		<h2>RSVP deadline (leaving empty will disable RSVPs):</h2>
 	</label>

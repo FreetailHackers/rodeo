@@ -242,6 +242,7 @@ async function main() {
 	await prisma.settings.create({ data: {} });
 
 	// Generate random StatusChanges
+	const statuses: Prisma.StatusChangeCreateManyInput[] = [];
 	const statusFlow: Status[] = ['CREATED', 'VERIFIED', 'APPLIED'];
 	const afterStatusApplied: Status[] = [
 		'CREATED',
@@ -259,35 +260,29 @@ async function main() {
 		let lastTimestamp = currentTime;
 		for (const status of statusFlow) {
 			lastTimestamp = new Date(lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * random());
-			await prisma.statusChange.create({
-				data: {
-					newStatus: status,
-					timestamp: lastTimestamp,
-					userId: id,
-				},
+			statuses.push({
+				newStatus: status,
+				timestamp: lastTimestamp,
+				userId: id,
 			});
 		}
 
 		// choose one out of afterStatusApplied
 		const afterStatusAppliedRandom = randomElement(afterStatusApplied);
 		lastTimestamp = new Date(lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * random());
-		await prisma.statusChange.create({
-			data: {
-				newStatus: afterStatusAppliedRandom,
-				timestamp: lastTimestamp,
-				userId: id,
-			},
+		statuses.push({
+			newStatus: afterStatusAppliedRandom,
+			timestamp: lastTimestamp,
+			userId: id,
 		});
 
 		if (afterStatusAppliedRandom == 'ACCEPTED') {
 			const afterStatusAcceptedRandom = randomElement(afterStatusAccepted);
 			lastTimestamp = new Date(lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * random());
-			await prisma.statusChange.create({
-				data: {
-					newStatus: afterStatusAcceptedRandom,
-					timestamp: lastTimestamp,
-					userId: id,
-				},
+			statuses.push({
+				newStatus: afterStatusAcceptedRandom,
+				timestamp: lastTimestamp,
+				userId: id,
 			});
 			await prisma.authUser.update({
 				where: { id: id },
@@ -300,6 +295,8 @@ async function main() {
 			});
 		}
 	}
+
+	await prisma.statusChange.createMany({ data: statuses });
 
 	// Generate decisions (not randomized so I don't have to worry about duplicates)
 	const decisions: Prisma.DecisionCreateManyInput[] = [];
