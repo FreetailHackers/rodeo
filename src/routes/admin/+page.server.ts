@@ -28,10 +28,21 @@ export const actions = {
 		} catch (e) {
 			confirmBy = null;
 		}
+		const scanOptions = formData.get('scanActions') as string;
+		const scanActions = scanOptions
+			.split('\r\n')
+			.map((option: string) => option.trim())
+			.filter(Boolean);
 		await trpc(locals.auth).settings.update({
 			applicationOpen,
 			confirmBy,
+			scanActions,
 		});
 		return 'Saved settings!';
+	},
+
+	release: async ({ locals }) => {
+		await trpc(locals.auth).admissions.releaseAllDecisions();
+		return 'Released all decisions!';
 	},
 };

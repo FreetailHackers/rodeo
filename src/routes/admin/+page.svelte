@@ -38,6 +38,15 @@
 		name="confirmBy"
 		value={data.settings.confirmBy?.toLocaleString('sv').replace(' ', 'T').slice(0, -3)}
 	/>
+
+	<label for="scanActions"><h2>Scan Options</h2></label>
+	<textarea
+		value={data.settings.scanActions.join('\n')}
+		name="scanActions"
+		id="scanActions"
+		placeholder="Write one option per line, like this:&#13;OPTION 1&#13;OPTION 2&#13;OPTION 3"
+	/>
+
 	<button type="submit">Save</button>
 </form>
 
@@ -79,5 +88,16 @@
 		margin-top: 0;
 		padding-top: 0;
 		text-transform: uppercase;
+	}
+
+	label {
+		display: block;
+		margin-bottom: 0.5rem;
+	}
+
+	input,
+	textarea {
+		flex-grow: 1;
+		width: 100%;
 	}
 </style>
