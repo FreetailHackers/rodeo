@@ -44,17 +44,4 @@ export const actions = {
 		await trpc(locals.auth).admissions.releaseAllDecisions();
 		return 'Released all decisions!';
 	},
-
-	update: async ({ locals, request }) => {
-		const formData = await request.formData();
-		const scanOptions = formData.get('scanActions') as string;
-		const scanActions = scanOptions
-			.split('\r\n')
-			.map((option: string) => option.trim())
-			.filter(Boolean);
-		await trpc(locals.auth).settings.update({
-			scanActions,
-		});
-		return 'Saved questions!';
-	},
 };
