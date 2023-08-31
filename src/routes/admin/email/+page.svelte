@@ -20,18 +20,18 @@
 	}}
 >
 	<label for="homepageText"><h2>Group Email to Specific Status</h2></label>
-	<input class="textbox-margin" name="emailTitle" placeholder="Type email title here" required />
-	<MarkdownEditor placeholder="Type email body here" name="emailBody" required />
 
-	<div class="email-status-button-container">
-		<select name="status" class="half-button" required>
+	<div class="flex-container">
+		<input class="textbox-margin" name="subject" placeholder="Type email subject here" required />
+		<select name="status" required>
 			{#each statuses as status}
 				<option value={status}>{status}</option>
 			{/each}
 		</select>
-
-		<button class="half-button" id="email-by-status" type="submit">Save</button>
 	</div>
+	<MarkdownEditor placeholder="Type email body here" name="emailBody" required />
+
+	<button id="email-by-status" type="submit">Send</button>
 </form>
 
 <form
@@ -94,18 +94,12 @@
 		margin-top: 20px;
 	}
 
-	.email-status-button-container {
-		display: flex;
-		justify-content: center;
-		width: 100%;
-	}
-	.half-button {
-		flex: 1;
-		margin-top: 1%;
-		max-width: 50%;
-	}
-
 	.textbox-margin {
 		margin-bottom: 1%;
+		flex: 1;
+	}
+
+	.flex-container {
+		display: flex;
 	}
 </style>

@@ -19,9 +19,9 @@ export const actions = {
 	emailByStatus: async ({ locals, request }) => {
 		const formData = await request.formData();
 		const status = formData.get('status') as Status;
-		const emailTitle = formData.get('emailTitle') as string;
+		const subject = formData.get('subject') as string;
 		const emailBody = formData.get('emailBody') as string;
-		await trpc(locals.auth).users.sendEmailByStatus({ status, emailTitle, emailBody });
+		await trpc(locals.auth).users.sendEmailByStatus({ status, subject, emailBody });
 	},
 
 	settings: async ({ locals, request }) => {

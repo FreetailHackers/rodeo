@@ -7,7 +7,7 @@
 <ul>
 	<li><a href="/admin" class:active={$page.url.pathname === '/admin'}>Admissions</a></li>
 	<li>
-		<a href="/admin/templates" class:active={$page.url.pathname === '/admin/templates'}>Email</a>
+		<a href="/admin/email" class:active={$page.url.pathname === '/admin/email'}>Email</a>
 	</li>
 	<li>
 		<a href="/admin/questions" class:active={$page.url.pathname === '/admin/questions'}
