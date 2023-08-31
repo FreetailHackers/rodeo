@@ -17,6 +17,7 @@ const settingsSchema = z
 		waitlistTemplate: z.string().optional(),
 		confirmTemplate: z.string().optional(),
 		declineTemplate: z.string().optional(),
+		scanActions: z.string().array().optional(),
 	})
 	.strict();
 
@@ -34,6 +35,7 @@ export const settingsRouter = t.router({
 			applicationOpen: boolean;
 			confirmBy: Date | null;
 			info: string;
+			scanActions: string[];
 		}> => {
 			const settings = await getSettings();
 			return {
@@ -41,6 +43,7 @@ export const settingsRouter = t.router({
 				applicationOpen: settings.applicationOpen,
 				confirmBy: settings.confirmBy,
 				info: settings.info,
+				scanActions: settings.scanActions,
 			};
 		}
 	),
