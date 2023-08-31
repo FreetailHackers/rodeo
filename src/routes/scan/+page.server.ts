@@ -5,7 +5,7 @@ export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['ORGANIZER', 'ADMIN']);
 	return {
 		questions: await trpc(locals.auth).questions.get(),
-		settings: await trpc(locals.auth).settings.getAll(),
+		settings: await trpc(locals.auth).settings.getPublic(),
 	};
 };
 

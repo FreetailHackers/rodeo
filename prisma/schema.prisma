@@ -145,5 +145,3 @@ enum QuestionType {
   RADIO
   FILE
 }
-
-
