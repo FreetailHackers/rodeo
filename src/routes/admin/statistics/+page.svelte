@@ -4,11 +4,20 @@
 
 	export let data;
 
-	function getPieChartData(questionData: { label: string; pairs: [string, number][] }) {
+	type PieChartData = {
+		labels: string[];
+		values: number[];
+		type: 'pie';
+	};
+
+	function getPieChartData(questionData: {
+		label: string;
+		pairs: [string, number][];
+	}): PieChartData {
 		const labels = questionData.pairs.map((pair) => pair[0]);
 		const values = questionData.pairs.map((pair) => pair[1]);
 
-		const pieData = {
+		const pieData: PieChartData = {
 			labels: labels,
 			values: values,
 			type: 'pie',
