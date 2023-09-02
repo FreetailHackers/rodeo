@@ -613,4 +613,50 @@ export const usersRouter = t.router({
 				orderBy: { timestamp: 'asc' },
 			});
 		}),
+
+	// Update the getAnswersForQuestions procedure
+	getAnswersForQuestions: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(
+			z.array(
+				z.object({
+					label: z.string(),
+					id: z.string(),
+				})
+			)
+		)
+		.query(async (req) => {
+			const questionPairs = req.input;
+			const users = await prisma.user.findMany({
+				select: {
+					application: true,
+				},
+			});
+
+			const questionAnswerCounts: Record<string, Record<string, number>> = {};
+
+			users.forEach((user) => {
+				const applicationData = user.application as Record<string, any>;
+				questionPairs.forEach(({ id: questionId, label: questionLabel }) => {
+					const answer = applicationData[questionId];
+					if (answer !== null) {
+						if (!questionAnswerCounts[questionLabel]) {
+							questionAnswerCounts[questionLabel] = {};
+						}
+						if (!questionAnswerCounts[questionLabel][answer]) {
+							questionAnswerCounts[questionLabel][answer] = 1;
+						} else {
+							questionAnswerCounts[questionLabel][answer]++;
+						}
+					}
+				});
+			});
+
+			const result = Object.entries(questionAnswerCounts).map(([label, answerCounts]) => ({
+				label,
+				pairs: Object.entries(answerCounts).filter(([, count]) => count >= 1),
+			}));
+
+			return result;
+		}),
 });

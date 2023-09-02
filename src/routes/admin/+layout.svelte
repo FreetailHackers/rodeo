@@ -16,6 +16,11 @@
 			>Registration Questions</a
 		>
 	</li>
+	<li>
+		<a href="/admin/statistics" class:active={$page.url.pathname === '/admin/statistics'}
+			>User Statistics</a
+		>
+	</li>
 </ul>
 <hr />
 
