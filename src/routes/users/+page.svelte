@@ -2,8 +2,10 @@
 	import type { Prisma } from '@prisma/client';
 	import { Parser } from '@json2csv/plainjs';
 	import UserTable from './user-table.svelte';
+	import Graph from './line-graph.svelte';
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
+	import Plot from 'svelte-plotly.js';
 
 	export let data;
 
@@ -40,7 +42,6 @@
 <svelte:head>
 	<title>Rodeo | Users</title>
 </svelte:head>
-
 <h1>Master Database</h1>
 <p><a href={csvDownloadLink} download="users.csv">Export search results as CSV</a></p>
 
@@ -99,6 +100,35 @@
 {#if data.users.length === 0}
 	<p>No results found.</p>
 {:else}
+	<!-- User statistics -->
+	<details class="stats">
+		<summary>User Statistics</summary>
+		<h1>User Statistics</h1>
+		<label for="statusChangeText"><h2>User Status Count Over Time</h2></label>
+		<Graph statusChanges={data.graph} />
+		{#each data.stats as stat}
+			<label for="category"><h2>{stat.questionName}</h2></label>
+			<div class="graph-container">
+				<Plot
+					data={[stat.data]}
+					layout={{
+						showlegend: false,
+						margin: {
+							t: 20,
+							r: 0,
+							b: 80,
+							l: 50,
+							pad: 5,
+						},
+					}}
+					fillParent="width"
+					debounce={250}
+				/>
+			</div>
+		{/each}
+	</details>
+
+	<!-- User table -->
 	<div class="filter">
 		<p>
 			Results {data.start} through {data.start + data.users.length - 1} of {data.count}:
@@ -162,6 +192,9 @@
 {/if}
 
 <style>
+	.stats {
+		padding-top: 20px;
+	}
 	.filter {
 		display: flex;
 		flex-direction: row;
@@ -199,5 +232,11 @@
 		pointer-events: none;
 		text-decoration: none;
 		opacity: 0.5;
+	}
+
+	.graph-container {
+		width: 100%;
+		height: 300px;
+		overflow: hidden;
 	}
 </style>

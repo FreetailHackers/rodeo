@@ -517,6 +517,42 @@ export const usersRouter = t.router({
 			}
 		),
 
+	unrestrictedSearch: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(
+			z.object({
+				key: z.string(),
+				search: z.string(),
+			})
+		)
+		.query(
+			async (
+				req
+			): Promise<{
+				users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
+			}> => {
+				let where: Prisma.UserWhereInput = {};
+				if (req.input.key === 'email') {
+					where = { authUser: { email: { contains: req.input.search } } };
+				} else if (req.input.key === 'status') {
+					where = { authUser: { status: req.input.search as Status } };
+				} else if (req.input.key === 'role') {
+					where = { authUser: { roles: { has: req.input.search as Role } } };
+				} else if (req.input.key === 'decision') {
+					where = {
+						decision: { status: req.input.search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },
+					};
+				}
+				return {
+					users: await prisma.user.findMany({
+						include: { authUser: true, decision: true },
+						where,
+						orderBy: { authUser: { email: 'asc' } },
+					}),
+				};
+			}
+		),
+
 	/**
 	 * Bulk sets the status of all the users. User must be an admin.
 	 */
@@ -612,51 +648,5 @@ export const usersRouter = t.router({
 			return await prisma.statusChange.findMany({
 				orderBy: { timestamp: 'asc' },
 			});
-		}),
-
-	// Update the getAnswersForQuestions procedure
-	getAnswersForQuestions: t.procedure
-		.use(authenticate(['ADMIN']))
-		.input(
-			z.array(
-				z.object({
-					label: z.string(),
-					id: z.string(),
-				})
-			)
-		)
-		.query(async (req) => {
-			const questionPairs = req.input;
-			const users = await prisma.user.findMany({
-				select: {
-					application: true,
-				},
-			});
-
-			const questionAnswerCounts: Record<string, Record<string, number>> = {};
-
-			users.forEach((user) => {
-				const applicationData = user.application as Record<string, any>;
-				questionPairs.forEach(({ id: questionId, label: questionLabel }) => {
-					const answer = applicationData[questionId];
-					if (answer !== null) {
-						if (!questionAnswerCounts[questionLabel]) {
-							questionAnswerCounts[questionLabel] = {};
-						}
-						if (!questionAnswerCounts[questionLabel][answer]) {
-							questionAnswerCounts[questionLabel][answer] = 1;
-						} else {
-							questionAnswerCounts[questionLabel][answer]++;
-						}
-					}
-				});
-			});
-
-			const result = Object.entries(questionAnswerCounts).map(([label, answerCounts]) => ({
-				label,
-				pairs: Object.entries(answerCounts).filter(([, count]) => count >= 1),
-			}));
-
-			return result;
 		}),
 });
