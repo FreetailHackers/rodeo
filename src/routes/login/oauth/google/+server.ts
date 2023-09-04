@@ -12,19 +12,22 @@ export const GET = async ({ cookies, url, locals }) => {
 	}
 
 	try {
-		const providerSession = await googleAuth.validateCallback(code);
+		const providerUserAuth = await googleAuth.validateCallback(code);
 
 		// Google follows the OpenID Connect spec, which means that we
 		// can get the user's email from the ID JWT without making any
 		// additional API calls :)
 
 		// Google emails should be always verified, but check just in case
-		if (!providerSession.providerUser.email_verified) {
+		if (
+			!providerUserAuth.googleUser.email_verified ||
+			providerUserAuth.googleUser.email === undefined
+		) {
 			throw redirect(302, '/');
 		}
 
-		const id = await _upsert(providerSession, providerSession.providerUser.email);
-		const session = await auth.createSession(id);
+		const id = await _upsert(providerUserAuth, providerUserAuth.googleUser.email);
+		const session = await auth.createSession({ userId: id, attributes: {} });
 		locals.auth.setSession(session);
 	} catch (e) {
 		console.error(e);

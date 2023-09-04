@@ -1,6 +1,6 @@
 import type { AuthUser } from '@prisma/client';
 import { initTRPC, type inferAsyncReturnType } from '@trpc/server';
-import type { AuthRequest } from 'lucia-auth';
+import type { AuthRequest } from 'lucia';
 import SuperJSON from 'superjson';
 
 export function createContext(auth: AuthRequest) {

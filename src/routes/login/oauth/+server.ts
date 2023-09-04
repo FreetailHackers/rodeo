@@ -23,7 +23,7 @@
  */
 import { githubAuth, googleAuth } from '$lib/lucia';
 import { prisma } from '$lib/trpc/db';
-import type { Key, User } from 'lucia-auth';
+import type { ProviderUserAuth } from '@lucia-auth/oauth/dist/core/provider.js';
 
 export const GET = async ({ cookies, url }) => {
 	const provider = getProvider(url.searchParams.get('provider'));
@@ -48,15 +48,6 @@ function getProvider(provider: string | null) {
 	}
 }
 
-// It seems like Lucia doesn't export ProviderSession, so I've just
-// copied the properties we need from the docs at
-// https://lucia-auth.com/reference/oauth/providersession
-type ProviderSession = {
-	existingUser: User | null;
-	createUser: (userAttributes: Lucia.UserAttributes) => Promise<User>;
-	createPersistentKey: (userId: string) => Promise<Key>;
-};
-
 /**
  * "Upserts" a user; that is, creates a new user if no user has
  * registered with this email, or links a provider account as a new
@@ -64,23 +55,23 @@ type ProviderSession = {
  *
  * NOTE: Make sure the email is verified before calling this function!
  */
-export async function _upsert(providerSession: ProviderSession, email: string) {
-	let user = await prisma.authUser.findUnique({
+export async function _upsert(providerUserAuth: ProviderUserAuth, email: string) {
+	const user = await prisma.authUser.findUnique({
 		where: { email },
 	});
 	// If no user has registered with this email, create a new user
 	if (user === null) {
-		user = await providerSession.createUser({
-			email,
-			roles: ['HACKER'],
-			status: 'VERIFIED',
+		const newUser = await providerUserAuth.createUser({
+			attributes: {
+				email,
+				roles: ['HACKER'],
+				status: 'VERIFIED',
+			},
 		});
-		await prisma.statusChange.create({
-			data: { newStatus: 'VERIFIED', userId: user.id },
-		});
-	} else if (providerSession.existingUser === null) {
+		return newUser.id;
+	} else if (providerUserAuth.getExistingUser() === null) {
 		// Otherwise, link the accounts
-		await providerSession.createPersistentKey(user.id);
+		await providerUserAuth.createKey(user.id);
 	}
 	return user.id;
 }
