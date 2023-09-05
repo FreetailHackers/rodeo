@@ -2,7 +2,6 @@
 	import type { Prisma } from '@prisma/client';
 	import { Parser } from '@json2csv/plainjs';
 	import UserTable from './user-table.svelte';
-	import Graph from './line-graph.svelte';
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import Plot from 'svelte-plotly.js';
@@ -104,8 +103,6 @@
 	<details class="stats">
 		<summary>User Statistics</summary>
 		<h1>User Statistics</h1>
-		<label for="statusChangeText"><h2>User Status Count Over Time</h2></label>
-		<Graph statusChanges={data.graph} />
 		{#each data.stats as stat}
 			<label for="category"><h2>{stat.questionName}</h2></label>
 			<div class="graph-container">

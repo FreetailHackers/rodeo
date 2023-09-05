@@ -488,19 +488,7 @@ export const usersRouter = t.router({
 				count: number;
 				users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
 			}> => {
-				// Convert key to Prisma where filter
-				let where: Prisma.UserWhereInput = {};
-				if (req.input.key === 'email') {
-					where = { authUser: { email: { contains: req.input.search } } };
-				} else if (req.input.key === 'status') {
-					where = { authUser: { status: req.input.search as Status } };
-				} else if (req.input.key === 'role') {
-					where = { authUser: { roles: { has: req.input.search as Role } } };
-				} else if (req.input.key === 'decision') {
-					where = {
-						decision: { status: req.input.search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },
-					};
-				}
+				const where: Prisma.UserWhereInput = getWhereCondition(req.input.key, req.input.search);
 				const count = await prisma.user.count({ where });
 				return {
 					pages: Math.ceil(count / req.input.limit),
@@ -517,7 +505,7 @@ export const usersRouter = t.router({
 			}
 		),
 
-	unrestrictedSearch: t.procedure
+	getStats: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(
 			z.object({
@@ -531,18 +519,7 @@ export const usersRouter = t.router({
 			): Promise<{
 				users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
 			}> => {
-				let where: Prisma.UserWhereInput = {};
-				if (req.input.key === 'email') {
-					where = { authUser: { email: { contains: req.input.search } } };
-				} else if (req.input.key === 'status') {
-					where = { authUser: { status: req.input.search as Status } };
-				} else if (req.input.key === 'role') {
-					where = { authUser: { roles: { has: req.input.search as Role } } };
-				} else if (req.input.key === 'decision') {
-					where = {
-						decision: { status: req.input.search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },
-					};
-				}
+				const where: Prisma.UserWhereInput = getWhereCondition(req.input.key, req.input.search);
 				return {
 					users: await prisma.user.findMany({
 						include: { authUser: true, decision: true },
@@ -650,3 +627,19 @@ export const usersRouter = t.router({
 			});
 		}),
 });
+
+// Converts key to Prisma where filter
+function getWhereCondition(key: string, search: string) {
+	if (key === 'email') {
+		return { authUser: { email: { contains: search } } };
+	} else if (key === 'status') {
+		return { authUser: { status: search as Status } };
+	} else if (key === 'role') {
+		return { authUser: { roles: { has: search as Role } } };
+	} else if (key === 'decision') {
+		return {
+			decision: { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },
+		};
+	}
+	return {};
+}

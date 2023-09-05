@@ -12,7 +12,7 @@ export const load = async ({ locals, url }) => {
 	});
 
 	// User Statistics
-	const userResults = await trpc(locals.auth).users.unrestrictedSearch({
+	const userResults = await trpc(locals.auth).users.getStats({
 		key: url.searchParams.get('key') ?? '',
 		search: url.searchParams.get('search') ?? '',
 	});
@@ -24,27 +24,25 @@ export const load = async ({ locals, url }) => {
 
 	const responses = new Map<string, Map<string, number>>();
 
-	if (Array.isArray(userResults.users)) {
-		userResults.users.forEach((user) => {
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			const applicationData = user.application as Record<string, any>;
-			questionWithStats.forEach((question) => {
-				const answer = applicationData[question.id];
-				const key = answer ?? 'No answer given';
-				if (!responses.has(question.label)) {
-					responses.set(question.label, new Map());
+	userResults.users.forEach((user) => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const applicationData = user.application as Record<string, any>;
+		questionWithStats.forEach((question) => {
+			const answer = applicationData[question.id];
+			const key = answer ?? 'No answer given';
+			if (!responses.has(question.label)) {
+				responses.set(question.label, new Map());
+			}
+			const answerFrequency = responses.get(question.label);
+			if (answerFrequency !== undefined) {
+				if (!answerFrequency.has(key)) {
+					answerFrequency.set(key, 1);
+				} else {
+					answerFrequency.set(key, (answerFrequency.get(key) ?? 0) + 1);
 				}
-				const answerFrequency = responses.get(question.label);
-				if (answerFrequency !== undefined) {
-					if (!answerFrequency.has(key)) {
-						answerFrequency.set(key, 1);
-					} else {
-						answerFrequency.set(key, (answerFrequency.get(key) || 0) + 1);
-					}
-				}
-			});
+			}
 		});
-	}
+	});
 
 	const chartData = Array.from(responses.entries()).map(([label, answerFrequency]) => ({
 		questionName: label,
@@ -63,7 +61,6 @@ export const load = async ({ locals, url }) => {
 		start: results.start,
 		count: results.count,
 		user,
-		graph: await trpc(locals.auth).users.getStatusChanges(),
 		query: Object.fromEntries(url.searchParams),
 	};
 };
