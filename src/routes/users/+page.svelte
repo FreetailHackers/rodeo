@@ -37,10 +37,12 @@
 		csvDownloadLink = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
 	}
 
-	function mapToDataObject(answerData: Map<string, number>) {
+	function recordToDataObject(answerData: Record<string, number>) {
+		const labels = Object.keys(answerData);
+		const values = labels.map((label) => answerData[label]);
 		return {
-			labels: Array.from(answerData.keys()),
-			values: Array.from(answerData.values()),
+			labels: labels,
+			values: values,
 			type: 'pie' as const,
 			textinfo: 'none' as const,
 		};
@@ -112,22 +114,21 @@
 	<details class="stats">
 		<summary>User Statistics</summary>
 		{#each data.questions as question}
-			{#if data.stats.get(question.id) !== undefined}
+			{#if data.stats[question.id] !== undefined}
 				<h2>{question.label}</h2>
 				<div class="graph-container">
 					<Plot
-						data={[mapToDataObject(data.stats.get(question.id) ?? new Map())]}
+						data={[recordToDataObject(data.stats[question.id])]}
 						layout={{
 							showlegend: true,
 							legend: {
 								orientation: 'h',
 							},
 							margin: {
-								t: 20,
-								r: 0,
-								b: 80,
+								t: 50,
+								r: 50,
+								b: 50,
 								l: 50,
-								pad: 5,
 							},
 						}}
 						fillParent="width"

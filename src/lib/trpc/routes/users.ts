@@ -519,33 +519,24 @@ export const usersRouter = t.router({
 		.query(async (req) => {
 			const where = getWhereCondition(req.input.key, req.input.search);
 			const users = await prisma.user.findMany({
-				include: { authUser: true, decision: true },
 				where,
-				orderBy: { authUser: { email: 'asc' } },
 			});
-
 			const questions = await getQuestions();
 			const filteredQuestion = questions.filter(
 				(question) => question.type === 'RADIO' || question.type === 'DROPDOWN'
 			);
-			const responses = new Map<string, Map<string, number>>();
+			const responses: Record<string, Record<string, number>> = {};
 			users.forEach((user) => {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const applicationData = user.application as Record<string, any>;
 				filteredQuestion.forEach((question) => {
 					const answer = applicationData[question.id];
 					const key = answer ?? 'No answer given';
-					if (!responses.has(question.id)) {
-						responses.set(question.id, new Map());
+					if (!responses[question.id]) {
+						responses[question.id] = {};
 					}
-					const answerFrequency = responses.get(question.id);
-					if (answerFrequency !== undefined) {
-						if (!answerFrequency.has(key)) {
-							answerFrequency.set(key, 1);
-						} else {
-							answerFrequency.set(key, (answerFrequency.get(key) ?? 0) + 1);
-						}
-					}
+					const answerData = responses[question.id];
+					answerData[key] = (answerData[key] ?? 0) + 1;
 				});
 			});
 			return responses;
