@@ -1,6 +1,6 @@
 import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
-import type { Question, Role, Status } from '@prisma/client';
+import type { Role, Status } from '@prisma/client';
 
 export const load = async ({ locals, url }) => {
 	const user = await authenticate(locals.auth, ['ADMIN']);
@@ -11,50 +11,20 @@ export const load = async ({ locals, url }) => {
 		limit: Number(url.searchParams.get('limit') ?? 10),
 	});
 
-	// User Statistics
-	const userResults = await trpc(locals.auth).users.getStats({
-		key: url.searchParams.get('key') ?? '',
-		search: url.searchParams.get('search') ?? '',
-	});
-
 	const questions = await trpc(locals.auth).questions.get();
-	const questionWithStats = questions.filter(
-		(question: Question) => question.type === 'RADIO' || question.type === 'DROPDOWN'
-	);
-
-	const responses = new Map<string, Map<string, number>>();
-
-	userResults.users.forEach((user) => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const applicationData = user.application as Record<string, any>;
-		questionWithStats.forEach((question) => {
-			const answer = applicationData[question.id];
-			const key = answer ?? 'No answer given';
-			if (!responses.has(question.label)) {
-				responses.set(question.label, new Map());
-			}
-			const answerFrequency = responses.get(question.label);
-			if (answerFrequency !== undefined) {
-				if (!answerFrequency.has(key)) {
-					answerFrequency.set(key, 1);
-				} else {
-					answerFrequency.set(key, (answerFrequency.get(key) ?? 0) + 1);
-				}
-			}
-		});
-	});
-
-	const chartData = Array.from(responses.entries()).map(([label, answerFrequency]) => ({
-		questionName: label,
-		data: {
-			labels: Array.from(answerFrequency.keys()),
-			values: Array.from(answerFrequency.values()),
-			type: 'pie' as const,
-		},
-	}));
+	const filteredQuestions = questions
+		.filter((question) => question.type === 'RADIO' || question.type === 'DROPDOWN')
+		.map((question) => ({
+			label: question.label,
+			id: question.id,
+		}));
 
 	return {
-		stats: chartData,
+		stats: await trpc(locals.auth).users.getStats({
+			key: url.searchParams.get('key') ?? '',
+			search: url.searchParams.get('search') ?? '',
+			questions: filteredQuestions,
+		}),
 		questions: questions,
 		users: results.users,
 		pages: results.pages,

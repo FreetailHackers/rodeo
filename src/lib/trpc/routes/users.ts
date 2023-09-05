@@ -505,30 +505,61 @@ export const usersRouter = t.router({
 			}
 		),
 
+	/**
+	 * Gets statistics on the given users for the given questions. User must be an admin.
+	 */
 	getStats: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(
 			z.object({
 				key: z.string(),
 				search: z.string(),
+				questions: z.array(
+					z.object({
+						id: z.string(),
+						label: z.string(),
+					})
+				),
 			})
 		)
-		.query(
-			async (
-				req
-			): Promise<{
-				users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
-			}> => {
-				const where: Prisma.UserWhereInput = getWhereCondition(req.input.key, req.input.search);
-				return {
-					users: await prisma.user.findMany({
-						include: { authUser: true, decision: true },
-						where,
-						orderBy: { authUser: { email: 'asc' } },
-					}),
-				};
-			}
-		),
+		.query(async (req) => {
+			const where: Prisma.UserWhereInput = getWhereCondition(req.input.key, req.input.search);
+			const users = await prisma.user.findMany({
+				include: { authUser: true, decision: true },
+				where,
+				orderBy: { authUser: { email: 'asc' } },
+			});
+
+			const responses = new Map<string, Map<string, number>>();
+			users.forEach((user) => {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				const applicationData = user.application as Record<string, any>;
+				req.input.questions.forEach((question) => {
+					const answer = applicationData[question.id];
+					const key = answer ?? 'No answer given';
+					if (!responses.has(question.label)) {
+						responses.set(question.label, new Map());
+					}
+					const answerFrequency = responses.get(question.label);
+					if (answerFrequency !== undefined) {
+						if (!answerFrequency.has(key)) {
+							answerFrequency.set(key, 1);
+						} else {
+							answerFrequency.set(key, (answerFrequency.get(key) ?? 0) + 1);
+						}
+					}
+				});
+			});
+
+			return Array.from(responses.entries()).map(([label, answerFrequency]) => ({
+				questionName: label,
+				data: {
+					labels: Array.from(answerFrequency.keys()),
+					values: Array.from(answerFrequency.values()),
+					type: 'pie' as const,
+				},
+			}));
+		}),
 
 	/**
 	 * Bulk sets the status of all the users. User must be an admin.
