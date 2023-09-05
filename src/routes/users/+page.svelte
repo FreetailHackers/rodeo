@@ -36,6 +36,15 @@
 		const csv = parser.parse(data.users.map(prepare));
 		csvDownloadLink = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
 	}
+
+	function mapToDataObject(answerData: Map<string, number>) {
+		return {
+			labels: Array.from(answerData.keys()),
+			values: Array.from(answerData.values()),
+			type: 'pie' as const,
+			textinfo: 'none' as const,
+		};
+	}
 </script>
 
 <svelte:head>
@@ -99,29 +108,33 @@
 {#if data.users.length === 0}
 	<p>No results found.</p>
 {:else}
-	<!-- User statistics -->
+	<!-- User Statistics -->
 	<details class="stats">
 		<summary>User Statistics</summary>
-		<h1>User Statistics</h1>
-		{#each data.stats as stat}
-			<label for="category"><h2>{stat.questionName}</h2></label>
-			<div class="graph-container">
-				<Plot
-					data={[stat.data]}
-					layout={{
-						showlegend: false,
-						margin: {
-							t: 20,
-							r: 0,
-							b: 80,
-							l: 50,
-							pad: 5,
-						},
-					}}
-					fillParent="width"
-					debounce={250}
-				/>
-			</div>
+		{#each data.questions as question}
+			{#if data.stats.get(question.id) !== undefined}
+				<h2>{question.label}</h2>
+				<div class="graph-container">
+					<Plot
+						data={[mapToDataObject(data.stats.get(question.id) ?? new Map())]}
+						layout={{
+							showlegend: true,
+							legend: {
+								orientation: 'h',
+							},
+							margin: {
+								t: 20,
+								r: 0,
+								b: 80,
+								l: 50,
+								pad: 5,
+							},
+						}}
+						fillParent="width"
+						debounce={250}
+					/>
+				</div>
+			{/if}
 		{/each}
 	</details>
 

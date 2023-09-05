@@ -488,7 +488,7 @@ export const usersRouter = t.router({
 				count: number;
 				users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
 			}> => {
-				const where: Prisma.UserWhereInput = getWhereCondition(req.input.key, req.input.search);
+				const where = getWhereCondition(req.input.key, req.input.search);
 				const count = await prisma.user.count({ where });
 				return {
 					pages: Math.ceil(count / req.input.limit),
@@ -514,33 +514,31 @@ export const usersRouter = t.router({
 			z.object({
 				key: z.string(),
 				search: z.string(),
-				questions: z.array(
-					z.object({
-						id: z.string(),
-						label: z.string(),
-					})
-				),
 			})
 		)
 		.query(async (req) => {
-			const where: Prisma.UserWhereInput = getWhereCondition(req.input.key, req.input.search);
+			const where = getWhereCondition(req.input.key, req.input.search);
 			const users = await prisma.user.findMany({
 				include: { authUser: true, decision: true },
 				where,
 				orderBy: { authUser: { email: 'asc' } },
 			});
 
+			const questions = await getQuestions();
+			const filteredQuestion = questions.filter(
+				(question) => question.type === 'RADIO' || question.type === 'DROPDOWN'
+			);
 			const responses = new Map<string, Map<string, number>>();
 			users.forEach((user) => {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const applicationData = user.application as Record<string, any>;
-				req.input.questions.forEach((question) => {
+				filteredQuestion.forEach((question) => {
 					const answer = applicationData[question.id];
 					const key = answer ?? 'No answer given';
-					if (!responses.has(question.label)) {
-						responses.set(question.label, new Map());
+					if (!responses.has(question.id)) {
+						responses.set(question.id, new Map());
 					}
-					const answerFrequency = responses.get(question.label);
+					const answerFrequency = responses.get(question.id);
 					if (answerFrequency !== undefined) {
 						if (!answerFrequency.has(key)) {
 							answerFrequency.set(key, 1);
@@ -550,15 +548,7 @@ export const usersRouter = t.router({
 					}
 				});
 			});
-
-			return Array.from(responses.entries()).map(([label, answerFrequency]) => ({
-				questionName: label,
-				data: {
-					labels: Array.from(answerFrequency.keys()),
-					values: Array.from(answerFrequency.values()),
-					type: 'pie' as const,
-				},
-			}));
+			return responses;
 		}),
 
 	/**
@@ -660,7 +650,7 @@ export const usersRouter = t.router({
 });
 
 // Converts key to Prisma where filter
-function getWhereCondition(key: string, search: string) {
+function getWhereCondition(key: string, search: string): Prisma.UserWhereInput {
 	if (key === 'email') {
 		return { authUser: { email: { contains: search } } };
 	} else if (key === 'status') {

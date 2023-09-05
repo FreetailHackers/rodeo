@@ -10,9 +10,9 @@ dayjs.extend(timezone);
 export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['ADMIN']);
 	return {
-		graph: await trpc(locals.auth).users.getStatusChanges(),
 		decisions: await trpc(locals.auth).admissions.getDecisions(),
 		settings: await trpc(locals.auth).settings.getAll(),
+		graph: await trpc(locals.auth).users.getStatusChanges(),
 	};
 };
 

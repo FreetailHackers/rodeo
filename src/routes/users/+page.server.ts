@@ -11,21 +11,12 @@ export const load = async ({ locals, url }) => {
 		limit: Number(url.searchParams.get('limit') ?? 10),
 	});
 
-	const questions = await trpc(locals.auth).questions.get();
-	const filteredQuestions = questions
-		.filter((question) => question.type === 'RADIO' || question.type === 'DROPDOWN')
-		.map((question) => ({
-			label: question.label,
-			id: question.id,
-		}));
-
 	return {
 		stats: await trpc(locals.auth).users.getStats({
 			key: url.searchParams.get('key') ?? '',
 			search: url.searchParams.get('search') ?? '',
-			questions: filteredQuestions,
 		}),
-		questions: questions,
+		questions: await trpc(locals.auth).questions.get(),
 		users: results.users,
 		pages: results.pages,
 		start: results.start,
