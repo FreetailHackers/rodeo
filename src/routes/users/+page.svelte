@@ -4,6 +4,7 @@
 	import UserTable from './user-table.svelte';
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
+	import Plot from 'svelte-plotly.js';
 
 	export let data;
 
@@ -35,12 +36,22 @@
 		const csv = parser.parse(data.users.map(prepare));
 		csvDownloadLink = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
 	}
+
+	function recordToDataObject(answerData: Record<string, number>) {
+		const labels = Object.keys(answerData);
+		const values = labels.map((label) => answerData[label]);
+		return {
+			labels: labels,
+			values: values,
+			type: 'pie' as const,
+			textinfo: 'none' as const,
+		};
+	}
 </script>
 
 <svelte:head>
 	<title>Rodeo | Users</title>
 </svelte:head>
-
 <h1>Master Database</h1>
 <p><a href={csvDownloadLink} download="users.csv">Export search results as CSV</a></p>
 
@@ -99,6 +110,36 @@
 {#if data.users.length === 0}
 	<p>No results found.</p>
 {:else}
+	<!-- User Statistics -->
+	<details class="stats">
+		<summary>User Statistics</summary>
+		{#each data.questions as question}
+			{#if data.stats[question.id] !== undefined}
+				<h2>{question.label}</h2>
+				<div class="graph-container">
+					<Plot
+						data={[recordToDataObject(data.stats[question.id])]}
+						layout={{
+							showlegend: true,
+							legend: {
+								orientation: 'h',
+							},
+							margin: {
+								t: 50,
+								r: 50,
+								b: 50,
+								l: 50,
+							},
+						}}
+						fillParent="width"
+						debounce={250}
+					/>
+				</div>
+			{/if}
+		{/each}
+	</details>
+
+	<!-- User table -->
 	<div class="filter">
 		<p>
 			Results {data.start} through {data.start + data.users.length - 1} of {data.count}:
@@ -162,6 +203,9 @@
 {/if}
 
 <style>
+	.stats {
+		padding-top: 20px;
+	}
 	.filter {
 		display: flex;
 		flex-direction: row;
@@ -199,5 +243,11 @@
 		pointer-events: none;
 		text-decoration: none;
 		opacity: 0.5;
+	}
+
+	.graph-container {
+		width: 100%;
+		height: 300px;
+		overflow: hidden;
 	}
 </style>
