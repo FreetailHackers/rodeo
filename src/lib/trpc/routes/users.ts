@@ -486,19 +486,7 @@ export const usersRouter = t.router({
 				count: number;
 				users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
 			}> => {
-				// Convert key to Prisma where filter
-				let where: Prisma.UserWhereInput = {};
-				if (req.input.key === 'email') {
-					where = { authUser: { email: { contains: req.input.search } } };
-				} else if (req.input.key === 'status') {
-					where = { authUser: { status: req.input.search as Status } };
-				} else if (req.input.key === 'role') {
-					where = { authUser: { roles: { has: req.input.search as Role } } };
-				} else if (req.input.key === 'decision') {
-					where = {
-						decision: { status: req.input.search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },
-					};
-				}
+				const where = getWhereCondition(req.input.key, req.input.search);
 				const count = await prisma.user.count({ where });
 				return {
 					pages: Math.ceil(count / req.input.limit),
@@ -514,6 +502,43 @@ export const usersRouter = t.router({
 				};
 			}
 		),
+
+	/**
+	 * Gets statistics on the given users for the given questions. User must be an admin.
+	 */
+	getStats: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(
+			z.object({
+				key: z.string(),
+				search: z.string(),
+			})
+		)
+		.query(async (req) => {
+			const where = getWhereCondition(req.input.key, req.input.search);
+			const users = await prisma.user.findMany({
+				where,
+			});
+			const questions = await getQuestions();
+			const filteredQuestion = questions.filter(
+				(question) => question.type === 'RADIO' || question.type === 'DROPDOWN'
+			);
+			const responses: Record<string, Record<string, number>> = {};
+			users.forEach((user) => {
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				const applicationData = user.application as Record<string, any>;
+				filteredQuestion.forEach((question) => {
+					const answer = applicationData[question.id];
+					const key = answer ?? 'No answer given';
+					if (!responses[question.id]) {
+						responses[question.id] = {};
+					}
+					const answerData = responses[question.id];
+					answerData[key] = (answerData[key] ?? 0) + 1;
+				});
+			});
+			return responses;
+		}),
 
 	/**
 	 * Bulk sets the status of all the users. User must be an admin.
@@ -626,3 +651,19 @@ export const usersRouter = t.router({
 			await sendEmail(emailArray, req.input.subject, req.input.emailBody);
 		}),
 });
+
+// Converts key to Prisma where filter
+function getWhereCondition(key: string, search: string): Prisma.UserWhereInput {
+	if (key === 'email') {
+		return { authUser: { email: { contains: search } } };
+	} else if (key === 'status') {
+		return { authUser: { status: search as Status } };
+	} else if (key === 'role') {
+		return { authUser: { roles: { has: search as Role } } };
+	} else if (key === 'decision') {
+		return {
+			decision: { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },
+		};
+	}
+	return {};
+}
