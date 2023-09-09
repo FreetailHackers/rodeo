@@ -16,7 +16,7 @@ const transporter = nodemailer.createTransport({
 export const sendEmail = async (
 	recipient: string | string[],
 	subject: string,
-	message: string,
+	message: string
 ): Promise<string> => {
 	// Preface with warning if not in production
 	let warning = '';
