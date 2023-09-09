@@ -1,7 +1,7 @@
 import { Prisma, Role, Status, type StatusChange } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
-import { sendEmail, sendManyEmails } from '../email';
+import { sendEmail } from '../email';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getQuestions } from './questions';
@@ -213,7 +213,7 @@ export const usersRouter = t.router({
 				});
 				// notify user through their email on successful application submission
 				const subject = 'Thanks for submitting!';
-				await sendEmail(req.ctx.user.email, subject, (await getSettings()).submitTemplate, null);
+				await sendEmail(req.ctx.user.email, subject, (await getSettings()).submitTemplate);
 			}
 			return errors;
 		}),
@@ -260,8 +260,7 @@ export const usersRouter = t.router({
 						'Thanks for your RSVP!',
 						(
 							await getSettings()
-						).confirmTemplate,
-						null
+						).confirmTemplate
 					);
 				}
 			} else {
@@ -279,8 +278,7 @@ export const usersRouter = t.router({
 						'Thanks for your RSVP!',
 						(
 							await getSettings()
-						).declineTemplate,
-						null
+						).declineTemplate
 					);
 				}
 			}
@@ -346,7 +344,7 @@ export const usersRouter = t.router({
 			'Click on the following link to verify your email address:<br><br>' +
 			link +
 			'<br><br>If you did not request this email, please ignore it.';
-		await sendEmail(req.ctx.user.email, 'Email Verification', body, null);
+		await sendEmail(req.ctx.user.email, 'Email Verification', body);
 	}),
 
 	/**
@@ -367,7 +365,7 @@ export const usersRouter = t.router({
 				const body =
 					'Click on the following link to reset your password (valid for 10 minutes):<br><br>' +
 					link;
-				await sendEmail(user.email, 'Password Reset', body, null);
+				await sendEmail(user.email, 'Password Reset', body);
 			}
 		}),
 
@@ -625,6 +623,6 @@ export const usersRouter = t.router({
 				})
 			).map((user) => user.email);
 
-			await sendManyEmails(emailArray, req.input.subject, req.input.emailBody, null);
+			await sendEmail(emailArray, req.input.subject, req.input.emailBody);
 		}),
 });
