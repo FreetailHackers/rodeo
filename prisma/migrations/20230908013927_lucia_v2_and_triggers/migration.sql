@@ -115,3 +115,10 @@ CREATE TRIGGER user_update_status_change_trigger
 AFTER UPDATE OF "status" ON "AuthUser"
 FOR EACH ROW
 EXECUTE FUNCTION user_status_change_trigger_function();
+
+
+/* Generate a User for each AuthUser that doesn't have one yet */
+INSERT INTO "User" ("authUserId")
+SELECT "AuthUser".id
+FROM "AuthUser"
+WHERE NOT EXISTS (SELECT 1 FROM "User" WHERE "authUserId" = "AuthUser".id);
