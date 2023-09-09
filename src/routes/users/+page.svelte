@@ -11,6 +11,7 @@
 	let key = data.query.key ?? 'email';
 	let search = data.query.search ?? '';
 	let limit = data.query.limit ?? '10';
+	let questions = data.questions;
 
 	// Helper function to replace question IDs with their labels
 	function prepare(user: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>) {
@@ -67,11 +68,20 @@
 				else search = '';
 			}}
 		>
-			<option value="email">Email</option>
-			<option value="role">Role</option>
-			<option value="status">Status</option>
+			<optgroup label="Enums">
+				<option value="email">Email</option>
+				<option value="role">Role</option>
+				<option value="status">Status</option>
+			</optgroup>
+			<optgroup label="Questions">
+				{#each questions as question}
+					<option value={question.id}>{question.label}</option>
+				{/each}
+			</optgroup>
 		</select>
+
 		{#if key === 'role'}
+			print({key});
 			<select name="search" bind:value={search} class="search">
 				<option value="HACKER">HACKER</option>
 				<option value="ADMIN">ADMIN</option>
@@ -81,6 +91,7 @@
 				<option value="SPONSOR">SPONSOR</option>
 			</select>
 		{:else if key === 'status'}
+			print({key});
 			<select name="search" bind:value={search} class="search">
 				<option value="CREATED">CREATED</option>
 				<option value="VERIFIED">VERIFIED</option>
@@ -92,15 +103,16 @@
 				<option value="DECLINED">DECLINED</option>
 			</select>
 		{:else}
-			<input
-				type="text"
-				id="search"
-				name="search"
-				placeholder="Search"
-				autocomplete="off"
-				bind:value={search}
-				class="search"
-			/>
+			{#each questions as question}
+				{#if question.id == key}
+					{#if question.type == 'CHECKBOX'}
+						<select name="search" bind:value={search} class="search">
+							<option value="TRUE">True</option>
+							<option value="FALSE">False</option>
+						</select>
+					{/if}
+				{/if}
+			{/each}
 		{/if}
 		<input type="hidden" name="limit" value={limit} />
 		<button>Search</button>
@@ -148,6 +160,8 @@
 			name="limit"
 			bind:value={limit}
 			on:change={() => {
+				console.log(location.pathname);
+				console.log(data.query);
 				goto(`${location.pathname}?${new URLSearchParams({ ...data.query, limit })}`, {
 					noScroll: true,
 				});
