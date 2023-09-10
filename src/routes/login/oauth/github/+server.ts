@@ -19,11 +19,11 @@ export const GET = async ({ cookies, url, locals }) => {
 	}
 
 	try {
-		const providerSession = await githubAuth.validateCallback(code);
+		const providerUserAuth = await githubAuth.validateCallback(code);
 
 		// Get primary email (which should be verified) from GitHub API
 		const res = await fetch('https://api.github.com/user/emails', {
-			headers: { Authorization: `Bearer ${providerSession.tokens.accessToken}` },
+			headers: { Authorization: `Bearer ${providerUserAuth.githubTokens.accessToken}` },
 		});
 		const emails: GitHubEmailResponse[] = await res.json();
 		const email = emails.find((e) => e.primary);
@@ -34,8 +34,8 @@ export const GET = async ({ cookies, url, locals }) => {
 			throw redirect(302, '/');
 		}
 
-		const id = await _upsert(providerSession, email.email);
-		const session = await auth.createSession(id);
+		const id = await _upsert(providerUserAuth, email.email);
+		const session = await auth.createSession({ userId: id, attributes: {} });
 		locals.auth.setSession(session);
 	} catch (e) {
 		console.error(e);

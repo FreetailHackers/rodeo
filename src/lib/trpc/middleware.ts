@@ -8,15 +8,15 @@ import { t } from './t';
  */
 export function authenticate(roles?: Role[]) {
 	return t.middleware(async ({ ctx, next }) => {
-		const { user } = await ctx.validateUser();
-		if (user === null) {
+		const session = await ctx.validate();
+		if (session === null) {
 			throw new Error('Unauthorized');
 		}
-		if (roles !== undefined && !hasAnyRole(user.roles, roles)) {
+		if (roles !== undefined && !hasAnyRole(session.user.roles, roles)) {
 			throw new Error('Forbidden');
 		}
 		return next({
-			ctx: { user },
+			ctx: { user: session.user },
 		});
 	});
 }

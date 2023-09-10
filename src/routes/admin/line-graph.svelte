@@ -48,7 +48,10 @@
 	}
 
 	function generateStatusCountHistory(statusCounts: Record<Status, number[]>) {
-		const timestamps = statusChanges.map((statusChange) => statusChange.timestamp);
+		const timestamps = [
+			statusChanges[0]?.timestamp,
+			...statusChanges.map((statusChange) => statusChange.timestamp),
+		];
 
 		const plotlyData = Object.keys(statusCounts).map((status) => {
 			const plotlyDatum = {
