@@ -1,5 +1,18 @@
 # Changelog
 
+## v0.6.2
+
+[ADDED]
+
+- Graph for tracking user and status count over time
+- Pie charts for DROPDOWN and RADIO question response counts
+- QR code scan options can be customized by admins
+- More descriptive page `<title>`s
+
+[FIXED]
+
+- Not all users appearing in search results
+
 ## v0.6.1
 
 [FIXED]

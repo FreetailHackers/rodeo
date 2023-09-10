@@ -49,7 +49,7 @@
 		</li>
 		<li><a href="/info" class:active={$page.url.pathname.startsWith('/info')}>Info</a></li>
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->
-		{#if data.user !== null && (!data.user.roles.includes('HACKER') || data.user.status === 'CONFIRMED')}
+		{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
 			<li><a href="/id" class:active={$page.url.pathname.startsWith('/id')}>My Hacker ID</a></li>
 		{/if}
 		{#if data.user?.roles.includes('ORGANIZER') || data.user?.roles.includes('ADMIN')}

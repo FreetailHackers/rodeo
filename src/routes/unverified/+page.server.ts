@@ -2,8 +2,8 @@ import { trpc } from '$lib/trpc/router';
 import { redirect } from '@sveltejs/kit';
 
 export const load = async ({ locals }) => {
-	const { user } = await locals.auth.validateUser();
-	if (user == null || user.status !== 'CREATED') {
+	const session = await locals.auth.validate();
+	if (session == null || session.user.status !== 'CREATED') {
 		throw redirect(303, '/');
 	}
 };
