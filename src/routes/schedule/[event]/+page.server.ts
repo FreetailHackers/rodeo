@@ -12,7 +12,7 @@ export const load = async ({ locals, params }) => {
 	if (event !== null) {
 		return {
 			event,
-			user: (await locals.auth.validateUser()).user,
+			user: (await locals.auth.validate())?.user,
 		};
 	}
 	throw error(404, 'Event not found');

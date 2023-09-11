@@ -13,19 +13,21 @@ const transporter = nodemailer.createTransport({
 	},
 });
 
-export const sendEmail = async (
-	recipient: string,
+export const sendEmails = async (
+	recipients: string[],
 	subject: string,
-	message: string,
-	name: string | null
+	message: string
 ): Promise<string> => {
 	// Preface with warning if not in production
 	let warning = '';
 	message = marked.parse(message);
 	if (process.env.VERCEL_ENV !== 'production') {
 		// Only allow emails to YOPmail on staging
-		if (process.env.VERCEL_ENV === 'preview' && !recipient.endsWith('@yopmail.com')) {
-			return 'Only @yopmail.com addresses are allowed on staging.';
+		if (process.env.VERCEL_ENV === 'preview') {
+			recipients = recipients.filter((recipient) => !recipient.endsWith('@yopmail.com'));
+			if (recipients.length != 0) {
+				return 'Only @yopmail.com addresses are allowed on staging.';
+			}
 		}
 		warning = `<h1>
 			WARNING: This email was sent from a testing environment.
@@ -33,33 +35,43 @@ export const sendEmail = async (
 			This message cannot be guaranteed to come from Freetail Hackers.
 			</h1>`;
 	}
-	const greeting = name ? `Hi ${name},` : 'Hi,';
 
-	const email = {
-		to: recipient,
-		from: 'hello@freetailhackers.com',
-		subject: subject,
-		html: `
-			${warning}
-			${greeting}
-			${message}
-			If you have any questions, you may email us at <a href="mailto:tech@freetailhackers.com">tech@freetailhackers.com</a>.
-			<br>
-			<br>
-			Best,
-			<br>
-			Freetail Hackers`,
-	};
 	try {
-		if (process.env.SENDGRID_KEY) {
-			await sgMail.send(email);
+		// Send emails to each recipient
+		const emailPromises = recipients.map(async (recipient) => {
+			const email = {
+				to: recipient,
+				from: 'hello@freetailhackers.com',
+				subject: subject,
+				html: `
+					${warning}
+					${message}`,
+			};
+
+			if (process.env.SENDGRID_KEY) {
+				return sgMail.send(email);
+			} else {
+				return transporter.sendMail(email);
+			}
+		});
+
+		const emailResults = await Promise.allSettled(emailPromises);
+		const failedRecipients = emailResults
+			.filter((result) => result.status === 'rejected')
+			.map((result, index) => recipients[index]);
+		if (failedRecipients.length > 0) {
+			return (
+				failedRecipients.length +
+				' emails unsuccessfully sent to ' +
+				failedRecipients.join(', ') +
+				'.'
+			);
 		} else {
-			await transporter.sendMail(email);
+			return `All emails successfully sent to ${recipients.join(', ')}!`;
 		}
-		return 'We sent an email to ' + recipient + '!';
 	} catch (error) {
 		console.error(error);
-		console.error(`To: ${recipient}, Subject: ${subject}, Message: ${message}`);
-		return 'There was an error sending the email. Please try again later.';
+		console.error(`To: ${recipients.join(', ')}, Subject: ${subject}, Message: ${message}`);
+		return 'There was an error sending the emails. Please try again later.';
 	}
 };

@@ -1,7 +1,7 @@
 import type { Decision, Prisma } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
-import { sendEmail } from '../email';
+import { sendEmails } from '../email';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getSettings } from './settings';
@@ -14,9 +14,6 @@ async function releaseDecision(decision: Decision): Promise<void> {
 		const updateStatus = prisma.authUser.update({
 			where: { id: decision.userId },
 			data: { status: decision.status },
-		});
-		await prisma.statusChange.create({
-			data: { newStatus: decision.status, userId: decision.userId },
 		});
 		const deleteDecision = prisma.decision.delete({
 			where: { userId: decision.userId },
@@ -31,7 +28,7 @@ async function releaseDecision(decision: Decision): Promise<void> {
 		} else if (decision.status === 'WAITLISTED') {
 			template = (await getSettings()).waitlistTemplate;
 		}
-		await sendEmail(hacker.email, 'Freetail Hackers status update', template, null);
+		await sendEmails([hacker.email], 'Freetail Hackers status update', template);
 	} else {
 		await prisma.decision.delete({
 			where: { userId: decision.userId },
