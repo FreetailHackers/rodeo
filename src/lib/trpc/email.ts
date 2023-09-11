@@ -62,7 +62,7 @@ export const sendEmails = async (
 		if (failedRecipients.length > 0) {
 			return (
 				failedRecipients.length +
-				'emails unsuccessfully sent to ' +
+				' emails unsuccessfully sent to ' +
 				failedRecipients.join(', ') +
 				'.'
 			);

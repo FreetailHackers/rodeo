@@ -617,15 +617,14 @@ export const usersRouter = t.router({
 	sendEmailByStatus: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(z.object({ status: z.nativeEnum(Status), subject: z.string(), emailBody: z.string() }))
-		.mutation(async (req): Promise<void> => {
+		.mutation(async (req): Promise<string> => {
 			const emailArray = (
 				await prisma.authUser.findMany({
 					where: { status: req.input.status },
 					select: { email: true },
 				})
 			).map((user) => user.email);
-
-			await sendEmails(emailArray, req.input.subject, req.input.emailBody);
+			return sendEmails(emailArray, req.input.subject, req.input.emailBody);
 		}),
 });
 
