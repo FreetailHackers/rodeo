@@ -1,7 +1,7 @@
 import { Prisma, Role, Status, type StatusChange } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
-import { sendEmail } from '../email';
+import { sendEmail, sendManyEmails } from '../email';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getQuestions } from './questions';
@@ -625,7 +625,7 @@ export const usersRouter = t.router({
 				})
 			).map((user) => user.email);
 
-			await sendEmail(emailArray, req.input.subject, req.input.emailBody);
+			await sendManyEmails(emailArray, req.input.subject, req.input.emailBody);
 		}),
 });
 
