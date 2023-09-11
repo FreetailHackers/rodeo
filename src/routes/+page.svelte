@@ -21,7 +21,7 @@
 	<title>Rodeo | Home</title>
 </svelte:head>
 
-{#if data.user !== null}
+{#if data.user !== undefined}
 	<SvelteMarkdown source={data.settings.homepageText} />
 
 	<form method="POST" action="?/logout" use:enhance>
@@ -55,7 +55,8 @@
 		<label for="email">Email</label>
 		<input id="email" name="email" required />
 		<label for="password">Password (<a href="/login/reset-password">forgot?</a>)</label>
-		<input type="password" id="password" name="password" required />
+		<!-- HACK: Not required so we can easily log into test accounts lol -->
+		<input type="password" id="password" name="password" />
 		<button>Continue</button>
 	</form>
 	<p>

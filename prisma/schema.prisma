@@ -1,6 +1,7 @@
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
@@ -11,16 +12,15 @@ generator client {
 
 model AuthUser {
   // Required by Lucia Auth
-  id           String        @id @unique
-  auth_session AuthSession[]
-  auth_key     AuthKey[]
+  id             String         @id @unique
+  auth_session   AuthSession[]
+  auth_key       AuthKey[]
+  single_use_key SingleUseKey[]
   // Custom attributes required for authentication/authorization flows
-  email        String        @unique
-  roles        Role[]        @default([HACKER])
-  status       Status        @default(CREATED)
-  user         User?
-
-  @@map("auth_user")
+  email          String         @unique
+  roles          Role[]         @default([HACKER])
+  status         Status         @default(CREATED)
+  user           User?
 }
 
 model AuthSession {
@@ -31,19 +31,26 @@ model AuthSession {
   auth_user      AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
-  @@map("auth_session")
 }
 
 model AuthKey {
   id              String   @id @unique
   hashed_password String?
   user_id         String
-  primary_key     Boolean
-  expires         BigInt?
   auth_user       AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
 
   @@index([user_id])
-  @@map("auth_key")
+}
+
+// For email verification and password resets
+model SingleUseKey {
+  id        String   @id @unique
+  purpose   String
+  expires   DateTime
+  user_id   String
+  auth_user AuthUser @relation(references: [id], fields: [user_id], onDelete: Cascade)
+
+  @@index([user_id])
 }
 
 model User {
@@ -154,3 +161,12 @@ enum QuestionType {
   RADIO
   FILE
 }
+
+// This section lists the names of manually created triggers, and the
+// migrations they are located in, as they are not supported by Prisma.
+// MAKE SURE TO READ AND UNDERSTAND ALL OF THESE TRIGGERS DURING
+// ONBOARDING BEFORE CODING! Otherwise you may get unexpected behavior.
+// Also make sure to add any new triggers to this list.
+
+// auth_user_insert_user_trigger (lucia_v2_and_triggers)
+// user_insert_status_change_trigger (lucia_v2_and_triggers)

@@ -17,7 +17,7 @@ export const load = async ({ locals }) => {
 	}
 	return {
 		schedule: events,
-		user: (await locals.auth.validateUser()).user,
+		user: (await locals.auth.validate())?.user,
 		dates: dates,
 	};
 };

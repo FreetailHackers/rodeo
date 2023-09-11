@@ -1,6 +1,6 @@
 import type { Role } from '.prisma/client';
 import { redirect } from '@sveltejs/kit';
-import type { AuthRequest, UserSchema } from 'lucia-auth';
+import type { AuthRequest, UserSchema } from 'lucia';
 
 /**
  * Authenticates and authorizes a user, redirecting to the login page if
@@ -12,10 +12,11 @@ import type { AuthRequest, UserSchema } from 'lucia-auth';
  * src/lib/trpc/middleware instead.
  */
 export async function authenticate(auth: AuthRequest, roles?: Role[]): Promise<UserSchema> {
-	const { user } = await auth.validateUser();
-	if (user === null) {
+	const session = await auth.validate();
+	if (session === null) {
 		throw redirect(303, '/?unauthenticated');
 	}
+	const user = session.user;
 	if (roles !== undefined && !hasAnyRole(user.roles, roles)) {
 		throw redirect(303, '/?forbidden');
 	}
