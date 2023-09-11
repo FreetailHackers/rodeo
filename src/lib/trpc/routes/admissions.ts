@@ -1,7 +1,7 @@
 import type { Decision, Prisma } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
-import { sendEmail } from '../email';
+import { sendEmails } from '../email';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getSettings } from './settings';
@@ -28,7 +28,8 @@ async function releaseDecision(decision: Decision): Promise<void> {
 		} else if (decision.status === 'WAITLISTED') {
 			template = (await getSettings()).waitlistTemplate;
 		}
-		await sendEmail(hacker.email, 'Freetail Hackers status update', template);
+		const recipient = [hacker.email];
+		await sendEmails(recipient, 'Freetail Hackers status update', template);
 	} else {
 		await prisma.decision.delete({
 			where: { userId: decision.userId },

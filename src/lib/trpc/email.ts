@@ -13,49 +13,7 @@ const transporter = nodemailer.createTransport({
 	},
 });
 
-export const sendEmail = async (
-	recipient: string,
-	subject: string,
-	message: string
-): Promise<string> => {
-	// Preface with warning if not in production
-	let warning = '';
-	message = marked.parse(message);
-	if (process.env.VERCEL_ENV !== 'production') {
-		// Only allow emails to YOPmail on staging
-		if (process.env.VERCEL_ENV === 'preview' && !recipient.endsWith('@yopmail.com')) {
-			return 'Only @yopmail.com addresses are allowed on staging.';
-		}
-		warning = `<h1>
-			WARNING: This email was sent from a testing environment.
-			Be careful when opening any links or attachments!
-			This message cannot be guaranteed to come from Freetail Hackers.
-			</h1>`;
-	}
-
-	const email = {
-		to: recipient,
-		from: 'hello@freetailhackers.com',
-		subject: subject,
-		html: `
-			${warning}
-			${message}`,
-	};
-	try {
-		if (process.env.SENDGRID_KEY) {
-			await sgMail.send(email);
-		} else {
-			await transporter.sendMail(email);
-		}
-		return 'We sent an email to ' + recipient + '!';
-	} catch (error) {
-		console.error(error);
-		console.error(`To: ${recipient}, Subject: ${subject}, Message: ${message}`);
-		return 'There was an error sending the email. Please try again later.';
-	}
-};
-
-export const sendManyEmails = async (
+export const sendEmails = async (
 	recipients: string[],
 	subject: string,
 	message: string
@@ -91,16 +49,29 @@ export const sendManyEmails = async (
 			};
 
 			if (process.env.SENDGRID_KEY) {
-				sgMail.send(email);
+				return sgMail.send(email);
 			} else {
-				transporter.sendMail(email);
+				return transporter.sendMail(email);
 			}
-
-			return 'We sent an email to ' + recipient + '!';
 		});
 
-		await Promise.allSettled(emailPromises);
-		return `Emails sent to ${recipients.join(', ')}!`;
+		const emailResults = await Promise.allSettled(emailPromises);
+		const failedRecipients = emailResults
+			.filter((result) => result.status === 'rejected')
+			.map((result) => {
+				const recipient = recipients[emailResults.indexOf(result)];
+				return recipient;
+			});
+		if (failedRecipients.length > 0) {
+			return (
+				failedRecipients.length +
+				'emails unsuccessfully sent to ' +
+				failedRecipients.join(', ') +
+				'.'
+			);
+		} else {
+			return `All emails successfully sent to ${recipients.join(', ')}!`;
+		}
 	} catch (error) {
 		console.error(error);
 		console.error(`To: ${recipients.join(', ')}, Subject: ${subject}, Message: ${message}`);
