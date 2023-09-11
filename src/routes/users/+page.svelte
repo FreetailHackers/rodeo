@@ -8,11 +8,11 @@
 
 	export let data;
 
-	let key = data.query.key ?? 'email';
+	let key = data.query.key ?? '';
 	let search = data.query.search ?? '';
 	let limit = data.query.limit ?? '10';
 	let questions = data.questions;
-
+	let filter = data.query.filter ?? '';
 	// Helper function to replace question IDs with their labels
 	function prepare(user: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>) {
 		function prepareApplication(application: Record<string, unknown>) {
@@ -72,6 +72,7 @@
 				<option value="email">Email</option>
 				<option value="role">Role</option>
 				<option value="status">Status</option>
+				<option value="decision">Decision</option>
 			</optgroup>
 			<optgroup label="Questions">
 				{#each questions as question}
@@ -81,7 +82,6 @@
 		</select>
 
 		{#if key === 'role'}
-			print({key});
 			<select name="search" bind:value={search} class="search">
 				<option value="HACKER">HACKER</option>
 				<option value="ADMIN">ADMIN</option>
@@ -91,7 +91,6 @@
 				<option value="SPONSOR">SPONSOR</option>
 			</select>
 		{:else if key === 'status'}
-			print({key});
 			<select name="search" bind:value={search} class="search">
 				<option value="CREATED">CREATED</option>
 				<option value="VERIFIED">VERIFIED</option>
@@ -102,13 +101,82 @@
 				<option value="CONFIRMED">CONFIRMED</option>
 				<option value="DECLINED">DECLINED</option>
 			</select>
+		{:else if key == 'email'}
+			<input
+				type="text"
+				id="search"
+				name="search"
+				placeholder="Search"
+				autocomplete="off"
+				bind:value={search}
+				class="search"
+			/>
+		{:else if key == 'decision'}
+			<select name="search" bind:value={search} class="search">
+				<option value="ACCEPTED">ACCEPTED</option>
+				<option value="WAITLISTED">WAITLISTED</option>
+				<option value="REJECTED">REJECTED</option>
+			</select>
 		{:else}
 			{#each questions as question}
 				{#if question.id == key}
 					{#if question.type == 'CHECKBOX'}
 						<select name="search" bind:value={search} class="search">
-							<option value="TRUE">True</option>
-							<option value="FALSE">False</option>
+							<option value="TRUE">TRUE</option>
+							<option value="FALSE">FALSE</option>
+						</select>
+					{:else if question.type == 'SENTENCE' || question.type == 'PARAGRAPH'}
+						<select name="filter" class="search">
+							<option value="exact">is exactly</option>
+							<option value="contains">contains</option>
+							<option value="regex">matches regex</option>
+						</select>
+						<input
+							type="text"
+							id="search"
+							name="search"
+							placeholder="Search"
+							autocomplete="off"
+							bind:value={search}
+							class="search"
+						/>
+					{:else if question.type == 'NUMBER'}
+						<select name="filter" class="search" bind:value={filter}>
+							<option value="greater">greater than</option>
+							<option value="greater_equal">greater than or equal to</option>
+							<option value="less">less than</option>
+							<option value="less_equal">less than or equal to</option>
+							<option value="equal">equal to</option>
+							<option value="not_equal_to">not equal to</option>
+							<option value="not_answered">not equal to</option>
+						</select>
+						{#if filter != 'not_answered'}
+							<input
+								type="number"
+								id="search"
+								name="search"
+								placeholder="Number"
+								autocomplete="off"
+								bind:value={search}
+								class="search"
+							/>
+						{/if}
+					{:else if question.type == 'DROPDOWN'}
+						<select name="search" bind:value={search} class="search">
+							{#each question.options as option}
+								<option value={option}>{option}</option>
+							{/each}
+						</select>
+					{:else if question.type == 'RADIO'}
+						<select name="search" bind:value={search} class="search">
+							{#each question.options as option}
+								<option value={option}>{option}</option>
+							{/each}
+						</select>
+					{:else if question.type == 'FILE'}
+						<select name="search" bind:value={search} class="search">
+							<option value="uploaded">Uploaded File</option>
+							<option value="not_uploaded">Not Uploaded File</option>
 						</select>
 					{/if}
 				{/if}
@@ -160,8 +228,6 @@
 			name="limit"
 			bind:value={limit}
 			on:change={() => {
-				console.log(location.pathname);
-				console.log(data.query);
 				goto(`${location.pathname}?${new URLSearchParams({ ...data.query, limit })}`, {
 					noScroll: true,
 				});
