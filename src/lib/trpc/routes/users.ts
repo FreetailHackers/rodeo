@@ -212,8 +212,7 @@ export const usersRouter = t.router({
 				});
 				// notify user through their email on successful application submission
 				const subject = 'Thanks for submitting!';
-				const recipient = [req.ctx.user.email];
-				await sendEmails(recipient, subject, (await getSettings()).submitTemplate);
+				await sendEmails([req.ctx.user.email], subject, (await getSettings()).submitTemplate);
 			}
 			return errors;
 		}),
@@ -249,9 +248,8 @@ export const usersRouter = t.router({
 						where: { id: req.ctx.user.id },
 						data: { status: 'CONFIRMED' },
 					});
-					const recipient = [req.ctx.user.email];
 					await sendEmails(
-						recipient,
+						[req.ctx.user.email],
 						'Thanks for your RSVP!',
 						(
 							await getSettings()
@@ -265,9 +263,8 @@ export const usersRouter = t.router({
 						where: { id: req.ctx.user.id },
 						data: { status: 'DECLINED' },
 					});
-					const recipient = [req.ctx.user.email];
 					await sendEmails(
-						recipient,
+						[req.ctx.user.email],
 						'Thanks for your RSVP!',
 						(
 							await getSettings()
@@ -335,8 +332,7 @@ export const usersRouter = t.router({
 			'Click on the following link to verify your email address:<br><br>' +
 			link +
 			'<br><br>If you did not request this email, please ignore it.';
-		const recipient = [req.ctx.user.email];
-		await sendEmails(recipient, 'Email Verification', body);
+		await sendEmails([req.ctx.user.email], 'Email Verification', body);
 	}),
 
 	/**
@@ -356,8 +352,7 @@ export const usersRouter = t.router({
 				const body =
 					'Click on the following link to reset your password (valid for 10 minutes):<br><br>' +
 					link;
-				const recipient = [user.email];
-				await sendEmails(recipient, 'Password Reset', body);
+				await sendEmails([user.email], 'Password Reset', body);
 			}
 		}),
 

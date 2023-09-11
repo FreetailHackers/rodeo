@@ -24,8 +24,8 @@ export const sendEmails = async (
 	if (process.env.VERCEL_ENV !== 'production') {
 		// Only allow emails to YOPmail on staging
 		if (process.env.VERCEL_ENV === 'preview') {
-			recipients = recipients.filter((recipient) => recipient.endsWith('@yopmail.com'));
-			if (recipients.length === 0) {
+			recipients = recipients.filter((recipient) => !recipient.endsWith('@yopmail.com'));
+			if (recipients.length != 0) {
 				return 'Only @yopmail.com addresses are allowed on staging.';
 			}
 		}
@@ -58,10 +58,7 @@ export const sendEmails = async (
 		const emailResults = await Promise.allSettled(emailPromises);
 		const failedRecipients = emailResults
 			.filter((result) => result.status === 'rejected')
-			.map((result) => {
-				const recipient = recipients[emailResults.indexOf(result)];
-				return recipient;
-			});
+			.map((result, index) => recipients[index]);
 		if (failedRecipients.length > 0) {
 			return (
 				failedRecipients.length +

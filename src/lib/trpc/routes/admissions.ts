@@ -28,8 +28,7 @@ async function releaseDecision(decision: Decision): Promise<void> {
 		} else if (decision.status === 'WAITLISTED') {
 			template = (await getSettings()).waitlistTemplate;
 		}
-		const recipient = [hacker.email];
-		await sendEmails(recipient, 'Freetail Hackers status update', template);
+		await sendEmails([hacker.email], 'Freetail Hackers status update', template);
 	} else {
 		await prisma.decision.delete({
 			where: { userId: decision.userId },
