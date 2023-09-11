@@ -1,7 +1,7 @@
 import { Prisma, Role, Status, type StatusChange } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
-import { sendEmail } from '../email';
+import { sendEmails } from '../email';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getQuestions } from './questions';
@@ -212,7 +212,7 @@ export const usersRouter = t.router({
 				});
 				// notify user through their email on successful application submission
 				const subject = 'Thanks for submitting!';
-				await sendEmail(req.ctx.user.email, subject, (await getSettings()).submitTemplate, null);
+				await sendEmails([req.ctx.user.email], subject, (await getSettings()).submitTemplate);
 			}
 			return errors;
 		}),
@@ -248,13 +248,12 @@ export const usersRouter = t.router({
 						where: { id: req.ctx.user.id },
 						data: { status: 'CONFIRMED' },
 					});
-					await sendEmail(
-						req.ctx.user.email,
+					await sendEmails(
+						[req.ctx.user.email],
 						'Thanks for your RSVP!',
 						(
 							await getSettings()
-						).confirmTemplate,
-						null
+						).confirmTemplate
 					);
 				}
 			} else {
@@ -264,13 +263,12 @@ export const usersRouter = t.router({
 						where: { id: req.ctx.user.id },
 						data: { status: 'DECLINED' },
 					});
-					await sendEmail(
-						req.ctx.user.email,
+					await sendEmails(
+						[req.ctx.user.email],
 						'Thanks for your RSVP!',
 						(
 							await getSettings()
-						).declineTemplate,
-						null
+						).declineTemplate
 					);
 				}
 			}
@@ -334,7 +332,7 @@ export const usersRouter = t.router({
 			'Click on the following link to verify your email address:<br><br>' +
 			link +
 			'<br><br>If you did not request this email, please ignore it.';
-		await sendEmail(req.ctx.user.email, 'Email Verification', body, null);
+		await sendEmails([req.ctx.user.email], 'Email Verification', body);
 	}),
 
 	/**
@@ -354,7 +352,7 @@ export const usersRouter = t.router({
 				const body =
 					'Click on the following link to reset your password (valid for 10 minutes):<br><br>' +
 					link;
-				await sendEmail(user.email, 'Password Reset', body, null);
+				await sendEmails([user.email], 'Password Reset', body);
 			}
 		}),
 
@@ -614,6 +612,19 @@ export const usersRouter = t.router({
 			return await prisma.statusChange.findMany({
 				orderBy: { timestamp: 'asc' },
 			});
+		}),
+
+	sendEmailByStatus: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(z.object({ status: z.nativeEnum(Status), subject: z.string(), emailBody: z.string() }))
+		.mutation(async (req): Promise<string> => {
+			const emailArray = (
+				await prisma.authUser.findMany({
+					where: { status: req.input.status },
+					select: { email: true },
+				})
+			).map((user) => user.email);
+			return sendEmails(emailArray, req.input.subject, req.input.emailBody);
 		}),
 });
 
