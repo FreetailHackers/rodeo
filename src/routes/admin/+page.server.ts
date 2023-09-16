@@ -19,12 +19,11 @@ export const load = async ({ locals }) => {
 export const actions = {
 	settings: async ({ locals, request }) => {
 		const formData = await request.formData();
+		const timezone = formData.get('timezone') as string;
 		const applicationOpen = formData.get('applicationOpen') === 'on';
 		let confirmBy: Date | null;
 		try {
-			confirmBy = dayjs
-				.tz(formData.get('confirmBy') as string, formData.get('timezone') as string)
-				.toDate();
+			confirmBy = dayjs.tz(formData.get('confirmBy') as string, timezone).toDate();
 		} catch (e) {
 			confirmBy = null;
 		}
@@ -37,6 +36,7 @@ export const actions = {
 			applicationOpen,
 			confirmBy,
 			scanActions,
+			timezone,
 		});
 		return 'Saved settings!';
 	},
