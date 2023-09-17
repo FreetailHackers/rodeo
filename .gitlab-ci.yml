@@ -90,10 +90,10 @@ deploy-preview-job:
     # Export .env to environment variables in shell so we can use them in this script
     - "export $(grep -v '^#' .vercel/.env.preview.local | xargs)"
     # Set database connection string to use preview database
-    - export DATABASE_URL=$DATABASE_URL/$CI_COMMIT_BRANCH\?pgbouncer=true
-    - echo "DROP DATABASE IF EXISTS $CI_COMMIT_BRANCH; CREATE DATABASE $CI_COMMIT_BRANCH;" | psql $DIRECT_URL/postgres\?options=endpoint%3D$(echo "$DIRECT_URL" | sed 's/.*@//; s/\..*//;')
+    - export DATABASE_URL=$DATABASE_URL/$CI_COMMIT_BRANCH
     - export DIRECT_URL=$DIRECT_URL/$CI_COMMIT_BRANCH
     # Deploy schema changes, if any
+    # Fun fact: prisma migrate deploy will create the database if it doesn't exist, so no need to do that manually!
     - npx prisma migrate deploy
     # Reset preview database and seed with fake data
     - npx prisma db seed
