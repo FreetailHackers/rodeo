@@ -2,6 +2,14 @@
 	import { enhance } from '$app/forms';
 	import { onMount } from 'svelte';
 	import { generateIcsContent } from '$lib/ics';
+	import dayjs from 'dayjs';
+	import utc from 'dayjs/plugin/utc';
+	import timezone from 'dayjs/plugin/timezone';
+	import customParseFormat from 'dayjs/plugin/customParseFormat';
+	dayjs.extend(customParseFormat);
+	dayjs.extend(utc);
+	dayjs.extend(timezone);
+
 	export let data;
 
 	const dateToString = (date: Date) =>
@@ -10,6 +18,7 @@
 			weekday: 'long',
 			month: 'long',
 			day: 'numeric',
+			year: 'numeric',
 		});
 
 	let currentDateTime = new Date();
@@ -24,9 +33,12 @@
 			data.schedule.flatMap((event) => [dateToString(event.start), dateToString(event.end)])
 		),
 	];
-	let displayDate = dateToString(currentDateTime);
+	let displayDateString = dateToString(currentDateTime);
+	$: displayDate = dayjs
+		.tz(dayjs(displayDateString.split(' ').slice(1).join(' '), 'MMMM D YYYY'), data.timezone)
+		.toDate();
 	if (dates.length > 0) {
-		displayDate = dates.reduce((prev, curr) =>
+		displayDateString = dates.reduce((prev, curr) =>
 			Math.abs(Date.parse(prev) - currentDateTime.getTime()) <
 			Math.abs(Date.parse(curr) - currentDateTime.getTime())
 				? curr
@@ -78,16 +90,19 @@
 	<div class="btn-group">
 		{#each dates as date}
 			<button
-				on:click={() => (displayDate = date)}
-				class={displayDate === date ? 'btn selected' : 'btn'}
+				on:click={() => (displayDateString = date)}
+				class={displayDateString === date ? 'btn selected' : 'btn'}
 				>{date}
 			</button>
 		{/each}
 	</div>
 	<ul>
 		{#each data.schedule as event}
-			<!-- Must call dateToString and convert back to date to keep timezone consistent -->
-			{#if new Date(displayDate) >= new Date(dateToString(event.start)) && new Date(displayDate) <= new Date(dateToString(event.end))}
+			<!-- We convert start time to string and parse it back in -->
+			<!-- This is done to zero out its hour/minute/second portion so the comparison works -->
+			{#if displayDate >= dayjs
+					.tz(event.start.toLocaleDateString('sv', { timeZone: data.timezone }), data.timezone)
+					.toDate() && displayDate <= event.end}
 				<li class={currentDateTime > event.end ? event.type + ' passed' : event.type}>
 					<!-- Event box -->
 					<a class="hyperlink" href="/schedule/{event.id}">ℹ️</a>
@@ -101,17 +116,17 @@
 							hour: 'numeric',
 							minute: 'numeric',
 							hour12: true,
-							weekday: dateToString(event.start) === displayDate ? undefined : 'long',
-							month: dateToString(event.start) === displayDate ? undefined : 'long',
-							day: dateToString(event.start) === displayDate ? undefined : 'numeric',
+							weekday: dateToString(event.start) === displayDateString ? undefined : 'long',
+							month: dateToString(event.start) === displayDateString ? undefined : 'long',
+							day: dateToString(event.start) === displayDateString ? undefined : 'numeric',
 						})} - {event.end.toLocaleString('en-US', {
 							timeZone: data.timezone,
 							hour: 'numeric',
 							minute: 'numeric',
 							hour12: true,
-							weekday: dateToString(event.end) === displayDate ? undefined : 'long',
-							month: dateToString(event.end) === displayDate ? undefined : 'long',
-							day: dateToString(event.end) === displayDate ? undefined : 'numeric',
+							weekday: dateToString(event.end) === displayDateString ? undefined : 'long',
+							month: dateToString(event.end) === displayDateString ? undefined : 'long',
+							day: dateToString(event.end) === displayDateString ? undefined : 'numeric',
 						})}
 					</h4>
 				</li>
