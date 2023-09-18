@@ -112,6 +112,7 @@ model Question {
   regex       String       @default("") // For sentences and paragraphs
   accept      String       @default("") // For files
   maxSizeMB   Float        @default(1) // For files
+  sponsorView Boolean      @default(false) // For files
 }
 
 model Event {

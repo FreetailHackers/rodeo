@@ -8,8 +8,15 @@ import { getQuestions } from './questions';
 import { getSettings } from './settings';
 import { auth, emailVerificationToken, resetPasswordToken } from '$lib/lucia';
 import type { Session } from 'lucia';
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {
+	DeleteObjectCommand,
+	PutObjectCommand,
+	S3Client,
+	GetObjectCommand,
+	ListObjectsV2Command,
+} from '@aws-sdk/client-s3';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { downloadZip } from 'client-zip';
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
@@ -127,6 +134,52 @@ export const usersRouter = t.router({
 				where: { userId: req.ctx.user.id },
 			});
 		}),
+
+	/**
+	 * Download all files in s3 bucket and return an outputStream
+	 */
+	downloadFiles: t.procedure.use(authenticate(['ADMIN'])).query(async () => {
+		try {
+			// List all objects in the S3 bucket
+			const listObjectsCommand = new ListObjectsV2Command({
+				Bucket: 'rodeo-staging',
+			});
+			const listObjectsResponse = await s3Client.send(listObjectsCommand);
+			if (!listObjectsResponse.Contents) {
+				throw new Error('No objects found in the S3 bucket.');
+			}
+			const getObjectPromises = [];
+			// Iterate through the objects and download each one
+			for (const object of listObjectsResponse.Contents) {
+				const getObjectCommand = new GetObjectCommand({
+					Bucket: 'rodeo-staging',
+					Key: object.Key,
+				});
+				getObjectPromises.push(s3Client.send(getObjectCommand));
+			}
+
+			// Wait for all the getObjectPromises to complete
+			// Question: should i be using allSettled for this?
+			const objects = await Promise.all(getObjectPromises);
+			// Create an array of file objects containing name and data
+			const files = objects.map((object) => {
+				if (!object.Body) {
+					throw new Error(`Invalid data for file`);
+				}
+				return { name: 'test', data: object.Body };
+			});
+			//listObjectsResponse.Contents[index].Key
+
+			// Create a zip file containing all the files
+			const zip = await downloadZip(files);
+			// console.log('뭐지');
+			// console.log(zip);
+			return zip;
+		} catch (error) {
+			console.error('Error downloading files from S3:', error);
+			throw error;
+		}
+	}),
 
 	/**
 	 * Attempts to submit the user's application. Returns a dictionary

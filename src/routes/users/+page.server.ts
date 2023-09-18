@@ -16,7 +16,7 @@ export const load = async ({ locals, url }) => {
 			key: url.searchParams.get('key') ?? '',
 			search: url.searchParams.get('search') ?? '',
 		}),
-		questions: await trpc(locals.auth).questions.get(),
+		questions: await trpc(locals.auth).questions.getSponsorViewable(),
 		users: results.users,
 		pages: results.pages,
 		start: results.start,
@@ -56,5 +56,11 @@ export const actions = {
 			await trpc(locals.auth).admissions.releaseDecisions(ids);
 			return 'Released decisions!';
 		}
+	},
+
+	downloadAllFiles: async ({ locals }) => {
+		const zip = await (await trpc(locals.auth).users.downloadFiles()).blob();
+		const blob = new Blob([zip]);
+		return URL.createObjectURL(blob);
 	},
 };

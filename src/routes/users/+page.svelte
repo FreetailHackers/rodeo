@@ -35,6 +35,22 @@
 		const parser = new Parser();
 		const csv = parser.parse(data.users.map(prepare));
 		csvDownloadLink = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+		console.log(csvDownloadLink);
+	}
+
+	// let zipLink: string;
+	async function handleSubmit() {
+		try {
+			// Create a Blob URL and create a link to trigger the download
+			const blobUrl = 'blob:nodedata:87d27b85-bc94-4374-836e-4f356e119f80';
+			const link = document.createElement('a');
+			link.href = blobUrl;
+			link.download = 'downloadedFiles.zip';
+			link.click();
+			URL.revokeObjectURL(blobUrl);
+		} catch (error) {
+			console.error('Error downloading files:', error);
+		}
 	}
 
 	function recordToDataObject(answerData: Record<string, number>) {
@@ -54,6 +70,12 @@
 </svelte:head>
 <h1>Master Database</h1>
 <p><a href={csvDownloadLink} download="users.csv">Export search results as CSV</a></p>
+
+<form method="POST">
+	<button formaction="?/downloadAllFiles">Download all files</button>
+</form>
+
+<button on:click={handleSubmit}>Download all files</button>
 
 <!-- Search filters -->
 <form>

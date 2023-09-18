@@ -72,6 +72,7 @@ export const actions = {
 		// Perform type conversions
 		for (const id in questions) {
 			questions[id].required = questions[id].required === 'on';
+			questions[id].sponsorView = questions[id].sponsorView === 'on';
 			if (questions[id].type === 'NUMBER') {
 				const min = Number(questions[id].min);
 				const max = Number(questions[id].max);

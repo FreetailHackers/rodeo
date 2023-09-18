@@ -131,4 +131,11 @@ export const questionsRouter = t.router({
 		.mutation(async (req): Promise<void> => {
 			await prisma.question.deleteMany({ where: { id: req.input } });
 		}),
+
+	getSponsorViewable: t.procedure.query(async (): Promise<Question[]> => {
+		return await prisma.question.findMany({
+			orderBy: [{ order: 'asc' }],
+			where: { sponsorView: true },
+		});
+	}),
 });
