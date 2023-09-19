@@ -6,6 +6,7 @@
 	import utc from 'dayjs/plugin/utc';
 	import timezone from 'dayjs/plugin/timezone';
 	import customParseFormat from 'dayjs/plugin/customParseFormat';
+	import { page } from '$app/stores';
 	dayjs.extend(customParseFormat);
 	dayjs.extend(utc);
 	dayjs.extend(timezone);
@@ -27,24 +28,28 @@
 	};
 	setInterval(updateDateTime, 1000);
 
-	// Loops through all events and finds the closest date to the current date
+	// Find all distinct dates in the schedule
 	const dates = [
 		...new Set(
 			data.schedule.flatMap((event) => [dateToString(event.start), dateToString(event.end)])
 		),
 	];
-	let displayDateString = dateToString(currentDateTime);
-	$: displayDate = dayjs
-		.tz(dayjs(displayDateString.split(' ').slice(1).join(' '), 'MMMM D YYYY'), data.timezone)
-		.toDate();
-	if (dates.length > 0) {
+	let displayDateString: string;
+	$: if ($page.url.searchParams.get('date')) {
+		// If a date is specified in the URL, preselect that date
+		displayDateString = dateToString(dayjs($page.url.searchParams.get('date')).toDate());
+	} else {
+		// Otherwise, loop through all events and preselect the closest date to today
 		displayDateString = dates.reduce((prev, curr) =>
 			Math.abs(Date.parse(prev) - currentDateTime.getTime()) <
 			Math.abs(Date.parse(curr) - currentDateTime.getTime())
-				? curr
-				: prev
+				? prev
+				: curr
 		);
 	}
+	$: displayDate = dayjs
+		.tz(dayjs(displayDateString.split(' ').slice(1).join(' '), 'MMMM D YYYY'), data.timezone)
+		.toDate();
 
 	// Calendar functionality
 	let url: string;
@@ -89,11 +94,12 @@
 	<br />
 	<div class="btn-group">
 		{#each dates as date}
-			<button
-				on:click={() => (displayDateString = date)}
-				class={displayDateString === date ? 'btn selected' : 'btn'}
-				>{date}
-			</button>
+			<a
+				class="btn"
+				href="?date={dayjs(date.split(' ').slice(1).join(' '), 'MMMM D YYYY').format('YYYY-MM-DD')}"
+				><button class:selected={displayDateString === date}>{date.split(',').slice(0, -1)}</button
+				></a
+			>
 		{/each}
 	</div>
 	<ul>
@@ -246,8 +252,12 @@
 		gap: 0.3rem;
 	}
 
-	button.btn {
+	a.btn {
 		flex: 1;
+	}
+
+	a.btn button {
+		width: 100%;
 	}
 
 	button.selected {

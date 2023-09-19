@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import type { Prisma, Question } from '@prisma/client';
-	import { onMount } from 'svelte';
 	import SvelteMarkdown from 'svelte-markdown';
 
 	export let user: Partial<Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>>;
@@ -8,11 +8,6 @@
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const application = user.application as Record<string, any>;
-
-	let origin = '';
-	onMount(() => {
-		origin = location.origin;
-	});
 </script>
 
 <p><b>Role</b> {user.authUser?.roles.join(', ')}</p>
@@ -32,7 +27,7 @@
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				{`${origin}/files/${user.authUserId}/${question.id}`}</a
+				{`${$page.url.origin}/files/${user.authUserId}/${question.id}`}</a
 			>
 		{:else if Array.isArray(application[question.id])}
 			{application[question.id].join(', ')}
