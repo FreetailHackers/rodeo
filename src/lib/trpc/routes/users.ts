@@ -8,15 +8,8 @@ import { getQuestions } from './questions';
 import { getSettings } from './settings';
 import { auth, emailVerificationToken, resetPasswordToken } from '$lib/lucia';
 import type { Session } from 'lucia';
-import {
-	DeleteObjectCommand,
-	PutObjectCommand,
-	S3Client,
-	GetObjectCommand,
-	ListObjectsV2Command,
-} from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { downloadZip } from 'client-zip';
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
@@ -493,7 +486,7 @@ export const usersRouter = t.router({
 		),
 
 	/**
-	 * Searches all users by email and returns all users without limit or page. 
+	 * Searches all users by email and returns all users without limit or page.
 	 * User must be an admin.
 	 */
 	searchAll: t.procedure
