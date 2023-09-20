@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.6.3
+
+[ADDED]
+
+- Admin panel setting for event timezone
+
+[FIXED]
+
+- Schedule now always displays times in timezone of event
+
 ## v0.6.2
 
 [ADDED]

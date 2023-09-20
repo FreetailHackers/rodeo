@@ -18,6 +18,7 @@ const settingsSchema = z
 		confirmTemplate: z.string().optional(),
 		declineTemplate: z.string().optional(),
 		scanActions: z.string().array().optional(),
+		timezone: z.string().optional(),
 	})
 	.strict();
 
@@ -36,6 +37,7 @@ export const settingsRouter = t.router({
 			confirmBy: Date | null;
 			info: string;
 			scanActions: string[];
+			timezone: string;
 		}> => {
 			const settings = await getSettings();
 			return {
@@ -44,6 +46,7 @@ export const settingsRouter = t.router({
 				confirmBy: settings.confirmBy,
 				info: settings.info,
 				scanActions: settings.scanActions,
+				timezone: settings.timezone,
 			};
 		}
 	),

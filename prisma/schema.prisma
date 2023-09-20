@@ -77,23 +77,26 @@ model Decision {
 }
 
 // Store global settings/configuration/configuration in a table with a single row
+// TODO: Separate public and private settings into separate tables?
 model Settings {
-  id                Int       @id @default(0) // Dummy ID is to satisfy Prisma
-  // TODO: Separate public and private settings into separate tables?
+  id Int @id @default(0) // Dummy ID is to satisfy Prisma
+
   // PUBLIC SETTINGS (all users must be able to see these)
-  applicationOpen   Boolean   @default(true)
-  confirmBy         DateTime?
-  info              String    @default("Put everything anybody may need to know about your hackathon here.")
-  homepageText      String    @default("This text can be edited from the admin panel. You can put deadlines, logistics, or other important information here.")
+  applicationOpen Boolean   @default(true)
+  confirmBy       DateTime?
+  info            String    @default("Put everything anybody may need to know about your hackathon here.")
+  homepageText    String    @default("This text can be edited from the admin panel. You can put deadlines, logistics, or other important information here.")
+  scanActions     String[]
+  timezone        String    @default("America/Chicago")
+
   // PRIVATE SETTINGS (settings that non-admins do not need)
-  rollingAdmissions Boolean   @default(false)
-  submitTemplate    String    @default("We have received your application to our hackathon!")
-  acceptTemplate    String    @default("You have been accepted to our hackathon!")
-  rejectTemplate    String    @default("We regret to inform you that we cannot offer you a spot at our hackathon this year.")
-  waitlistTemplate  String    @default("We regret to inform you that we cannot offer you a spot at our hackathon at this time.")
-  confirmTemplate   String    @default("Thank you for confirming your attendance to our hackathon! We look forward to seeing you there!")
-  declineTemplate   String    @default("Thank you for letting us know that you will not be able to attend. We hope to see you next year!")
-  scanActions       String[]
+  rollingAdmissions Boolean @default(false)
+  submitTemplate    String  @default("We have received your application to our hackathon!")
+  acceptTemplate    String  @default("You have been accepted to our hackathon!")
+  rejectTemplate    String  @default("We regret to inform you that we cannot offer you a spot at our hackathon this year.")
+  waitlistTemplate  String  @default("We regret to inform you that we cannot offer you a spot at our hackathon at this time.")
+  confirmTemplate   String  @default("Thank you for confirming your attendance to our hackathon! We look forward to seeing you there!")
+  declineTemplate   String  @default("Thank you for letting us know that you will not be able to attend. We hope to see you next year!")
 }
 
 model Question {

@@ -22,6 +22,7 @@
 <h2>
 	🕒&nbsp;
 	{data.event.start.toLocaleString('en-US', {
+		timeZone: data.timezone,
 		day: 'numeric',
 		weekday: 'long',
 		month: 'long',
@@ -31,12 +32,14 @@
 	})} -
 	{#if data.event.start.toDateString() === data.event.end.toDateString()}
 		{data.event.end.toLocaleString('en-US', {
+			timeZone: data.timezone,
 			hour: 'numeric',
 			minute: 'numeric',
 			hour12: true,
 		})}
 	{:else}
 		{data.event.end.toLocaleString('en-US', {
+			timeZone: data.timezone,
 			day: 'numeric',
 			weekday: 'long',
 			month: 'long',
@@ -58,7 +61,7 @@
 	<h1>Edit Event</h1>
 	<form
 		method="POST"
-		action="?/saveEdit"
+		action="?/edit"
 		use:enhance={() => {
 			return async ({ update }) => {
 				update({ reset: false });
@@ -73,14 +76,13 @@
 		<label for="description">Description</label>
 		<textarea id="description" name="description" required value={data.event.description} />
 
-		<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
 		<label for="start">Start Time</label>
 		<input
 			type="datetime-local"
 			id="start"
 			name="start"
 			required
-			value={data.event.start.toLocaleString('sv')}
+			value={data.event.start.toLocaleString('sv', { timeZone: data.timezone })}
 		/>
 
 		<label for="end">End Time</label>
@@ -89,7 +91,7 @@
 			id="end"
 			name="end"
 			required
-			value={data.event.end.toLocaleString('sv')}
+			value={data.event.end.toLocaleString('sv', { timeZone: data.timezone })}
 		/>
 
 		<label for="location">Location</label>
@@ -106,6 +108,14 @@
 
 		<button type="submit">Save</button>
 	</form>
+
+	<details>
+		<summary><h1>Delete Event</h1></summary>
+		<form method="POST" action="?/delete" use:enhance>
+			<input type="hidden" name="id" value={data.event.id} />
+			<button type="submit"><strong>DELETE EVENT (this cannot be undone!)</strong></button>
+		</form>
+	</details>
 {/if}
 
 <style>
@@ -117,6 +127,12 @@
 		padding: 6px;
 		font-size: small;
 		border-radius: 20px;
+	}
+
+	summary h1 {
+		display: inline-block;
+		vertical-align: middle;
+		padding-left: 0.5rem;
 	}
 
 	a {
