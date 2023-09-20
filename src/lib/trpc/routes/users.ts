@@ -136,52 +136,6 @@ export const usersRouter = t.router({
 		}),
 
 	/**
-	 * Download all files in s3 bucket and return an outputStream
-	 */
-	downloadFiles: t.procedure.use(authenticate(['ADMIN'])).query(async () => {
-		try {
-			// List all objects in the S3 bucket
-			const listObjectsCommand = new ListObjectsV2Command({
-				Bucket: 'rodeo-staging',
-			});
-			const listObjectsResponse = await s3Client.send(listObjectsCommand);
-			if (!listObjectsResponse.Contents) {
-				throw new Error('No objects found in the S3 bucket.');
-			}
-			const getObjectPromises = [];
-			// Iterate through the objects and download each one
-			for (const object of listObjectsResponse.Contents) {
-				const getObjectCommand = new GetObjectCommand({
-					Bucket: 'rodeo-staging',
-					Key: object.Key,
-				});
-				getObjectPromises.push(s3Client.send(getObjectCommand));
-			}
-
-			// Wait for all the getObjectPromises to complete
-			// Question: should i be using allSettled for this?
-			const objects = await Promise.all(getObjectPromises);
-			// Create an array of file objects containing name and data
-			const files = objects.map((object) => {
-				if (!object.Body) {
-					throw new Error(`Invalid data for file`);
-				}
-				return { name: 'test', data: object.Body };
-			});
-			//listObjectsResponse.Contents[index].Key
-
-			// Create a zip file containing all the files
-			const zip = await downloadZip(files);
-			// console.log('뭐지');
-			// console.log(zip);
-			return zip;
-		} catch (error) {
-			console.error('Error downloading files from S3:', error);
-			throw error;
-		}
-	}),
-
-	/**
 	 * Attempts to submit the user's application. Returns a dictionary
 	 * containing questions with validation errors, if any.
 	 */
@@ -532,6 +486,35 @@ export const usersRouter = t.router({
 						where,
 						skip: req.input.page * req.input.limit,
 						take: req.input.limit,
+						orderBy: { authUser: { email: 'asc' } },
+					}),
+				};
+			}
+		),
+
+	/**
+	 * Searches all users by email and returns all users without limit or page. 
+	 * User must be an admin.
+	 */
+	searchAll: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(
+			z.object({
+				key: z.string(),
+				search: z.string(),
+			})
+		)
+		.query(
+			async (
+				req
+			): Promise<{
+				users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
+			}> => {
+				const where = getWhereCondition(req.input.key, req.input.search);
+				return {
+					users: await prisma.user.findMany({
+						include: { authUser: true, decision: true },
+						where,
 						orderBy: { authUser: { email: 'asc' } },
 					}),
 				};

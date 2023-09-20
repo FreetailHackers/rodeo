@@ -10,6 +10,10 @@ export const load = async ({ locals, url }) => {
 		search: url.searchParams.get('search') ?? '',
 		limit: Number(url.searchParams.get('limit') ?? 10),
 	});
+	const allUsers = await trpc(locals.auth).users.searchAll({
+		key: url.searchParams.get('key') ?? '',
+		search: url.searchParams.get('search') ?? '',
+	});
 
 	return {
 		stats: await trpc(locals.auth).users.getStats({
@@ -23,6 +27,7 @@ export const load = async ({ locals, url }) => {
 		count: results.count,
 		user,
 		query: Object.fromEntries(url.searchParams),
+		allUsers: allUsers.users,
 	};
 };
 
@@ -56,11 +61,5 @@ export const actions = {
 			await trpc(locals.auth).admissions.releaseDecisions(ids);
 			return 'Released decisions!';
 		}
-	},
-
-	downloadAllFiles: async ({ locals }) => {
-		const zip = await (await trpc(locals.auth).users.downloadFiles()).blob();
-		const blob = new Blob([zip]);
-		return URL.createObjectURL(blob);
 	},
 };
