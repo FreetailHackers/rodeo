@@ -9,6 +9,7 @@
 [FIXED]
 
 - Schedule now always displays times in timezone of event
+- Admissions page not updating correctly after accepting/waitlisting/rejecting
 
 ## v0.6.2
 

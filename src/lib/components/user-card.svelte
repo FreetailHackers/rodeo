@@ -7,7 +7,7 @@
 	export let questions: Question[];
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const application = user.application as Record<string, any>;
+	$: application = user.application as Record<string, any>;
 </script>
 
 <p><b>Role</b> {user.authUser?.roles.join(', ')}</p>
