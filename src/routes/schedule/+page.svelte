@@ -1,38 +1,55 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import { enhance } from '$app/forms';
-	import type { Event } from '@prisma/client';
 	import { onMount } from 'svelte';
 	import { generateIcsContent } from '$lib/ics';
-	export let data;
-	export let form;
+	import dayjs from 'dayjs';
+	import utc from 'dayjs/plugin/utc';
+	import timezone from 'dayjs/plugin/timezone';
+	import customParseFormat from 'dayjs/plugin/customParseFormat';
+	import { page } from '$app/stores';
+	dayjs.extend(customParseFormat);
+	dayjs.extend(utc);
+	dayjs.extend(timezone);
 
-	let editedEvent: Event | null = null;
-	// Possibly a HACK: we return an Event if the user has clicked edit and null otherwise
-	$: if (form !== null) {
-		editedEvent = form;
-		if (browser) {
-			window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-		}
-	}
+	export let data;
+
+	const dateToString = (date: Date) =>
+		date.toLocaleDateString('en-US', {
+			timeZone: data.timezone,
+			weekday: 'long',
+			month: 'long',
+			day: 'numeric',
+			year: 'numeric',
+		});
 
 	let currentDateTime = new Date();
 	const updateDateTime = () => {
 		currentDateTime = new Date();
 	};
-
 	setInterval(updateDateTime, 1000);
 
-	// Loops through all events and finds the closest date to the current date
-	let displayDate = currentDateTime;
-	if (data.dates.length > 0) {
-		displayDate = data.dates.reduce((prev, curr) =>
-			Math.abs(curr.getTime() - currentDateTime.getTime()) <
-			Math.abs(prev.getTime() - currentDateTime.getTime())
-				? curr
-				: prev
+	// Find all distinct dates in the schedule
+	const dates = [
+		...new Set(
+			data.schedule.flatMap((event) => [dateToString(event.start), dateToString(event.end)])
+		),
+	];
+	let displayDateString: string;
+	$: if ($page.url.searchParams.get('date')) {
+		// If a date is specified in the URL, preselect that date
+		displayDateString = dateToString(dayjs($page.url.searchParams.get('date')).toDate());
+	} else {
+		// Otherwise, loop through all events and preselect the closest date to today
+		displayDateString = dates.reduce((prev, curr) =>
+			Math.abs(Date.parse(prev) - currentDateTime.getTime()) <
+			Math.abs(Date.parse(curr) - currentDateTime.getTime())
+				? prev
+				: curr
 		);
 	}
+	$: displayDate = dayjs
+		.tz(dayjs(displayDateString.split(' ').slice(1).join(' '), 'MMMM D YYYY'), data.timezone)
+		.toDate();
 
 	// Calendar functionality
 	let url: string;
@@ -52,6 +69,7 @@
 {/if}
 <div class="schedule">
 	<div>
+		<p><strong><em>All times are in {data.timezone}</em></strong></p>
 		<div class="key">
 			<div class="box Regular-Event" />
 			&nbsp;Regular Event
@@ -75,29 +93,23 @@
 	</div>
 	<br />
 	<div class="btn-group">
-		{#each data.dates as eventDate}
-			<button
-				id={eventDate.toDateString()}
-				on:click={() => (displayDate = eventDate)}
-				class={displayDate.toDateString() === eventDate.toDateString() ? 'btn selected' : 'btn'}
-				>{eventDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-			</button>
+		{#each dates as date}
+			<a
+				class="btn"
+				href="?date={dayjs(date.split(' ').slice(1).join(' '), 'MMMM D YYYY').format('YYYY-MM-DD')}"
+				><button class:selected={displayDateString === date}>{date.split(',').slice(0, -1)}</button
+				></a
+			>
 		{/each}
 	</div>
 	<ul>
 		{#each data.schedule as event}
-			{#if event.start.toDateString() === displayDate.toDateString()}
+			<!-- We convert start time to string and parse it back in -->
+			<!-- This is done to zero out its hour/minute/second portion so the comparison works -->
+			{#if displayDate >= dayjs
+					.tz(event.start.toLocaleDateString('sv', { timeZone: data.timezone }), data.timezone)
+					.toDate() && displayDate <= event.end}
 				<li class={currentDateTime > event.end ? event.type + ' passed' : event.type}>
-					<!-- Element removal box -->
-					{#if data.user?.roles.includes('ADMIN')}
-						<div class="modification-buttons">
-							<form method="POST" use:enhance>
-								<input type="hidden" name="id" value={event.id} />
-								<button type="submit" formaction="?/delete">❌</button>
-								<button type="submit" formaction="?/edit">✏</button>
-							</form>
-						</div>
-					{/if}
 					<!-- Event box -->
 					<a class="hyperlink" href="/schedule/{event.id}">ℹ️</a>
 					<h2 class="event-name">
@@ -106,13 +118,21 @@
 					<h4 class="event-info">📍&nbsp;{event.location}</h4>
 					<h4 class="event-info">
 						{event.start.toLocaleString('en-US', {
+							timeZone: data.timezone,
 							hour: 'numeric',
 							minute: 'numeric',
 							hour12: true,
+							weekday: dateToString(event.start) === displayDateString ? undefined : 'long',
+							month: dateToString(event.start) === displayDateString ? undefined : 'long',
+							day: dateToString(event.start) === displayDateString ? undefined : 'numeric',
 						})} - {event.end.toLocaleString('en-US', {
+							timeZone: data.timezone,
 							hour: 'numeric',
 							minute: 'numeric',
 							hour12: true,
+							weekday: dateToString(event.end) === displayDateString ? undefined : 'long',
+							month: dateToString(event.end) === displayDateString ? undefined : 'long',
+							day: dateToString(event.end) === displayDateString ? undefined : 'numeric',
 						})}
 					</h4>
 				</li>
@@ -120,42 +140,30 @@
 		{/each}
 	</ul>
 </div>
+
 {#if data.user?.roles.includes('ADMIN')}
 	<hr />
-	<h2>{editedEvent == null ? 'Create New Event' : 'Edit Event'}</h2>
-	<form method="POST" action={editedEvent == null ? '?/create' : '?/saveEdit'} use:enhance>
-		<input type="hidden" name="id" value={editedEvent?.id} />
+	<h2>Create New Event</h2>
+	<form method="POST" use:enhance>
+		<input type="hidden" name="id" />
 
 		<label for="name">Name</label>
-		<input type="text" id="name" name="name" required value={editedEvent?.name ?? ''} />
+		<input type="text" id="name" name="name" required />
 
 		<label for="description">Description</label>
-		<textarea id="description" name="description" required value={editedEvent?.description ?? ''} />
+		<textarea id="description" name="description" required />
 
-		<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
 		<label for="start">Start Time</label>
-		<input
-			type="datetime-local"
-			id="start"
-			name="start"
-			required
-			value={editedEvent?.start.toLocaleString('sv') ?? ''}
-		/>
+		<input type="datetime-local" id="start" name="start" required />
 
 		<label for="end">End Time</label>
-		<input
-			type="datetime-local"
-			id="end"
-			name="end"
-			required
-			value={editedEvent?.end.toLocaleString('sv') ?? ''}
-		/>
+		<input type="datetime-local" id="end" name="end" required />
 
 		<label for="location">Location</label>
-		<input type="text" id="location" name="location" required value={editedEvent?.location ?? ''} />
+		<input type="text" id="location" name="location" required />
 
 		<label for="type">Event Type</label>
-		<select name="type" value={editedEvent?.type ?? ''} required>
+		<select name="type" required>
 			<option value="Regular-Event">Regular Event</option>
 			<option value="Key-Event">Key Event</option>
 			<option value="Speaker-Event">Speaker Event</option>
@@ -170,7 +178,7 @@
 <style>
 	.schedule {
 		width: 100%;
-		padding: 20px 20px 5px 20px;
+		padding: 5px 20px;
 		background-color: #f5f2ee;
 	}
 
@@ -244,16 +252,16 @@
 		gap: 0.3rem;
 	}
 
-	button.btn {
+	a.btn {
 		flex: 1;
+	}
+
+	a.btn button {
+		width: 100%;
 	}
 
 	button.selected {
 		text-decoration: underline;
-	}
-
-	li div {
-		position: absolute;
 	}
 
 	a.hyperlink {
@@ -273,29 +281,6 @@
 
 	hr {
 		margin-top: 20px;
-	}
-
-	div.modification-buttons {
-		position: absolute;
-		left: 0;
-		margin-left: 15px;
-	}
-
-	li form {
-		flex-direction: row;
-	}
-
-	li button {
-		background-color: #0000008f;
-		width: 30px;
-		height: 30px;
-		color: #ffffff;
-		border: none;
-		margin: 15px 15px 0px 0px;
-	}
-
-	li button:hover {
-		background-color: #972626;
 	}
 
 	a.calendar-export-link {

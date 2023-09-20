@@ -31,12 +31,14 @@
 	<label for="confirmBy">
 		<h2>RSVP deadline (leaving empty will disable RSVPs):</h2>
 	</label>
-	<input type="hidden" name="timezone" value={Intl.DateTimeFormat().resolvedOptions().timeZone} />
 	<input
 		type="datetime-local"
 		id="confirmBy"
 		name="confirmBy"
-		value={data.settings.confirmBy?.toLocaleString('sv').replace(' ', 'T').slice(0, -3)}
+		value={data.settings.confirmBy
+			?.toLocaleString('sv', { timeZone: data.settings.timezone })
+			.replace(' ', 'T')
+			.slice(0, -3)}
 	/>
 
 	<label for="scanActions"><h2>Scan Options</h2></label>
@@ -46,6 +48,13 @@
 		id="scanActions"
 		placeholder="Write one option per line, like this:&#13;OPTION 1&#13;OPTION 2&#13;OPTION 3"
 	/>
+
+	<label for="timezone"><h2>Timezone</h2></label>
+	<select name="timezone" id="timezone" value={data.settings.timezone}>
+		{#each Intl.supportedValuesOf('timeZone') as timezone}
+			<option value={timezone}>{timezone}</option>
+		{/each}
+	</select>
 
 	<button type="submit">Save</button>
 </form>
