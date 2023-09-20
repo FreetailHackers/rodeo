@@ -513,6 +513,15 @@ export const usersRouter = t.router({
 			const users = await prisma.user.findMany({
 				where,
 			});
+			console.log('experiment');
+			console.log(req.input.search);
+			console.log(
+				await prisma.user.count({
+					where: {
+						application: { path: ['d5abd647-8d17-4c87-835d-cf49ea0163fb'], equals: 'Freshman' },
+					},
+				})
+			);
 			const questions = await getQuestions();
 			const filteredQuestion = questions.filter(
 				(question) => question.type === 'RADIO' || question.type === 'DROPDOWN'
@@ -653,6 +662,8 @@ function getWhereCondition(key: string, filter: string, search: string): Prisma.
 			decision: { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },
 		};
 	} else {
+		console.log('search');
+		console.log(search);
 		for (const question of questions) {
 			if (key == question.id) {
 				if (question.type == 'SENTENCE' || question.type == 'PARAGRAPH') {
@@ -665,6 +676,7 @@ function getWhereCondition(key: string, filter: string, search: string): Prisma.
 						return { application: { path: [question.id], string_contains: search } };
 					} else if (filter == 'regex') {
 						console.log('entered regex string');
+						// not implemented
 					}
 				} else if (question.type == 'NUMBER') {
 					console.log('entered number');
@@ -688,29 +700,44 @@ function getWhereCondition(key: string, filter: string, search: string): Prisma.
 						return { application: { path: [question.id], not: Number(search) } };
 					} else if (filter == 'unanswered') {
 						console.log('entered unanswered number');
-						return { application: { path: [question.id], equals: undefined } };
+						return { application: { path: [question.id], equals: Prisma.DbNull } };
 					}
 				} else if (question.type == 'DROPDOWN') {
 					console.log('enter dropdwon');
-					if (filter == 'has_at_least_one') {
-						console.log('entered has_at_least_one dropdown');
-						return { application: { path: [question.id], array_contains: [search] } };
-					} else if (filter == 'has_all') {
-						console.log('entered has_all dropdown');
-						return { application: { path: [question.id], not: Number(search) } };
-					} else if (filter == 'exactly') {
-						console.log('entered has_all dropdown');
-						return { application: { path: [question.id], array_starts_with: [search] } };
-					} else if (filter == 'unanswered') {
-						console.log('entered unanswered dropdown');
-						return { application: { path: [question.id], equals: undefined } };
+					if (question.multiple) {
+						if (filter == 'contains') {
+							console.log('entered has_at_least_one dropdown');
+							return { application: { path: [question.id], array_contains: search } };
+						} else if (filter == 'has_all') {
+							console.log('entered has_all dropdown');
+							return { application: { path: [question.id], array_contains: [search] } };
+						} else if (filter == 'exactly') {
+							console.log('entered has_all dropdown');
+							return { application: { path: [question.id], array_starts_with: [search] } };
+						} else if (filter == 'unanswered') {
+							console.log('entered unanswered dropdown');
+							return { application: { path: [question.id], equals: Prisma.DbNull } };
+						}
+					} else {
+						if (filter == 'is') {
+							console.log('entered is dropdown');
+							return { application: { path: [question.id], string_contains: search } };
+						} else if (filter == 'is_not') {
+							console.log('entered is_not dropdown');
+							return { application: { path: [question.id], not: search } };
+						} else if (filter == 'unanswered') {
+							console.log('entered unanswered dropdown');
+							return { application: { path: [question.id], equals: Prisma.DbNull } };
+						}
 					}
 				} else if (question.type == 'CHECKBOX') {
-					console.log('entered chckbox');
-					if (filter == 'exact') {
-						console.log('entered exact checkbox');
-						console.log(typeof Boolean(search));
-						return { application: { path: [question.id], equals: Boolean(search) } };
+					console.log('entered checkbox');
+					if (search == 'true') {
+						console.log('entered true checkbox');
+						return { application: { path: [question.id], equals: true } };
+					} else if (search == 'false') {
+						console.log('entered false checkbox');
+						return { application: { path: [question.id], equals: false } };
 					}
 				} else if (question.type == 'RADIO') {
 					console.log('entered radio');
@@ -722,16 +749,16 @@ function getWhereCondition(key: string, filter: string, search: string): Prisma.
 						return { application: { path: [question.id], not: search } };
 					} else if (filter == 'unanswered') {
 						console.log('entered unanswered radio');
-						return { application: { path: [question.id], equals: undefined } };
+						return { application: { path: [question.id], equals: Prisma.DbNull } };
 					}
 				} else if (question.type == 'FILE') {
 					console.log('entered file');
 					if (filter == 'uploaded') {
 						console.log('entered uploaded file');
-						return { application: { path: [question.id], not: undefined } };
+						return { application: { path: [question.id], not: Prisma.DbNull } };
 					} else if (filter == 'not_uploaded') {
 						console.log('entered not_uploaded file');
-						return { application: { path: [question.id], equals: undefined } };
+						return { application: { path: [question.id], equals: Prisma.DbNull } };
 					}
 				}
 			}

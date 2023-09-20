@@ -5,8 +5,11 @@
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import Plot from 'svelte-plotly.js';
+	import Select from 'svelte-select';
 
 	export let data;
+
+	const dropdownFilterTexts: Record<string, string> = {};
 
 	let key = data.query.key ?? '';
 	let search = data.query.search ?? '';
@@ -62,6 +65,7 @@
 	<fieldset class="filter">
 		<select
 			name="key"
+			class="key"
 			bind:value={key}
 			on:change={() => {
 				if (key === 'role') search = 'HACKER';
@@ -146,7 +150,7 @@
 							<option value="not_equal">not equal to</option>
 							<option value="unanswered">unanswered</option>
 						</select>
-						{#if filter != 'not_answered'}
+						{#if filter != 'unanswered'}
 							<input
 								type="number"
 								id="search"
@@ -158,17 +162,40 @@
 							/>
 						{/if}
 					{:else if question.type == 'DROPDOWN'}
-						<select name="filter" class="search" bind:value={filter}>
-							<option value="has_at_least_one">has at least one of</option>
-							<option value="has_all">has all of</option>
-							<option value="exactly">is exactly</option>
-							<option value="unanswered">unanswered</option>
-						</select>
-						<select name="search" bind:value={search} class="search">
-							{#each question.options as option}
-								<option value={option}>{option}</option>
-							{/each}
-						</select>
+						{#if question.multiple}
+							<select name="filter" class="search" bind:value={filter}>
+								<option value="has_at_least_one">has at least one of</option>
+								<option value="has_all">has all of</option>
+								<option value="exactly">is exactly</option>
+								<option value="unanswered">unanswered</option>
+							</select>
+						{:else}
+							<select name="filter" class="search" bind:value={filter}>
+								<option value="is" selected>is</option>
+								<option value="is_not" selected>is not</option>
+								<option value="unanswered">unanswered</option>
+							</select>
+						{/if}
+
+						{#if filter != 'unanswered'}
+							<Select
+								name={question.id}
+								id={question.id}
+								items={question.custom && dropdownFilterTexts[question.id]
+									? [...new Set([...question.options, dropdownFilterTexts[question.id]])]
+									: question.options}
+								bind:value={search}
+								bind:filterText={dropdownFilterTexts[question.id]}
+								multiple={Boolean(question.multiple)}
+								containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem;"
+								inputStyles="margin: 0; height: initial"
+							>
+								<div slot="item" let:item>
+									{question.options.includes(item.label) ? '' : 'Other: '}
+									{item.label}
+								</div>
+							</Select>
+						{/if}
 					{:else if question.type == 'CHECKBOX'}
 						<select name="filter" class="search" bind:value={filter}>
 							<option value="exact" selected>is</option>
@@ -183,11 +210,13 @@
 							<option value="is_not" selected>is not</option>
 							<option value="unanswered">unanswered</option>
 						</select>
-						<select name="search" bind:value={search} class="search">
-							{#each question.options as option}
-								<option value={option}>{option}</option>
-							{/each}
-						</select>
+						{#if filter != 'unanswered'}
+							<select name="search" bind:value={search} class="search">
+								{#each question.options as option}
+									<option value={option}>{option}</option>
+								{/each}
+							</select>
+						{/if}
 					{:else if question.type == 'FILE'}
 						<select name="filter" class="search" bind:value={filter}>
 							<option value="has" selected>has</option>
@@ -314,9 +343,13 @@
 		min-width: 0;
 	}
 
+	.key {
+		min-width: 5rem;
+	}
+
 	.search {
-		min-width: 0;
 		flex: 1;
+		min-width: 5rem;
 	}
 
 	.filter button {
