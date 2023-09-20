@@ -13,6 +13,7 @@
 	let limit = data.query.limit ?? '10';
 	let questions = data.questions;
 	let filter = data.query.filter ?? '';
+
 	// Helper function to replace question IDs with their labels
 	function prepare(user: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>) {
 		function prepareApplication(application: Record<string, unknown>) {
@@ -120,13 +121,8 @@
 		{:else}
 			{#each questions as question}
 				{#if question.id == key}
-					{#if question.type == 'CHECKBOX'}
-						<select name="search" bind:value={search} class="search">
-							<option value="TRUE">TRUE</option>
-							<option value="FALSE">FALSE</option>
-						</select>
-					{:else if question.type == 'SENTENCE' || question.type == 'PARAGRAPH'}
-						<select name="filter" class="search">
+					{#if question.type == 'SENTENCE' || question.type == 'PARAGRAPH'}
+						<select name="filter" class="search" bind:value={filter}>
 							<option value="exact">is exactly</option>
 							<option value="contains">contains</option>
 							<option value="regex">matches regex</option>
@@ -147,8 +143,8 @@
 							<option value="less">less than</option>
 							<option value="less_equal">less than or equal to</option>
 							<option value="equal">equal to</option>
-							<option value="not_equal_to">not equal to</option>
-							<option value="not_answered">not equal to</option>
+							<option value="not_equal">not equal to</option>
+							<option value="unanswered">unanswered</option>
 						</select>
 						{#if filter != 'not_answered'}
 							<input
@@ -162,18 +158,40 @@
 							/>
 						{/if}
 					{:else if question.type == 'DROPDOWN'}
+						<select name="filter" class="search" bind:value={filter}>
+							<option value="has_at_least_one">has at least one of</option>
+							<option value="has_all">has all of</option>
+							<option value="exactly">is exactly</option>
+							<option value="unanswered">unanswered</option>
+						</select>
 						<select name="search" bind:value={search} class="search">
 							{#each question.options as option}
 								<option value={option}>{option}</option>
 							{/each}
 						</select>
+					{:else if question.type == 'CHECKBOX'}
+						<select name="filter" class="search" bind:value={filter}>
+							<option value="exact" selected>is</option>
+						</select>
+						<select name="search" bind:value={search} class="search">
+							<option value="true">TRUE</option>
+							<option value="false">FALSE</option>
+						</select>
 					{:else if question.type == 'RADIO'}
+						<select name="filter" class="search" bind:value={filter}>
+							<option value="is" selected>is</option>
+							<option value="is_not" selected>is not</option>
+							<option value="unanswered">unanswered</option>
+						</select>
 						<select name="search" bind:value={search} class="search">
 							{#each question.options as option}
 								<option value={option}>{option}</option>
 							{/each}
 						</select>
 					{:else if question.type == 'FILE'}
+						<select name="filter" class="search" bind:value={filter}>
+							<option value="has" selected>has</option>
+						</select>
 						<select name="search" bind:value={search} class="search">
 							<option value="uploaded">Uploaded File</option>
 							<option value="not_uploaded">Not Uploaded File</option>

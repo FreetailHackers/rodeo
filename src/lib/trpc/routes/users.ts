@@ -12,7 +12,7 @@ import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
-
+const questions = await getQuestions();
 export const usersRouter = t.router({
 	/**
 	 * Gets all data on the user with the given ID. User must be an
@@ -79,7 +79,17 @@ export const usersRouter = t.router({
 			if (!(await getSettings()).applicationOpen || req.ctx.user.status !== 'VERIFIED') {
 				return;
 			}
-
+			console.log('question?');
+			console.log(
+				await prisma.user.count({
+					where: {
+						application: {
+							path: ['f47faf78-9a98-49de-9776-4c09e545a2cc'],
+							equals: true,
+						},
+					},
+				})
+			);
 			// Validate application
 			const questions = await getQuestions();
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -455,6 +465,7 @@ export const usersRouter = t.router({
 			z.object({
 				key: z.string(),
 				search: z.string(),
+				filter: z.string(),
 				limit: z.number().transform((limit) => (limit === 0 ? Number.MAX_SAFE_INTEGER : limit)),
 				page: z.number().transform((page) => page - 1),
 			})
@@ -468,7 +479,7 @@ export const usersRouter = t.router({
 				count: number;
 				users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
 			}> => {
-				const where = getWhereCondition(req.input.key, req.input.search);
+				const where = getWhereCondition(req.input.key, req.input.filter, req.input.search);
 				const count = await prisma.user.count({ where });
 				return {
 					pages: Math.ceil(count / req.input.limit),
@@ -494,10 +505,11 @@ export const usersRouter = t.router({
 			z.object({
 				key: z.string(),
 				search: z.string(),
+				filter: z.string(),
 			})
 		)
 		.query(async (req) => {
-			const where = getWhereCondition(req.input.key, req.input.search);
+			const where = getWhereCondition(req.input.key, req.input.filter, req.input.search);
 			const users = await prisma.user.findMany({
 				where,
 			});
@@ -629,7 +641,7 @@ export const usersRouter = t.router({
 });
 
 // Converts key to Prisma where filter
-function getWhereCondition(key: string, search: string): Prisma.UserWhereInput {
+function getWhereCondition(key: string, filter: string, search: string): Prisma.UserWhereInput {
 	if (key === 'email') {
 		return { authUser: { email: { contains: search } } };
 	} else if (key === 'status') {
@@ -640,6 +652,90 @@ function getWhereCondition(key: string, search: string): Prisma.UserWhereInput {
 		return {
 			decision: { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },
 		};
+	} else {
+		for (const question of questions) {
+			if (key == question.id) {
+				if (question.type == 'SENTENCE' || question.type == 'PARAGRAPH') {
+					console.log('entered string');
+					if (filter == 'exact') {
+						console.log('entered exact string');
+						return { application: { path: [question.id], equals: search } };
+					} else if (filter == 'contains') {
+						console.log('entered contains string');
+						return { application: { path: [question.id], string_contains: search } };
+					} else if (filter == 'regex') {
+						console.log('entered regex string');
+					}
+				} else if (question.type == 'NUMBER') {
+					console.log('entered number');
+					if (filter == 'greater') {
+						console.log('entered greater number');
+						return { application: { path: [question.id], gt: Number(search) } };
+					} else if (filter == 'greater_equal') {
+						console.log('entered greater_equal number');
+						return { application: { path: [question.id], gte: Number(search) } };
+					} else if (filter == 'less') {
+						console.log('entered less number');
+						return { application: { path: [question.id], lt: Number(search) } };
+					} else if (filter == 'less_equal') {
+						console.log('entered less_equal number');
+						return { application: { path: [question.id], lte: Number(search) } };
+					} else if (filter == 'equal') {
+						console.log('entered equals number');
+						return { application: { path: [question.id], equals: Number(search) } };
+					} else if (filter == 'not_equal') {
+						console.log('entered less_equal number');
+						return { application: { path: [question.id], not: Number(search) } };
+					} else if (filter == 'unanswered') {
+						console.log('entered unanswered number');
+						return { application: { path: [question.id], equals: undefined } };
+					}
+				} else if (question.type == 'DROPDOWN') {
+					console.log('enter dropdwon');
+					if (filter == 'has_at_least_one') {
+						console.log('entered has_at_least_one dropdown');
+						return { application: { path: [question.id], array_contains: [search] } };
+					} else if (filter == 'has_all') {
+						console.log('entered has_all dropdown');
+						return { application: { path: [question.id], not: Number(search) } };
+					} else if (filter == 'exactly') {
+						console.log('entered has_all dropdown');
+						return { application: { path: [question.id], array_starts_with: [search] } };
+					} else if (filter == 'unanswered') {
+						console.log('entered unanswered dropdown');
+						return { application: { path: [question.id], equals: undefined } };
+					}
+				} else if (question.type == 'CHECKBOX') {
+					console.log('entered chckbox');
+					if (filter == 'exact') {
+						console.log('entered exact checkbox');
+						console.log(typeof Boolean(search));
+						return { application: { path: [question.id], equals: Boolean(search) } };
+					}
+				} else if (question.type == 'RADIO') {
+					console.log('entered radio');
+					if (filter == 'is') {
+						console.log('entered is radio');
+						return { application: { path: [question.id], equals: search } };
+					} else if (filter == 'is_not') {
+						console.log('entered is radio');
+						return { application: { path: [question.id], not: search } };
+					} else if (filter == 'unanswered') {
+						console.log('entered unanswered radio');
+						return { application: { path: [question.id], equals: undefined } };
+					}
+				} else if (question.type == 'FILE') {
+					console.log('entered file');
+					if (filter == 'uploaded') {
+						console.log('entered uploaded file');
+						return { application: { path: [question.id], not: undefined } };
+					} else if (filter == 'not_uploaded') {
+						console.log('entered not_uploaded file');
+						return { application: { path: [question.id], equals: undefined } };
+					}
+				}
+			}
+		}
 	}
 	return {};
 }

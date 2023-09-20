@@ -9,6 +9,7 @@ export const load = async ({ locals, url }) => {
 		key: url.searchParams.get('key') ?? '',
 		search: url.searchParams.get('search') ?? '',
 		limit: Number(url.searchParams.get('limit') ?? 10),
+		filter: url.searchParams.get('filter') ?? '',
 	});
 	console.log('users');
 	console.log(results.users);
@@ -16,6 +17,7 @@ export const load = async ({ locals, url }) => {
 		stats: await trpc(locals.auth).users.getStats({
 			key: url.searchParams.get('key') ?? '',
 			search: url.searchParams.get('search') ?? '',
+			filter: url.searchParams.get('filter') ?? '',
 		}),
 		questions: await trpc(locals.auth).questions.get(),
 		users: results.users,
