@@ -1,5 +1,5 @@
 import { trpc } from '$lib/trpc/router';
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -9,30 +9,26 @@ dayjs.extend(timezone);
 
 export const load = async ({ locals, params }) => {
 	const event = await trpc(locals.auth).events.get(Number(params.event));
+	const settings = await trpc(locals.auth).settings.getPublic();
 	if (event !== null) {
 		return {
 			event,
 			user: (await locals.auth.validate())?.user,
+			timezone: settings.timezone,
 		};
 	}
 	throw error(404, 'Event not found');
 };
 
 export const actions = {
-	saveEdit: async ({ locals, request }) => {
+	edit: async ({ locals, request }) => {
+		const timezone = (await trpc(locals.auth).settings.getPublic()).timezone;
 		const formData = await request.formData();
-		const id = formData.get('id') as string;
-
-		const fixedStartTime = dayjs
-			.tz(formData.get('start') as string, formData.get('timezone') as string)
-			.toDate();
-
-		const fixedEndTime = dayjs
-			.tz(formData.get('end') as string, formData.get('timezone') as string)
-			.toDate();
+		const fixedStartTime = dayjs.tz(formData.get('start') as string, timezone).toDate();
+		const fixedEndTime = dayjs.tz(formData.get('end') as string, timezone).toDate();
 
 		await trpc(locals.auth).events.update({
-			id: Number(id),
+			id: Number(formData.get('id') as string),
 			name: formData.get('name') as string,
 			description: formData.get('description') as string,
 			start: fixedStartTime,
@@ -40,5 +36,12 @@ export const actions = {
 			location: formData.get('location') as string,
 			type: formData.get('type') as string,
 		});
+		return 'Saved event!';
+	},
+
+	delete: async ({ locals, request }) => {
+		const formData = await request.formData();
+		await trpc(locals.auth).events.delete(Number(formData.get('id') as string));
+		throw redirect(303, '/schedule');
 	},
 };

@@ -7,12 +7,14 @@
 	import Plot from 'svelte-plotly.js';
 	import JSZip from 'jszip';
 	import { saveAs } from 'file-saver';
+	import { page } from '$app/stores';
 
 	export let data;
 
-	let key = data.query.key ?? 'email';
-	let search = data.query.search ?? '';
-	let limit = data.query.limit ?? '10';
+	$: query = Object.fromEntries($page.url.searchParams);
+	let key = $page.url.searchParams.get('key') ?? 'email';
+	let search = $page.url.searchParams.get('search') ?? '';
+	let limit = $page.url.searchParams.get('limit') ?? '10';
 
 	// Helper function to replace question IDs with their labels
 	function prepare(user: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>) {
@@ -54,17 +56,16 @@
 	// Download all files of current search filter
 	function downloadAllFiles() {
 		const zip = new JSZip();
-		const folder = zip.folder('applications') || zip;
+		const folder = zip.folder('FreeTail_Files') || zip;
 		data.allUsers.forEach((user) => {
 			const application = user.application as Record<string, any>;
 			data.questions.forEach((question) => {
 				if (application[question.id] !== undefined && application[question.id] !== '') {
 					if (question.type === 'FILE') {
 						application[question.id];
-						folder.file(
-							`${user.authUser.email}/` + application[question.id],
-							fetchFile('/files/' + user.authUserId + '/' + question.id)
-						);
+						const filePath: string = `${user.authUser.email}/` + application[question.id];
+						const file: string = '/files/' + user.authUserId + '/' + question.id;
+						folder.file(filePath, fetchFile(file));
 					}
 				}
 			});
@@ -191,7 +192,7 @@
 			name="limit"
 			bind:value={limit}
 			on:change={() => {
-				goto(`${location.pathname}?${new URLSearchParams({ ...data.query, limit })}`, {
+				goto(`${location.pathname}?${{ ...query, limit }}}`, {
 					noScroll: true,
 				});
 			}}
@@ -209,35 +210,42 @@
 	<form>
 		<p id="page">
 			<a
-				class:disabled={Number(data.query.page ?? 1) === 1}
+				class:disabled={Number($page.url.searchParams.get('page') ?? 1) === 1}
 				data-sveltekit-noscroll
-				href={`?${new URLSearchParams({ ...data.query, page: '1' })}`}>&lt;&lt;</a
+				href={`?${new URLSearchParams({ ...query, page: '1' })}`}>&lt;&lt;</a
 			>
 			<a
-				class:disabled={Number(data.query.page ?? 1) === 1}
+				class:disabled={Number($page.url.searchParams.get('page') ?? 1) === 1}
 				data-sveltekit-noscroll
 				href={`?${new URLSearchParams({
-					...data.query,
-					page: String(Number(data.query.page ?? 1) - 1),
+					...query,
+					page: String(Number($page.url.searchParams.get('page') ?? 1) - 1),
 				})}`}>&lt;</a
 			>
-			Page <input type="number" name="page" min="1" max={data.pages} value={data.query.page ?? 1} />
+			Page
+			<input
+				type="number"
+				name="page"
+				min="1"
+				max={data.pages}
+				value={$page.url.searchParams.get('page') ?? 1}
+			/>
 			of {data.pages}
 			<a
-				class:disabled={Number(data.query.page ?? 1) >= data.pages}
+				class:disabled={Number($page.url.searchParams.get('page') ?? 1) >= data.pages}
 				data-sveltekit-noscroll
 				href={`?${new URLSearchParams({
-					...data.query,
-					page: String(Number(data.query.page ?? 1) + 1),
+					...query,
+					page: String(Number($page.url.searchParams.get('page') ?? 1) + 1),
 				})}`}>&gt;</a
 			>
 			<a
-				class:disabled={Number(data.query.page ?? 1) >= data.pages}
+				class:disabled={Number($page.url.searchParams.get('page') ?? 1) >= data.pages}
 				data-sveltekit-noscroll
-				href={`?${new URLSearchParams({ ...data.query, page: String(data.pages) })}`}>&gt;&gt;</a
+				href={`?${new URLSearchParams({ ...query, page: String(data.pages) })}`}>&gt;&gt;</a
 			>
 		</p>
-		{#each Object.entries(data.query) as [key, value]}
+		{#each [...$page.url.searchParams] as [key, value]}
 			{#if key !== 'page'}
 				<input type="hidden" name={key} {value} />
 			{/if}
