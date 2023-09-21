@@ -58,14 +58,14 @@
 		const zip = new JSZip();
 		const folder = zip.folder('FreeTail_Files') || zip;
 		data.allUsers.forEach((user) => {
-			const application = user.application as Record<string, any>;
+			const application = user.application as Record<string, unknown>;
 			data.questions.forEach((question) => {
 				if (application[question.id] !== undefined && application[question.id] !== '') {
 					if (question.type === 'FILE') {
-						application[question.id];
-						const filePath: string = `${user.authUser.email}/` + application[question.id];
-						const file: string = '/files/' + user.authUserId + '/' + question.id;
-						folder.file(filePath, fetchFile(file));
+						folder.file(
+							`${user.authUser.email}/` + application[question.id],
+							fetchFile('/files/' + user.authUserId + '/' + question.id)
+						);
 					}
 				}
 			});
