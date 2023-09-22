@@ -15,7 +15,7 @@
 	let search = data.query.search ?? '';
 	let limit = data.query.limit ?? '10';
 	let questions = data.questions;
-	let filter = data.query.filter ?? '';
+	let searchFilter = data.query.searchFilter ?? '';
 
 	// Helper function to replace question IDs with their labels
 	function prepare(user: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>) {
@@ -66,6 +66,7 @@
 		<select
 			name="key"
 			class="key"
+			placeholder="Choose criteria"
 			bind:value={key}
 			on:change={() => {
 				if (key === 'role') search = 'HACKER';
@@ -73,12 +74,10 @@
 				else search = '';
 			}}
 		>
-			<optgroup label="Enums">
-				<option value="email">Email</option>
-				<option value="role">Role</option>
-				<option value="status">Status</option>
-				<option value="decision">Decision</option>
-			</optgroup>
+			<option value="email">Email</option>
+			<option value="role">Role</option>
+			<option value="status">Status</option>
+			<option value="decision">Decision</option>
 			<optgroup label="Questions">
 				{#each questions as question}
 					<option value={question.id}>{question.label}</option>
@@ -126,7 +125,7 @@
 			{#each questions as question}
 				{#if question.id == key}
 					{#if question.type == 'SENTENCE' || question.type == 'PARAGRAPH'}
-						<select name="filter" class="search" bind:value={filter}>
+						<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
 							<option value="exact">is exactly</option>
 							<option value="contains">contains</option>
 							<option value="regex">matches regex</option>
@@ -141,7 +140,7 @@
 							class="search"
 						/>
 					{:else if question.type == 'NUMBER'}
-						<select name="filter" class="search" bind:value={filter}>
+						<select name="searchFilter" class="search" bind:value={searchFilter}>
 							<option value="greater">greater than</option>
 							<option value="greater_equal">greater than or equal to</option>
 							<option value="less">less than</option>
@@ -150,7 +149,7 @@
 							<option value="not_equal">not equal to</option>
 							<option value="unanswered">unanswered</option>
 						</select>
-						{#if filter != 'unanswered'}
+						{#if searchFilter != 'unanswered'}
 							<input
 								type="number"
 								id="search"
@@ -163,29 +162,25 @@
 						{/if}
 					{:else if question.type == 'DROPDOWN'}
 						{#if question.multiple}
-							<select name="filter" class="search" bind:value={filter}>
-								<option value="has_at_least_one">has at least one of</option>
-								<option value="has_all">has all of</option>
+							<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
+								<option value="contains">contains</option>
 								<option value="exactly">is exactly</option>
 								<option value="unanswered">unanswered</option>
 							</select>
 						{:else}
-							<select name="filter" class="search" bind:value={filter}>
+							<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
 								<option value="is" selected>is</option>
 								<option value="is_not" selected>is not</option>
 								<option value="unanswered">unanswered</option>
 							</select>
 						{/if}
-
-						{#if filter != 'unanswered'}
+						{#if searchFilter != 'unanswered'}
 							<Select
-								name={question.id}
-								id={question.id}
+								name="search"
 								items={question.custom && dropdownFilterTexts[question.id]
 									? [...new Set([...question.options, dropdownFilterTexts[question.id]])]
 									: question.options}
 								bind:value={search}
-								bind:filterText={dropdownFilterTexts[question.id]}
 								multiple={Boolean(question.multiple)}
 								containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem;"
 								inputStyles="margin: 0; height: initial"
@@ -197,7 +192,7 @@
 							</Select>
 						{/if}
 					{:else if question.type == 'CHECKBOX'}
-						<select name="filter" class="search" bind:value={filter}>
+						<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
 							<option value="exact" selected>is</option>
 						</select>
 						<select name="search" bind:value={search} class="search">
@@ -205,12 +200,12 @@
 							<option value="false">FALSE</option>
 						</select>
 					{:else if question.type == 'RADIO'}
-						<select name="filter" class="search" bind:value={filter}>
+						<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
 							<option value="is" selected>is</option>
 							<option value="is_not" selected>is not</option>
 							<option value="unanswered">unanswered</option>
 						</select>
-						{#if filter != 'unanswered'}
+						{#if searchFilter != 'unanswered'}
 							<select name="search" bind:value={search} class="search">
 								{#each question.options as option}
 									<option value={option}>{option}</option>
@@ -218,7 +213,7 @@
 							</select>
 						{/if}
 					{:else if question.type == 'FILE'}
-						<select name="filter" class="search" bind:value={filter}>
+						<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
 							<option value="has" selected>has</option>
 						</select>
 						<select name="search" bind:value={search} class="search">
@@ -348,6 +343,11 @@
 	}
 
 	.search {
+		flex: 1;
+		min-width: 5rem;
+	}
+
+	.searchFilter {
 		flex: 1;
 		min-width: 5rem;
 	}

@@ -89,7 +89,7 @@ async function main() {
 			custom: true,
 			options: majors,
 			required: true,
-			generate: () => randomElement(majors),
+			generate: () => [randomElement(majors)],
 		},
 		{
 			order: 3,
