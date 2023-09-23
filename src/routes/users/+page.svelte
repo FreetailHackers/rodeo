@@ -74,10 +74,13 @@
 				else search = '';
 			}}
 		>
-			<option value="email">Email</option>
-			<option value="role">Role</option>
-			<option value="status">Status</option>
-			<option value="decision">Decision</option>
+			<option selected disabled>Select Filter</option>
+			<optgroup label="Enums">
+				<option value="email">Email</option>
+				<option value="role">Role</option>
+				<option value="status">Status</option>
+				<option value="decision">Decision</option>
+			</optgroup>
 			<optgroup label="Questions">
 				{#each questions as question}
 					<option value={question.id}>{question.label}</option>
@@ -128,7 +131,6 @@
 						<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
 							<option value="exact">is exactly</option>
 							<option value="contains">contains</option>
-							<option value="regex">matches regex</option>
 						</select>
 						<input
 							type="text"
@@ -336,6 +338,7 @@
 		gap: 0.5rem;
 		width: 100%;
 		min-width: 0;
+		flex-wrap: wrap;
 	}
 
 	.key {
@@ -370,11 +373,11 @@
 		width: 3.5rem;
 	}
 
-	.disabled {
+	/* .disabled {
 		pointer-events: none;
 		text-decoration: none;
 		opacity: 0.5;
-	}
+	} */
 
 	.graph-container {
 		width: 100%;

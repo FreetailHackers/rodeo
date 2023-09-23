@@ -502,22 +502,7 @@ export const usersRouter = t.router({
 			const users = await prisma.user.findMany({
 				where,
 			});
-			console.log('experiment');
-			console.log(req.input.search);
-			// const searchDictArray = JSON.parse(req.input.search);
-			// console.log("search array:", searchDictArray.map((item:{ value: string }) => item.value))
-			// // get array of search values
-			// // const searchArray = searchDictArray.map((item:{ value: string }) => item.value);
-			// console.log(
-			// 	await prisma.user.count({
-			// 		where: {
-			// 			application: {
-			// 				path: ['3943b3e7-ffa1-4478-8d12-6d82cd8d9d9f'],
-			// 				array_contains: ['Public Health'],
-			// 			},
-			// 		},
-			// 	})
-			// );
+
 			const questions = await getQuestions();
 			const filteredQuestion = questions.filter(
 				(question) => question.type === 'RADIO' || question.type === 'DROPDOWN'
@@ -669,9 +654,6 @@ function getWhereCondition(
 						return { application: { path: [question.id], equals: search } };
 					} else if (searchFilter == 'contains') {
 						return { application: { path: [question.id], string_contains: search } };
-					} else if (searchFilter == 'regex') {
-						console.log('entered regex string');
-						return { application: { path: [question.id], string_starts_with: '/c*t/' } };
 					}
 				} else if (question.type == 'NUMBER') {
 					if (searchFilter == 'greater') {
@@ -690,7 +672,7 @@ function getWhereCondition(
 						return { application: { path: [question.id], equals: Prisma.DbNull } };
 					}
 				} else if (question.type == 'DROPDOWN') {
-					const searchDictArray = JSON.parse(search); // list of dicts
+					const searchDictArray = JSON.parse(search);
 
 					// check if the question allows for multiple values
 					if (question.multiple) {
@@ -729,6 +711,7 @@ function getWhereCondition(
 						return { application: { path: [question.id], equals: Prisma.DbNull } };
 					}
 				} else if (question.type == 'FILE') {
+					// don't think this part is working right but everything else should be
 					if (searchFilter == 'uploaded') {
 						return { application: { path: [question.id], not: Prisma.DbNull } };
 					} else if (searchFilter == 'not_uploaded') {
