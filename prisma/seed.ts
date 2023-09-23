@@ -15,7 +15,14 @@ import 'lucia/polyfill/node';
 import { firstNames, lastNames, majors } from './data';
 import { PrismaClient, Status, Prisma } from '@prisma/client';
 import { prisma as prismaAdapter } from '@lucia-auth/adapter-prisma';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
 const prisma = new PrismaClient();
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const auth = lucia({
 	adapter: prismaAdapter(new PrismaClient(), {
@@ -60,6 +67,9 @@ async function main() {
 			body: 'We are now accepting applications for HackTX! The deadline is Friday, September 17th at 11:59 PM.',
 		},
 	});
+
+	// Optional: change to where your development team is located so the schedule times make sense for your event
+	const timezone = 'America/Chicago';
 
 	// Create example questions
 	const questions: (Prisma.QuestionCreateInput & { generate: () => unknown })[] = [
@@ -144,57 +154,90 @@ async function main() {
 	const events: Prisma.EventCreateInput[] = [
 		{
 			name: 'Opening Ceremony',
-			start: new Date('2021-09-24T18:00:00.000Z'),
-			end: new Date('2021-09-24T19:00:00.000Z'),
+			start: dayjs.tz('2021-09-24T09:00:00', timezone).toDate(),
+			end: dayjs.tz('2021-09-24T09:30:00', timezone).toDate(),
 			location: 'GDC Auditorium (2.216)',
 			description: 'Welcome to HackTX 2021!',
 			type: 'Key-Event',
 		},
 		{
 			name: 'Hacking Begins',
-			start: new Date('2021-09-24T19:00:00.000Z'),
-			end: new Date('2021-09-25T19:00:00.000Z'),
+			start: dayjs.tz('2021-09-24T10:00:00', timezone).toDate(),
+			end: dayjs.tz('2021-09-24T10:00:00', timezone).toDate(),
 			location: 'GDC',
 			description: 'Start hacking!',
 			type: 'Key-Event',
 		},
 		{
 			name: 'Intro to Svelte',
-			start: new Date('2021-09-24T19:30:00.000Z'),
-			end: new Date('2021-09-24T20:30:00.000Z'),
+			start: dayjs.tz('2021-09-24T10:30:00', timezone).toDate(),
+			end: dayjs.tz('2021-09-24T11:00:00', timezone).toDate(),
 			location: 'GDC 6.302',
 			description: 'Learn how to use Svelte, the hottest and most-loved framework in town!',
 			type: 'Workshop',
 		},
 		{
+			name: 'Lunch',
+			start: dayjs.tz('2021-09-24T12:00:00', timezone).toDate(),
+			end: dayjs.tz('2021-09-24T13:00:00', timezone).toDate(),
+			location: 'GDC Courtyard',
+			description: 'Delicious Chinese food from 99 Ranch!',
+			type: 'Regular-Event',
+		},
+		{
+			name: 'Dinner',
+			start: dayjs.tz('2021-09-24T18:00:00', timezone).toDate(),
+			end: dayjs.tz('2021-09-24T19:00:00', timezone).toDate(),
+			location: 'GDC Courtyard',
+			description: 'Delicious Indian food from Sangam Chettinad!',
+			type: 'Regular-Event',
+		},
+		{
 			name: 'Midnight Snack',
-			start: new Date('2021-09-24T23:00:00.000Z'),
-			end: new Date('2021-09-25T00:00:00.000Z'),
+			// Cross date boundaries so we can test that it shows up on both days
+			start: dayjs.tz('2021-09-24T23:45:00', timezone).toDate(),
+			end: dayjs.tz('2021-09-25T00:15:00', timezone).toDate(),
 			location: 'GDC',
 			description: 'Free food!',
 			type: 'Regular-Event',
 		},
 		{
+			name: 'Breakfast',
+			start: dayjs.tz('2021-09-25T08:00:00', timezone).toDate(),
+			end: dayjs.tz('2021-09-25T09:00:00', timezone).toDate(),
+			location: 'GDC Courtyard',
+			description: 'Delicious pizza from DeSano!',
+			type: 'Regular-Event',
+		},
+		{
 			name: 'Hacking Ends',
-			start: new Date('2021-09-25T19:00:00.000Z'),
-			end: new Date('2021-09-25T20:00:00.000Z'),
+			start: dayjs.tz('2021-09-25T10:00:00', timezone).toDate(),
+			end: dayjs.tz('2021-09-25T10:00:00', timezone).toDate(),
 			location: 'GDC',
 			description: 'Stop hacking!',
 			type: 'Key-Event',
 		},
 		{
 			name: '5BLD with Feet Bench Press',
-			start: new Date('2021-09-25T19:30:00.000Z'),
-			end: new Date('2021-09-25T20:00:00.000Z'),
+			start: dayjs.tz('2021-09-25T10:00:00', timezone).toDate(),
+			end: dayjs.tz('2021-09-25T11:00:00', timezone).toDate(),
 			location: 'Gregory Gym Basement',
 			description:
 				"Who can bench press the most weight while solving a 5x5 Rubik's cube with their feet blindfolded?",
 			type: 'Fun-Event',
 		},
 		{
+			name: 'Judging',
+			start: dayjs.tz('2021-09-25T11:00:00', timezone).toDate(),
+			end: dayjs.tz('2021-09-25T12:00:00', timezone).toDate(),
+			location: 'WCP Ballroom',
+			description: 'Show off your hard work!',
+			type: 'Key-Event',
+		},
+		{
 			name: 'Closing Ceremony',
-			start: new Date('2021-09-25T20:00:00.000Z'),
-			end: new Date('2021-09-25T21:00:00.000Z'),
+			start: dayjs.tz('2021-09-25T12:00:00', timezone).toDate(),
+			end: dayjs.tz('2021-09-25T12:30:00', timezone).toDate(),
 			location: 'GDC Auditorium (2.216)',
 			description: 'Goodbye!',
 			type: 'Key-Event',
@@ -233,7 +276,7 @@ async function main() {
 	await prisma.user.createMany({ data: users });
 
 	// Create default settings
-	await prisma.settings.create({ data: {} });
+	await prisma.settings.create({ data: { timezone } });
 
 	// Generate random StatusChanges
 	const statuses: Prisma.StatusChangeCreateManyInput[] = [];
@@ -304,9 +347,14 @@ async function main() {
 
 	// Generate decisions (not randomized so I don't have to worry about duplicates)
 	const decisions: Prisma.DecisionCreateManyInput[] = [];
+	// Make one query and save in memory to avoid querying for every hacker's status below
+	const hackers = (await prisma.authUser.findMany()).reduce(
+		(map, user) => ((map[user.id] = user), map),
+		{}
+	);
 	for (const id of ids) {
 		// Only decide on hackers with status APPLIED or WAITLISTED with 50% probability
-		const hacker = await prisma.authUser.findUniqueOrThrow({ where: { id } });
+		const hacker = hackers[id];
 		if ((hacker.status !== 'APPLIED' && hacker.status !== 'WAITLISTED') || random() < 0.5) {
 			continue;
 		}

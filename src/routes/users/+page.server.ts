@@ -24,7 +24,6 @@ export const load = async ({ locals, url }) => {
 		start: results.start,
 		count: results.count,
 		user,
-		query: Object.fromEntries(url.searchParams),
 	};
 };
 
