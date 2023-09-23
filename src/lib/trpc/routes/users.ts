@@ -536,6 +536,7 @@ export const usersRouter = t.router({
 			})
 		)
 		.mutation(async (req): Promise<void> => {
+			console.log(req);
 			const updateStatuses = prisma.authUser.updateMany({
 				where: { id: { in: req.input.ids } },
 				data: { status: req.input.status },
@@ -636,6 +637,8 @@ function getWhereCondition(
 	searchFilter: string,
 	search: string
 ): Prisma.UserWhereInput {
+	console.log('search:', search, typeof search);
+	console.log('search filter:', searchFilter);
 	if (key === 'email') {
 		return { authUser: { email: { contains: search } } };
 	} else if (key === 'status') {
@@ -654,6 +657,8 @@ function getWhereCondition(
 						return { application: { path: [question.id], equals: search } };
 					} else if (searchFilter == 'contains') {
 						return { application: { path: [question.id], string_contains: search } };
+					} else if (searchFilter == 'unanswered') {
+						return { application: { path: [question.id], equals: Prisma.DbNull } };
 					}
 				} else if (question.type == 'NUMBER') {
 					if (searchFilter == 'greater') {
@@ -693,7 +698,7 @@ function getWhereCondition(
 						} else if (searchFilter == 'is_not') {
 							return { application: { path: [question.id], not: searchDictArray.value } };
 						} else if (searchFilter == 'unanswered') {
-							return { application: { path: [question.id], equals: Prisma.DbNull } };
+							return { application: { path: [question.id], equals: 'DbNull' } };
 						}
 					}
 				} else if (question.type == 'CHECKBOX') {
@@ -708,14 +713,14 @@ function getWhereCondition(
 					} else if (searchFilter == 'is_not') {
 						return { application: { path: [question.id], not: search } };
 					} else if (searchFilter == 'unanswered') {
-						return { application: { path: [question.id], equals: Prisma.DbNull } };
+						return { application: { path: [question.id], equals: 'DbNull' } };
 					}
 				} else if (question.type == 'FILE') {
 					// don't think this part is working right but everything else should be
 					if (searchFilter == 'uploaded') {
-						return { application: { path: [question.id], not: Prisma.DbNull } };
+						return { application: { path: [question.id], not: 'DbNull' } };
 					} else if (searchFilter == 'not_uploaded') {
-						return { application: { path: [question.id], equals: Prisma.DbNull } };
+						return { application: { path: [question.id], equals: 'DbNull' } };
 					}
 				}
 			}

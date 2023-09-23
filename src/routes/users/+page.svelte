@@ -131,6 +131,7 @@
 						<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
 							<option value="exact">is exactly</option>
 							<option value="contains">contains</option>
+							<option value="unanswered">unanswered</option>
 						</select>
 						<input
 							type="text"
@@ -163,6 +164,7 @@
 							/>
 						{/if}
 					{:else if question.type == 'DROPDOWN'}
+						console.log(search);
 						{#if question.multiple}
 							<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
 								<option value="contains">contains</option>
