@@ -11,8 +11,7 @@ export const load = async ({ locals, url }) => {
 		limit: Number(url.searchParams.get('limit') ?? 10),
 		searchFilter: url.searchParams.get('searchFilter') ?? '',
 	});
-	console.log('users');
-	console.log(results.users);
+
 	return {
 		stats: await trpc(locals.auth).users.getStats({
 			key: url.searchParams.get('key') ?? '',
