@@ -166,7 +166,6 @@
 							/>
 						{/if}
 					{:else if question.type == 'DROPDOWN'}
-						console.log(search);
 						{#if question.multiple}
 							<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
 								<option value="contains">contains</option>
@@ -196,6 +195,10 @@
 									{item.label}
 								</div>
 							</Select>
+						{:else}
+							<select hidden name="search" bind:value={search} class="search">
+								<option value="none">none</option>
+							</select>
 						{/if}
 					{:else if question.type == 'CHECKBOX'}
 						<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>

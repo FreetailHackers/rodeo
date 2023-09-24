@@ -536,7 +536,6 @@ export const usersRouter = t.router({
 			})
 		)
 		.mutation(async (req): Promise<void> => {
-			console.log(req);
 			const updateStatuses = prisma.authUser.updateMany({
 				where: { id: { in: req.input.ids } },
 				data: { status: req.input.status },
@@ -637,8 +636,6 @@ function getWhereCondition(
 	searchFilter: string,
 	search: string
 ): Prisma.UserWhereInput {
-	console.log('search:', search, typeof search);
-	console.log('search filter:', searchFilter);
 	if (key === 'email') {
 		return { authUser: { email: { contains: search } } };
 	} else if (key === 'status') {
@@ -677,27 +674,32 @@ function getWhereCondition(
 						return { application: { path: [question.id], equals: Prisma.DbNull } };
 					}
 				} else if (question.type == 'DROPDOWN') {
-					const searchDictArray = JSON.parse(search);
+					// look to see if searchFilter is unanswered
+					if (searchFilter != 'unanswered') {
+						const searchDictArray = JSON.parse(search);
 
-					// check if the question allows for multiple values
-					if (question.multiple) {
-						// get array of search values
-						const searchArray = searchDictArray.map((item: { value: string }) => item.value);
+						// check if question allows multiple responses
+						if (question.multiple) {
+							const searchArray = searchDictArray.map((item: { value: string }) => item.value);
 
-						if (searchFilter == 'contains') {
-							return { application: { path: [question.id], array_contains: searchArray } };
-						} else if (searchFilter == 'exactly') {
-							return { application: { path: [question.id], equals: searchArray } };
-						} else if (searchFilter == 'unanswered') {
-							return { application: { path: [question.id], equals: Prisma.DbNull } };
+							if (searchFilter == 'contains') {
+								return { application: { path: [question.id], array_contains: searchArray } };
+							} else if (searchFilter == 'exactly') {
+								return { application: { path: [question.id], equals: searchArray } };
+							}
+						} else {
+							// searchDictArray is a string
+							if (searchFilter == 'is') {
+								return { application: { path: [question.id], equals: searchDictArray.value } };
+							} else if (searchFilter == 'is_not') {
+								return { application: { path: [question.id], not: searchDictArray.value } };
+							}
 						}
 					} else {
-						// users can only have one value for this question
-						if (searchFilter == 'is') {
-							return { application: { path: [question.id], equals: searchDictArray.value } };
-						} else if (searchFilter == 'is_not') {
-							return { application: { path: [question.id], not: searchDictArray.value } };
-						} else if (searchFilter == 'unanswered') {
+						// want to find users who didn't answer the question
+						if (question.multiple) {
+							return { application: { path: [question.id], equals: Prisma.DbNull } };
+						} else {
 							return { application: { path: [question.id], equals: 'DbNull' } };
 						}
 					}
