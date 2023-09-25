@@ -12,7 +12,6 @@ import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
-const questions = await getQuestions();
 export const usersRouter = t.router({
 	/**
 	 * Gets all data on the user with the given ID. User must be an
@@ -454,7 +453,11 @@ export const usersRouter = t.router({
 				count: number;
 				users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
 			}> => {
-				const where = getWhereCondition(req.input.key, req.input.searchFilter, req.input.search);
+				const where = await getWhereCondition(
+					req.input.key,
+					req.input.searchFilter,
+					req.input.search
+				);
 				const count = await prisma.user.count({ where });
 				return {
 					pages: Math.ceil(count / req.input.limit),
@@ -484,7 +487,11 @@ export const usersRouter = t.router({
 			})
 		)
 		.query(async (req) => {
-			const where = getWhereCondition(req.input.key, req.input.searchFilter, req.input.search);
+			const where = await getWhereCondition(
+				req.input.key,
+				req.input.searchFilter,
+				req.input.search
+			);
 			const users = await prisma.user.findMany({
 				where,
 			});
@@ -617,11 +624,11 @@ export const usersRouter = t.router({
 });
 
 // Converts key to Prisma where filter
-function getWhereCondition(
+async function getWhereCondition(
 	key: string,
 	searchFilter: string,
 	search: string
-): Prisma.UserWhereInput {
+): Promise<Prisma.UserWhereInput> {
 	if (key === 'email') {
 		return { authUser: { email: { contains: search } } };
 	} else if (key === 'status') {
@@ -633,6 +640,7 @@ function getWhereCondition(
 			decision: { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },
 		};
 	} else {
+		const questions = await getQuestions();
 		for (const question of questions) {
 			if (key == question.id) {
 				if (question.type == 'SENTENCE' || question.type == 'PARAGRAPH') {
