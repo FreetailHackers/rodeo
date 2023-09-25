@@ -63,7 +63,6 @@ test-job:
   stage: test
   script:
     - npm ci
-    - npx prisma generate
     - npm run build
     - npm run check
     - npm run lint
