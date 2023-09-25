@@ -12,20 +12,14 @@
 
 import { lucia } from 'lucia';
 import 'lucia/polyfill/node';
-import { firstNames, lastNames, majors } from './data';
+import { MY_TIMEZONE, events, questions } from './data';
 import { PrismaClient, Status, Prisma } from '@prisma/client';
 import { prisma as prismaAdapter } from '@lucia-auth/adapter-prisma';
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
 
 const prisma = new PrismaClient();
 
-dayjs.extend(utc);
-dayjs.extend(timezone);
-
 const auth = lucia({
-	adapter: prismaAdapter(new PrismaClient(), {
+	adapter: prismaAdapter(prisma, {
 		user: 'authUser',
 		session: 'authSession',
 		key: 'authKey',
@@ -65,279 +59,65 @@ async function main() {
 	await prisma.announcement.create({
 		data: {
 			body: 'We are now accepting applications for HackTX! The deadline is Friday, September 17th at 11:59 PM.',
+			published: new Date('2021-09-01T00:00:00'),
 		},
 	});
 
-	// Optional: change to where your development team is located so the schedule times make sense for your event
-	const timezone = 'America/Chicago';
-
 	// Create example questions
-	const questions: (Prisma.QuestionCreateInput & { generate: () => unknown })[] = [
-		{
-			order: 0,
-			label: 'Name',
-			type: 'SENTENCE',
-			required: true,
-			placeholder: 'J. Random Hacker',
-			generate: () => `${randomElement(firstNames)} ${randomElement(lastNames)}`,
-		},
-		{
-			order: 1,
-			label: 'Classification',
-			type: 'DROPDOWN',
-			multiple: false,
-			custom: false,
-			required: true,
-			options: ['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate'],
-			generate: () => randomElement(['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate']),
-		},
-		{
-			order: 2,
-			label: 'Major',
-			type: 'DROPDOWN',
-			multiple: true,
-			custom: true,
-			options: majors,
-			required: true,
-			generate: () => [randomElement(majors)],
-		},
-		{
-			order: 3,
-			label: 'I agree to sell my data.',
-			type: 'CHECKBOX',
-			required: true,
-			generate: () => true,
-		},
-		{
-			order: 4,
-			label: 'How many hackathons have you attended?',
-			type: 'NUMBER',
-			required: true,
-			placeholder: '0',
-			min: 0,
-			step: 1,
-			generate: () => Math.floor(random() * 10),
-		},
-		{
-			order: 5,
-			label: 'Why do you want to attend HackTX?',
-			type: 'PARAGRAPH',
-			required: true,
-			placeholder: 'I love hackathons!',
-			generate: () => 'I want to attend HackTX because I love hackathons!',
-		},
-		{
-			order: 6,
-			label: 'Resume',
-			type: 'FILE',
-			required: false,
-			accept: '.doc, .docx, .pdf',
-			maxSizeMB: 1,
-			generate: () => undefined,
-		},
-		{
-			order: 7,
-			label: 'Shirt size',
-			type: 'RADIO',
-			required: true,
-			options: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
-			generate: () => randomElement(['XS', 'S', 'M', 'L', 'XL', 'XXL']),
-		},
-	];
 	// Remove the generate function (used when creating dummy users) before creating questions
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	await prisma.question.createMany({ data: questions.map(({ generate, ...keep }) => keep) });
-
 	const createdQuestions = await prisma.question.findMany();
 
 	// Create example events
-	const events: Prisma.EventCreateInput[] = [
-		{
-			name: 'Opening Ceremony',
-			start: dayjs.tz('2021-09-24T09:00:00', timezone).toDate(),
-			end: dayjs.tz('2021-09-24T09:30:00', timezone).toDate(),
-			location: 'GDC Auditorium (2.216)',
-			description: 'Welcome to HackTX 2021!',
-			type: 'Key-Event',
-		},
-		{
-			name: 'Hacking Begins',
-			start: dayjs.tz('2021-09-24T10:00:00', timezone).toDate(),
-			end: dayjs.tz('2021-09-24T10:00:00', timezone).toDate(),
-			location: 'GDC',
-			description: 'Start hacking!',
-			type: 'Key-Event',
-		},
-		{
-			name: 'Intro to Svelte',
-			start: dayjs.tz('2021-09-24T10:30:00', timezone).toDate(),
-			end: dayjs.tz('2021-09-24T11:00:00', timezone).toDate(),
-			location: 'GDC 6.302',
-			description: 'Learn how to use Svelte, the hottest and most-loved framework in town!',
-			type: 'Workshop',
-		},
-		{
-			name: 'Lunch',
-			start: dayjs.tz('2021-09-24T12:00:00', timezone).toDate(),
-			end: dayjs.tz('2021-09-24T13:00:00', timezone).toDate(),
-			location: 'GDC Courtyard',
-			description: 'Delicious Chinese food from 99 Ranch!',
-			type: 'Regular-Event',
-		},
-		{
-			name: 'Dinner',
-			start: dayjs.tz('2021-09-24T18:00:00', timezone).toDate(),
-			end: dayjs.tz('2021-09-24T19:00:00', timezone).toDate(),
-			location: 'GDC Courtyard',
-			description: 'Delicious Indian food from Sangam Chettinad!',
-			type: 'Regular-Event',
-		},
-		{
-			name: 'Midnight Snack',
-			// Cross date boundaries so we can test that it shows up on both days
-			start: dayjs.tz('2021-09-24T23:45:00', timezone).toDate(),
-			end: dayjs.tz('2021-09-25T00:15:00', timezone).toDate(),
-			location: 'GDC',
-			description: 'Free food!',
-			type: 'Regular-Event',
-		},
-		{
-			name: 'Breakfast',
-			start: dayjs.tz('2021-09-25T08:00:00', timezone).toDate(),
-			end: dayjs.tz('2021-09-25T09:00:00', timezone).toDate(),
-			location: 'GDC Courtyard',
-			description: 'Delicious pizza from DeSano!',
-			type: 'Regular-Event',
-		},
-		{
-			name: 'Hacking Ends',
-			start: dayjs.tz('2021-09-25T10:00:00', timezone).toDate(),
-			end: dayjs.tz('2021-09-25T10:00:00', timezone).toDate(),
-			location: 'GDC',
-			description: 'Stop hacking!',
-			type: 'Key-Event',
-		},
-		{
-			name: '5BLD with Feet Bench Press',
-			start: dayjs.tz('2021-09-25T10:00:00', timezone).toDate(),
-			end: dayjs.tz('2021-09-25T11:00:00', timezone).toDate(),
-			location: 'Gregory Gym Basement',
-			description:
-				"Who can bench press the most weight while solving a 5x5 Rubik's cube with their feet blindfolded?",
-			type: 'Fun-Event',
-		},
-		{
-			name: 'Judging',
-			start: dayjs.tz('2021-09-25T11:00:00', timezone).toDate(),
-			end: dayjs.tz('2021-09-25T12:00:00', timezone).toDate(),
-			location: 'WCP Ballroom',
-			description: 'Show off your hard work!',
-			type: 'Key-Event',
-		},
-		{
-			name: 'Closing Ceremony',
-			start: dayjs.tz('2021-09-25T12:00:00', timezone).toDate(),
-			end: dayjs.tz('2021-09-25T12:30:00', timezone).toDate(),
-			location: 'GDC Auditorium (2.216)',
-			description: 'Goodbye!',
-			type: 'Key-Event',
-		},
-	];
 	await prisma.event.createMany({ data: events });
 
-	// Create example users
-	// NOTE: There is no way to sign in as these users, since they don't have passwords
-	// and hashing passwords is slow by design
+	// Create default settings
+	await prisma.settings.create({ data: { timezone: MY_TIMEZONE } });
+
+	// Generate fake users and status changes
+	// NOTE: By "fake", I mean the fact that there is no way to sign in
+	// as these users, since they don't have passwords, and hashing
+	// passwords is slow by design
 	const authUsers: Prisma.AuthUserCreateManyInput[] = [];
 	const users: Prisma.UserCreateManyInput[] = [];
-	const ids: string[] = [];
+	const statusChanges: Prisma.StatusChangeCreateManyInput[] = [];
+	const maxSecondsBetweenStatusChanges = 60 * 60 * 24 * 7; // 1 week
+	const startingTime = new Date();
+	// We must allow enough time for 5 status changes
+	// (CREATED -> VERIFIED -> APPLIED -> ACCEPTED/REJECTED/WAITLISTED -> CONFIRMED/DECLINED)
+	startingTime.setSeconds(-maxSecondsBetweenStatusChanges * 6);
+
 	for (let i = 0; i < 1000; i++) {
+		const id = `hacker${i}@yopmail.com`;
+		const statusFlow = generateStatusFlow(id, startingTime, maxSecondsBetweenStatusChanges);
 		// Generate a completed application for each hacker
 		const application = {};
 		for (const question of createdQuestions) {
 			// IMPORTANT: This assumes that the questions variable is ordered by the order field!!
 			application[question.id] = questions[question.order].generate();
 		}
-		const email = `hacker${i}@yopmail.com`;
 		authUsers.push({
-			id: email,
-			email,
+			id: id,
+			email: id,
 			roles: ['HACKER'],
-			status: 'CREATED',
+			status: statusFlow[statusFlow.length - 1].newStatus,
 		});
-		users.push({ authUserId: email, application });
-		ids.push(email);
+		users.push({ authUserId: id, application });
+		statusChanges.push(...statusFlow);
 	}
+
 	await prisma.authUser.createMany({ data: authUsers });
-	// HACK: This is to avoid unique key constraint errors due to the trigger
-	// that automatically creates a User when an AuthUser is created, and the
-	// fact that Prisma doesn't support bulk updates yet
+	// HACK: This is to avoid unique key constraint errors due to the
+	// trigger that automatically creates a User when an AuthUser is
+	// created and the fact that Prisma doesn't support bulk updates yet
 	await prisma.user.deleteMany();
 	await prisma.user.createMany({ data: users });
-
-	// Create default settings
-	await prisma.settings.create({ data: { timezone } });
-
-	// Generate random StatusChanges
-	const statuses: Prisma.StatusChangeCreateManyInput[] = [];
-	const statusFlow: Status[] = ['CREATED', 'VERIFIED', 'APPLIED'];
-	const afterStatusApplied: Status[] = [
-		'CREATED',
-		'VERIFIED',
-		'APPLIED',
-		'ACCEPTED',
-		'REJECTED',
-		'WAITLISTED',
-	];
-	const afterStatusAccepted: Status[] = ['CONFIRMED', 'DECLINED', 'ACCEPTED'];
-	const intervalInMinutes = 300; // Customize the interval in minutes
-
-	const currentTime = new Date('2023-08-01');
-	for (const id of ids) {
-		let lastTimestamp = currentTime;
-		for (const status of statusFlow) {
-			lastTimestamp = new Date(lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * random());
-			statuses.push({
-				newStatus: status,
-				timestamp: lastTimestamp,
-				userId: id,
-			});
-		}
-
-		// choose one out of afterStatusApplied
-		const afterStatusAppliedRandom = randomElement(afterStatusApplied);
-		lastTimestamp = new Date(lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * random());
-		statuses.push({
-			newStatus: afterStatusAppliedRandom,
-			timestamp: lastTimestamp,
-			userId: id,
-		});
-
-		if (afterStatusAppliedRandom == 'ACCEPTED') {
-			const afterStatusAcceptedRandom = randomElement(afterStatusAccepted);
-			lastTimestamp = new Date(lastTimestamp.getTime() + intervalInMinutes * 60 * 1000 * random());
-			statuses.push({
-				newStatus: afterStatusAcceptedRandom,
-				timestamp: lastTimestamp,
-				userId: id,
-			});
-			await prisma.authUser.update({
-				where: { id: id },
-				data: { status: afterStatusAcceptedRandom },
-			});
-		} else {
-			await prisma.authUser.update({
-				where: { id: id },
-				data: { status: afterStatusAppliedRandom },
-			});
-		}
-	}
-
 	// HACK: Delete status changes autogenerated by trigger since we are
-	// generating them manually (must do this AFTER creating hackers but
-	// BEFORE creating test accounts)
+	// generating them manually (must do this AFTER creating fake users
+	// but BEFORE creating test hacker and admin)
 	await prisma.statusChange.deleteMany();
-	await prisma.statusChange.createMany({ data: statuses });
+	await prisma.statusChange.createMany({ data: statusChanges });
 
 	// Create test hacker and admin
 	// (must do this AFTER calling prisma.user.deleteMany() and prisma.statusChange.deleteMany())
@@ -345,35 +125,88 @@ async function main() {
 	const adminId = await register('admin@yopmail.com', '');
 	await prisma.authUser.update({ where: { id: adminId }, data: { roles: ['ADMIN'] } });
 
-	// Generate decisions (not randomized so I don't have to worry about duplicates)
+	// Generate decisions for fake users
 	const decisions: Prisma.DecisionCreateManyInput[] = [];
-	// Make one query and save in memory to avoid querying for every hacker's status below
-	const hackers = (await prisma.authUser.findMany()).reduce(
-		(map, user) => ((map[user.id] = user), map),
-		{}
-	);
-	for (const id of ids) {
-		// Only decide on hackers with status APPLIED or WAITLISTED with 50% probability
-		const hacker = hackers[id];
-		if ((hacker.status !== 'APPLIED' && hacker.status !== 'WAITLISTED') || random() < 0.5) {
-			continue;
+	const hackers = await prisma.authUser.findMany({
+		where: {
+			roles: { has: 'HACKER' },
+			status: { in: ['APPLIED', 'WAITLISTED'] },
+		},
+	});
+	for (const hacker of hackers) {
+		// Don't decide on every user probability
+		if (random() >= 0.5) {
+			decisions.push({
+				userId: hacker.id,
+				status: randomElement(['ACCEPTED', 'REJECTED', 'WAITLISTED']),
+			});
 		}
-		decisions.push({
-			userId: hacker.id,
-			status: randomElement(['ACCEPTED', 'REJECTED', 'WAITLISTED']),
-		});
 	}
 	await prisma.decision.createMany({ data: decisions });
 }
 
+/**
+ * Generates a random status flow for a hacker.
+ *
+ * @param id The hacker's id
+ * @param startingTime The earliest time the first status change can
+ * occur (ideally somewhat close to the current date so the graph
+ * looks realistic)
+ * @param maxSecondsBetweenStatusChanges The maximum number of seconds
+ * that can pass between each status change
+ */
+function generateStatusFlow(
+	id: string,
+	startingTime: Date,
+	maxSecondsBetweenStatusChanges: number
+): Prisma.StatusChangeCreateManyInput[] {
+	const statusChanges: Prisma.StatusChangeCreateManyInput[] = [];
+	const attritionRate = 0.1; // 10% of hackers drop out at each stage
+	let lastTimestamp = startingTime;
+	for (const status of ['CREATED', 'VERIFIED', 'APPLIED'] as Status[]) {
+		lastTimestamp = new Date(
+			lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random()
+		);
+		statusChanges.push({ newStatus: status, timestamp: lastTimestamp, userId: id });
+		if (random() < attritionRate) {
+			return statusChanges;
+		}
+	}
+	const afterStatusAppliedRandom = randomElement([
+		'ACCEPTED',
+		'REJECTED',
+		'WAITLISTED',
+	] as Status[]);
+	lastTimestamp = new Date(
+		lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random()
+	);
+	statusChanges.push({
+		newStatus: afterStatusAppliedRandom,
+		timestamp: lastTimestamp,
+		userId: id,
+	});
+
+	if (random() >= attritionRate && afterStatusAppliedRandom == 'ACCEPTED') {
+		lastTimestamp = new Date(
+			lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random()
+		);
+		statusChanges.push({
+			newStatus: randomElement(['CONFIRMED', 'DECLINED'] as Status[]),
+			timestamp: lastTimestamp,
+			userId: id,
+		});
+	}
+	return statusChanges;
+}
+
 // Quick and dirty seedable random number generator taken from https://stackoverflow.com/a/19303725/16458492
 let seed = 0;
-function random() {
+export function random() {
 	const x = Math.sin(seed++) * 10000;
 	return x - Math.floor(x);
 }
 
-function randomElement<T>(array: T[]): T {
+export function randomElement<T>(array: T[]): T {
 	return array[Math.floor(random() * array.length)];
 }
 
