@@ -435,7 +435,7 @@ export const usersRouter = t.router({
 	 * Searches all users by email. User must be an admin.
 	 */
 	search: t.procedure
-		.use(authenticate(['ADMIN']))
+		.use(authenticate(['ADMIN', 'SPONSOR']))
 		.input(
 			z.object({
 				key: z.string(),
@@ -464,17 +464,29 @@ export const usersRouter = t.router({
 					scanOptions
 				);
 				const count = await prisma.user.count({ where });
+				const users = await prisma.user.findMany({
+					include: { authUser: true, decision: true },
+					where,
+					skip: req.input.page * req.input.limit,
+					take: req.input.limit,
+					orderBy: { authUser: { email: 'asc' } },
+				});
+				if (!req.ctx.user.roles.includes('ADMIN')) {
+					const questions = await getQuestions();
+					const filteredQuestion = questions.filter((question) => !question.sponsorView);
+					users.forEach((user) => {
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						const applicationData = user.application as Record<string, any>;
+						filteredQuestion.forEach((question) => {
+							delete applicationData[question.id];
+						});
+					});
+				}
 				return {
 					pages: Math.ceil(count / req.input.limit),
 					start: req.input.page * req.input.limit + 1,
 					count,
-					users: await prisma.user.findMany({
-						include: { authUser: true, decision: true },
-						where,
-						skip: req.input.page * req.input.limit,
-						take: req.input.limit,
-						orderBy: { authUser: { email: 'asc' } },
-					}),
+					users: users,
 				};
 			}
 		),

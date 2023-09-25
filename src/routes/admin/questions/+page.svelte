@@ -172,6 +172,13 @@
 					</div>
 				</div>
 			{/if}
+			<div>
+				<Toggle
+					name={question.id + '_sponsorView'}
+					label="Viewable by Sponsors"
+					checked={question.sponsorView}
+				/>
+			</div>
 		</fieldset>
 	{/each}
 
