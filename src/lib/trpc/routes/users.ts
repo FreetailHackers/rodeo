@@ -22,12 +22,6 @@ export const usersRouter = t.router({
 	 * NOTE: If you only need authentication/authorization info, use
 	 * `locals.auth.validateUser()` instead. This will save you a
 	 * database query.
-	 *
-	 * XXX: It is very important that you use this function instead of
-	 * querying the users table directly because this function will
-	 * create the row in the users table if it does not exist.
-	 * Alternatively, make sure to create the row in the users table
-	 * after every call to `auth.createUser()`.
 	 */
 	get: t.procedure
 		.input(z.string().optional())
@@ -41,18 +35,10 @@ export const usersRouter = t.router({
 				}
 				const user = session.user;
 				if (req.input === undefined) {
-					try {
-						return await prisma.user.findUniqueOrThrow({
-							where: { authUserId: user.id },
-							include: { authUser: true, decision: true },
-						});
-					} catch (e) {
-						// If no row in users is linked to the authUser, create one
-						return await prisma.user.create({
-							data: { authUserId: user.id },
-							include: { authUser: true, decision: true },
-						});
-					}
+					return await prisma.user.findUniqueOrThrow({
+						where: { authUserId: user.id },
+						include: { authUser: true, decision: true },
+					});
 				} else {
 					if (!user.roles.includes('ADMIN')) {
 						throw new Error('Forbidden');

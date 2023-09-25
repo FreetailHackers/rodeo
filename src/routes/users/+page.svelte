@@ -279,7 +279,7 @@
 			name="limit"
 			bind:value={limit}
 			on:change={() => {
-				goto(`${location.pathname}?${{ ...query, limit }}}`, {
+				goto(`${location.pathname}?${new URLSearchParams({ ...$page.url.searchParams, limit })}`, {
 					noScroll: true,
 				});
 			}}
