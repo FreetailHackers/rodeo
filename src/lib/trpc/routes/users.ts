@@ -463,11 +463,7 @@ export const usersRouter = t.router({
 					take: req.input.limit,
 					orderBy: { authUser: { email: 'asc' } },
 				});
-				const session = await req.ctx.validate();
-				if (session === null) {
-					throw new Error('Unauthorized');
-				}
-				if (session.user.roles.includes('ADMIN')) {
+				if (req.ctx.user.roles.includes('ADMIN')) {
 					const questions = await getQuestions();
 					const filteredQuestion = questions.filter((question) => !question.sponsorView);
 					users.forEach((user) => {
