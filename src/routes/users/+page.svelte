@@ -5,7 +5,10 @@
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import Plot from 'svelte-plotly.js';
+	import JSZip from 'jszip';
+	import { saveAs } from 'file-saver';
 	import { page } from '$app/stores';
+	import { toasts } from '$lib/stores';
 
 	export let data;
 
@@ -39,6 +42,13 @@
 		csvDownloadLink = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
 	}
 
+	function downloadCSV() {
+		const parser = new Parser();
+		const csv = parser.parse(data.users.map(prepare));
+		const blob = new Blob([csv], { type: 'text/csv' });
+		saveAs(blob, 'users.csv');
+	}
+
 	function recordToDataObject(answerData: Record<string, number>) {
 		const labels = Object.keys(answerData);
 		const values = labels.map((label) => answerData[label]);
@@ -49,13 +59,52 @@
 			textinfo: 'none' as const,
 		};
 	}
+
+	// Download all files of current search filter
+	function downloadAllFiles() {
+		const zip = new JSZip();
+		const folder = zip.folder('files') || zip;
+		data.users.forEach((user) => {
+			const application = user.application as Record<string, unknown>;
+			data.questions.forEach((question) => {
+				if (application[question.id] !== undefined && application[question.id] !== '') {
+					if (question.type === 'FILE') {
+						folder.file(
+							`${user.authUser.email}/${application[question.id]}`,
+							fetchFile(`/files/${user.authUserId}/${question.id}`)
+						);
+					}
+				}
+			});
+		});
+		zip.generateAsync({ type: 'blob' }).then(function (content) {
+			saveAs(content, 'files.zip');
+		});
+	}
+
+	async function fetchFile(fileUrl: string) {
+		try {
+			const response = await fetch(fileUrl);
+			if (!response.ok) {
+				toasts.notify('Network response was not ok; unable to download ' + fileUrl);
+				throw new Error();
+			}
+			return await response.blob();
+		} catch (error) {
+			toasts.notify('Error downloading file');
+			throw error;
+		}
+	}
 </script>
 
 <svelte:head>
 	<title>Rodeo | Users</title>
 </svelte:head>
 <h1>Master Database</h1>
-<p><a href={csvDownloadLink} download="users.csv">Export search results as CSV</a></p>
+<button class="download-button" on:click={downloadCSV}>Export search results as CSV</button>
+<button class="download-button" on:click={downloadAllFiles}
+	>Download files from current search</button
+>
 
 <!-- Search filters -->
 <form>
@@ -258,5 +307,11 @@
 		width: 100%;
 		height: 300px;
 		overflow: hidden;
+	}
+
+	.download-button {
+		width: 100%;
+		text-align: center;
+		margin-bottom: 10px;
 	}
 </style>
