@@ -102,7 +102,9 @@
 </svelte:head>
 <h1>Master Database</h1>
 <button class="download-button" on:click={downloadCSV}>Export search results as CSV</button>
-<button class="download-button" on:click={downloadAllFiles}>Download files selected users</button>
+<button class="download-button" on:click={downloadAllFiles}
+	>Download files from current search</button
+>
 
 <!-- Search filters -->
 <form>
