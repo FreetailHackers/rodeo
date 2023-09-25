@@ -665,19 +665,19 @@ function getWhereCondition(
 		};
 	} else if (scanOptions.includes(key)) {
 		if (searchFilter == 'greater') {
-			return { application: { path: [key], gt: Number(search) } };
+			return { scanCount: { path: [key], gt: Number(search) } };
 		} else if (searchFilter == 'greater_equal') {
-			return { application: { path: [key], gte: Number(search) } };
+			return { scanCount: { path: [key], gte: Number(search) } };
 		} else if (searchFilter == 'less') {
-			return { application: { path: [key], lt: Number(search) } };
+			return { scanCount: { path: [key], lt: Number(search) } };
 		} else if (searchFilter == 'less_equal') {
-			return { application: { path: [key], lte: Number(search) } };
+			return { scanCount: { path: [key], lte: Number(search) } };
 		} else if (searchFilter == 'equal') {
-			return { application: { path: [key], equals: Number(search) } };
+			return { scanCount: { path: [key], equals: Number(search) } };
 		} else if (searchFilter == 'not_equal') {
-			return { application: { path: [key], not: Number(search) } };
+			return { scanCount: { path: [key], not: Number(search) } };
 		} else if (searchFilter == 'unanswered') {
-			return { application: { path: [key], equals: Prisma.DbNull } };
+			return { scanCount: { path: [key], equals: Prisma.DbNull } };
 		}
 	} else {
 		for (const question of questions) {
