@@ -17,6 +17,7 @@
 	let search = $page.url.searchParams.get('search') ?? '';
 	let limit = $page.url.searchParams.get('limit') ?? '10';
 	let questions = data.questions;
+	let scanOptions = data.settings.scanActions;
 	let searchFilter = $page.url.searchParams.get('searchFilter') ?? '';
 
 	// Helper function to replace question IDs with their labels
@@ -76,7 +77,7 @@
 				else search = '';
 			}}
 		>
-			<option selected disabled>Select Filter</option>
+			<!-- <option selected disabled>Select Filter</option> -->
 			<optgroup label="Enums">
 				<option value="email">Email</option>
 				<option value="role">Role</option>
@@ -86,6 +87,11 @@
 			<optgroup label="Questions">
 				{#each questions as question}
 					<option value={question.id}>{question.label}</option>
+				{/each}
+			</optgroup>
+			<optgroup label="Scan Options">
+				{#each scanOptions as scanOption}
+					<option value={scanOption}>{scanOption}</option>
 				{/each}
 			</optgroup>
 		</select>
@@ -126,6 +132,27 @@
 				<option value="WAITLISTED">WAITLISTED</option>
 				<option value="REJECTED">REJECTED</option>
 			</select>
+		{:else if scanOptions.includes(key)}
+			<select name="searchFilter" class="search" bind:value={searchFilter}>
+				<option value="greater">greater than</option>
+				<option value="greater_equal">greater than or equal to</option>
+				<option value="less">less than</option>
+				<option value="less_equal">less than or equal to</option>
+				<option value="equal">equal to</option>
+				<option value="not_equal">not equal to</option>
+				<option value="unanswered">no scans</option>
+			</select>
+			{#if searchFilter != 'unanswered'}
+				<input
+					type="number"
+					id="search"
+					name="search"
+					placeholder="Number"
+					autocomplete="off"
+					bind:value={search}
+					class="search"
+				/>
+			{/if}
 		{:else}
 			{#each questions as question}
 				{#if question.id == key}

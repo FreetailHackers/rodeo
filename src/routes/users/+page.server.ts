@@ -13,6 +13,7 @@ export const load = async ({ locals, url }) => {
 	});
 
 	return {
+		settings: await trpc(locals.auth).settings.getPublic(),
 		stats: await trpc(locals.auth).users.getStats({
 			key: url.searchParams.get('key') ?? '',
 			search: url.searchParams.get('search') ?? '',

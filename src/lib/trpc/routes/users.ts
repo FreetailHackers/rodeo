@@ -1,4 +1,4 @@
-import { Prisma, Role, Status, type StatusChange } from '@prisma/client';
+import { Prisma, Role, Status, type Question, type StatusChange } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
 import { sendEmails } from '../email';
@@ -12,7 +12,7 @@ import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
-const questions = await getQuestions();
+
 export const usersRouter = t.router({
 	/**
 	 * Gets all data on the user with the given ID. User must be an
@@ -468,7 +468,15 @@ export const usersRouter = t.router({
 				count: number;
 				users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
 			}> => {
-				const where = getWhereCondition(req.input.key, req.input.searchFilter, req.input.search);
+				const questions = await getQuestions();
+				const scanOptions = (await getSettings()).scanActions;
+				const where = getWhereCondition(
+					req.input.key,
+					req.input.searchFilter,
+					req.input.search,
+					questions,
+					scanOptions
+				);
 				const count = await prisma.user.count({ where });
 				return {
 					pages: Math.ceil(count / req.input.limit),
@@ -498,12 +506,19 @@ export const usersRouter = t.router({
 			})
 		)
 		.query(async (req) => {
-			const where = getWhereCondition(req.input.key, req.input.searchFilter, req.input.search);
+			const questions = await getQuestions();
+			const scanOptions = (await getSettings()).scanActions;
+			const where = getWhereCondition(
+				req.input.key,
+				req.input.searchFilter,
+				req.input.search,
+				questions,
+				scanOptions
+			);
 			const users = await prisma.user.findMany({
 				where,
 			});
 
-			const questions = await getQuestions();
 			const filteredQuestion = questions.filter(
 				(question) => question.type === 'RADIO' || question.type === 'DROPDOWN'
 			);
@@ -634,7 +649,9 @@ export const usersRouter = t.router({
 function getWhereCondition(
 	key: string,
 	searchFilter: string,
-	search: string
+	search: string,
+	questions: Question[],
+	scanOptions: string[]
 ): Prisma.UserWhereInput {
 	if (key === 'email') {
 		return { authUser: { email: { contains: search } } };
@@ -646,6 +663,22 @@ function getWhereCondition(
 		return {
 			decision: { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },
 		};
+	} else if (scanOptions.includes(key)) {
+		if (searchFilter == 'greater') {
+			return { application: { path: [key], gt: Number(search) } };
+		} else if (searchFilter == 'greater_equal') {
+			return { application: { path: [key], gte: Number(search) } };
+		} else if (searchFilter == 'less') {
+			return { application: { path: [key], lt: Number(search) } };
+		} else if (searchFilter == 'less_equal') {
+			return { application: { path: [key], lte: Number(search) } };
+		} else if (searchFilter == 'equal') {
+			return { application: { path: [key], equals: Number(search) } };
+		} else if (searchFilter == 'not_equal') {
+			return { application: { path: [key], not: Number(search) } };
+		} else if (searchFilter == 'unanswered') {
+			return { application: { path: [key], equals: Prisma.DbNull } };
+		}
 	} else {
 		for (const question of questions) {
 			if (key == question.id) {
