@@ -467,14 +467,14 @@ export const usersRouter = t.router({
 				if (session === null) {
 					throw new Error('Unauthorized');
 				}
-				if (session.user.roles.includes('SPONSOR')) {
+				if (session.user.roles.includes('ADMIN')) {
 					const questions = await getQuestions();
 					const filteredQuestion = questions.filter((question) => question.sponsorView === false);
 					users.forEach((user) => {
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						const applicationData = user.application as Record<string, any>;
 						filteredQuestion.forEach((question) => {
-							applicationData[question.id] = 'NON_SPONSOR_VIEW';
+							delete applicationData[question.id];
 						});
 					});
 				}

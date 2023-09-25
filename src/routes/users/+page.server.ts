@@ -3,20 +3,22 @@ import { trpc } from '$lib/trpc/router';
 import type { Role, Status } from '@prisma/client';
 
 export const load = async ({ locals, url }) => {
-	const user = await authenticate(locals.auth, ['ADMIN']);
+	const user = await authenticate(locals.auth, ['ADMIN', 'SPONSOR']);
 	const results = await trpc(locals.auth).users.search({
 		page: Number(url.searchParams.get('page') ?? 1),
 		key: url.searchParams.get('key') ?? '',
 		search: url.searchParams.get('search') ?? '',
 		limit: Number(url.searchParams.get('limit') ?? 10),
 	});
-
+	const questions = await trpc(locals.auth).questions.get();
 	return {
 		stats: await trpc(locals.auth).users.getStats({
 			key: url.searchParams.get('key') ?? '',
 			search: url.searchParams.get('search') ?? '',
 		}),
-		questions: await trpc(locals.auth).questions.get(),
+		questions: user.roles.includes('ADMIN')
+			? questions
+			: questions.filter((question) => question.sponsorView),
 		users: results.users,
 		pages: results.pages,
 		start: results.start,

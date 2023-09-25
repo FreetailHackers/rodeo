@@ -17,25 +17,23 @@
 	{#if user.decision}(Pending {user.decision.status}){/if}
 </p>
 {#each questions as question}
-	{#if application[question.id] !== 'NON_SPONSOR_VIEW'}
-		<SvelteMarkdown source={question.label} />
-		<blockquote>
-			{#if application[question.id] === undefined || application[question.id] === ''}
-				<i>No answer given</i>
-			{:else if question.type === 'FILE'}
-				<a
-					href={`/files/${user.authUserId}/${question.id}`}
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					{`${$page.url.origin}/files/${user.authUserId}/${question.id}`}</a
-				>
-			{:else if Array.isArray(application[question.id])}
-				{application[question.id].join(', ')}
-			{:else}
-				{application[question.id]}{/if}
-		</blockquote>
-	{/if}
+	<SvelteMarkdown source={question.label} />
+	<blockquote>
+		{#if application[question.id] === undefined || application[question.id] === ''}
+			<i>No answer given</i>
+		{:else if question.type === 'FILE'}
+			<a
+				href={`/files/${user.authUserId}/${question.id}`}
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				{`${$page.url.origin}/files/${user.authUserId}/${question.id}`}</a
+			>
+		{:else if Array.isArray(application[question.id])}
+			{application[question.id].join(', ')}
+		{:else}
+			{application[question.id]}{/if}
+	</blockquote>
 {/each}
 
 <style>
