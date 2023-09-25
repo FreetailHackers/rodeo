@@ -469,7 +469,7 @@ export const usersRouter = t.router({
 				}
 				if (session.user.roles.includes('ADMIN')) {
 					const questions = await getQuestions();
-					const filteredQuestion = questions.filter((question) => question.sponsorView === false);
+					const filteredQuestion = questions.filter((question) => !question.sponsorView);
 					users.forEach((user) => {
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						const applicationData = user.application as Record<string, any>;

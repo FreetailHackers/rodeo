@@ -87,7 +87,7 @@
 			const response = await fetch(fileUrl);
 			if (!response.ok) {
 				toasts.notify('Network response was not ok; unable to download ' + fileUrl);
-				throw new Error('Network response was not ok');
+				throw new Error();
 			}
 			return await response.blob();
 		} catch (error) {
