@@ -10,24 +10,19 @@ export const load = async ({ locals, url }) => {
 		search: url.searchParams.get('search') ?? '',
 		limit: Number(url.searchParams.get('limit') ?? 10),
 	});
-	const allUsers = await trpc(locals.auth).users.searchAll({
-		key: url.searchParams.get('key') ?? '',
-		search: url.searchParams.get('search') ?? '',
-	});
 
 	return {
 		stats: await trpc(locals.auth).users.getStats({
 			key: url.searchParams.get('key') ?? '',
 			search: url.searchParams.get('search') ?? '',
 		}),
-		questions: await trpc(locals.auth).questions.getSponsorViewable(),
+		questions: await trpc(locals.auth).questions.get(),
 		users: results.users,
 		pages: results.pages,
 		start: results.start,
 		count: results.count,
 		user,
 		query: Object.fromEntries(url.searchParams),
-		allUsers: allUsers.users,
 	};
 };
 

@@ -24,11 +24,6 @@
 			<!-- Fields common to all question types -->
 			<div class="flex-row">
 				<Toggle name={question.id + '_required'} label="Required" checked={question.required} />
-				<Toggle
-					name={question.id + '_sponsorView'}
-					label="Viewable by Sponsor"
-					checked={question.sponsorView}
-				/>
 				<!-- Put a hidden disabled button before the these
 					 buttons to prevent enter from triggering them -->
 				<div class="flex-row actions">
@@ -177,6 +172,13 @@
 					</div>
 				</div>
 			{/if}
+			<div>
+				<Toggle
+					name={question.id + '_sponsorView'}
+					label="Viewable by Sponsors"
+					checked={question.sponsorView}
+				/>
+			</div>
 		</fieldset>
 	{/each}
 

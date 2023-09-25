@@ -450,7 +450,7 @@ export const usersRouter = t.router({
 	 * Searches all users by email. User must be an admin.
 	 */
 	search: t.procedure
-		.use(authenticate(['ADMIN']))
+		.use(authenticate(['ADMIN', 'SPONSOR']))
 		.input(
 			z.object({
 				key: z.string(),
@@ -470,46 +470,33 @@ export const usersRouter = t.router({
 			}> => {
 				const where = getWhereCondition(req.input.key, req.input.search);
 				const count = await prisma.user.count({ where });
+				const users = await prisma.user.findMany({
+					include: { authUser: true, decision: true },
+					where,
+					skip: req.input.page * req.input.limit,
+					take: req.input.limit,
+					orderBy: { authUser: { email: 'asc' } },
+				});
+				const session = await req.ctx.validate();
+				if (session === null) {
+					throw new Error('Unauthorized');
+				}
+				if (session.user.roles.includes('SPONSOR')) {
+					const questions = await getQuestions();
+					const filteredQuestion = questions.filter((question) => question.sponsorView === false);
+					users.forEach((user) => {
+						// eslint-disable-next-line @typescript-eslint/no-explicit-any
+						const applicationData = user.application as Record<string, any>;
+						filteredQuestion.forEach((question) => {
+							applicationData[question.id] = 'NON_SPONSOR_VIEW';
+						});
+					});
+				}
 				return {
 					pages: Math.ceil(count / req.input.limit),
 					start: req.input.page * req.input.limit + 1,
 					count,
-					users: await prisma.user.findMany({
-						include: { authUser: true, decision: true },
-						where,
-						skip: req.input.page * req.input.limit,
-						take: req.input.limit,
-						orderBy: { authUser: { email: 'asc' } },
-					}),
-				};
-			}
-		),
-
-	/**
-	 * Searches all users by email and returns all users without limit or page.
-	 * User must be an admin.
-	 */
-	searchAll: t.procedure
-		.use(authenticate(['ADMIN']))
-		.input(
-			z.object({
-				key: z.string(),
-				search: z.string(),
-			})
-		)
-		.query(
-			async (
-				req
-			): Promise<{
-				users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
-			}> => {
-				const where = getWhereCondition(req.input.key, req.input.search);
-				return {
-					users: await prisma.user.findMany({
-						include: { authUser: true, decision: true },
-						where,
-						orderBy: { authUser: { email: 'asc' } },
-					}),
+					users: users,
 				};
 			}
 		),
