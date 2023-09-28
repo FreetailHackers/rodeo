@@ -663,19 +663,41 @@ function getWhereCondition(
 		};
 	} else if (scanOptions.includes(key)) {
 		if (searchFilter == 'greater') {
-			return { application: { path: [key], gt: Number(search) } };
+			return { scanCount: { path: [key], gt: Number(search) } };
 		} else if (searchFilter == 'greater_equal') {
-			return { application: { path: [key], gte: Number(search) } };
+			return { scanCount: { path: [key], gte: Number(search) } };
 		} else if (searchFilter == 'less') {
-			return { application: { path: [key], lt: Number(search) } };
+			if (search == '0') {
+				return { scanCount: { path: [key], lt: Number(search) } };
+			} else {
+				return {
+					OR: [
+						{
+							scanCount: { path: [key], lt: Number(search) },
+						},
+						{
+							scanCount: { path: [key], equals: Prisma.DbNull },
+						},
+					],
+				};
+			}
 		} else if (searchFilter == 'less_equal') {
-			return { application: { path: [key], lte: Number(search) } };
+			return {
+				OR: [
+					{
+						scanCount: { path: [key], lte: search },
+					},
+					{
+						scanCount: { path: [key], equals: Prisma.DbNull },
+					},
+				],
+			};
 		} else if (searchFilter == 'equal') {
-			return { application: { path: [key], equals: Number(search) } };
+			return { scanCount: { path: [key], equals: Number(search) } };
 		} else if (searchFilter == 'not_equal') {
-			return { application: { path: [key], not: Number(search) } };
+			return { scanCount: { path: [key], not: Number(search) } };
 		} else if (searchFilter == 'unanswered') {
-			return { application: { path: [key], equals: Prisma.DbNull } };
+			return { scanCount: { path: [key], equals: Prisma.DbNull } };
 		}
 	} else {
 		for (const question of questions) {
@@ -687,6 +709,8 @@ function getWhereCondition(
 						return { application: { path: [question.id], string_contains: search } };
 					} else if (searchFilter == 'unanswered') {
 						return { application: { path: [question.id], equals: Prisma.DbNull } };
+					} else if (searchFilter == 'empty') {
+						return { application: { path: [question.id], equals: '' } };
 					}
 				} else if (question.type == 'NUMBER') {
 					if (searchFilter == 'greater') {
@@ -724,21 +748,20 @@ function getWhereCondition(
 								return { application: { path: [question.id], equals: searchDictArray.value } };
 							} else if (searchFilter == 'is_not') {
 								return { application: { path: [question.id], not: searchDictArray.value } };
+							} else if (searchFilter == 'unanswered') {
+								return { application: { path: [question.id], equals: Prisma.DbNull } };
 							}
 						}
 					} else {
-						// want to find users who didn't answer the question
-						if (question.multiple) {
-							return { application: { path: [question.id], equals: Prisma.DbNull } };
-						} else {
-							return { application: { path: [question.id], equals: 'DbNull' } };
-						}
+						return { application: { path: [question.id], equals: Prisma.DbNull } };
 					}
 				} else if (question.type == 'CHECKBOX') {
 					if (search == 'true') {
 						return { application: { path: [question.id], equals: true } };
 					} else if (search == 'false') {
 						return { application: { path: [question.id], equals: false } };
+					} else if (search == 'unanswered') {
+						return { application: { path: [question.id], equals: Prisma.DbNull } };
 					}
 				} else if (question.type == 'RADIO') {
 					if (searchFilter == 'is') {
@@ -746,14 +769,14 @@ function getWhereCondition(
 					} else if (searchFilter == 'is_not') {
 						return { application: { path: [question.id], not: search } };
 					} else if (searchFilter == 'unanswered') {
-						return { application: { path: [question.id], equals: 'DbNull' } };
+						return { application: { path: [question.id], equals: Prisma.DbNull } };
 					}
 				} else if (question.type == 'FILE') {
 					// don't think this part is working right but everything else should be
-					if (searchFilter == 'uploaded') {
-						return { application: { path: [question.id], not: 'DbNull' } };
-					} else if (searchFilter == 'not_uploaded') {
-						return { application: { path: [question.id], equals: 'DbNull' } };
+					if (search == 'uploaded') {
+						return { application: { path: [question.id], not: Prisma.DbNull } };
+					} else if (search == 'not_uploaded') {
+						return { application: { path: [question.id], equals: Prisma.DbNull } };
 					}
 				}
 			}

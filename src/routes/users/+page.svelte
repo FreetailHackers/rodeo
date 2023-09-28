@@ -123,16 +123,45 @@
 			on:change={() => {
 				if (key === 'role') search = 'HACKER';
 				else if (key === 'status') search = 'CREATED';
-				else search = '';
+				else if (key === 'decision') search = 'ACCEPTED';
+				else if (Array.from(questions, (x) => x.id).includes(key) || scanOptions.includes(key)) {
+					for (const question of questions) {
+						if (
+							key == question.id &&
+							(question.type === 'SENTENCE' || question.type === 'PARAGRAPH')
+						) {
+							searchFilter = 'contains';
+							search = '';
+						} else if (
+							key == question.id &&
+							(question.type === 'RADIO' || (question.type === 'DROPDOWN' && !question.multiple))
+						) {
+							searchFilter = 'is';
+							search = '';
+						} else if (key == question.id && question.type === 'DROPDOWN') {
+							searchFilter = 'contains';
+						} else if (key == question.id && question.type === 'CHECKBOX') {
+							console.log('Set search');
+							search = 'true';
+						} else if (key == question.id && question.type === 'FILE') {
+							search = 'uploaded';
+						} else if (
+							(key == question.id && question.type === 'NUMBER') ||
+							scanOptions.includes(key)
+						) {
+							searchFilter = 'equal';
+							search = '';
+						}
+					}
+				} else search = '';
 			}}
 		>
-			<!-- <option selected disabled>Select Filter</option> -->
-			<optgroup label="Enums">
-				<option value="email">Email</option>
-				<option value="role">Role</option>
-				<option value="status">Status</option>
-				<option value="decision">Decision</option>
-			</optgroup>
+			<!-- enums -->
+			<option value="email">Email</option>
+			<option value="role">Role</option>
+			<option value="status">Status</option>
+			<option value="decision">Decision</option>
+
 			<optgroup label="Questions">
 				{#each questions as question}
 					<option value={question.id}>{question.label}</option>
@@ -165,7 +194,7 @@
 				<option value="CONFIRMED">CONFIRMED</option>
 				<option value="DECLINED">DECLINED</option>
 			</select>
-		{:else if key == 'email'}
+		{:else if key === 'email'}
 			<input
 				type="text"
 				id="search"
@@ -175,7 +204,7 @@
 				bind:value={search}
 				class="search"
 			/>
-		{:else if key == 'decision'}
+		{:else if key === 'decision'}
 			<select name="search" bind:value={search} class="search">
 				<option value="ACCEPTED">ACCEPTED</option>
 				<option value="WAITLISTED">WAITLISTED</option>
@@ -204,23 +233,26 @@
 			{/if}
 		{:else}
 			{#each questions as question}
-				{#if question.id == key}
-					{#if question.type == 'SENTENCE' || question.type == 'PARAGRAPH'}
+				{#if question.id === key}
+					{#if question.type === 'SENTENCE' || question.type === 'PARAGRAPH'}
 						<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
 							<option value="exact">is exactly</option>
-							<option value="contains">contains</option>
+							<option value="contains" selected>contains</option>
+							<option value="empty">is empty</option>
 							<option value="unanswered">unanswered</option>
 						</select>
-						<input
-							type="text"
-							id="search"
-							name="search"
-							placeholder="Search"
-							autocomplete="off"
-							bind:value={search}
-							class="search"
-						/>
-					{:else if question.type == 'NUMBER'}
+						{#if searchFilter != 'unanswered' && searchFilter != 'empty'}
+							<input
+								type="text"
+								id="search"
+								name="search"
+								placeholder="Search"
+								autocomplete="off"
+								bind:value={search}
+								class="search"
+							/>
+						{/if}
+					{:else if question.type === 'NUMBER'}
 						<select name="searchFilter" class="search" bind:value={searchFilter}>
 							<option value="greater">greater than</option>
 							<option value="greater_equal">greater than or equal to</option>
@@ -241,7 +273,7 @@
 								class="search"
 							/>
 						{/if}
-					{:else if question.type == 'DROPDOWN'}
+					{:else if question.type === 'DROPDOWN'}
 						{#if question.multiple}
 							<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
 								<option value="contains">contains</option>
@@ -276,15 +308,13 @@
 								<option value="none">none</option>
 							</select>
 						{/if}
-					{:else if question.type == 'CHECKBOX'}
-						<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
-							<option value="exact" selected>is</option>
-						</select>
+					{:else if question.type === 'CHECKBOX'}
 						<select name="search" bind:value={search} class="search">
-							<option value="true">TRUE</option>
-							<option value="false">FALSE</option>
+							<option value="true">is true</option>
+							<option value="false">is false</option>
+							<option value="unanswered">is not anaswered</option>
 						</select>
-					{:else if question.type == 'RADIO'}
+					{:else if question.type === 'RADIO'}
 						<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
 							<option value="is" selected>is</option>
 							<option value="is_not" selected>is not</option>
@@ -297,13 +327,10 @@
 								{/each}
 							</select>
 						{/if}
-					{:else if question.type == 'FILE'}
-						<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
-							<option value="has" selected>has</option>
-						</select>
+					{:else if question.type === 'FILE'}
 						<select name="search" bind:value={search} class="search">
-							<option value="uploaded">Uploaded File</option>
-							<option value="not_uploaded">Not Uploaded File</option>
+							<option value="uploaded">has uploaded File</option>
+							<option value="not_uploaded">has not uploaded File</option>
 						</select>
 					{/if}
 				{/if}
@@ -462,12 +489,6 @@
 	#page input {
 		width: 3.5rem;
 	}
-
-	/* .disabled {
-		pointer-events: none;
-		text-decoration: none;
-		opacity: 0.5;
-	} */
 
 	.graph-container {
 		width: 100%;
