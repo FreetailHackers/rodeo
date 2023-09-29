@@ -8,14 +8,18 @@
 	import JSZip from 'jszip';
 	import { saveAs } from 'file-saver';
 	import { page } from '$app/stores';
+	import Select from 'svelte-select';
 	import { toasts } from '$lib/stores';
 
 	export let data;
+
+	const dropdownFilterTexts: Record<string, string> = {};
 
 	$: query = Object.fromEntries($page.url.searchParams);
 	let key = $page.url.searchParams.get('key') ?? 'email';
 	let search = $page.url.searchParams.get('search') ?? '';
 	let limit = $page.url.searchParams.get('limit') ?? '10';
+	let searchFilter = $page.url.searchParams.get('searchFilter') ?? '';
 
 	// Helper function to replace question IDs with their labels
 	function prepare(user: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>) {
@@ -111,17 +115,60 @@
 	<fieldset class="filter">
 		<select
 			name="key"
+			class="key"
+			placeholder="Choose criteria"
 			bind:value={key}
 			on:change={() => {
 				if (key === 'role') search = 'HACKER';
 				else if (key === 'status') search = 'CREATED';
-				else search = '';
+				else if (key === 'decision') search = 'ACCEPTED';
+				else if (Array.from(data.questions, (x) => x.id).includes(key)) {
+					search = '';
+					for (const question of data.questions) {
+						if (
+							key === question.id &&
+							(question.type === 'SENTENCE' || question.type === 'PARAGRAPH')
+						) {
+							searchFilter = 'contains';
+						} else if (
+							key === question.id &&
+							(question.type === 'RADIO' || (question.type === 'DROPDOWN' && !question.multiple))
+						) {
+							searchFilter = 'is';
+						} else if (key === question.id && question.type === 'DROPDOWN') {
+							searchFilter = 'contains';
+						} else if (key === question.id && question.type === 'CHECKBOX') {
+							searchFilter = 'true';
+						} else if (key === question.id && question.type === 'FILE') {
+							searchFilter = 'uploaded';
+						} else if (key === question.id && question.type === 'NUMBER') {
+							searchFilter = 'equal';
+						}
+					}
+				} else if (data.settings.scanActions.includes(key)) {
+					searchFilter = 'equal';
+					search = '';
+				} else search = '';
 			}}
 		>
+			<!-- enums -->
 			<option value="email">Email</option>
 			<option value="role">Role</option>
 			<option value="status">Status</option>
+			<option value="decision">Decision</option>
+
+			<optgroup label="Questions">
+				{#each data.questions as question}
+					<option value={question.id}>{question.label}</option>
+				{/each}
+			</optgroup>
+			<optgroup label="Scan Options">
+				{#each data.settings.scanActions as scanOption}
+					<option value={scanOption}>{scanOption}</option>
+				{/each}
+			</optgroup>
 		</select>
+
 		{#if key === 'role'}
 			<select name="search" bind:value={search} class="search">
 				<option value="HACKER">HACKER</option>
@@ -142,7 +189,7 @@
 				<option value="CONFIRMED">CONFIRMED</option>
 				<option value="DECLINED">DECLINED</option>
 			</select>
-		{:else}
+		{:else if key === 'email'}
 			<input
 				type="text"
 				id="search"
@@ -152,6 +199,131 @@
 				bind:value={search}
 				class="search"
 			/>
+		{:else if key === 'decision'}
+			<select name="search" bind:value={search} class="search">
+				<option value="ACCEPTED">ACCEPTED</option>
+				<option value="WAITLISTED">WAITLISTED</option>
+				<option value="REJECTED">REJECTED</option>
+			</select>
+		{:else if data.settings.scanActions.includes(key)}
+			<select name="searchFilter" class="search" bind:value={searchFilter}>
+				<option value="greater">greater than</option>
+				<option value="greater_equal">greater than or equal to</option>
+				<option value="less">less than</option>
+				<option value="less_equal">less than or equal to</option>
+				<option value="equal">equal to</option>
+				<option value="not_equal">not equal to</option>
+			</select>
+			<input
+				type="number"
+				id="search"
+				name="search"
+				placeholder="Number"
+				autocomplete="off"
+				bind:value={search}
+				class="search"
+				min="0"
+			/>
+		{:else}
+			{#each data.questions as question}
+				{#if question.id === key}
+					{#if question.type === 'SENTENCE' || question.type === 'PARAGRAPH'}
+						<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
+							<option value="exact">is exactly</option>
+							<option value="contains" selected>contains</option>
+							<option value="unanswered">is not answered</option>
+						</select>
+						{#if searchFilter !== 'unanswered'}
+							<input
+								type="text"
+								id="search"
+								name="search"
+								placeholder="Search"
+								autocomplete="off"
+								bind:value={search}
+								class="search"
+							/>
+						{/if}
+					{:else if question.type === 'NUMBER'}
+						<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
+							<option value="greater">greater than</option>
+							<option value="greater_equal">greater than or equal to</option>
+							<option value="less">less than</option>
+							<option value="less_equal">less than or equal to</option>
+							<option value="equal">equal to</option>
+							<option value="not_equal">not equal to</option>
+							<option value="unanswered">unanswered</option>
+						</select>
+						{#if searchFilter !== 'unanswered'}
+							<input
+								type="number"
+								id="search"
+								name="search"
+								placeholder="Number"
+								autocomplete="off"
+								bind:value={search}
+								class="search"
+							/>
+						{/if}
+					{:else if question.type === 'DROPDOWN'}
+						{#if question.multiple}
+							<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
+								<option value="contains">contains</option>
+								<option value="exactly">is exactly</option>
+								<option value="unanswered">unanswered</option>
+							</select>
+						{:else}
+							<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
+								<option value="is" selected>is</option>
+								<option value="is_not" selected>is not</option>
+								<option value="unanswered">unanswered</option>
+							</select>
+						{/if}
+						{#if searchFilter !== 'unanswered'}
+							<Select
+								name="search"
+								class="search"
+								items={question.custom && dropdownFilterTexts[question.id]
+									? [...new Set([...question.options, dropdownFilterTexts[question.id]])]
+									: question.options}
+								bind:filterText={dropdownFilterTexts[question.id]}
+								bind:value={search}
+								multiple={Boolean(question.multiple)}
+								containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem; min-width: 60%"
+								inputStyles="margin: 0; height: initial"
+							>
+								<div slot="item" let:item>
+									{question.options.includes(item.label) ? '' : 'Other: '}
+									{item.label}
+								</div>
+							</Select>
+						{/if}
+					{:else if question.type === 'CHECKBOX'}
+						<select name="searchFilter" bind:value={searchFilter} class="searchFilter">
+							<option value="true">is true</option>
+							<option value="false">is false</option>
+						</select>
+					{:else if question.type === 'RADIO'}
+						<select name="searchFilter" class="searchFilter" bind:value={searchFilter}>
+							<option value="is" selected>is</option>
+							<option value="is_not" selected>is not</option>
+							<option value="unanswered">unanswered</option>
+						</select>
+						{#if searchFilter !== 'unanswered'}
+							<select name="search" bind:value={search} class="search">
+								{#each question.options as option}
+									<option value={option}>{option}</option>
+								{/each}
+							</select>
+						{/if}
+					{:else if question.type === 'FILE'}
+						<select name="searchFilter" bind:value={searchFilter} class="searchFilter">
+							<option value="uploaded">has uploaded file</option>
+							<option value="not_uploaded">has not uploaded file</option>
+						</select>
+					{/if}
+				{/if}
+			{/each}
 		{/if}
 		<input type="hidden" name="limit" value={limit} />
 		<button>Search</button>
@@ -264,23 +436,35 @@
 	.stats {
 		padding-top: 20px;
 	}
+
 	.filter {
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
-		gap: 0.5rem;
+		gap: 0.3rem;
 		width: 100%;
 		min-width: 0;
+		flex-wrap: wrap;
+	}
+
+	.key {
+		flex: 1;
+		min-width: 50%;
 	}
 
 	.search {
-		min-width: 0;
+		flex: 2;
+		max-width: 100%;
+	}
+
+	.searchFilter {
 		flex: 1;
+		max-width: 50%;
 	}
 
 	.filter button {
-		min-width: 5rem;
+		min-width: 100%;
 	}
 
 	#page {
@@ -295,12 +479,6 @@
 
 	#page input {
 		width: 3.5rem;
-	}
-
-	.disabled {
-		pointer-events: none;
-		text-decoration: none;
-		opacity: 0.5;
 	}
 
 	.graph-container {
