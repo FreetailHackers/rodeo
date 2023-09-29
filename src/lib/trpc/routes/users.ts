@@ -652,7 +652,7 @@ function getWhereCondition(
 	scanOptions: string[]
 ): Prisma.UserWhereInput {
 	if (key === 'email') {
-		return { authUser: { email: { contains: search } } };
+		return { authUser: { email: { contains: search, mode: 'insensitive' } } };
 	} else if (key === 'status') {
 		return { authUser: { status: search as Status } };
 	} else if (key === 'role') {
@@ -662,12 +662,12 @@ function getWhereCondition(
 			decision: { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },
 		};
 	} else if (scanOptions.includes(key)) {
-		if (searchFilter == 'greater') {
+		if (searchFilter === 'greater') {
 			return { scanCount: { path: [key], gt: Number(search) } };
-		} else if (searchFilter == 'greater_equal') {
+		} else if (searchFilter === 'greater_equal') {
 			return { scanCount: { path: [key], gte: Number(search) } };
-		} else if (searchFilter == 'less') {
-			if (search == '0') {
+		} else if (searchFilter === 'less') {
+			if (search === '0') {
 				return { scanCount: { path: [key], lt: Number(search) } };
 			} else {
 				return {
@@ -681,54 +681,123 @@ function getWhereCondition(
 					],
 				};
 			}
-		} else if (searchFilter == 'less_equal') {
+		} else if (searchFilter === 'less_equal') {
 			return {
 				OR: [
 					{
-						scanCount: { path: [key], lte: search },
+						scanCount: { path: [key], lte: Number(search) },
 					},
 					{
 						scanCount: { path: [key], equals: Prisma.DbNull },
 					},
 				],
 			};
-		} else if (searchFilter == 'equal') {
-			return { scanCount: { path: [key], equals: Number(search) } };
-		} else if (searchFilter == 'not_equal') {
-			return { scanCount: { path: [key], not: Number(search) } };
-		} else if (searchFilter == 'unanswered') {
-			return { scanCount: { path: [key], equals: Prisma.DbNull } };
+		} else if (searchFilter === 'equal') {
+			if (Number(search) === 0) {
+				return {
+					OR: [
+						{
+							scanCount: { path: [key], equals: Number(search) },
+						},
+						{
+							scanCount: { path: [key], equals: Prisma.DbNull },
+						},
+					],
+				};
+			} else {
+				return { scanCount: { path: [key], equals: Number(search) } };
+			}
+		} else if (searchFilter === 'not_equal') {
+			return {
+				OR: [
+					{
+						scanCount: { path: [key], not: Number(search) },
+					},
+					{
+						scanCount: { path: [key], equals: Prisma.DbNull },
+					},
+				],
+			};
 		}
 	} else {
 		for (const question of questions) {
-			if (key == question.id) {
-				if (question.type == 'SENTENCE' || question.type == 'PARAGRAPH') {
-					if (searchFilter == 'exact') {
+			if (key === question.id) {
+				if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
+					if (searchFilter === 'exact') {
 						return { application: { path: [question.id], equals: search } };
-					} else if (searchFilter == 'contains') {
+					} else if (searchFilter === 'contains') {
 						return { application: { path: [question.id], string_contains: search } };
-					} else if (searchFilter == 'unanswered') {
-						return { application: { path: [question.id], equals: Prisma.DbNull } };
-					} else if (searchFilter == 'empty') {
-						return { application: { path: [question.id], equals: '' } };
+					} else if (searchFilter === 'unanswered') {
+						return {
+							OR: [
+								{
+									application: { path: [question.id], equals: '' },
+								},
+								{
+									application: { path: [question.id], equals: Prisma.DbNull },
+								},
+							],
+						};
 					}
-				} else if (question.type == 'NUMBER') {
-					if (searchFilter == 'greater') {
-						return { application: { path: [question.id], gt: Number(search) } };
-					} else if (searchFilter == 'greater_equal') {
-						return { application: { path: [question.id], gte: Number(search) } };
-					} else if (searchFilter == 'less') {
-						return { application: { path: [question.id], lt: Number(search) } };
-					} else if (searchFilter == 'less_equal') {
-						return { application: { path: [question.id], lte: Number(search) } };
-					} else if (searchFilter == 'equal') {
-						return { application: { path: [question.id], equals: Number(search) } };
-					} else if (searchFilter == 'not_equal') {
-						return { application: { path: [question.id], not: Number(search) } };
-					} else if (searchFilter == 'unanswered') {
-						return { application: { path: [question.id], equals: Prisma.DbNull } };
+				} else if (question.type === 'NUMBER') {
+					if (searchFilter === 'greater') {
+						return { scanCount: { path: [key], gt: Number(search) } };
+					} else if (searchFilter === 'greater_equal') {
+						return { scanCount: { path: [key], gte: Number(search) } };
+					} else if (searchFilter === 'less') {
+						if (search === '0') {
+							return { scanCount: { path: [key], lt: Number(search) } };
+						} else {
+							return {
+								OR: [
+									{
+										scanCount: { path: [key], lt: Number(search) },
+									},
+									{
+										scanCount: { path: [key], equals: Prisma.DbNull },
+									},
+								],
+							};
+						}
+					} else if (searchFilter === 'less_equal') {
+						return {
+							OR: [
+								{
+									scanCount: { path: [key], lte: Number(search) },
+								},
+								{
+									scanCount: { path: [key], equals: Prisma.DbNull },
+								},
+							],
+						};
+					} else if (searchFilter === 'equal') {
+						if (Number(search) === 0) {
+							return {
+								OR: [
+									{
+										scanCount: { path: [key], equals: Number(search) },
+									},
+									{
+										scanCount: { path: [key], equals: Prisma.DbNull },
+									},
+								],
+							};
+						} else {
+							return { scanCount: { path: [key], equals: Number(search) } };
+						}
+					} else if (searchFilter === 'not_equal') {
+						return {
+							OR: [
+								{
+									scanCount: { path: [key], not: Number(search) },
+								},
+								{
+									scanCount: { path: [key], equals: Prisma.DbNull },
+								},
+							],
+						};
 					}
-				} else if (question.type == 'DROPDOWN') {
+				} else if (question.type === 'DROPDOWN') {
 					// look to see if searchFilter is unanswered
 					if (searchFilter != 'unanswered') {
 						const searchDictArray = JSON.parse(search);
@@ -737,45 +806,51 @@ function getWhereCondition(
 						if (question.multiple) {
 							const searchArray = searchDictArray.map((item: { value: string }) => item.value);
 
-							if (searchFilter == 'contains') {
+							if (searchFilter === 'contains') {
 								return { application: { path: [question.id], array_contains: searchArray } };
-							} else if (searchFilter == 'exactly') {
+							} else if (searchFilter === 'exactly') {
 								return { application: { path: [question.id], equals: searchArray } };
 							}
 						} else {
 							// searchDictArray is a string
-							if (searchFilter == 'is') {
+							if (searchFilter === 'is') {
 								return { application: { path: [question.id], equals: searchDictArray.value } };
-							} else if (searchFilter == 'is_not') {
+							} else if (searchFilter === 'is_not') {
 								return { application: { path: [question.id], not: searchDictArray.value } };
-							} else if (searchFilter == 'unanswered') {
+							} else if (searchFilter === 'unanswered') {
 								return { application: { path: [question.id], equals: Prisma.DbNull } };
 							}
 						}
 					} else {
 						return { application: { path: [question.id], equals: Prisma.DbNull } };
 					}
-				} else if (question.type == 'CHECKBOX') {
-					if (search == 'true') {
+				} else if (question.type === 'CHECKBOX') {
+					if (searchFilter === 'true') {
 						return { application: { path: [question.id], equals: true } };
-					} else if (search == 'false') {
-						return { application: { path: [question.id], equals: false } };
-					} else if (search == 'unanswered') {
-						return { application: { path: [question.id], equals: Prisma.DbNull } };
+					} else if (searchFilter === 'false') {
+						return {
+							OR: [
+								{
+									application: { path: [question.id], equals: false },
+								},
+								{
+									application: { path: [question.id], equals: Prisma.DbNull },
+								},
+							],
+						};
 					}
-				} else if (question.type == 'RADIO') {
-					if (searchFilter == 'is') {
+				} else if (question.type === 'RADIO') {
+					if (searchFilter === 'is') {
 						return { application: { path: [question.id], equals: search } };
-					} else if (searchFilter == 'is_not') {
+					} else if (searchFilter === 'is_not') {
 						return { application: { path: [question.id], not: search } };
-					} else if (searchFilter == 'unanswered') {
+					} else if (searchFilter === 'unanswered') {
 						return { application: { path: [question.id], equals: Prisma.DbNull } };
 					}
-				} else if (question.type == 'FILE') {
-					// don't think this part is working right but everything else should be
-					if (search == 'uploaded') {
+				} else if (question.type === 'FILE') {
+					if (searchFilter === 'uploaded') {
 						return { application: { path: [question.id], not: Prisma.DbNull } };
-					} else if (search == 'not_uploaded') {
+					} else if (searchFilter === 'not_uploaded') {
 						return { application: { path: [question.id], equals: Prisma.DbNull } };
 					}
 				}
