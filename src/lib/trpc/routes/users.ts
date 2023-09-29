@@ -675,7 +675,7 @@ function getWhereCondition(
 			}
 			return { scanCount: { path: [key], gte: Number(search) } };
 		} else if (searchFilter === 'less') {
-			if (Number(search) === 0) {
+			if (Number(search) !== 0) {
 				return {
 					OR: [
 						{ scanCount: { path: [key], lt: Number(search) } },
