@@ -233,7 +233,7 @@
 							<option value="contains" selected>contains</option>
 							<option value="unanswered">is not answered</option>
 						</select>
-						{#if searchFilter != 'unanswered'}
+						{#if searchFilter !== 'unanswered'}
 							<input
 								type="text"
 								id="search"
@@ -254,7 +254,7 @@
 							<option value="not_equal">not equal to</option>
 							<option value="unanswered">unanswered</option>
 						</select>
-						{#if searchFilter != 'unanswered'}
+						{#if searchFilter !== 'unanswered'}
 							<input
 								type="number"
 								id="search"
@@ -279,7 +279,7 @@
 								<option value="unanswered">unanswered</option>
 							</select>
 						{/if}
-						{#if searchFilter != 'unanswered'}
+						{#if searchFilter !== 'unanswered'}
 							<Select
 								name="search"
 								class="search"
@@ -309,7 +309,7 @@
 							<option value="is_not" selected>is not</option>
 							<option value="unanswered">unanswered</option>
 						</select>
-						{#if searchFilter != 'unanswered'}
+						{#if searchFilter !== 'unanswered'}
 							<select name="search" bind:value={search} class="search">
 								{#each question.options as option}
 									<option value={option}>{option}</option>

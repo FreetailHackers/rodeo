@@ -743,61 +743,13 @@ function getWhereCondition(
 					} else if (searchFilter === 'greater_equal') {
 						return { application: { path: [key], gte: Number(search) } };
 					} else if (searchFilter === 'less') {
-						if (Number(search) === 0) {
-							return { application: { path: [key], lt: Number(search) } };
-						} else {
-							return {
-								OR: [
-									{
-										application: { path: [key], lt: Number(search) },
-									},
-									{
-										application: { path: [key], equals: Prisma.DbNull },
-									},
-								],
-							};
-						}
+						return { application: { path: [key], lt: Number(search) } };
 					} else if (searchFilter === 'less_equal') {
-						return {
-							OR: [
-								{
-									application: { path: [key], lte: Number(search) },
-								},
-								{
-									application: { path: [key], equals: Prisma.DbNull },
-								},
-							],
-						};
+						return { application: { path: [key], lte: Number(search) } };
 					} else if (searchFilter === 'equal') {
-						if (Number(search) === 0) {
-							return {
-								OR: [
-									{
-										application: { path: [key], equals: Number(search) },
-									},
-									{
-										application: { path: [key], equals: Prisma.DbNull },
-									},
-								],
-							};
-						} else {
-							return { application: { path: [key], equals: Number(search) } };
-						}
+						return { application: { path: [key], equals: Number(search) } };
 					} else if (searchFilter === 'not_equal') {
-						if (Number(search) === 0) {
-							return {
-								OR: [
-									{ application: { path: [key], not: Number(search) } },
-									{ application: { path: [key], not: Prisma.DbNull } },
-								],
-							};
-						}
-						return {
-							OR: [
-								{ application: { path: [key], not: Number(search) } },
-								{ application: { path: [key], equals: Prisma.DbNull } },
-							],
-						};
+						return { application: { path: [key], not: Number(search) } };
 					}
 				} else if (question.type === 'DROPDOWN') {
 					// look to see if searchFilter is unanswered
