@@ -665,57 +665,55 @@ function getWhereCondition(
 		if (searchFilter === 'greater') {
 			return { scanCount: { path: [key], gt: Number(search) } };
 		} else if (searchFilter === 'greater_equal') {
-			return { scanCount: { path: [key], gte: Number(search) } };
-		} else if (searchFilter === 'less') {
-			if (search === '0') {
-				return { scanCount: { path: [key], lt: Number(search) } };
-			} else {
+			if (Number(search) === 0) {
 				return {
 					OR: [
-						{
-							scanCount: { path: [key], lt: Number(search) },
-						},
-						{
-							scanCount: { path: [key], equals: Prisma.DbNull },
-						},
+						{ scanCount: { path: [key], gte: Number(search) } },
+						{ scanCount: { path: [key], equals: Prisma.DbNull } },
 					],
 				};
 			}
+			return { scanCount: { path: [key], gte: Number(search) } };
+		} else if (searchFilter === 'less') {
+			if (Number(search) === 0) {
+				return {
+					OR: [
+						{ scanCount: { path: [key], lt: Number(search) } },
+						{ scanCount: { path: [key], equals: Prisma.DbNull } },
+					],
+				};
+			}
+			return { scanCount: { path: [key], lt: Number(search) } };
 		} else if (searchFilter === 'less_equal') {
 			return {
 				OR: [
-					{
-						scanCount: { path: [key], lte: Number(search) },
-					},
-					{
-						scanCount: { path: [key], equals: Prisma.DbNull },
-					},
+					{ scanCount: { path: [key], lte: Number(search) } },
+					{ scanCount: { path: [key], equals: Prisma.DbNull } },
 				],
 			};
 		} else if (searchFilter === 'equal') {
 			if (Number(search) === 0) {
 				return {
 					OR: [
-						{
-							scanCount: { path: [key], equals: Number(search) },
-						},
-						{
-							scanCount: { path: [key], equals: Prisma.DbNull },
-						},
+						{ scanCount: { path: [key], equals: Number(search) } },
+						{ scanCount: { path: [key], equals: Prisma.DbNull } },
 					],
 				};
-			} else {
-				return { scanCount: { path: [key], equals: Number(search) } };
 			}
+			return { scanCount: { path: [key], equals: Number(search) } };
 		} else if (searchFilter === 'not_equal') {
+			if (Number(search) === 0) {
+				return {
+					OR: [
+						{ scanCount: { path: [key], not: Number(search) } },
+						{ scanCount: { path: [key], not: Prisma.DbNull } },
+					],
+				};
+			}
 			return {
 				OR: [
-					{
-						scanCount: { path: [key], not: Number(search) },
-					},
-					{
-						scanCount: { path: [key], equals: Prisma.DbNull },
-					},
+					{ scanCount: { path: [key], not: Number(search) } },
+					{ scanCount: { path: [key], equals: Prisma.DbNull } },
 				],
 			};
 		}
@@ -741,20 +739,20 @@ function getWhereCondition(
 					}
 				} else if (question.type === 'NUMBER') {
 					if (searchFilter === 'greater') {
-						return { scanCount: { path: [key], gt: Number(search) } };
+						return { application: { path: [key], gt: Number(search) } };
 					} else if (searchFilter === 'greater_equal') {
-						return { scanCount: { path: [key], gte: Number(search) } };
+						return { application: { path: [key], gte: Number(search) } };
 					} else if (searchFilter === 'less') {
-						if (search === '0') {
-							return { scanCount: { path: [key], lt: Number(search) } };
+						if (Number(search) === 0) {
+							return { application: { path: [key], lt: Number(search) } };
 						} else {
 							return {
 								OR: [
 									{
-										scanCount: { path: [key], lt: Number(search) },
+										application: { path: [key], lt: Number(search) },
 									},
 									{
-										scanCount: { path: [key], equals: Prisma.DbNull },
+										application: { path: [key], equals: Prisma.DbNull },
 									},
 								],
 							};
@@ -763,10 +761,10 @@ function getWhereCondition(
 						return {
 							OR: [
 								{
-									scanCount: { path: [key], lte: Number(search) },
+									application: { path: [key], lte: Number(search) },
 								},
 								{
-									scanCount: { path: [key], equals: Prisma.DbNull },
+									application: { path: [key], equals: Prisma.DbNull },
 								},
 							],
 						};
@@ -775,31 +773,35 @@ function getWhereCondition(
 							return {
 								OR: [
 									{
-										scanCount: { path: [key], equals: Number(search) },
+										application: { path: [key], equals: Number(search) },
 									},
 									{
-										scanCount: { path: [key], equals: Prisma.DbNull },
+										application: { path: [key], equals: Prisma.DbNull },
 									},
 								],
 							};
 						} else {
-							return { scanCount: { path: [key], equals: Number(search) } };
+							return { application: { path: [key], equals: Number(search) } };
 						}
 					} else if (searchFilter === 'not_equal') {
+						if (Number(search) === 0) {
+							return {
+								OR: [
+									{ application: { path: [key], not: Number(search) } },
+									{ application: { path: [key], not: Prisma.DbNull } },
+								],
+							};
+						}
 						return {
 							OR: [
-								{
-									scanCount: { path: [key], not: Number(search) },
-								},
-								{
-									scanCount: { path: [key], equals: Prisma.DbNull },
-								},
+								{ application: { path: [key], not: Number(search) } },
+								{ application: { path: [key], equals: Prisma.DbNull } },
 							],
 						};
 					}
 				} else if (question.type === 'DROPDOWN') {
 					// look to see if searchFilter is unanswered
-					if (searchFilter != 'unanswered') {
+					if (searchFilter !== 'unanswered') {
 						const searchDictArray = JSON.parse(search);
 
 						// check if question allows multiple responses

@@ -449,21 +449,21 @@
 	}
 
 	.key {
-		min-width: 50%;
+		max-width: 50%;
 	}
 
 	.search {
-		flex: 10;
-		min-width: 60%;
+		flex: 2;
+		max-width: 100%;
 	}
 
 	.searchFilter {
-		flex: 10;
-		min-width: 20%;
+		flex: 1;
+		max-width: 50%;
 	}
 
 	.filter button {
-		min-width: -webkit-fill-available;
+		min-width: 100%;
 	}
 
 	#page {
