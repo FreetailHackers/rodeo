@@ -449,7 +449,8 @@
 	}
 
 	.key {
-		max-width: 50%;
+		flex: 1;
+		min-width: 50%;
 	}
 
 	.search {
