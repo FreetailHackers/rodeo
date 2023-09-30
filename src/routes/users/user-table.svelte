@@ -2,9 +2,10 @@
 	import { enhance } from '$app/forms';
 	import UserCard from '$lib/components/user-card.svelte';
 	import type { Prisma, Question } from '@prisma/client';
+	import type { UserSchema } from 'lucia';
 
 	export let users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
-	export let selfID: string;
+	export let self: UserSchema;
 	export let questions: Question[];
 
 	let action = 'admissions';
@@ -46,7 +47,7 @@
 					This will NOT send any notifications and WILL delete any pending (unreleased) decisions.`;
 		}
 		if (action === 'add-role') {
-			if (selectedUsers.filter((user) => user.authUserId === selfID).length > 0) {
+			if (selectedUsers.filter((user) => user.authUserId === self.id).length > 0) {
 				throw 'You cannot change your own role.';
 			}
 			return `${
@@ -54,7 +55,7 @@
 			} selected users will have the chosen role assigned to them.`;
 		}
 		if (action === 'remove-role') {
-			if (selectedUsers.filter((user) => user.authUserId === selfID).length > 0) {
+			if (selectedUsers.filter((user) => user.authUserId === self.id).length > 0) {
 				throw 'You cannot change your own role.';
 			}
 			return `${selected.filter(Boolean).length} selected users will have the chosen role removed.`;
@@ -81,119 +82,129 @@
 	action="?/bulk"
 >
 	<ul>
-		<!-- Actions -->
-		<li id="header">
-			<div class="flex-align-center">
-				<input
-					type="checkbox"
-					id="selectAll"
-					bind:this={selectAll}
-					on:click={() => (selected = selected.map(() => selectAll.checked))}
-				/>
-				Select an action:
-			</div>
-			<div id="actions">
+		{#if self.roles.includes('ADMIN')}
+			<!-- Actions -->
+			<li id="header">
 				<div class="flex-align-center">
 					<input
-						type="radio"
-						name="action"
-						id="user-admissions"
-						bind:group={action}
-						value="admissions"
+						type="checkbox"
+						id="selectAll"
+						bind:this={selectAll}
+						on:click={() => (selected = selected.map(() => selectAll.checked))}
 					/>
-					<label for="user-admissions">Admissions:&nbsp;</label>
-					<span class="grow" />
-					<select name="user-admissions">
-						<option value="ACCEPTED">Accept</option>
-						<option value="REJECTED">Reject</option>
-						<option value="WAITLISTED">Waitlist</option>
-					</select>
+					Select an action:
 				</div>
-				<div class="flex-align-center">
-					<input type="radio" name="action" id="user-status" bind:group={action} value="status" />
-					<label for="user-status">Set status:&nbsp;</label>
-					<span class="grow" />
-					<select name="user-status">
-						<option value="CREATED">Created</option>
-						<option value="VERIFIED">Verified</option>
-						<option value="APPLIED">Applied</option>
-						<option value="ACCEPTED">Accepted</option>
-						<option value="REJECTED">Rejected</option>
-						<option value="WAITLISTED">Waitlisted</option>
-						<option value="CONFIRMED">Confirmed</option>
-						<option value="DECLINED">Declined</option>
-					</select>
-				</div>
-				<div class="flex-align-center">
-					<input type="radio" name="action" id="add-role" bind:group={action} value="add-role" />
-					<label for="add-role">Add role:&nbsp;</label>
-					<span class="grow" />
-					<select name="role-to-add">
-						<option value="HACKER">Hacker</option>
-						<option value="ADMIN">Admin</option>
-						<option value="ORGANIZER">Organizer</option>
-						<option value="JUDGE">Judge</option>
-						<option value="VOLUNTEER">Volunteer</option>
-						<option value="SPONSOR">Sponsor</option>
-					</select>
-				</div>
-				<div class="flex-align-center">
-					<input
-						type="radio"
-						name="action"
-						id="remove-role"
-						bind:group={action}
-						value="remove-role"
-					/>
-					<label for="remove-role">Remove role:&nbsp;</label>
-					<span class="grow" />
-					<select name="role-to-remove">
-						<option value="HACKER">Hacker</option>
-						<option value="ADMIN">Admin</option>
-						<option value="ORGANIZER">Organizer</option>
-						<option value="JUDGE">Judge</option>
-						<option value="VOLUNTEER">Volunteer</option>
-						<option value="SPONSOR">Sponsor</option>
-					</select>
-				</div>
-				<div class="flex-align-center">
-					<input type="radio" name="action" id="user-release" bind:group={action} value="release" />
-					<label for="user-release">Release decisions</label>
-				</div>
-				{(() => {
-					try {
-						return validateSelection(action, selected);
-					} catch (e) {
-						return e;
-					}
-				})()}
-				<button
-					type="submit"
-					disabled={(() => {
+				<div id="actions">
+					<div class="flex-align-center">
+						<input
+							type="radio"
+							name="action"
+							id="user-admissions"
+							bind:group={action}
+							value="admissions"
+						/>
+						<label for="user-admissions">Admissions:&nbsp;</label>
+						<span class="grow" />
+						<select name="user-admissions">
+							<option value="ACCEPTED">Accept</option>
+							<option value="REJECTED">Reject</option>
+							<option value="WAITLISTED">Waitlist</option>
+						</select>
+					</div>
+					<div class="flex-align-center">
+						<input type="radio" name="action" id="user-status" bind:group={action} value="status" />
+						<label for="user-status">Set status:&nbsp;</label>
+						<span class="grow" />
+						<select name="user-status">
+							<option value="CREATED">Created</option>
+							<option value="VERIFIED">Verified</option>
+							<option value="APPLIED">Applied</option>
+							<option value="ACCEPTED">Accepted</option>
+							<option value="REJECTED">Rejected</option>
+							<option value="WAITLISTED">Waitlisted</option>
+							<option value="CONFIRMED">Confirmed</option>
+							<option value="DECLINED">Declined</option>
+						</select>
+					</div>
+					<div class="flex-align-center">
+						<input type="radio" name="action" id="add-role" bind:group={action} value="add-role" />
+						<label for="add-role">Add role:&nbsp;</label>
+						<span class="grow" />
+						<select name="role-to-add">
+							<option value="HACKER">Hacker</option>
+							<option value="ADMIN">Admin</option>
+							<option value="ORGANIZER">Organizer</option>
+							<option value="JUDGE">Judge</option>
+							<option value="VOLUNTEER">Volunteer</option>
+							<option value="SPONSOR">Sponsor</option>
+						</select>
+					</div>
+					<div class="flex-align-center">
+						<input
+							type="radio"
+							name="action"
+							id="remove-role"
+							bind:group={action}
+							value="remove-role"
+						/>
+						<label for="remove-role">Remove role:&nbsp;</label>
+						<span class="grow" />
+						<select name="role-to-remove">
+							<option value="HACKER">Hacker</option>
+							<option value="ADMIN">Admin</option>
+							<option value="ORGANIZER">Organizer</option>
+							<option value="JUDGE">Judge</option>
+							<option value="VOLUNTEER">Volunteer</option>
+							<option value="SPONSOR">Sponsor</option>
+						</select>
+					</div>
+					<div class="flex-align-center">
+						<input
+							type="radio"
+							name="action"
+							id="user-release"
+							bind:group={action}
+							value="release"
+						/>
+						<label for="user-release">Release decisions</label>
+					</div>
+					{(() => {
 						try {
-							validateSelection(action, selected);
-							return false;
+							return validateSelection(action, selected);
 						} catch (e) {
-							return true;
+							return e;
 						}
 					})()}
-				>
-					Confirm
-				</button>
-			</div>
-		</li>
+					<button
+						type="submit"
+						disabled={(() => {
+							try {
+								validateSelection(action, selected);
+								return false;
+							} catch (e) {
+								return true;
+							}
+						})()}
+					>
+						Confirm
+					</button>
+				</div>
+			</li>
+		{/if}
 
 		<!-- Data -->
 		{#each users as user, i (user.authUserId)}
 			<li>
 				<details>
 					<summary class="flex-align-center">
-						<input
-							type="checkbox"
-							name={'id ' + user.authUserId}
-							checked={selected[i]}
-							on:click={() => (selected[i] = !selected[i])}
-						/>
+						{#if self.roles.includes('ADMIN')}
+							<input
+								type="checkbox"
+								name={'id ' + user.authUserId}
+								checked={selected[i]}
+								on:click={() => (selected[i] = !selected[i])}
+							/>
+						{/if}
 						<a href="mailto:{user.authUser.email}">{user.authUser.email}</a>
 						<span class="grow" />
 						<span

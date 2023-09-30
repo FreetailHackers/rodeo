@@ -454,7 +454,7 @@ export const usersRouter = t.router({
 				count: number;
 				users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
 			}> => {
-				const questions = await getQuestions();
+				let questions = await getQuestions();
 				const scanOptions = (await getSettings()).scanActions;
 				const where = getWhereCondition(
 					req.input.key,
@@ -471,13 +471,13 @@ export const usersRouter = t.router({
 					take: req.input.limit,
 					orderBy: { authUser: { email: 'asc' } },
 				});
+				// Remove questions that should not be visible to sponsors
 				if (!req.ctx.user.roles.includes('ADMIN')) {
-					const questions = await getQuestions();
-					const filteredQuestion = questions.filter((question) => !question.sponsorView);
+					questions = questions.filter((question) => !question.sponsorView);
 					users.forEach((user) => {
 						// eslint-disable-next-line @typescript-eslint/no-explicit-any
 						const applicationData = user.application as Record<string, any>;
-						filteredQuestion.forEach((question) => {
+						questions.forEach((question) => {
 							delete applicationData[question.id];
 						});
 					});
@@ -495,7 +495,7 @@ export const usersRouter = t.router({
 	 * Gets statistics on the given users for the given questions. User must be an admin.
 	 */
 	getStats: t.procedure
-		.use(authenticate(['ADMIN']))
+		.use(authenticate(['ADMIN', 'SPONSOR']))
 		.input(
 			z.object({
 				key: z.string(),
@@ -504,7 +504,7 @@ export const usersRouter = t.router({
 			})
 		)
 		.query(async (req) => {
-			const questions = await getQuestions();
+			let questions = await getQuestions();
 			const scanOptions = (await getSettings()).scanActions;
 			const where = getWhereCondition(
 				req.input.key,
@@ -517,14 +517,17 @@ export const usersRouter = t.router({
 				where,
 			});
 
-			const filteredQuestion = questions.filter(
+			questions = questions.filter(
 				(question) => question.type === 'RADIO' || question.type === 'DROPDOWN'
 			);
+			if (!req.ctx.user.roles.includes('ADMIN')) {
+				questions = questions.filter((question) => question.sponsorView);
+			}
 			const responses: Record<string, Record<string, number>> = {};
 			users.forEach((user) => {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const applicationData = user.application as Record<string, any>;
-				filteredQuestion.forEach((question) => {
+				questions.forEach((question) => {
 					const answer = applicationData[question.id];
 					const key = answer ?? 'No answer given';
 					if (!responses[question.id]) {

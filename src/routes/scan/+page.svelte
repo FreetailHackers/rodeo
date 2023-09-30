@@ -52,6 +52,9 @@
 
 <section>
 	{#if action === ''}
+		{#if data.settings.scanActions.length === 0}
+			<i>No scan actions are configured. Add some in the <a href="/admin">admin panel</a>.</i>
+		{/if}
 		{#each data.settings.scanActions as option}
 			<button on:click={() => (action = option)}>{option}</button>
 		{/each}

@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.7.1
+
+[FIXED]
+
+- Password resets expire in 10 minutes instead of 10 seconds now
+- Sponsor accounts can actually see the sponsor portal
+
+## v0.7.0
+
+[ADDED]
+
+- Ability to filter users by decisions, registration questions, and scan options
+- Sponsor portal
+
 ## v0.6.3
 
 [ADDED]

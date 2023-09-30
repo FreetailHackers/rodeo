@@ -336,6 +336,9 @@
 	<!-- User Statistics -->
 	<details class="stats">
 		<summary>User Statistics</summary>
+		{#if Object.keys(data.stats).length === 0}
+			<p>No statistics available.</p>
+		{/if}
 		{#each data.questions as question}
 			{#if data.stats[question.id] !== undefined}
 				<h2>{question.label}</h2>
@@ -383,7 +386,7 @@
 			<option value="0">Show all</option>
 		</select>
 	</div>
-	<UserTable users={data.users} selfID={data.user.id} questions={data.questions} />
+	<UserTable users={data.users} self={data.user} questions={data.questions} />
 
 	<!-- Pagination -->
 	<form>
