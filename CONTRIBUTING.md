@@ -31,6 +31,7 @@ If you're using Linux, you can probably figure this out yourself.
 Once you've installed PostgreSQL and NodeJS, the next steps are the same for every OS. First, create a database named `rodeo-development` with `createdb rodeo-development`. Next, create a file named `.env` and put the following string in it, substituting username and password as appropriate. Most installations set the default username to either your operating system username or `postgres` and a blank default password. If this doesn't work you can consult your package manager's documentation.
 
 `DATABASE_URL=postgres://username:password@localhost:5432/rodeo-development`
+`DIRECT_URL=postgres://username:password@localhost:5432/rodeo-development`
 
 Now run `npm install` to download our dependencies, `npx prisma migrate dev` to sync up your database to our schema, and `npx prisma db seed` to insert some dummy data. Finally, you can start the development server with `npm run dev` and log into the sample accounts by following the instructions at the top of the [the seed script](prisma/seed.ts).
 
