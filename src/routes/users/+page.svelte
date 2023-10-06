@@ -72,7 +72,7 @@
 
 		return {
 			type: 'box' as const,
-			boxpoints: false as false,
+			boxpoints: false as const,
 			y: data,
 		};
 	}
