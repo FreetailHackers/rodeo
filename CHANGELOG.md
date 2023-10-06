@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.7.2
+
+[ADDED]
+
+- Textareas can now be vertically resized
+
+[CHANGED]
+
+- Optimized database queries and email sending for releasing decisions
+
+[FIXED]
+
+- Users list not showing in navbar for sponsor accounts
+- Users list display limit not remembering filters
+- Users list pagination buttons not disabled when at first/last page
+
 ## v0.7.1
 
 [FIXED]

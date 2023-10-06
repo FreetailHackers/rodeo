@@ -1,4 +1,4 @@
-import type { Decision, Prisma } from '@prisma/client';
+import type { Prisma, Status } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
 import { sendEmails } from '../email';
@@ -6,33 +6,41 @@ import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getSettings } from './settings';
 
-async function releaseDecision(decision: Decision): Promise<void> {
-	const hacker = await prisma.authUser.findUniqueOrThrow({
-		where: { id: decision.userId },
+async function releaseDecisions(ids?: string[]): Promise<void> {
+	const hackers = await prisma.user.findMany({
+		include: { authUser: true, decision: true },
+		where: ids === undefined ? {} : { authUserId: { in: ids } },
 	});
-	if (hacker.status === 'APPLIED' || hacker.status === 'WAITLISTED') {
-		const updateStatus = prisma.authUser.update({
-			where: { id: decision.userId },
-			data: { status: decision.status },
+	// The codebase should already enforce that decisions can only exist
+	// for users with status APPLIED or WAITLISTED, but check for safety
+	const invalid = hackers
+		.filter((hacker) => !['APPLIED', 'WAITLISTED'].includes(hacker.authUser.status))
+		.map((hacker) => hacker.authUserId);
+	await prisma.decision.deleteMany({ where: { userId: { in: invalid } } });
+	for (const decision of ['ACCEPTED', 'REJECTED', 'WAITLISTED']) {
+		const decisions = hackers.filter((hacker) => hacker.decision?.status === decision);
+		const updateStatus = prisma.authUser.updateMany({
+			where: { id: { in: decisions.map((decision) => decision.authUserId) } },
+			data: { status: decision as Status },
 		});
-		const deleteDecision = prisma.decision.delete({
-			where: { userId: decision.userId },
+		const deleteDecision = prisma.decision.deleteMany({
+			where: { userId: { in: decisions.map((decision) => decision.authUserId) } },
 		});
 		await prisma.$transaction([updateStatus, deleteDecision]);
 
 		let template = '';
-		if (decision.status === 'ACCEPTED') {
+		if (decision === 'ACCEPTED') {
 			template = (await getSettings()).acceptTemplate;
-		} else if (decision.status === 'REJECTED') {
+		} else if (decision === 'REJECTED') {
 			template = (await getSettings()).rejectTemplate;
-		} else if (decision.status === 'WAITLISTED') {
+		} else if (decision === 'WAITLISTED') {
 			template = (await getSettings()).waitlistTemplate;
 		}
-		await sendEmails([hacker.email], 'Freetail Hackers status update', template);
-	} else {
-		await prisma.decision.delete({
-			where: { userId: decision.userId },
-		});
+		await sendEmails(
+			decisions.map((hacker) => hacker.authUser.email),
+			'Freetail Hackers status update',
+			template
+		);
 	}
 }
 
@@ -100,8 +108,7 @@ export const admissionsRouter = t.router({
 	releaseAllDecisions: t.procedure
 		.use(authenticate(['ADMIN']))
 		.mutation(async (): Promise<void> => {
-			const decisions = await prisma.decision.findMany();
-			decisions.forEach((decision) => releaseDecision(decision));
+			await releaseDecisions();
 		}),
 
 	/**
@@ -112,25 +119,7 @@ export const admissionsRouter = t.router({
 		.use(authenticate(['ADMIN']))
 		.input(z.array(z.string()))
 		.mutation(async (req): Promise<void> => {
-			const decisions = await prisma.decision.findMany({
-				where: { userId: { in: req.input } },
-			});
-			decisions.forEach((decision) => releaseDecision(decision));
-		}),
-
-	/**
-	 * Bulk removes a list of pending decisions by user ID. User must be
-	 * an admin.
-	 */
-	removeDecisions: t.procedure
-		.use(authenticate(['ADMIN']))
-		.input(z.array(z.string()))
-		.mutation(async (req): Promise<void> => {
-			await prisma.decision.deleteMany({
-				where: {
-					userId: { in: req.input },
-				},
-			});
+			await releaseDecisions(req.input);
 		}),
 
 	/**
