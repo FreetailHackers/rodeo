@@ -64,6 +64,19 @@
 		};
 	}
 
+	function recordToNumberObject(answerData: Record<string, number>) {
+		const data = Object.entries(answerData).flatMap(([label, value]) => {
+			const numericLabel = parseFloat(label);
+			return Array.from({ length: value }, () => numericLabel);
+		});
+
+		return {
+			type: 'box' as const,
+			boxpoints: false as false,
+			y: data,
+		};
+	}
+
 	// Download all files of current search filter
 	function downloadAllFiles() {
 		const zip = new JSZip();
@@ -342,25 +355,42 @@
 		{#each data.questions as question}
 			{#if data.stats[question.id] !== undefined}
 				<h2>{question.label}</h2>
-				<div class="graph-container">
+				{#if question.type === 'NUMBER'}
 					<Plot
-						data={[recordToDataObject(data.stats[question.id])]}
+						data={[recordToNumberObject(data.stats[question.id])]}
 						layout={{
-							showlegend: true,
-							legend: {
-								orientation: 'h',
-							},
+							showlegend: false,
 							margin: {
-								t: 50,
+								t: 20,
 								r: 50,
 								b: 50,
-								l: 50,
+								l: 20,
 							},
 						}}
 						fillParent="width"
 						debounce={250}
 					/>
-				</div>
+				{:else}
+					<div class="graph-container">
+						<Plot
+							data={[recordToDataObject(data.stats[question.id])]}
+							layout={{
+								showlegend: true,
+								legend: {
+									orientation: 'h',
+								},
+								margin: {
+									t: 20,
+									r: 50,
+									b: 50,
+									l: 20,
+								},
+							}}
+							fillParent={true}
+							debounce={250}
+						/>
+					</div>
+				{/if}
 			{/if}
 		{/each}
 	</details>

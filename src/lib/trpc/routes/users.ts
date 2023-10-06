@@ -517,9 +517,6 @@ export const usersRouter = t.router({
 				where,
 			});
 
-			questions = questions.filter(
-				(question) => question.type === 'RADIO' || question.type === 'DROPDOWN'
-			);
 			if (!req.ctx.user.roles.includes('ADMIN')) {
 				questions = questions.filter((question) => question.sponsorView);
 			}
@@ -527,14 +524,34 @@ export const usersRouter = t.router({
 			users.forEach((user) => {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const applicationData = user.application as Record<string, any>;
+
 				questions.forEach((question) => {
 					const answer = applicationData[question.id];
-					const key = answer ?? 'No answer given';
+
 					if (!responses[question.id]) {
 						responses[question.id] = {};
 					}
-					const answerData = responses[question.id];
-					answerData[key] = (answerData[key] ?? 0) + 1;
+
+					if (question.type === 'DROPDOWN' && question.multiple && Array.isArray(answer)) {
+						answer.forEach((response) => {
+							const key = response ?? 'No answer given';
+							const answerData = responses[question.id];
+							answerData[key] = (answerData[key] ?? 0) + 1;
+						});
+					} else if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
+						if (answer) {
+							const words = answer.split(/\s+/);
+
+							words.forEach((word: string) => {
+								const answerData = responses[question.id];
+								answerData[word] = (answerData[word] ?? 0) + 1;
+							});
+						}
+					} else {
+						const key = answer ?? 'No answer given';
+						const answerData = responses[question.id];
+						answerData[key] = (answerData[key] ?? 0) + 1;
+					}
 				});
 			});
 			return responses;
