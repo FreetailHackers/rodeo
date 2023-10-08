@@ -19,6 +19,8 @@ const settingsSchema = z
 		declineTemplate: z.string().optional(),
 		scanActions: z.string().array().optional(),
 		timezone: z.string().optional(),
+		applicationDeadline: z.date().nullable().optional(),
+		applicationLimit: z.number().optional(),
 	})
 	.strict();
 

@@ -20,6 +20,15 @@ export const actions = {
 	settings: async ({ locals, request }) => {
 		const formData = await request.formData();
 		const timezone = formData.get('timezone') as string;
+		let applicationDeadline: Date | null;
+		try {
+			applicationDeadline = dayjs
+				.tz(formData.get('applicationDeadline') as string, timezone)
+				.toDate();
+		} catch (e) {
+			applicationDeadline = null;
+		}
+		const applicationLimit = parseInt(formData.get('applicationLimit') as string);
 		const applicationOpen = formData.get('applicationOpen') === 'on';
 		let confirmBy: Date | null;
 		try {
@@ -37,6 +46,8 @@ export const actions = {
 			confirmBy,
 			scanActions,
 			timezone,
+			applicationDeadline,
+			applicationLimit,
 		});
 		return 'Saved settings!';
 	},

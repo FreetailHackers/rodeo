@@ -9,6 +9,7 @@ export const load = async ({ locals }) => {
 		user: await trpc(locals.auth).users.get(),
 		questions: await trpc(locals.auth).questions.get(),
 		settings: await trpc(locals.auth).settings.getPublic(),
+		canApply: await trpc(locals.auth).admissions.canApply(),
 	};
 };
 
@@ -56,7 +57,7 @@ export const actions = {
 	},
 
 	finish: async ({ locals, request }) => {
-		if (!(await trpc(locals.auth).settings.getPublic()).applicationOpen) {
+		if (!(await trpc(locals.auth).admissions.canApply())) {
 			throw redirect(301, '/apply');
 		}
 		await trpc(locals.auth).users.update(
@@ -66,7 +67,7 @@ export const actions = {
 	},
 
 	withdraw: async ({ locals }) => {
-		if (!(await trpc(locals.auth).settings.getPublic()).applicationOpen) {
+		if (!(await trpc(locals.auth).admissions.canApply())) {
 			throw redirect(301, '/apply');
 		}
 		await trpc(locals.auth).users.withdrawApplication();

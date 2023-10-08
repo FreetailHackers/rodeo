@@ -12,6 +12,7 @@ export const load = async ({ locals }) => {
 			google: googleAuth !== null,
 			github: githubAuth !== null,
 		},
+		canApply: await trpc(locals.auth).admissions.canApply(),
 	};
 };
 

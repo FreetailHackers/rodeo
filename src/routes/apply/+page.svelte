@@ -34,7 +34,7 @@
 		<h1>SUBMITTED</h1>
 		<p>Thanks for applying! The team will review your application soon.</p>
 		<form method="POST" action="?/withdraw" use:enhance>
-			{#if data.settings.applicationOpen}
+			{#if data.canApply}
 				<button>Withdraw and Edit</button>
 			{:else}
 				<button disabled>Cannot edit because applications are closed.</button>
@@ -122,7 +122,7 @@
 
 <!-- The actual application -->
 {#if data.user.authUser.status === 'VERIFIED'}
-	{#if data.settings.applicationOpen}
+	{#if data.canApply}
 		<form
 			bind:this={applicationForm}
 			method="POST"

@@ -20,6 +20,33 @@
 		};
 	}}
 >
+	<label for="applicationStatus"><h2>Application Status</h2></label>
+
+	<status-container>
+		<label for="applicationDeadline">Select new application deadline:</label>
+		<input
+			type="datetime-local"
+			name="applicationDeadline"
+			id="applicationDeadline"
+			value={data.settings.applicationDeadline
+				?.toLocaleString('sv', { timeZone: data.settings.timezone })
+				.replace(' ', 'T')
+				.slice(0, -3)}
+		/>
+	</status-container>
+
+	<status-container>
+		<label for="applicationLimit">Type in new maximum number of applications:</label>
+		<input
+			type="number"
+			name="applicationLimit"
+			id="applicationLimit"
+			value={data.settings.applicationLimit}
+			placeholder="Type in new maximum number of applications"
+			step="1"
+		/>
+	</status-container>
+
 	<Toggle
 		name="applicationOpen"
 		label="Accept new applications"
@@ -108,5 +135,9 @@
 	textarea {
 		flex-grow: 1;
 		width: 100%;
+	}
+
+	status-container {
+		margin-bottom: 1rem;
 	}
 </style>
