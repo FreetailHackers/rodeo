@@ -358,7 +358,7 @@
 			<p>No statistics available.</p>
 		{:else}
 			<h2>Settings</h2>
-			<label for="wordLimit">Frequency List Word Limit:</label>
+			<label for="wordLimit">Frequency List Limit:</label>
 			<select bind:value={wordLimit} id="wordLimit">
 				<option value="5">5</option>
 				<option value="10">10</option>
