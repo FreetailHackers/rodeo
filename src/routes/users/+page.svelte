@@ -15,6 +15,8 @@
 
 	const dropdownFilterTexts: Record<string, string> = {};
 
+	let wordLimit = 0;
+
 	$: query = Object.fromEntries($page.url.searchParams);
 	let key = $page.url.searchParams.get('key') ?? 'email';
 	let search = $page.url.searchParams.get('search') ?? '';
@@ -73,7 +75,10 @@
 		return {
 			type: 'box' as const,
 			boxpoints: false as const,
-			y: data,
+			x: data,
+			orientation: 'h' as const,
+			showlegend: false,
+			name: '',
 		};
 	}
 
@@ -351,25 +356,56 @@
 		<summary>User Statistics</summary>
 		{#if Object.keys(data.stats).length === 0}
 			<p>No statistics available.</p>
+		{:else}
+			<h2>Settings</h2>
+			<label for="wordLimit">Limit on the amount of words in the word frequency lists:</label>
+			<select bind:value={wordLimit} id="wordLimit">
+				<option value="5">5</option>
+				<option value="10">10</option>
+				<option value="15">15</option>
+				<option value="20">20</option>
+				<option value="25">25</option>
+				<option value="0">All</option>
+			</select>
 		{/if}
 		{#each data.questions as question}
 			{#if data.stats[question.id] !== undefined}
 				<h2>{question.label}</h2>
 				{#if question.type === 'NUMBER'}
-					<Plot
-						data={[recordToNumberObject(data.stats[question.id])]}
-						layout={{
-							showlegend: false,
-							margin: {
-								t: 20,
-								r: 50,
-								b: 50,
-								l: 20,
-							},
-						}}
-						fillParent="width"
-						debounce={250}
-					/>
+					<div class="graph-container">
+						<Plot
+							data={[recordToNumberObject(data.stats[question.id])]}
+							layout={{
+								showlegend: false,
+								margin: {
+									t: 20,
+									r: 50,
+									b: 50,
+									l: 20,
+								},
+							}}
+							fillParent="width"
+							debounce={250}
+						/>
+					</div>
+				{:else if question.type == 'SENTENCE' || question.type == 'PARAGRAPH'}
+					{@const totalFrequency = Object.values(data.stats[question.id]).reduce(
+						(a, b) => a + b,
+						0
+					)}
+					{@const sortedWords = Object.entries(data.stats[question.id])
+						.map(([word, frequency]) => ({ word, frequency }))
+						.sort((a, b) => b.frequency - a.frequency)}
+
+					<ol>
+						{#each sortedWords.slice(0, wordLimit == 0 ? sortedWords.length : wordLimit) as { word, frequency }}
+							<li>
+								<strong>{word}</strong>: {frequency} ({((frequency / totalFrequency) * 100).toFixed(
+									2
+								)}%)
+							</li>
+						{/each}
+					</ol>
 				{:else}
 					<div class="graph-container">
 						<Plot
