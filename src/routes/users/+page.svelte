@@ -15,8 +15,6 @@
 
 	const dropdownFilterTexts: Record<string, string> = {};
 
-	let wordLimit = 0;
-
 	$: query = Object.fromEntries($page.url.searchParams);
 	let key = $page.url.searchParams.get('key') ?? 'email';
 	let search = $page.url.searchParams.get('search') ?? '';
@@ -55,28 +53,27 @@
 		saveAs(blob, 'users.csv');
 	}
 
-	function recordToDataObject(answerData: Record<string, number>) {
+	function frequencyToPieChartData(answerData: Record<string, number>): Partial<Plotly.PieData> {
 		const labels = Object.keys(answerData);
 		const values = labels.map((label) => answerData[label]);
 		return {
+			type: 'pie',
 			labels: labels,
 			values: values,
-			type: 'pie' as const,
-			textinfo: 'none' as const,
+			textinfo: 'none',
 		};
 	}
 
-	function recordToNumberObject(answerData: Record<string, number>) {
-		const data = Object.entries(answerData).flatMap(([label, value]) => {
-			const numericLabel = parseFloat(label);
-			return Array.from({ length: value }, () => numericLabel);
+	function frequencyToBoxPlotData(answerData: Record<string, number>): Partial<Plotly.BoxPlotData> {
+		const data = Object.entries(answerData).flatMap(([response, frequency]) => {
+			return Array.from({ length: frequency }, () => response);
 		});
 
 		return {
-			type: 'box' as const,
-			boxpoints: false as const,
+			type: 'box',
+			boxpoints: false,
 			x: data,
-			orientation: 'h' as const,
+			orientation: 'h',
 			showlegend: false,
 			name: '',
 		};
@@ -356,76 +353,69 @@
 		<summary>User Statistics</summary>
 		{#if Object.keys(data.stats).length === 0}
 			<p>No statistics available.</p>
-		{:else}
-			<h2>Settings</h2>
-			<label for="wordLimit">Frequency List Limit:</label>
-			<select bind:value={wordLimit} id="wordLimit">
-				<option value="5">10</option>
-				<option value="10">25</option>
-				<option value="15">50</option>
-				<option value="20">100</option>
-				<option value="0">All</option>
-			</select>
 		{/if}
 		{#each data.questions as question}
 			{#if data.stats[question.id] !== undefined}
-				<h2>{question.label}</h2>
-				{#if question.type === 'NUMBER'}
-					<div class="graph-container">
-						<Plot
-							data={[recordToNumberObject(data.stats[question.id])]}
-							layout={{
-								showlegend: false,
-								margin: {
-									t: 20,
-									r: 50,
-									b: 50,
-									l: 20,
-								},
-							}}
-							fillParent="width"
-							debounce={250}
-						/>
-					</div>
-				{:else if question.type == 'SENTENCE' || question.type == 'PARAGRAPH'}
-					{@const totalFrequency = Object.values(data.stats[question.id]).reduce(
-						(a, b) => a + b,
-						0
-					)}
-					{@const sortedWords = Object.entries(data.stats[question.id])
-						.map(([word, frequency]) => ({ word, frequency }))
-						.sort((a, b) => b.frequency - a.frequency)}
+				<details>
+					<summary class="question-label">{question.label}</summary>
+					{#if question.type === 'NUMBER'}
+						<div class="graph-container">
+							<Plot
+								data={[frequencyToBoxPlotData(data.stats[question.id])]}
+								layout={{
+									showlegend: false,
+									margin: {
+										t: 20,
+										r: 50,
+										b: 50,
+										l: 20,
+									},
+								}}
+								fillParent="width"
+								debounce={250}
+							/>
+						</div>
+					{:else if question.type === 'SENTENCE' || question.type === 'PARAGRAPH'}
+						{@const totalFrequency = Object.values(data.stats[question.id]).reduce(
+							(a, b) => a + b,
+							0
+						)}
+						{@const sortedWords = Object.entries(data.stats[question.id])
+							.map(([word, frequency]) => ({ word, frequency }))
+							.sort((a, b) => b.frequency - a.frequency)}
 
-					<ol>
-						{#each sortedWords.slice(0, wordLimit == 0 ? sortedWords.length : wordLimit) as { word, frequency }}
-							<li>
-								<strong>{word}</strong>: {frequency} ({((frequency / totalFrequency) * 100).toFixed(
-									2
-								)}%)
-							</li>
-						{/each}
-					</ol>
-				{:else}
-					<div class="graph-container">
-						<Plot
-							data={[recordToDataObject(data.stats[question.id])]}
-							layout={{
-								showlegend: true,
-								legend: {
-									orientation: 'h',
-								},
-								margin: {
-									t: 20,
-									r: 50,
-									b: 50,
-									l: 20,
-								},
-							}}
-							fillParent={true}
-							debounce={250}
-						/>
-					</div>
-				{/if}
+						<ol>
+							{#each sortedWords as { word, frequency }}
+								<li>
+									<strong>{word}</strong>: {frequency} ({(
+										(frequency / totalFrequency) *
+										100
+									).toFixed(2)}%)
+								</li>
+							{/each}
+						</ol>
+					{:else}
+						<div class="graph-container">
+							<Plot
+								data={[frequencyToPieChartData(data.stats[question.id])]}
+								layout={{
+									showlegend: true,
+									legend: {
+										orientation: 'h',
+									},
+									margin: {
+										t: 20,
+										r: 50,
+										b: 50,
+										l: 20,
+									},
+								}}
+								fillParent={true}
+								debounce={250}
+							/>
+						</div>
+					{/if}
+				</details>
 			{/if}
 		{/each}
 	</details>
@@ -559,5 +549,9 @@
 		width: 100%;
 		text-align: center;
 		margin-bottom: 10px;
+	}
+
+	.question-label {
+		padding: 10px 20px;
 	}
 </style>

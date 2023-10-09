@@ -532,22 +532,36 @@ export const usersRouter = t.router({
 						responses[question.id] = {};
 					}
 
-					if (question.type === 'DROPDOWN' && question.multiple && Array.isArray(answer)) {
-						answer.forEach((response) => {
-							const key = response ?? 'No answer given';
+					if (question.type === 'DROPDOWN') {
+						if (!question.multiple) {
+							const key = answer ?? 'No answer given';
 							const answerData = responses[question.id];
 							answerData[key] = (answerData[key] ?? 0) + 1;
-						});
+						} else if (Array.isArray(answer)) {
+							answer.forEach((response) => {
+								const key = response ?? 'No answer given';
+								const answerData = responses[question.id];
+								answerData[key] = (answerData[key] ?? 0) + 1;
+							});
+						}
 					} else if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
 						if (answer) {
-							const words = answer.split(/\s+/);
+							const uniqueWords = new Set<string>(answer.split(/\s+/));
 
-							words.forEach((word: string) => {
+							uniqueWords.forEach((word: string) => {
 								const answerData = responses[question.id];
 								answerData[word] = (answerData[word] ?? 0) + 1;
 							});
 						}
-					} else {
+					} else if (question.type === 'CHECKBOX') {
+						const key = answer ?? false;
+						const answerData = responses[question.id];
+						answerData[key] = (answerData[key] ?? 0) + 1;
+					} else if (
+						question.type === 'FILE' ||
+						question.type === 'NUMBER' ||
+						question.type === 'RADIO'
+					) {
 						const key = answer ?? 'No answer given';
 						const answerData = responses[question.id];
 						answerData[key] = (answerData[key] ?? 0) + 1;
