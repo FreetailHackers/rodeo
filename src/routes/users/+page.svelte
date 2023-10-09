@@ -360,11 +360,10 @@
 			<h2>Settings</h2>
 			<label for="wordLimit">Frequency List Limit:</label>
 			<select bind:value={wordLimit} id="wordLimit">
-				<option value="5">5</option>
-				<option value="10">10</option>
-				<option value="15">15</option>
-				<option value="20">20</option>
-				<option value="25">25</option>
+				<option value="5">10</option>
+				<option value="10">25</option>
+				<option value="15">50</option>
+				<option value="20">100</option>
 				<option value="0">All</option>
 			</select>
 		{/if}
