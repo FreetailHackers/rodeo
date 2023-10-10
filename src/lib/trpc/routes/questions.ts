@@ -27,7 +27,7 @@ export const questionsRouter = t.router({
 		.mutation(async (req): Promise<Question> => {
 			// TODO: Only supports adding at end for now
 			const orders = (await getQuestions()).map((question) => question.order);
-			const lastOrder = orders.length == 0 ? 0 : Math.max(...orders);
+			const lastOrder = orders.length === 0 ? 0 : Math.max(...orders);
 			return await prisma.question.create({
 				data: {
 					label: '',

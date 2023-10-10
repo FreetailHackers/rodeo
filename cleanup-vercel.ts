@@ -28,10 +28,10 @@ if (LATEST_TO_KEEP < 1) {
 }
 
 async function getDeployments() {
-	if (process.env.VERCEL_PROJECT_ID === undefined || process.env.VERCEL_PROJECT_ID.trim() == '') {
+	if (process.env.VERCEL_PROJECT_ID === undefined || process.env.VERCEL_PROJECT_ID.trim() === '') {
 		throw new Error('VERCEL_PROJECT_ID is not defined');
 	}
-	if (process.env.VERCEL_TOKEN === undefined || process.env.VERCEL_TOKEN.trim() == '') {
+	if (process.env.VERCEL_TOKEN === undefined || process.env.VERCEL_TOKEN.trim() === '') {
 		throw new Error('VERCEL_TOKEN is not defined');
 	}
 

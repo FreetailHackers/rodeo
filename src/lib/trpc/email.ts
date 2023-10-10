@@ -25,7 +25,7 @@ export const sendEmails = async (
 		// Only allow emails to YOPmail on staging
 		if (process.env.VERCEL_ENV === 'preview') {
 			recipients = recipients.filter((recipient) => !recipient.endsWith('@yopmail.com'));
-			if (recipients.length != 0) {
+			if (recipients.length !== 0) {
 				return 'Only @yopmail.com addresses are allowed on staging.';
 			}
 		}
