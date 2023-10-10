@@ -98,7 +98,7 @@ model Settings {
   waitlistTemplate  String  @default("We regret to inform you that we cannot offer you a spot at our hackathon at this time.")
   confirmTemplate   String  @default("Thank you for confirming your attendance to our hackathon! We look forward to seeing you there!")
   declineTemplate   String  @default("Thank you for letting us know that you will not be able to attend. We hope to see you next year!")
-  applicationLimit  Int     @default(0) // 0 means no limit
+  applicationLimit  Int?
 }
 
 model Question {

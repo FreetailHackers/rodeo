@@ -18,6 +18,7 @@ export const canApply = async (): Promise<boolean> => {
 		(settings.applicationDeadline !== null && new Date() > settings.applicationDeadline)
 	)
 		return false;
+	if (settings.applicationLimit === null) return true;
 	const count = await prisma.authUser.count({
 		where: {
 			status: 'APPLIED',
