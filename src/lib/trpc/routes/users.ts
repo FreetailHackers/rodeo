@@ -557,12 +557,16 @@ export const usersRouter = t.router({
 						const key = answer ?? false;
 						const answerData = responses[question.id];
 						answerData[key] = (answerData[key] ?? 0) + 1;
-					} else if (
-						question.type === 'FILE' ||
-						question.type === 'NUMBER' ||
-						question.type === 'RADIO'
-					) {
+					} else if (question.type === 'FILE') {
+						const key = answer ? 'File uploaded' : 'No file uploaded';
+						const answerData = responses[question.id];
+						answerData[key] = (answerData[key] ?? 0) + 1;
+					} else if (question.type === 'RADIO') {
 						const key = answer ?? 'No answer given';
+						const answerData = responses[question.id];
+						answerData[key] = (answerData[key] ?? 0) + 1;
+					} else if (question.type === 'NUMBER') {
+						const key = answer !== undefined && answer !== null ? answer : 'No answer given';
 						const answerData = responses[question.id];
 						answerData[key] = (answerData[key] ?? 0) + 1;
 					}
