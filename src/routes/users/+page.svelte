@@ -54,12 +54,10 @@
 	}
 
 	function frequencyToPieChartData(answerData: Record<string, number>): Partial<Plotly.PieData> {
-		const labels = Object.keys(answerData);
-		const values = labels.map((label) => answerData[label]);
 		return {
 			type: 'pie',
-			labels: labels,
-			values: values,
+			labels: Object.keys(answerData),
+			values: Object.values(answerData),
 			textinfo: 'none',
 		};
 	}
