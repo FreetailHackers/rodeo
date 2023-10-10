@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.7.3
+
+[FIXED]
+
+- Required checkboxes in application not checked after withdraw and edit
+
 ## v0.7.2
 
 [ADDED]
@@ -15,6 +21,10 @@
 - Users list not showing in navbar for sponsor accounts
 - Users list display limit not remembering filters
 - Users list pagination buttons not disabled when at first/last page
+
+[REMOVED]
+
+- Show all users option in user list
 
 ## v0.7.1
 
