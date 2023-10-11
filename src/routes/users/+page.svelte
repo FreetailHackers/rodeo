@@ -81,6 +81,20 @@
 		};
 	}
 
+	function getWordFrequencyStatisticsMap(
+		answerData: Record<string, number | [number, number]>,
+		totalResponses: number
+	) {
+		return Object.entries(answerData as Record<string, [number, number]>)
+			.map(([word, [totalFrequency, frequencyPerResponse]]) => ({
+				word,
+				totalFrequency,
+				frequencyPerResponse,
+				percentage: ((frequencyPerResponse / totalResponses) * 100).toFixed(2),
+			}))
+			.sort((a, b) => b.totalFrequency - a.totalFrequency);
+	}
+
 	// Download all files of current search filter
 	function downloadAllFiles() {
 		const zip = new JSZip();
@@ -378,16 +392,10 @@
 							/>
 						</div>
 					{:else if question.type === 'SENTENCE' || question.type === 'PARAGRAPH'}
-						{@const totalResponses = data.count}
-						{@const sortedWords = Object.entries(data.stats[question.id])
-							.map(([word, [totalFrequency, frequencyPerResponse]]) => ({
-								word,
-								totalFrequency,
-								frequencyPerResponse,
-								percentage: ((frequencyPerResponse / totalResponses) * 100).toFixed(2),
-							}))
-							.sort((a, b) => b.totalFrequency - a.totalFrequency)}
-
+						{@const sortedWords = getWordFrequencyStatisticsMap(
+							data.stats[question.id],
+							data.count
+						)}
 						<ol>
 							{#each sortedWords as { word, totalFrequency, percentage }}
 								<li>
