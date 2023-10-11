@@ -84,7 +84,7 @@ textarea {
 	font-family: var(--font-family);
 	font-size: var(--font-size);
 	padding: 1rem;
-	resize: none;
+	resize: vertical;
 	border: 2px solid gray;
 	height: 10rem;
 }

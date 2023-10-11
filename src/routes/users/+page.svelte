@@ -2,7 +2,6 @@
 	import type { Prisma } from '@prisma/client';
 	import { Parser } from '@json2csv/plainjs';
 	import UserTable from './user-table.svelte';
-	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import Plot from 'svelte-plotly.js';
 	import JSZip from 'jszip';
@@ -37,13 +36,6 @@
 			decision: user.decision?.status,
 			...(user.scanCount as object),
 		};
-	}
-
-	let csvDownloadLink: string;
-	$: if (browser && data.users.length > 0) {
-		const parser = new Parser();
-		const csv = parser.parse(data.users.map(prepare));
-		csvDownloadLink = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
 	}
 
 	function downloadCSV() {
@@ -439,7 +431,7 @@
 			name="limit"
 			bind:value={limit}
 			on:change={() => {
-				goto(`${location.pathname}?${new URLSearchParams({ ...$page.url.searchParams, limit })}`, {
+				goto(`${location.pathname}?${new URLSearchParams({ ...query, limit })}`, {
 					noScroll: true,
 				});
 			}}
@@ -448,7 +440,6 @@
 			<option value="25">Show 25</option>
 			<option value="50">Show 50</option>
 			<option value="100">Show 100</option>
-			<option value="0">Show all</option>
 		</select>
 	</div>
 	<UserTable users={data.users} self={data.user} questions={data.questions} />
@@ -547,6 +538,12 @@
 
 	#page input {
 		width: 3.5rem;
+	}
+
+	.disabled {
+		pointer-events: none;
+		text-decoration: none;
+		opacity: 0.5;
 	}
 
 	.graph-container {

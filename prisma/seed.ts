@@ -89,7 +89,7 @@ async function main() {
 	startingTime.setSeconds(-maxSecondsBetweenStatusChanges * 6);
 
 	for (let i = 0; i < 1000; i++) {
-		const id = `hacker${i}@yopmail.com`;
+		const id = `hacker${String(i).padStart(3, '0')}@yopmail.com`;
 		const statusFlow = generateStatusFlow(id, startingTime, maxSecondsBetweenStatusChanges);
 		// Generate a completed application for each hacker
 		const application = {};
@@ -132,6 +132,7 @@ async function main() {
 			roles: { has: 'HACKER' },
 			status: { in: ['APPLIED', 'WAITLISTED'] },
 		},
+		orderBy: { id: 'asc' },
 	});
 	for (const hacker of hackers) {
 		// Don't decide on every user probability
@@ -186,7 +187,7 @@ function generateStatusFlow(
 		userId: id,
 	});
 
-	if (random() >= attritionRate && afterStatusAppliedRandom == 'ACCEPTED') {
+	if (random() >= attritionRate && afterStatusAppliedRandom === 'ACCEPTED') {
 		lastTimestamp = new Date(
 			lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random()
 		);

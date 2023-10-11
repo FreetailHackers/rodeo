@@ -187,7 +187,7 @@
 							type="checkbox"
 							name={question.id}
 							id={question.id}
-							checked={application[question.id]}
+							bind:checked={application[question.id]}
 						/>
 					{:else if question.type === 'DROPDOWN'}
 						<Select
