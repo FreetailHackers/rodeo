@@ -53,18 +53,22 @@
 		saveAs(blob, 'users.csv');
 	}
 
-	function frequencyToPieChartData(answerData: Record<string, number>): Partial<Plotly.PieData> {
+	function frequencyToPieChartData(
+		answerData: Record<string, number | [number, number]>
+	): Partial<Plotly.PieData> {
 		return {
 			type: 'pie',
 			labels: Object.keys(answerData),
-			values: Object.values(answerData),
+			values: Object.values(answerData as Record<string, number>),
 			textinfo: 'none',
 		};
 	}
 
-	function frequencyToBoxPlotData(answerData: Record<string, number>): Partial<Plotly.BoxPlotData> {
+	function frequencyToBoxPlotData(
+		answerData: Record<string, number | [number, number]>
+	): Partial<Plotly.BoxPlotData> {
 		const data = Object.entries(answerData).flatMap(([response, frequency]) => {
-			return Array.from({ length: frequency }, () => response);
+			return Array.from({ length: frequency as number }, () => response);
 		});
 
 		return {
@@ -374,21 +378,21 @@
 							/>
 						</div>
 					{:else if question.type === 'SENTENCE' || question.type === 'PARAGRAPH'}
-						{@const totalFrequency = Object.values(data.stats[question.id]).reduce(
-							(a, b) => a + b,
-							0
-						)}
+						{@const totalResponses = data.count}
 						{@const sortedWords = Object.entries(data.stats[question.id])
-							.map(([word, frequency]) => ({ word, frequency }))
-							.sort((a, b) => b.frequency - a.frequency)}
+							.map(([word, [totalFrequency, frequencyPerResponse]]) => ({
+								word,
+								totalFrequency,
+								frequencyPerResponse,
+								percentage: ((frequencyPerResponse / totalResponses) * 100).toFixed(2),
+							}))
+							.sort((a, b) => b.totalFrequency - a.totalFrequency)}
 
 						<ol>
-							{#each sortedWords as { word, frequency }}
+							{#each sortedWords as { word, totalFrequency, percentage }}
 								<li>
-									<strong>{word}</strong>: {frequency} ({(
-										(frequency / totalFrequency) *
-										100
-									).toFixed(2)}%)
+									<strong>{word}</strong> - Appears {totalFrequency} times ({percentage}% of
+									responses)
 								</li>
 							{/each}
 						</ol>

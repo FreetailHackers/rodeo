@@ -520,7 +520,7 @@ export const usersRouter = t.router({
 			if (!req.ctx.user.roles.includes('ADMIN')) {
 				questions = questions.filter((question) => question.sponsorView);
 			}
-			const responses: Record<string, Record<string, number>> = {};
+			const responses: Record<string, Record<string, number | [number, number]>> = {};
 			users.forEach((user) => {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const applicationData = user.application as Record<string, any>;
@@ -536,39 +536,47 @@ export const usersRouter = t.router({
 						if (!question.multiple) {
 							const key = answer ?? 'No answer given';
 							const answerData = responses[question.id];
-							answerData[key] = (answerData[key] ?? 0) + 1;
+							answerData[key] = ((answerData[key] ?? 0) as number) + 1;
 						} else if (Array.isArray(answer)) {
 							answer.forEach((response) => {
 								const key = response ?? 'No answer given';
 								const answerData = responses[question.id];
-								answerData[key] = (answerData[key] ?? 0) + 1;
+								answerData[key] = ((answerData[key] ?? 0) as number) + 1;
 							});
 						}
 					} else if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
 						if (answer) {
-							const uniqueWords = new Set<string>(answer.split(/\s+/));
+							const words = answer.split(/\s+/);
+							const seen = new Set<string>();
 
-							uniqueWords.forEach((word: string) => {
+							words.forEach((word: string) => {
 								const answerData = responses[question.id];
-								answerData[word] = (answerData[word] ?? 0) + 1;
+								if (!answerData[word]) {
+									answerData[word] = [0, 0];
+								}
+								if (!seen.has(word)) {
+									seen.add(word);
+									(answerData[word] as [number, number])[1] += 1;
+								}
+								(answerData[word] as [number, number])[0] += 1;
 							});
 						}
 					} else if (question.type === 'CHECKBOX') {
 						const key = answer ?? false;
 						const answerData = responses[question.id];
-						answerData[key] = (answerData[key] ?? 0) + 1;
+						answerData[key] = ((answerData[key] ?? 0) as number) + 1;
 					} else if (question.type === 'FILE') {
 						const key = answer ? 'File uploaded' : 'No file uploaded';
 						const answerData = responses[question.id];
-						answerData[key] = (answerData[key] ?? 0) + 1;
+						answerData[key] = ((answerData[key] ?? 0) as number) + 1;
 					} else if (question.type === 'RADIO') {
 						const key = answer ?? 'No answer given';
 						const answerData = responses[question.id];
-						answerData[key] = (answerData[key] ?? 0) + 1;
+						answerData[key] = ((answerData[key] ?? 0) as number) + 1;
 					} else if (question.type === 'NUMBER') {
 						const key = answer !== undefined && answer !== null ? answer : 'No answer given';
 						const answerData = responses[question.id];
-						answerData[key] = (answerData[key] ?? 0) + 1;
+						answerData[key] = ((answerData[key] ?? 0) as number) + 1;
 					}
 				});
 			});
