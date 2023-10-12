@@ -60,7 +60,12 @@
 		answerData: Record<string, number | [number, number]>
 	): Partial<Plotly.BoxPlotData> {
 		const data = Object.entries(answerData).flatMap(([response, frequency]) => {
-			return Array.from({ length: frequency as number }, () => response);
+			const numericResponse = Number(response);
+			if (Number.isNaN(numericResponse)) {
+				return [];
+			} else {
+				return Array.from({ length: frequency as number }, () => numericResponse);
+			}
 		});
 
 		return {

@@ -554,11 +554,13 @@ export const usersRouter = t.router({
 								if (!answerData[word]) {
 									answerData[word] = [0, 0];
 								}
-								if (!seen.has(word)) {
-									seen.add(word);
-									(answerData[word] as [number, number])[1] += 1;
-								}
+
+								seen.add(word);
 								(answerData[word] as [number, number])[0] += 1;
+							});
+
+							seen.forEach((word: string) => {
+								(responses[question.id][word] as [number, number])[1] += 1;
 							});
 						}
 					} else if (question.type === 'CHECKBOX') {
@@ -574,9 +576,10 @@ export const usersRouter = t.router({
 						const answerData = responses[question.id];
 						answerData[key] = ((answerData[key] ?? 0) as number) + 1;
 					} else if (question.type === 'NUMBER') {
-						const key = answer !== undefined && answer !== null ? answer : 'No answer given';
-						const answerData = responses[question.id];
-						answerData[key] = ((answerData[key] ?? 0) as number) + 1;
+						if (answer !== undefined && answer !== null) {
+							const answerData = responses[question.id];
+							answerData[answer] = ((answerData[answer] ?? 0) as number) + 1;
+						}
 					}
 				});
 			});
