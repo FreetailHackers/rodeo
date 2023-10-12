@@ -2,6 +2,11 @@
 
 ## v0.7.3
 
+[ADDED]
+
+- PWA support
+- Statistics for all question types
+
 [FIXED]
 
 - Required checkboxes in application not checked after withdraw and edit
