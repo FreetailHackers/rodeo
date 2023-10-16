@@ -40,6 +40,7 @@ export const settingsRouter = t.router({
 			info: string;
 			scanActions: string[];
 			timezone: string;
+			applicationDeadline: Date | null;
 		}> => {
 			const settings = await getSettings();
 			return {
@@ -49,6 +50,7 @@ export const settingsRouter = t.router({
 				info: settings.info,
 				scanActions: settings.scanActions,
 				timezone: settings.timezone,
+				applicationDeadline: settings.applicationDeadline,
 			};
 		}
 	),

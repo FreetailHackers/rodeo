@@ -23,7 +23,7 @@
 	<label for="applicationStatus"><h2>Application Status</h2></label>
 
 	<status-container>
-		<label for="applicationDeadline">Select new application deadline:</label>
+		<label for="applicationDeadline">Hackers must apply by:</label>
 		<input
 			type="datetime-local"
 			name="applicationDeadline"
@@ -36,7 +36,9 @@
 	</status-container>
 
 	<status-container>
-		<label for="applicationLimit">Type in new maximum number of applications:</label>
+		<label for="applicationLimit"
+			>Hackers can only apply if there are at most this number of accounts with status APPLIED:</label
+		>
 		<input
 			type="number"
 			name="applicationLimit"

@@ -8,23 +8,21 @@ import { getSettings } from './settings';
 
 /**
  * Considers applicationOpen, applicationDeadline, and applicationLimit
- * to determine whether or not the applications are opened.
+ * to determine whether or not new users can apply.
  * User must be an admin.
  */
 export const canApply = async (): Promise<boolean> => {
 	const settings = await getSettings();
-	if (
-		!settings.applicationOpen ||
-		(settings.applicationDeadline !== null && new Date() > settings.applicationDeadline)
-	)
-		return false;
-	if (settings.applicationLimit === null) return true;
 	const count = await prisma.authUser.count({
 		where: {
-			status: 'APPLIED',
+			status: { in: ['APPLIED', 'ACCEPTED', 'CONFIRMED', 'REJECTED', 'DECLINED', 'WAITLISTED'] },
 		},
 	});
-	return count <= settings.applicationLimit;
+	return (
+		settings.applicationOpen &&
+		(settings.applicationDeadline === null || settings.applicationDeadline > new Date()) &&
+		(settings.applicationLimit === null || count <= settings.applicationLimit)
+	);
 };
 
 async function releaseDecisions(ids?: string[]): Promise<void> {
