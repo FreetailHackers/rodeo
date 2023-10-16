@@ -79,7 +79,7 @@
 			<summary>{user.authUser.email}</summary>
 			<UserCard {user} questions={data.questions} />
 		</details>
-		<p class={(scanCount[action] ?? 0) == 0 ? 'success' : 'error'}>
+		<p class={(scanCount[action] ?? 0) === 0 ? 'success' : 'error'}>
 			This user has scanned for {action}
 			{scanCount[action] ?? 0} times.
 		</p>

@@ -518,24 +518,70 @@ export const usersRouter = t.router({
 				where,
 			});
 
-			questions = questions.filter(
-				(question) => question.type === 'RADIO' || question.type === 'DROPDOWN'
-			);
 			if (!req.ctx.user.roles.includes('ADMIN')) {
 				questions = questions.filter((question) => question.sponsorView);
 			}
-			const responses: Record<string, Record<string, number>> = {};
+			const responses: Record<string, Record<string, number | [number, number]>> = {};
 			users.forEach((user) => {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const applicationData = user.application as Record<string, any>;
+
 				questions.forEach((question) => {
 					const answer = applicationData[question.id];
-					const key = answer ?? 'No answer given';
+
 					if (!responses[question.id]) {
 						responses[question.id] = {};
 					}
-					const answerData = responses[question.id];
-					answerData[key] = (answerData[key] ?? 0) + 1;
+
+					if (question.type === 'DROPDOWN') {
+						if (!question.multiple) {
+							const key = answer ?? 'No answer given';
+							const answerData = responses[question.id];
+							answerData[key] = ((answerData[key] ?? 0) as number) + 1;
+						} else if (Array.isArray(answer)) {
+							answer.forEach((response) => {
+								const key = response ?? 'No answer given';
+								const answerData = responses[question.id];
+								answerData[key] = ((answerData[key] ?? 0) as number) + 1;
+							});
+						}
+					} else if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
+						if (answer) {
+							const words = answer.split(/\s+/);
+							const seen = new Set<string>();
+
+							words.forEach((word: string) => {
+								const answerData = responses[question.id];
+								if (!answerData[word]) {
+									answerData[word] = [0, 0];
+								}
+
+								seen.add(word);
+								(answerData[word] as [number, number])[0] += 1;
+							});
+
+							seen.forEach((word: string) => {
+								(responses[question.id][word] as [number, number])[1] += 1;
+							});
+						}
+					} else if (question.type === 'CHECKBOX') {
+						const key = answer ?? false;
+						const answerData = responses[question.id];
+						answerData[key] = ((answerData[key] ?? 0) as number) + 1;
+					} else if (question.type === 'FILE') {
+						const key = answer ? 'File uploaded' : 'No file uploaded';
+						const answerData = responses[question.id];
+						answerData[key] = ((answerData[key] ?? 0) as number) + 1;
+					} else if (question.type === 'RADIO') {
+						const key = answer ?? 'No answer given';
+						const answerData = responses[question.id];
+						answerData[key] = ((answerData[key] ?? 0) as number) + 1;
+					} else if (question.type === 'NUMBER') {
+						if (answer !== undefined && answer !== null) {
+							const answerData = responses[question.id];
+							answerData[answer] = ((answerData[answer] ?? 0) as number) + 1;
+						}
+					}
 				});
 			});
 			return responses;

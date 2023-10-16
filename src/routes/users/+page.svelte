@@ -45,15 +45,51 @@
 		saveAs(blob, 'users.csv');
 	}
 
-	function recordToDataObject(answerData: Record<string, number>) {
-		const labels = Object.keys(answerData);
-		const values = labels.map((label) => answerData[label]);
+	function frequencyToPieChartData(
+		answerData: Record<string, number | [number, number]>
+	): Partial<Plotly.PieData> {
 		return {
-			labels: labels,
-			values: values,
-			type: 'pie' as const,
-			textinfo: 'none' as const,
+			type: 'pie',
+			labels: Object.keys(answerData),
+			values: Object.values(answerData as Record<string, number>),
+			textinfo: 'none',
 		};
+	}
+
+	function frequencyToBoxPlotData(
+		answerData: Record<string, number | [number, number]>
+	): Partial<Plotly.BoxPlotData> {
+		const data = Object.entries(answerData).flatMap(([response, frequency]) => {
+			const numericResponse = Number(response);
+			if (Number.isNaN(numericResponse)) {
+				return [];
+			} else {
+				return Array.from({ length: frequency as number }, () => numericResponse);
+			}
+		});
+
+		return {
+			type: 'box',
+			boxpoints: false,
+			x: data,
+			orientation: 'h',
+			showlegend: false,
+			name: '',
+		};
+	}
+
+	function getWordFrequencyStatisticsMap(
+		answerData: Record<string, number | [number, number]>,
+		totalResponses: number
+	) {
+		return Object.entries(answerData as Record<string, [number, number]>)
+			.map(([word, [totalFrequency, frequencyPerResponse]]) => ({
+				word,
+				totalFrequency,
+				frequencyPerResponse,
+				percentage: ((frequencyPerResponse / totalResponses) * 100).toFixed(2),
+			}))
+			.sort((a, b) => b.totalFrequency - a.totalFrequency);
 	}
 
 	// Download all files of current search filter
@@ -333,26 +369,60 @@
 		{/if}
 		{#each data.questions as question}
 			{#if data.stats[question.id] !== undefined}
-				<h2>{question.label}</h2>
-				<div class="graph-container">
-					<Plot
-						data={[recordToDataObject(data.stats[question.id])]}
-						layout={{
-							showlegend: true,
-							legend: {
-								orientation: 'h',
-							},
-							margin: {
-								t: 50,
-								r: 50,
-								b: 50,
-								l: 50,
-							},
-						}}
-						fillParent="width"
-						debounce={250}
-					/>
-				</div>
+				<details>
+					<summary class="question-label">{question.label}</summary>
+					{#if question.type === 'NUMBER'}
+						<div class="graph-container">
+							<Plot
+								data={[frequencyToBoxPlotData(data.stats[question.id])]}
+								layout={{
+									showlegend: false,
+									margin: {
+										t: 20,
+										r: 50,
+										b: 50,
+										l: 20,
+									},
+								}}
+								fillParent="width"
+								debounce={250}
+							/>
+						</div>
+					{:else if question.type === 'SENTENCE' || question.type === 'PARAGRAPH'}
+						{@const sortedWords = getWordFrequencyStatisticsMap(
+							data.stats[question.id],
+							data.count
+						)}
+						<ol>
+							{#each sortedWords as { word, totalFrequency, percentage }}
+								<li>
+									<strong>{word}</strong> - Appears {totalFrequency} times ({percentage}% of
+									responses)
+								</li>
+							{/each}
+						</ol>
+					{:else}
+						<div class="graph-container">
+							<Plot
+								data={[frequencyToPieChartData(data.stats[question.id])]}
+								layout={{
+									showlegend: true,
+									legend: {
+										orientation: 'h',
+									},
+									margin: {
+										t: 20,
+										r: 50,
+										b: 50,
+										l: 20,
+									},
+								}}
+								fillParent={true}
+								debounce={250}
+							/>
+						</div>
+					{/if}
+				</details>
 			{/if}
 		{/each}
 	</details>
@@ -491,5 +561,9 @@
 		width: 100%;
 		text-align: center;
 		margin-bottom: 10px;
+	}
+
+	.question-label {
+		padding: 10px 20px;
 	}
 </style>

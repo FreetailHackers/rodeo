@@ -77,7 +77,7 @@ Now if you switch the toggle and press save, it should now persist between refre
 if (data.settings.spongebobCase) {
 	data.settings.homepageText = data.settings.homepageText
 		.split('')
-		.map((char, i) => (i % 2 == 0 ? char.toLowerCase() : char.toUpperCase()))
+		.map((char, i) => (i % 2 === 0 ? char.toLowerCase() : char.toUpperCase()))
 		.join('');
 }
 ```

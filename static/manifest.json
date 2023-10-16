@@ -1,0 +1,14 @@
+{
+	"name": "Rodeo",
+	"icons": [
+		{
+			"src": "favicon512.png",
+			"type": "image/png",
+			"sizes": "512x512"
+		}
+	],
+	"display": "standalone",
+	"start_url": "..",
+	"theme_color": "#954479",
+	"background_color": "#ffffff"
+}

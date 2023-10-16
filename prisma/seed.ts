@@ -187,7 +187,7 @@ function generateStatusFlow(
 		userId: id,
 	});
 
-	if (random() >= attritionRate && afterStatusAppliedRandom == 'ACCEPTED') {
+	if (random() >= attritionRate && afterStatusAppliedRandom === 'ACCEPTED') {
 		lastTimestamp = new Date(
 			lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random()
 		);
