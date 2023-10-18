@@ -4,7 +4,7 @@ import { Parser } from '@json2csv/plainjs';
 import type { Prisma, Question } from '@prisma/client';
 
 export const GET = async ({ locals, url }) => {
-	await authenticate(locals.auth, ['ADMIN', 'SPONSOR']);
+	await authenticate(locals.auth, ['ADMIN']);
 	const results = await trpc(locals.auth).users.search({
 		page: 1,
 		key: url.searchParams.get('key') ?? '',

@@ -14,6 +14,10 @@
 - Sponsors can no longer search by status/role/decision/scan actions
 - Sponsors can view files that they have access to
 
+[REMOVED]
+
+- Ability for sponsors to export data
+
 ## v0.7.2
 
 [ADDED]

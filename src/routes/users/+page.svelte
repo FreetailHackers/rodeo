@@ -44,11 +44,13 @@
 	<title>Rodeo | Users</title>
 </svelte:head>
 <h1>Master Database</h1>
-<a href={'/users/download-data' + $page.url.search} download="users.csv"
-	><button class="download-button"
-		>Download user data (excluding file uploads) for {data.count} users as CSV</button
-	></a
->
+{#if data.user.roles.includes('ADMIN')}
+	<a href={'/users/download-data' + $page.url.search} download="users.csv"
+		><button class="download-button"
+			>Download user data (excluding file uploads) for {data.count} users as CSV</button
+		></a
+	>
+{/if}
 <button class="download-button" on:click={downloadAllFiles}
 	>Download file uploads from {data.count} users as ZIP</button
 >

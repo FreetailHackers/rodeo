@@ -478,6 +478,8 @@ export const usersRouter = t.router({
 						questions.forEach((question) => {
 							delete applicationData[question.id];
 						});
+						user.decision = null;
+						user.scanCount = null;
 					});
 				}
 				return {
