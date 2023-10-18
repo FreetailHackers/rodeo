@@ -1,13 +1,12 @@
 <script lang="ts">
-	import type { Prisma } from '@prisma/client';
-	import { Parser } from '@json2csv/plainjs';
 	import UserTable from './user-table.svelte';
 	import { goto } from '$app/navigation';
-	import Plot from 'svelte-plotly.js';
-	import JSZip from 'jszip';
-	import { saveAs } from 'file-saver';
 	import { page } from '$app/stores';
 	import Select from 'svelte-select';
+	import Statistics from './statistics.svelte';
+	import saveAs from 'file-saver';
+	import JSZip from 'jszip';
+	import { trpc } from '$lib/trpc/client';
 	import { toasts } from '$lib/stores';
 
 	export let data;
@@ -20,112 +19,24 @@
 	let limit = $page.url.searchParams.get('limit') ?? '10';
 	let searchFilter = $page.url.searchParams.get('searchFilter') ?? '';
 
-	// Helper function to replace question IDs with their labels
-	function prepare(user: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>) {
-		function prepareApplication(application: Record<string, unknown>) {
-			let prepared: Record<string, unknown> = {};
-			for (const question of data.questions) {
-				prepared[question.label] = application[question.id];
-			}
-			return prepared;
-		}
-		// "Flatten" User object so CSV is generated correctly
-		return {
-			...user.authUser,
-			...prepareApplication(user.application as Record<string, unknown>),
-			decision: user.decision?.status,
-			...(user.scanCount as object),
-		};
-	}
-
-	function downloadCSV() {
-		const parser = new Parser();
-		const csv = parser.parse(data.users.map(prepare));
-		const blob = new Blob([csv], { type: 'text/csv' });
-		saveAs(blob, 'users.csv');
-	}
-
-	function frequencyToPieChartData(
-		answerData: Record<string, number | [number, number]>
-	): Partial<Plotly.PieData> {
-		return {
-			type: 'pie',
-			labels: Object.keys(answerData),
-			values: Object.values(answerData as Record<string, number>),
-			textinfo: 'none',
-		};
-	}
-
-	function frequencyToBoxPlotData(
-		answerData: Record<string, number | [number, number]>
-	): Partial<Plotly.BoxPlotData> {
-		const data = Object.entries(answerData).flatMap(([response, frequency]) => {
-			const numericResponse = Number(response);
-			if (Number.isNaN(numericResponse)) {
-				return [];
-			} else {
-				return Array.from({ length: frequency as number }, () => numericResponse);
-			}
-		});
-
-		return {
-			type: 'box',
-			boxpoints: false,
-			x: data,
-			orientation: 'h',
-			showlegend: false,
-			name: '',
-		};
-	}
-
-	function getWordFrequencyStatisticsMap(
-		answerData: Record<string, number | [number, number]>,
-		totalResponses: number
-	) {
-		return Object.entries(answerData as Record<string, [number, number]>)
-			.map(([word, [totalFrequency, frequencyPerResponse]]) => ({
-				word,
-				totalFrequency,
-				frequencyPerResponse,
-				percentage: ((frequencyPerResponse / totalResponses) * 100).toFixed(2),
-			}))
-			.sort((a, b) => b.totalFrequency - a.totalFrequency);
-	}
-
 	// Download all files of current search filter
-	function downloadAllFiles() {
+	async function downloadAllFiles() {
+		async function fetchFile(url: string) {
+			const r = await fetch(url);
+			if (!r.ok) {
+				toasts.notify('Could not download file at ' + url + ': ' + r.statusText);
+			}
+			return await r.blob();
+		}
 		const zip = new JSZip();
 		const folder = zip.folder('files') || zip;
-		data.users.forEach((user) => {
-			const application = user.application as Record<string, unknown>;
-			data.questions.forEach((question) => {
-				if (application[question.id] !== undefined && application[question.id] !== '') {
-					if (question.type === 'FILE') {
-						folder.file(
-							`${user.authUser.email}/${application[question.id]}`,
-							fetchFile(`/files/${user.authUserId}/${question.id}`)
-						);
-					}
-				}
-			});
-		});
-		zip.generateAsync({ type: 'blob' }).then(function (content) {
-			saveAs(content, 'files.zip');
-		});
-	}
-
-	async function fetchFile(fileUrl: string) {
-		try {
-			const response = await fetch(fileUrl);
-			if (!response.ok) {
-				toasts.notify('Network response was not ok; unable to download ' + fileUrl);
-				throw new Error();
+		const files = await trpc().users.files.query({ key, search, searchFilter });
+		for (const user in files) {
+			for (const file of files[user]) {
+				folder.file(file.path, fetchFile(file.url));
 			}
-			return await response.blob();
-		} catch (error) {
-			toasts.notify('Error downloading file');
-			throw error;
 		}
+		saveAs(await zip.generateAsync({ type: 'blob' }), 'files.zip');
 	}
 </script>
 
@@ -133,9 +44,13 @@
 	<title>Rodeo | Users</title>
 </svelte:head>
 <h1>Master Database</h1>
-<button class="download-button" on:click={downloadCSV}>Export search results as CSV</button>
+<a href={'/users/download-data' + $page.url.search} download="users.csv"
+	><button class="download-button"
+		>Download user data (excluding file uploads) for {data.count} users as CSV</button
+	></a
+>
 <button class="download-button" on:click={downloadAllFiles}
-	>Download files from current search</button
+	>Download file uploads from {data.count} users as ZIP</button
 >
 
 <!-- Search filters -->
@@ -181,20 +96,24 @@
 		>
 			<!-- enums -->
 			<option value="email">Email</option>
-			<option value="role">Role</option>
-			<option value="status">Status</option>
-			<option value="decision">Decision</option>
+			{#if data.user.roles.includes('ADMIN')}
+				<option value="role">Role</option>
+				<option value="status">Status</option>
+				<option value="decision">Decision</option>
+			{/if}
 
 			<optgroup label="Questions">
 				{#each data.questions as question}
 					<option value={question.id}>{question.label}</option>
 				{/each}
 			</optgroup>
-			<optgroup label="Scan Options">
-				{#each data.settings.scanActions as scanOption}
-					<option value={scanOption}>{scanOption}</option>
-				{/each}
-			</optgroup>
+			{#if data.user.roles.includes('ADMIN')}
+				<optgroup label="Scan Options">
+					{#each data.settings.scanActions as scanAction}
+						<option value={scanAction}>{scanAction}</option>
+					{/each}
+				</optgroup>
+			{/if}
 		</select>
 
 		{#if key === 'role'}
@@ -361,72 +280,7 @@
 {#if data.users.length === 0}
 	<p>No results found.</p>
 {:else}
-	<!-- User Statistics -->
-	<details class="stats">
-		<summary>User Statistics</summary>
-		{#if Object.keys(data.stats).length === 0}
-			<p>No statistics available.</p>
-		{/if}
-		{#each data.questions as question}
-			{#if data.stats[question.id] !== undefined}
-				<details>
-					<summary class="question-label">{question.label}</summary>
-					{#if question.type === 'NUMBER'}
-						<div class="graph-container">
-							<Plot
-								data={[frequencyToBoxPlotData(data.stats[question.id])]}
-								layout={{
-									showlegend: false,
-									margin: {
-										t: 20,
-										r: 50,
-										b: 50,
-										l: 20,
-									},
-								}}
-								fillParent="width"
-								debounce={250}
-							/>
-						</div>
-					{:else if question.type === 'SENTENCE' || question.type === 'PARAGRAPH'}
-						{@const sortedWords = getWordFrequencyStatisticsMap(
-							data.stats[question.id],
-							data.count
-						)}
-						<ol>
-							{#each sortedWords as { word, totalFrequency, percentage }}
-								<li>
-									<strong>{word}</strong> - Appears {totalFrequency} times ({percentage}% of
-									responses)
-								</li>
-							{/each}
-						</ol>
-					{:else}
-						<div class="graph-container">
-							<Plot
-								data={[frequencyToPieChartData(data.stats[question.id])]}
-								layout={{
-									showlegend: true,
-									legend: {
-										orientation: 'h',
-									},
-									margin: {
-										t: 20,
-										r: 50,
-										b: 50,
-										l: 20,
-									},
-								}}
-								fillParent={true}
-								debounce={250}
-							/>
-						</div>
-					{/if}
-				</details>
-			{/if}
-		{/each}
-	</details>
-
+	<Statistics stats={data.stats} questions={data.questions} count={data.count} />
 	<!-- User table -->
 	<div class="filter">
 		<p>
@@ -497,10 +351,6 @@
 {/if}
 
 <style>
-	.stats {
-		padding-top: 20px;
-	}
-
 	.filter {
 		display: flex;
 		flex-direction: row;
@@ -551,19 +401,9 @@
 		opacity: 0.5;
 	}
 
-	.graph-container {
-		width: 100%;
-		height: 300px;
-		overflow: hidden;
-	}
-
 	.download-button {
 		width: 100%;
 		text-align: center;
 		margin-bottom: 10px;
-	}
-
-	.question-label {
-		padding: 10px 20px;
 	}
 </style>

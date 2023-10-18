@@ -6,10 +6,13 @@
 
 - PWA support
 - Statistics for all question types
+- Download data/files button now ignore display limit
 
 [FIXED]
 
 - Required checkboxes in application not checked after withdraw and edit
+- Sponsors can no longer search by status/role/decision/scan actions
+- Sponsors can view files that they have access to
 
 ## v0.7.2
 
