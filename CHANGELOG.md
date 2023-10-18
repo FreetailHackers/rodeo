@@ -11,6 +11,7 @@
 [FIXED]
 
 - Required checkboxes in application not checked after withdraw and edit
+- Logging in with Google/GitHub OAuth now normalizes emails to lowercase
 
 ## v0.7.2
 
