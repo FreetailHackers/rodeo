@@ -39,8 +39,7 @@
 						</form>
 					{/if}
 				</span>
-				<br />
-				<p><SvelteMarkdown source={announcement.body} isInline /></p>
+				<SvelteMarkdown source={announcement.body} />
 			</li>
 		{/each}
 	</ul>
@@ -56,7 +55,7 @@
 
 	li {
 		border: 2px solid black;
-		padding: 1rem;
+		padding: 1rem 1rem 0 1rem;
 		margin-bottom: 1rem;
 	}
 

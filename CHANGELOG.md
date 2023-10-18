@@ -6,6 +6,7 @@
 
 - PWA support
 - Statistics for all question types
+- Markdown support in schedule
 
 [FIXED]
 
