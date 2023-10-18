@@ -15,7 +15,7 @@ export const canApply = async (): Promise<boolean> => {
 	const settings = await getSettings();
 	const count = await prisma.authUser.count({
 		where: {
-			status: { in: ['APPLIED', 'ACCEPTED', 'CONFIRMED', 'REJECTED', 'DECLINED', 'WAITLISTED'] },
+			status: { in: ['APPLIED', 'ACCEPTED', 'CONFIRMED'] },
 		},
 	});
 	return (
@@ -162,7 +162,7 @@ export const admissionsRouter = t.router({
 		}
 	),
 
-	canApply: t.procedure.use(authenticate(['ADMIN'])).query(async (): Promise<boolean> => {
+	canApply: t.procedure.query(async (): Promise<boolean> => {
 		return await canApply();
 	}),
 });
