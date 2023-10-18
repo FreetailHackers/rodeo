@@ -29,9 +29,7 @@ html {
 body {
 	font-family: var(--font-family);
 	font-size: var(--font-size);
-	max-width: 50rem;
 	margin: 0 auto;
-	padding: 0 1rem;
 	overflow-wrap: anywhere;
 }
 
@@ -196,4 +194,13 @@ dialog::backdrop {
 
 img {
 	max-width: 100%;
+}
+
+footer {
+	padding: 0 1rem;
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	text-align: center;
 }

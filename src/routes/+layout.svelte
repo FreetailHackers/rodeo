@@ -81,11 +81,13 @@
 	{/if}
 </nav>
 
-{#key $page.url.pathname}
-	<div in:fly={{ easing: cubicOut, y: 10, duration: 300 }}>
-		<slot />
-	</div>
-{/key}
+<div class="main-content">
+	{#key $page.url.pathname}
+		<div in:fly={{ easing: cubicOut, y: 10, duration: 300 }}>
+			<slot />
+		</div>
+	{/key}
+</div>
 
 <Toasts />
 
@@ -99,11 +101,18 @@
 </footer>
 
 <style>
+	.main-content {
+		display: flex;
+		justify-content: center;
+		max-width: 50rem;
+		margin: 0 auto;
+		padding: 0 1rem;
+	}
 	nav {
 		position: sticky;
 		top: 0;
 		margin-top: 0;
-		background-color: white;
+		background-color: var(--primary-accent);
 		z-index: 99;
 	}
 
@@ -112,7 +121,7 @@
 		margin: 0;
 		padding: 0;
 		transition: all 0.5s ease-out;
-		background-color: white;
+		background-color: var(--primary-accent);
 		max-height: 0;
 		overflow: hidden;
 		width: 100%;
@@ -134,6 +143,7 @@
 		display: block;
 		width: 100%;
 		padding: 0.7rem 0;
+		color: white;
 	}
 
 	@media (min-width: 768px) {
@@ -145,17 +155,22 @@
 			margin: 0;
 			padding-top: 1rem;
 			display: flex;
+			justify-content: space-around;
 			max-height: fit-content;
+			font-family: 'ruddy', sans-serif;
+			font-weight: 700;
+			font-style: normal;
+			text-transform: uppercase;
 		}
 
-		menu li + li::before {
-			content: '|';
+		menu li {
 			padding: 0.5rem;
 		}
 
 		menu a {
 			display: inline;
 			width: initial;
+			text-decoration: none;
 		}
 	}
 
