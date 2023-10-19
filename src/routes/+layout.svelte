@@ -177,6 +177,11 @@
 		text-decoration: none;
 	}
 
+	menu li:hover {
+		transform: 1s;
+		background-color: #502340;
+	}
+
 	@media (min-width: 1090px) {
 		/* minimum width that can fit all navbar tabs for admin accounts (which have the most number of tabs currently) */
 		/* should be updated if we change the number of tabs */
@@ -206,16 +211,14 @@
 			padding: 0.5rem;
 		}
 
+		menu li:hover {
+			border-radius: 5px;
+		}
+
 		menu a {
 			display: inline;
 			width: initial;
 			text-decoration: none;
-		}
-
-		li:hover {
-			border-radius: 10px;
-			transform: 1s;
-			background-color: #502340;
 		}
 	}
 
