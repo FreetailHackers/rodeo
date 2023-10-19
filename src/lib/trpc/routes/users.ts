@@ -1,4 +1,4 @@
-import { Prisma, Role, Status, type Question, type StatusChange } from '@prisma/client';
+import { Prisma, Role, Status, type StatusChange } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
 import { sendEmails } from '../email';
@@ -40,7 +40,7 @@ export const usersRouter = t.router({
 						include: { authUser: true, decision: true },
 					});
 				} else {
-					if (!user.roles.includes('ADMIN')) {
+					if (!user.roles.includes('ADMIN') && !user.roles.includes('ORGANIZER')) {
 						throw new Error('Forbidden');
 					}
 					return await prisma.user.findUniqueOrThrow({
@@ -432,7 +432,7 @@ export const usersRouter = t.router({
 		}),
 
 	/**
-	 * Searches all users by email. User must be an admin.
+	 * Searches all users by email. User must be an admin or sponsor.
 	 */
 	search: t.procedure
 		.use(authenticate(['ADMIN', 'SPONSOR']))
@@ -455,13 +455,11 @@ export const usersRouter = t.router({
 				users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
 			}> => {
 				let questions = await getQuestions();
-				const scanOptions = (await getSettings()).scanActions;
-				const where = getWhereCondition(
+				const where = await getWhereCondition(
 					req.input.key,
 					req.input.searchFilter,
 					req.input.search,
-					questions,
-					scanOptions
+					req.ctx.user.roles
 				);
 				const count = await prisma.user.count({ where });
 				const users = await prisma.user.findMany({
@@ -480,6 +478,8 @@ export const usersRouter = t.router({
 						questions.forEach((question) => {
 							delete applicationData[question.id];
 						});
+						user.decision = null;
+						user.scanCount = null;
 					});
 				}
 				return {
@@ -492,7 +492,54 @@ export const usersRouter = t.router({
 		),
 
 	/**
-	 * Gets statistics on the given users for the given questions. User must be an admin.
+	 * Gets URLS for all files uploaded by the users matching the given
+	 * search criteria. User must be an admin or sponsor.
+	 *
+	 * (This is called directly in the frontend, because sending the
+	 * files themselves wouldn't fit within Vercel's 4 MB payload limit)
+	 */
+	files: t.procedure
+		.use(authenticate(['ADMIN', 'SPONSOR']))
+		.input(
+			z.object({
+				key: z.string(),
+				search: z.string(),
+				searchFilter: z.string(),
+			})
+		)
+		.query(async (req): Promise<Record<string, { path: string; url: string }[]>> => {
+			let questions = (await getQuestions()).filter((question) => question.type === 'FILE');
+			if (!req.ctx.user.roles.includes('ADMIN')) {
+				questions = questions.filter((question) => question.sponsorView);
+			}
+			const where = await getWhereCondition(
+				req.input.key,
+				req.input.searchFilter,
+				req.input.search,
+				req.ctx.user.roles
+			);
+			const users = await prisma.user.findMany({ include: { authUser: true }, where });
+			// Remove questions that should not be visible to sponsors
+			const files: Record<string, { path: string; url: string }[]> = {};
+			users.forEach((user) => {
+				files[user.authUser.email] = [];
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				const applicationData = user.application as Record<string, any>;
+				questions.forEach((question) => {
+					if (applicationData[question.id]) {
+						files[user.authUser.email].push({
+							path: `${user.authUser.email}-${question.id}-${applicationData[question.id]}`,
+							url: `/files/${user.authUserId}/${question.id}`,
+						});
+					}
+				});
+			});
+			return files;
+		}),
+
+	/**
+	 * Gets statistics on the given users for the given questions. User
+	 * must be an admin or sponsor.
 	 */
 	getStats: t.procedure
 		.use(authenticate(['ADMIN', 'SPONSOR']))
@@ -505,17 +552,13 @@ export const usersRouter = t.router({
 		)
 		.query(async (req) => {
 			let questions = await getQuestions();
-			const scanOptions = (await getSettings()).scanActions;
-			const where = getWhereCondition(
+			const where = await getWhereCondition(
 				req.input.key,
 				req.input.searchFilter,
 				req.input.search,
-				questions,
-				scanOptions
+				req.ctx.user.roles
 			);
-			const users = await prisma.user.findMany({
-				where,
-			});
+			const users = await prisma.user.findMany({ where });
 
 			if (!req.ctx.user.roles.includes('ADMIN')) {
 				questions = questions.filter((question) => question.sponsorView);
@@ -692,25 +735,43 @@ export const usersRouter = t.router({
 		}),
 });
 
-// Converts key to Prisma where filter
-function getWhereCondition(
+async function getWhereCondition(
 	key: string,
 	searchFilter: string,
 	search: string,
-	questions: Question[],
-	scanOptions: string[]
-): Prisma.UserWhereInput {
+	roles: Role[]
+): Promise<Prisma.UserWhereInput> {
+	if (!roles.includes('ADMIN')) {
+		return {
+			AND: [
+				{ authUser: { roles: { has: 'HACKER' } } },
+				await getWhereConditionHelper(key, searchFilter, search, roles),
+			],
+		};
+	}
+	return await getWhereConditionHelper(key, searchFilter, search, roles);
+}
+
+// Converts key to Prisma where filter
+async function getWhereConditionHelper(
+	key: string,
+	searchFilter: string,
+	search: string,
+	roles: Role[]
+): Promise<Prisma.UserWhereInput> {
+	const questions = await getQuestions();
+	const scanActions = (await getSettings()).scanActions;
 	if (key === 'email') {
 		return { authUser: { email: { contains: search, mode: 'insensitive' } } };
-	} else if (key === 'status') {
+	} else if (key === 'status' && roles.includes('ADMIN')) {
 		return { authUser: { status: search as Status } };
-	} else if (key === 'role') {
+	} else if (key === 'role' && roles.includes('ADMIN')) {
 		return { authUser: { roles: { has: search as Role } } };
-	} else if (key === 'decision') {
+	} else if (key === 'decision' && roles.includes('ADMIN')) {
 		return {
 			decision: { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },
 		};
-	} else if (scanOptions.includes(key)) {
+	} else if (scanActions.includes(key) && roles.includes('ADMIN')) {
 		if (searchFilter === 'greater') {
 			return { scanCount: { path: [key], gt: Number(search) } };
 		} else if (searchFilter === 'greater_equal') {
@@ -769,6 +830,9 @@ function getWhereCondition(
 	} else {
 		for (const question of questions) {
 			if (key === question.id) {
+				if (!roles.includes('ADMIN') && !question.sponsorView) {
+					return {};
+				}
 				if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
 					if (searchFilter === 'exact') {
 						return { application: { path: [question.id], equals: search } };
