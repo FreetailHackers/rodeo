@@ -76,7 +76,6 @@
 			<a href="/feedback" class:active={$page.url.pathname.startsWith('/feedback')}>Feedback</a>
 		</li>
 	</menu>
-	<hr />
 
 	{#if isLoading}
 		<div class="overlay">
@@ -157,6 +156,7 @@
 		display: flex;
 		width: 100%;
 		padding-top: 0.7rem;
+		padding-bottom: 0.7rem;
 		justify-content: flex-start;
 		align-items: center;
 		flex-wrap: nowrap;
@@ -201,6 +201,7 @@
 		menu {
 			margin: 0;
 			padding-top: 0.5rem;
+			padding-bottom: 0.5rem;
 			display: flex;
 			justify-content: space-around;
 			max-height: fit-content;
