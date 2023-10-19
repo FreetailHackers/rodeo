@@ -22,7 +22,7 @@
 			}
 		} else {
 			html5QrCode = new Html5Qrcode('reader');
-			const config = { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1 };
+			const config = { fps: 5, qrbox: { width: 250, height: 250 }, aspectRatio: 1 };
 			html5QrCode.start({ facingMode: 'environment' }, config, handleScan, () => undefined);
 			totalScans = await trpc().users.getScanCount.query(action);
 		}

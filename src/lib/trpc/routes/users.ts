@@ -40,7 +40,7 @@ export const usersRouter = t.router({
 						include: { authUser: true, decision: true },
 					});
 				} else {
-					if (!user.roles.includes('ADMIN')) {
+					if (!user.roles.includes('ADMIN') && !user.roles.includes('ORGANIZER')) {
 						throw new Error('Forbidden');
 					}
 					return await prisma.user.findUniqueOrThrow({
