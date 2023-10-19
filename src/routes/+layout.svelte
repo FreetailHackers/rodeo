@@ -57,7 +57,8 @@
 		{/if}
 		{#if data.user?.roles.includes('HACKER')}
 			<li><a href="/apply" class:active={$page.url.pathname.startsWith('/apply')}>Apply</a></li>
-		{:else if data.user?.roles.includes('ADMIN') || data.user?.roles.includes('SPONSOR')}
+		{/if}
+		{#if data.user?.roles.includes('ADMIN') || data.user?.roles.includes('SPONSOR')}
 			<li><a href="/users" class:active={$page.url.pathname.startsWith('/users')}>Users</a></li>
 			{#if data.user?.roles.includes('ADMIN')}
 				<li><a href="/admin" class:active={$page.url.pathname.startsWith('/admin')}>Admin</a></li>
