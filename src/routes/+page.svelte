@@ -72,6 +72,7 @@
 	.main-content {
 		margin: 0 auto;
 		padding: 0 1rem;
+		max-width: 50rem;
 	}
 
 	label {

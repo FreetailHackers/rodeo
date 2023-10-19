@@ -129,10 +129,11 @@
 	.main-content {
 		display: flex;
 		justify-content: center;
-		/* max-width: 50rem; */
+		/* max-width: 50rem;  */
 		margin: 0 auto;
 		padding: 0 1rem;
 	}
+
 	nav {
 		position: sticky;
 		/* top: 0; */
