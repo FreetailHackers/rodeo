@@ -107,8 +107,6 @@
 <style>
 	label {
 		display: flex;
-		/* padding: 0 1rem; */
-		/* margin: 0 auto; */
 		font-family: 'ruddy', sans-serif;
 		font-weight: 700;
 		font-style: normal;
@@ -128,7 +126,7 @@
 	}
 
 	.main-content {
-		width: 50rem;
+		max-width: 50rem;
 		margin: 0 auto;
 		padding: 0 1rem;
 	}
@@ -180,7 +178,8 @@
 	}
 
 	@media (min-width: 1090px) {
-		/* max width before tab labels overflow */
+		/* minimum width that can fit all navbar tabs for admin accounts (which have the most number of tabs currently) */
+		/* should be updated if we change the number of tabs */
 		#hamburger-logo {
 			display: none;
 		}
@@ -211,6 +210,12 @@
 			display: inline;
 			width: initial;
 			text-decoration: none;
+		}
+
+		li:hover {
+			border-radius: 10px;
+			transform: 1s;
+			background-color: #502340;
 		}
 	}
 
