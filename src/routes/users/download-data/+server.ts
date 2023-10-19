@@ -18,7 +18,12 @@ export const GET = async ({ locals, url }) => {
 	for (const user of results.users) {
 		users.push(prepare(user, questions));
 	}
-	return new Response(parser.parse(users));
+	return new Response(parser.parse(users), {
+		headers: {
+			'Content-Type': 'text/csv',
+			'Content-Disposition': 'attachment; filename="users.csv"',
+		},
+	});
 };
 
 // Helper function to replace question IDs with their labels
