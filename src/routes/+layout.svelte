@@ -33,7 +33,10 @@
 </script>
 
 <nav>
-	<label for="hamburgerCheckbox" id="hamburger"><b>MENU</b></label>
+	<!-- <img src="favicon.png" alt="freetail logo"> -->
+	<label for="hamburgerCheckbox" id="hamburger"
+		><img src="favicon.png" alt="freetail logo" id="hamburger-logo" /><b>MENU</b></label
+	>
 	<input
 		type="checkbox"
 		id="hamburgerCheckbox"
@@ -41,6 +44,7 @@
 		style="display: none"
 	/>
 	<menu id="menu" bind:this={menu}>
+		<img src="favicon.png" id="menu-logo" alt="freetail logo" />
 		<li>
 			<a href="/" class:active={$page.url.pathname === '/'}>Home</a>
 		</li>
@@ -101,6 +105,27 @@
 </footer>
 
 <style>
+	label {
+		display: flex;
+		padding: 0 1rem;
+		margin: 0 auto;
+		font-family: 'ruddy', sans-serif;
+		font-weight: 700;
+		font-style: normal;
+		text-transform: uppercase;
+	}
+
+	#hamburger-logo {
+		display: block;
+		height: 2rem;
+		padding-right: 1rem;
+		padding-left: 1rem;
+	}
+
+	#menu-logo {
+		display: none;
+	}
+
 	.main-content {
 		display: flex;
 		justify-content: center;
@@ -125,12 +150,19 @@
 		max-height: 0;
 		overflow: hidden;
 		width: 100%;
+		padding: 0 1rem;
+		font-family: 'ruddy', sans-serif;
+		font-weight: 700;
+		font-style: normal;
+		text-transform: uppercase;
 	}
 
 	#hamburger {
-		display: block;
+		display: flex;
 		width: 100%;
 		padding-top: 1rem;
+		align-items: center;
+		justify-content: flex-start;
 	}
 
 	#hamburgerCheckbox:checked + menu {
@@ -142,11 +174,21 @@
 	menu a {
 		display: block;
 		width: 100%;
-		padding: 0.7rem 0;
+		padding: 0.7rem 1rem;
 		color: white;
+		text-decoration: none;
 	}
 
-	@media (min-width: 768px) {
+	@media (min-width: 769px) {
+		#hamburger-logo {
+			display: none;
+		}
+
+		#menu-logo {
+			display: block;
+			height: 40px;
+		}
+
 		#hamburger {
 			display: none;
 		}
@@ -161,6 +203,7 @@
 			font-weight: 700;
 			font-style: normal;
 			text-transform: uppercase;
+			align-items: center;
 		}
 
 		menu li {
