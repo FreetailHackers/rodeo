@@ -33,9 +33,8 @@
 </script>
 
 <nav>
-	<!-- <img src="favicon.png" alt="freetail logo"> -->
 	<label for="hamburgerCheckbox" id="hamburger"
-		><img src="favicon.png" alt="freetail logo" id="hamburger-logo" /><b>MENU</b></label
+		><img src="favicon.png" alt="Freetail logo" id="hamburger-logo" /><b>MENU</b></label
 	>
 	<input
 		type="checkbox"
@@ -44,7 +43,7 @@
 		style="display: none"
 	/>
 	<menu id="menu" bind:this={menu}>
-		<img src="favicon.png" id="menu-logo" alt="freetail logo" />
+		<img src="favicon.png" id="menu-logo" alt="Freetail logo" />
 		<li>
 			<a href="/" class:active={$page.url.pathname === '/'}>Home</a>
 		</li>
@@ -109,11 +108,12 @@
 	label {
 		display: flex;
 		/* padding: 0 1rem; */
-		margin: 0 auto;
+		/* margin: 0 auto; */
 		font-family: 'ruddy', sans-serif;
 		font-weight: 700;
 		font-style: normal;
 		text-transform: uppercase;
+		color: white;
 	}
 
 	#hamburger-logo {
@@ -128,16 +128,13 @@
 	}
 
 	.main-content {
-		display: flex;
-		justify-content: center;
-		/* max-width: 50rem;  */
+		width: 50rem;
 		margin: 0 auto;
 		padding: 0 1rem;
 	}
 
 	nav {
 		position: sticky;
-		/* top: 0; */
 		margin-top: 0;
 		background-color: var(--primary-accent);
 		z-index: 99;
@@ -152,7 +149,6 @@
 		max-height: 0;
 		overflow: hidden;
 		width: 100%;
-		/* padding: 0 1rem; */
 		font-family: 'ruddy', sans-serif;
 		font-weight: 700;
 		font-style: normal;
@@ -162,9 +158,11 @@
 	#hamburger {
 		display: flex;
 		width: 100%;
-		padding-top: 1rem;
-		align-items: center;
+		padding-top: 0.7rem;
 		justify-content: flex-start;
+		align-items: center;
+		flex-wrap: nowrap;
+		flex-direction: row;
 	}
 
 	#hamburgerCheckbox:checked + menu {
@@ -182,6 +180,7 @@
 	}
 
 	@media (min-width: 1090px) {
+		/* max width before tab labels overflow */
 		#hamburger-logo {
 			display: none;
 		}
@@ -197,7 +196,7 @@
 
 		menu {
 			margin: 0;
-			padding-top: 1rem;
+			padding-top: 0.5rem;
 			display: flex;
 			justify-content: space-around;
 			max-height: fit-content;
@@ -215,10 +214,6 @@
 		}
 	}
 
-	hr {
-		margin-top: 1rem;
-	}
-
 	.overlay {
 		position: fixed;
 		top: 0;
@@ -234,6 +229,6 @@
 
 	.active {
 		font-weight: bold;
-		color: black;
+		text-decoration: underline;
 	}
 </style>
