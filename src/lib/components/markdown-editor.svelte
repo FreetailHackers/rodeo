@@ -51,6 +51,7 @@
 	}
 	textarea {
 		height: auto;
+		width: 100%;
 	}
 
 	.border {

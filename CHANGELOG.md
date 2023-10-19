@@ -7,12 +7,14 @@
 - PWA support
 - Statistics for all question types
 - Download data/files button now ignore display limit
+- Markdown support in schedule
 
 [FIXED]
 
 - Required checkboxes in application not checked after withdraw and edit
 - Sponsors can no longer search by status/role/decision/scan actions
 - Sponsors can view files that they have access to
+- Logging in with Google/GitHub OAuth now normalizes emails to lowercase
 
 [REMOVED]
 

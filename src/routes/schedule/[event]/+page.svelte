@@ -2,6 +2,8 @@
 	import { enhance } from '$app/forms';
 	import { onMount } from 'svelte';
 	import { generateIcsContent } from '$lib/ics';
+	import SvelteMarkdown from 'svelte-markdown';
+	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
 
 	export let data;
 
@@ -49,7 +51,7 @@
 		})}
 	{/if}
 </h2>
-<p>{data.event.description}</p>
+<SvelteMarkdown source={data.event.description} />
 
 <a href="/schedule/">Back to Schedule</a>
 {#if url}
@@ -74,7 +76,9 @@
 		<input type="text" id="name" name="name" required value={data.event.name} />
 
 		<label for="description">Description</label>
-		<textarea id="description" name="description" required value={data.event.description} />
+		<div id="description">
+			<MarkdownEditor id="description" name="description" value={data.event.description} required />
+		</div>
 
 		<label for="start">Start Time</label>
 		<input
@@ -147,7 +151,7 @@
 
 	select,
 	input,
-	textarea {
+	#description {
 		margin-bottom: 1rem;
 	}
 
