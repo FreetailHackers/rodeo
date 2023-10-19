@@ -107,7 +107,7 @@
 <style>
 	label {
 		display: flex;
-		padding: 0 1rem;
+		/* padding: 0 1rem; */
 		margin: 0 auto;
 		font-family: 'ruddy', sans-serif;
 		font-weight: 700;
@@ -135,7 +135,7 @@
 	}
 	nav {
 		position: sticky;
-		top: 0;
+		/* top: 0; */
 		margin-top: 0;
 		background-color: var(--primary-accent);
 		z-index: 99;
@@ -150,7 +150,7 @@
 		max-height: 0;
 		overflow: hidden;
 		width: 100%;
-		padding: 0 1rem;
+		/* padding: 0 1rem; */
 		font-family: 'ruddy', sans-serif;
 		font-weight: 700;
 		font-style: normal;
