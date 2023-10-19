@@ -129,7 +129,7 @@
 	.main-content {
 		display: flex;
 		justify-content: center;
-		max-width: 50rem;
+		/* max-width: 50rem; */
 		margin: 0 auto;
 		padding: 0 1rem;
 	}
@@ -179,7 +179,7 @@
 		text-decoration: none;
 	}
 
-	@media (min-width: 769px) {
+	@media (min-width: 1090px) {
 		#hamburger-logo {
 			display: none;
 		}
@@ -199,10 +199,6 @@
 			display: flex;
 			justify-content: space-around;
 			max-height: fit-content;
-			font-family: 'ruddy', sans-serif;
-			font-weight: 700;
-			font-style: normal;
-			text-transform: uppercase;
 			align-items: center;
 		}
 
@@ -236,5 +232,6 @@
 
 	.active {
 		font-weight: bold;
+		color: black;
 	}
 </style>
