@@ -407,10 +407,18 @@ export const usersRouter = t.router({
 				})
 			).scanCount as Prisma.JsonObject;
 			const scans = Number(scanCount[req.input.action] ?? 0);
-			await prisma.user.update({
-				where: { authUserId: req.input.id },
-				data: { scanCount: { ...scanCount, [req.input.action]: scans + 1 } },
-			});
+			await prisma.$transaction([
+				prisma.user.update({
+					where: { authUserId: req.input.id },
+					data: { scanCount: { ...scanCount, [req.input.action]: scans + 1 } },
+				}),
+				prisma.scan.create({
+					data: {
+						action: req.input.action,
+						user: { connect: { authUserId: req.input.id } },
+					},
+				}),
+			]);
 		}),
 
 	/**
@@ -429,6 +437,21 @@ export const usersRouter = t.router({
 						gt: 0,
 					},
 				},
+			});
+		}),
+
+	/**
+	 * Returns a log of all scans ordered in increasing timestamp. User
+	 * must be an admin or organizer.
+	 */
+	getScanLog: t.procedure
+		.use(authenticate(['ORGANIZER', 'ADMIN']))
+		.input(z.string())
+		.query(async (req): Promise<Prisma.ScanGetPayload<{ include: { user: true } }>[]> => {
+			return await prisma.scan.findMany({
+				include: { user: true },
+				where: { action: req.input },
+				orderBy: { timestamp: 'asc' },
 			});
 		}),
 
