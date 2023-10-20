@@ -28,12 +28,12 @@ export const actions = {
 		} catch (e) {
 			applicationDeadline = null;
 		}
-		if(!applicationDeadline || isNaN(applicationDeadline.getTime())) {
+		if (!applicationDeadline || isNaN(applicationDeadline.getTime())) {
 			applicationDeadline = null;
 		}
 		const applicationLimitRaw = formData.get('applicationLimit');
 		let applicationLimit: number | null = parseInt(applicationLimitRaw as string);
-		if(applicationLimitRaw === '' || isNaN(applicationLimit)) {
+		if (applicationLimitRaw === '' || isNaN(applicationLimit)) {
 			applicationLimit = null;
 		}
 		const applicationOpen = formData.get('applicationOpen') === 'on';
@@ -43,7 +43,7 @@ export const actions = {
 		} catch (e) {
 			confirmBy = null;
 		}
-		console.log(applicationDeadline, applicationLimit)
+		console.log(applicationDeadline, applicationLimit);
 		const scanOptions = formData.get('scanActions') as string;
 		const scanActions = scanOptions
 			.split('\r\n')
