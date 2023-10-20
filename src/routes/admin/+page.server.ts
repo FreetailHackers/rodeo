@@ -43,9 +43,7 @@ export const actions = {
 		} catch (e) {
 			confirmBy = null;
 		}
-		console.log(applicationDeadline, applicationLimit);
-		const scanOptions = formData.get('scanActions') as string;
-		const scanActions = scanOptions
+		const scanActions = (formData.get('scanActions') as string)
 			.split('\r\n')
 			.map((option: string) => option.trim())
 			.filter(Boolean);

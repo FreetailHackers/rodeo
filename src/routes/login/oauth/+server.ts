@@ -56,6 +56,7 @@ function getProvider(provider: string | null) {
  * NOTE: Make sure the email is verified before calling this function!
  */
 export async function _upsert(providerUserAuth: ProviderUserAuth, email: string) {
+	email = email.trim().toLowerCase();
 	const user = await prisma.authUser.findUnique({
 		where: { email },
 	});
