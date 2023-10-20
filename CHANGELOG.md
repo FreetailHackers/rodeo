@@ -5,6 +5,7 @@
 [ADDED]
 
 - Timestamps for scans
+- Ability to close applications based on deadline or application limit
 
 [CHANGED]
 
