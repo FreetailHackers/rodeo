@@ -14,11 +14,6 @@ export const load = async ({ locals, url }) => {
 	const questions = await trpc(locals.auth).questions.get();
 	return {
 		settings: await trpc(locals.auth).settings.getPublic(),
-		stats: await trpc(locals.auth).users.getStats({
-			key: url.searchParams.get('key') ?? '',
-			search: url.searchParams.get('search') ?? '',
-			searchFilter: url.searchParams.get('searchFilter') ?? '',
-		}),
 		questions: user.roles.includes('ADMIN')
 			? questions
 			: questions.filter((question) => question.sponsorView),

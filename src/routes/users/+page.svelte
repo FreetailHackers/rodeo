@@ -282,7 +282,7 @@
 {#if data.users.length === 0}
 	<p>No results found.</p>
 {:else}
-	<Statistics stats={data.stats} questions={data.questions} count={data.count} />
+	<Statistics questions={data.questions} count={data.count} />
 	<!-- User table -->
 	<div class="filter">
 		<p>

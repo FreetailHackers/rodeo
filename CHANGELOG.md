@@ -9,6 +9,7 @@
 [CHANGED]
 
 - Redesigned navbar and hacker ID page
+- Statistics in user page are now lazily loaded to improve TTI
 
 ## v0.7.3
 

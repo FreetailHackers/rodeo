@@ -1,10 +1,17 @@
 <script lang="ts">
+	import { afterNavigate } from '$app/navigation';
+	import { page } from '$app/stores';
+	import { trpc } from '$lib/trpc/client';
 	import type { Question } from '@prisma/client';
 	import Plot from 'svelte-plotly.js';
 
-	export let stats: Record<string, Record<string, number | [number, number]>>;
+	let stats: Record<string, Record<string, number | [number, number]>> | null = null;
 	export let questions: Question[];
 	export let count: number;
+
+	afterNavigate(() => {
+		stats = null;
+	});
 
 	function frequencyToPieChartData(
 		answerData: Record<string, number | [number, number]>
@@ -54,8 +61,17 @@
 	}
 </script>
 
-<details class="stats">
-	<summary>User Statistics</summary>
+{#if stats === null}
+	<button
+		on:click={async () =>
+			(stats = await trpc().users.getStats.query({
+				key: $page.url.searchParams.get('key') ?? '',
+				search: $page.url.searchParams.get('search') ?? '',
+				searchFilter: $page.url.searchParams.get('searchFilter') ?? '',
+			}))}>Show statistics</button
+	>
+{:else}
+	<button on:click={() => (stats = null)}>Hide statistics</button>
 	{#if Object.keys(stats).length === 0}
 		<p>No statistics available.</p>
 	{/if}
@@ -114,11 +130,12 @@
 			</details>
 		{/if}
 	{/each}
-</details>
+{/if}
 
 <style>
-	.stats {
-		padding-top: 20px;
+	button {
+		width: 100%;
+		margin: 0.5rem 0;
 	}
 
 	.graph-container {
