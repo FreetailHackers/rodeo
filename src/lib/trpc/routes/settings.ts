@@ -20,7 +20,7 @@ const settingsSchema = z
 		scanActions: z.string().array().optional(),
 		timezone: z.string().optional(),
 		applicationDeadline: z.date().nullable().optional(),
-		applicationLimit: z.number().optional(),
+		applicationLimit: z.number().nullable().optional(),
 	})
 	.strict();
 

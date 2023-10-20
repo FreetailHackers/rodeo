@@ -5,6 +5,7 @@
 	export let data;
 
 	let releaseConfirm = false;
+	let applicationOpenStatus = data.settings.applicationOpen;
 </script>
 
 <svelte:head>
@@ -22,9 +23,16 @@
 >
 	<label for="applicationStatus"><h2>Application Status</h2></label>
 
+	<Toggle
+		name="applicationOpen"
+		label="Accept new applications"
+		bind:checked={applicationOpenStatus}
+	/>
+
 	<status-container>
 		<label for="applicationDeadline">Hackers must apply before:</label>
 		<input
+			disabled={!applicationOpenStatus}
 			type="datetime-local"
 			name="applicationDeadline"
 			id="applicationDeadline"
@@ -38,23 +46,17 @@
 	<status-container>
 		<label for="applicationLimit"
 			>Hackers can only apply if there are at most this number of accounts with status APPLIED,
-			ACCEPTED, CONFIRMED:</label
+			ACCEPTED, CONFIRMED. Leaving empty will remove limit on account number:</label
 		>
 		<input
+			disabled={!applicationOpenStatus}
 			type="number"
 			name="applicationLimit"
 			id="applicationLimit"
 			value={data.settings.applicationLimit}
-			placeholder="Type in new maximum number of applications"
-			step="1"
+			placeholder="ex) 10000"
 		/>
 	</status-container>
-
-	<Toggle
-		name="applicationOpen"
-		label="Accept new applications"
-		checked={data.settings.applicationOpen}
-	/>
 
 	<label for="statusChangeText"><h2>User Status Count Over Time</h2></label>
 	<Graph statusChanges={data.graph} />
@@ -141,6 +143,6 @@
 	}
 
 	status-container {
-		margin-bottom: 1rem;
+		margin-top: 1rem;
 	}
 </style>
