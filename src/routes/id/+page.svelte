@@ -8,7 +8,7 @@
 
 	onMount(() => {
 		QRCode.toCanvas(canvas, data.user.id, {
-			width: 200,
+			width: 250,
 		});
 	});
 </script>
@@ -22,7 +22,7 @@
 		<div class="white-border">
 			<canvas bind:this={canvas} id="qrcode" />
 		</div>
-		<span>My Hacker ID</span>
+		<div class="text"><span>My Hacker ID</span></div>
 	</div>
 </div>
 
@@ -34,13 +34,17 @@
 		padding: 0 1rem;
 	}
 
+	.text {
+		display: flex;
+	}
+
 	.purple-border {
 		display: flex;
 		flex-direction: column;
 		justify-content: flex-start;
 		align-items: center;
 		flex-wrap: nowrap;
-		height: 25rem;
+		height: 24rem;
 		border-radius: 28px;
 		background: #8b4f77;
 		width: fit-content;
@@ -51,8 +55,10 @@
 		justify-content: center;
 		align-items: center;
 		border-radius: 38px;
-		margin: 20px;
-		margin-bottom: 40px;
+		margin-top: 20px;
+		margin-left: 20px;
+		margin-right: 20px;
+		margin-bottom: 10px;
 		background: #f7f7ff;
 		width: fit-content;
 	}
@@ -72,6 +78,6 @@
 		margin: 0 auto;
 		padding: 0;
 		margin: 20px;
-		width: 100px;
+		/* width: 100px; */
 	}
 </style>
