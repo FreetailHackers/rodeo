@@ -34,9 +34,9 @@
 		padding-top: 15px;
 	}
 
-	/* hr {
+	hr {
 		margin: 1rem 0;
-	} */
+	}
 
 	.active {
 		font-weight: bold;

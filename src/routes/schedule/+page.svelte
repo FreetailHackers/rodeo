@@ -280,7 +280,7 @@
 	/* Admin view */
 
 	hr {
-		margin: 0;
+		margin-top: 20px;
 	}
 
 	a.calendar-export-link {
