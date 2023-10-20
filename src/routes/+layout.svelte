@@ -33,7 +33,9 @@
 </script>
 
 <nav>
-	<label for="hamburgerCheckbox" id="hamburger"><b>MENU</b></label>
+	<label for="hamburgerCheckbox" id="hamburger"
+		><img src="favicon.png" alt="Freetail logo" id="hamburger-logo" /><b>MENU</b></label
+	>
 	<input
 		type="checkbox"
 		id="hamburgerCheckbox"
@@ -41,6 +43,7 @@
 		style="display: none"
 	/>
 	<menu id="menu" bind:this={menu}>
+		<img src="favicon.png" id="menu-logo" alt="Freetail logo" />
 		<li>
 			<a href="/" class:active={$page.url.pathname === '/'}>Home</a>
 		</li>
@@ -73,7 +76,6 @@
 			<a href="/feedback" class:active={$page.url.pathname.startsWith('/feedback')}>Feedback</a>
 		</li>
 	</menu>
-	<hr />
 
 	{#if isLoading}
 		<div class="overlay">
@@ -82,11 +84,13 @@
 	{/if}
 </nav>
 
-{#key $page.url.pathname}
-	<div in:fly={{ easing: cubicOut, y: 10, duration: 300 }}>
-		<slot />
-	</div>
-{/key}
+<div class="main-content">
+	{#key $page.url.pathname}
+		<div in:fly={{ easing: cubicOut, y: 10, duration: 300 }}>
+			<slot />
+		</div>
+	{/key}
+</div>
 
 <Toasts />
 
@@ -100,11 +104,36 @@
 </footer>
 
 <style>
+	label {
+		display: flex;
+		font-family: 'ruddy', sans-serif;
+		font-weight: 700;
+		font-style: normal;
+		text-transform: uppercase;
+		color: white;
+	}
+
+	#hamburger-logo {
+		display: block;
+		height: 2rem;
+		padding-right: 1rem;
+		padding-left: 1rem;
+	}
+
+	#menu-logo {
+		display: none;
+	}
+
+	.main-content {
+		max-width: 50rem;
+		margin: 0 auto;
+		padding: 0 1rem;
+	}
+
 	nav {
 		position: sticky;
-		top: 0;
 		margin-top: 0;
-		background-color: white;
+		background-color: var(--primary-accent);
 		z-index: 99;
 	}
 
@@ -113,16 +142,25 @@
 		margin: 0;
 		padding: 0;
 		transition: all 0.5s ease-out;
-		background-color: white;
+		background-color: var(--primary-accent);
 		max-height: 0;
 		overflow: hidden;
 		width: 100%;
+		font-family: 'ruddy', sans-serif;
+		font-weight: 700;
+		font-style: normal;
+		text-transform: uppercase;
 	}
 
 	#hamburger {
-		display: block;
+		display: flex;
 		width: 100%;
-		padding-top: 1rem;
+		padding-top: 0.7rem;
+		padding-bottom: 0.7rem;
+		justify-content: flex-start;
+		align-items: center;
+		flex-wrap: nowrap;
+		flex-direction: row;
 	}
 
 	#hamburgerCheckbox:checked + menu {
@@ -134,34 +172,55 @@
 	menu a {
 		display: block;
 		width: 100%;
-		padding: 0.7rem 0;
+		padding: 0.7rem 1rem;
+		color: white;
+		text-decoration: none;
 	}
 
-	@media (min-width: 768px) {
+	menu li:hover {
+		transform: 1s;
+		background-color: #502340;
+	}
+
+	@media (min-width: 1090px) {
+		/* minimum width that can fit all navbar tabs for admin accounts (which have the most number of tabs currently) */
+		/* should be updated if we change the number of tabs */
+		#hamburger-logo {
+			display: none;
+		}
+
+		#menu-logo {
+			display: block;
+			height: 40px;
+		}
+
 		#hamburger {
 			display: none;
 		}
 
 		menu {
 			margin: 0;
-			padding-top: 1rem;
+			padding-top: 0.5rem;
+			padding-bottom: 0.5rem;
 			display: flex;
+			justify-content: space-around;
 			max-height: fit-content;
+			align-items: center;
 		}
 
-		menu li + li::before {
-			content: '|';
+		menu li {
 			padding: 0.5rem;
+		}
+
+		menu li:hover {
+			border-radius: 5px;
 		}
 
 		menu a {
 			display: inline;
 			width: initial;
+			text-decoration: none;
 		}
-	}
-
-	hr {
-		margin-top: 1rem;
 	}
 
 	.overlay {
@@ -179,5 +238,6 @@
 
 	.active {
 		font-weight: bold;
+		text-decoration: underline;
 	}
 </style>
