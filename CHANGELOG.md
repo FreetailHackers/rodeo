@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.8.0
+
+[ADDED]
+
+- Timestamps for scans
+
+[CHANGED]
+
+- Redesigned navbar and hacker ID page
+
 ## v0.7.3
 
 [ADDED]

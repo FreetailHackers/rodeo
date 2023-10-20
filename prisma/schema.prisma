@@ -61,6 +61,7 @@ model User {
   application   Json           @default("{}")
   scanCount     Json           @default("{}")
   statusChanges StatusChange[]
+  scans         Scan[]
 }
 
 model Announcement {
@@ -131,6 +132,14 @@ model Event {
 model StatusChange {
   id        Int      @id @default(autoincrement())
   newStatus Status
+  timestamp DateTime @default(now())
+  userId    String
+  user      User     @relation(fields: [userId], references: [authUserId], onDelete: Cascade)
+}
+
+model Scan {
+  id        Int      @id @default(autoincrement())
+  action    String
   timestamp DateTime @default(now())
   userId    String
   user      User     @relation(fields: [userId], references: [authUserId], onDelete: Cascade)
