@@ -32,7 +32,7 @@
 	<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
 {:else}
 	<!-- Signup page -->
-	{#if !data.settings.applicationOpen}
+	{#if !data.canApply}
 		<p>
 			<b>
 				NOTE: Applications are closed. If you would like to be notified of future events, you may

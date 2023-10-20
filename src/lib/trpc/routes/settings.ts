@@ -19,6 +19,8 @@ const settingsSchema = z
 		declineTemplate: z.string().optional(),
 		scanActions: z.string().array().optional(),
 		timezone: z.string().optional(),
+		applicationDeadline: z.date().nullable().optional(),
+		applicationLimit: z.number().nullable().optional(),
 	})
 	.strict();
 
@@ -38,6 +40,7 @@ export const settingsRouter = t.router({
 			info: string;
 			scanActions: string[];
 			timezone: string;
+			applicationDeadline: Date | null;
 		}> => {
 			const settings = await getSettings();
 			return {
@@ -47,6 +50,7 @@ export const settingsRouter = t.router({
 				info: settings.info,
 				scanActions: settings.scanActions,
 				timezone: settings.timezone,
+				applicationDeadline: settings.applicationDeadline,
 			};
 		}
 	),

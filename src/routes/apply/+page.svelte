@@ -29,12 +29,28 @@
 	<p>Your application status is:</p>
 	{#if data.user.authUser.status === 'VERIFIED'}
 		<h1>INCOMPLETE</h1>
-		<p>You must complete your application to be considered for admission.</p>
+		{#if data.settings.applicationDeadline !== null}
+			<p>
+				You must complete your application by
+				<bold
+					>{data.settings.applicationDeadline.toLocaleDateString('en-US', {
+						weekday: 'long',
+						month: 'long',
+						day: 'numeric',
+						hour: 'numeric',
+						minute: 'numeric',
+					})}
+				</bold>
+				to be considered for admission.
+			</p>
+		{:else}
+			<p>You must complete your application to be considered for admission.</p>
+		{/if}
 	{:else if data.user.authUser.status === 'APPLIED'}
 		<h1>SUBMITTED</h1>
 		<p>Thanks for applying! The team will review your application soon.</p>
 		<form method="POST" action="?/withdraw" use:enhance>
-			{#if data.settings.applicationOpen}
+			{#if data.canApply}
 				<button>Withdraw and Edit</button>
 			{:else}
 				<button disabled>Cannot edit because applications are closed.</button>
@@ -122,7 +138,7 @@
 
 <!-- The actual application -->
 {#if data.user.authUser.status === 'VERIFIED'}
-	{#if data.settings.applicationOpen}
+	{#if data.canApply}
 		<form
 			bind:this={applicationForm}
 			method="POST"
@@ -336,5 +352,9 @@
 		color: red;
 		margin: 0;
 		order: 1;
+	}
+
+	bold {
+		font-weight: bold;
 	}
 </style>

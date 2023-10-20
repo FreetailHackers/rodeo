@@ -10,6 +10,7 @@ import { auth, emailVerificationToken, resetPasswordToken } from '$lib/lucia';
 import type { Session } from 'lucia';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { canApply } from './admissions';
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
@@ -62,7 +63,7 @@ export const usersRouter = t.router({
 		.use(authenticate(['HACKER']))
 		.input(z.record(z.any()))
 		.mutation(async (req): Promise<void> => {
-			if (!(await getSettings()).applicationOpen || req.ctx.user.status !== 'VERIFIED') {
+			if (!(await canApply()) || req.ctx.user.status !== 'VERIFIED') {
 				return;
 			}
 			// Validate application
@@ -121,7 +122,7 @@ export const usersRouter = t.router({
 		.use(authenticate(['HACKER']))
 		.mutation(async (req): Promise<Record<string, string>> => {
 			// Ensure applications are open and the user has not received a decision yet
-			if (!(await getSettings()).applicationOpen || req.ctx.user.status !== 'VERIFIED') {
+			if (!(await canApply()) || req.ctx.user.status !== 'VERIFIED') {
 				return {};
 			}
 
@@ -209,7 +210,7 @@ export const usersRouter = t.router({
 	withdrawApplication: t.procedure
 		.use(authenticate(['HACKER']))
 		.mutation(async (req): Promise<void> => {
-			if (!(await getSettings()).applicationOpen || req.ctx.user.status !== 'APPLIED') {
+			if (!(await canApply()) || req.ctx.user.status !== 'APPLIED') {
 				return;
 			}
 			await prisma.authUser.update({
