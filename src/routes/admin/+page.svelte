@@ -5,6 +5,7 @@
 	export let data;
 
 	let releaseConfirm = false;
+	let applicationOpenStatus = data.settings.applicationOpen;
 </script>
 
 <svelte:head>
@@ -20,11 +21,43 @@
 		};
 	}}
 >
+	<label for="applicationStatus"><h2>Application Status</h2></label>
+
 	<Toggle
 		name="applicationOpen"
 		label="Accept new applications"
-		checked={data.settings.applicationOpen}
+		bind:checked={applicationOpenStatus}
 	/>
+
+	<status-container>
+		<label for="applicationDeadline">Hackers must apply before:</label>
+		<input
+			readonly={!applicationOpenStatus}
+			type="datetime-local"
+			name="applicationDeadline"
+			id="applicationDeadline"
+			value={data.settings.applicationDeadline
+				?.toLocaleString('sv', { timeZone: data.settings.timezone })
+				.replace(' ', 'T')
+				.slice(0, -3)}
+		/>
+	</status-container>
+
+	<status-container>
+		<label for="applicationLimit"
+			>Hackers can only apply if there are at most this number of accounts with status APPLIED,
+			ACCEPTED, or CONFIRMED (leaving empty will disable this limit)</label
+		>
+		<input
+			readonly={!applicationOpenStatus}
+			type="number"
+			name="applicationLimit"
+			id="applicationLimit"
+			value={data.settings.applicationLimit}
+			placeholder="10000"
+			min="0"
+		/>
+	</status-container>
 
 	<label for="statusChangeText"><h2>User Status Count Over Time</h2></label>
 	<Graph statusChanges={data.graph} />
@@ -108,5 +141,13 @@
 	textarea {
 		flex-grow: 1;
 		width: 100%;
+	}
+
+	status-container {
+		margin-top: 1rem;
+	}
+
+	input[readonly] {
+		background-color: rgb(182, 182, 182);
 	}
 </style>

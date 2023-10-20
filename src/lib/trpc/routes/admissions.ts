@@ -6,6 +6,25 @@ import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getSettings } from './settings';
 
+/**
+ * Considers applicationOpen, applicationDeadline, and applicationLimit
+ * to determine whether or not new users can apply.
+ * User must be an admin.
+ */
+export const canApply = async (): Promise<boolean> => {
+	const settings = await getSettings();
+	const count = await prisma.authUser.count({
+		where: {
+			status: { in: ['APPLIED', 'ACCEPTED', 'CONFIRMED'] },
+		},
+	});
+	return (
+		settings.applicationOpen &&
+		(settings.applicationDeadline === null || settings.applicationDeadline > new Date()) &&
+		(settings.applicationLimit === null || count <= settings.applicationLimit)
+	);
+};
+
 async function releaseDecisions(ids?: string[]): Promise<void> {
 	const hackers = await prisma.user.findMany({
 		include: { authUser: true, decision: true },
@@ -142,4 +161,8 @@ export const admissionsRouter = t.router({
 			});
 		}
 	),
+
+	canApply: t.procedure.query(async (): Promise<boolean> => {
+		return await canApply();
+	}),
 });
