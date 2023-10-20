@@ -33,7 +33,6 @@
 		<label for="applicationDeadline">Hackers must apply before:</label>
 		<input
 			readonly={!applicationOpenStatus}
-			class:grayed={!applicationOpenStatus}
 			type="datetime-local"
 			name="applicationDeadline"
 			id="applicationDeadline"
@@ -51,7 +50,6 @@
 		>
 		<input
 			readonly={!applicationOpenStatus}
-			class:grayed={!applicationOpenStatus}
 			type="number"
 			name="applicationLimit"
 			id="applicationLimit"
@@ -149,7 +147,7 @@
 		margin-top: 1rem;
 	}
 
-	.grayed {
+	input[readonly] {
 		background-color: rgb(182, 182, 182);
 	}
 </style>
