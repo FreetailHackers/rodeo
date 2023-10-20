@@ -33,7 +33,7 @@ export const actions = {
 		}
 		const applicationLimitRaw = formData.get('applicationLimit');
 		let applicationLimit: number | null = parseInt(applicationLimitRaw as string);
-		if (applicationLimitRaw === '' || isNaN(applicationLimit)) {
+		if (isNaN(applicationLimit)) {
 			applicationLimit = null;
 		}
 		const applicationOpen = formData.get('applicationOpen') === 'on';

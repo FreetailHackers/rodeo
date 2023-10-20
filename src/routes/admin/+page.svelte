@@ -46,7 +46,7 @@
 	<status-container>
 		<label for="applicationLimit"
 			>Hackers can only apply if there are at most this number of accounts with status APPLIED,
-			ACCEPTED, CONFIRMED. Leaving empty will remove limit on account number:</label
+			ACCEPTED, or CONFIRMED (leaving empty will disable this limit)</label
 		>
 		<input
 			disabled={!applicationOpenStatus}
@@ -54,7 +54,8 @@
 			name="applicationLimit"
 			id="applicationLimit"
 			value={data.settings.applicationLimit}
-			placeholder="ex) 10000"
+			placeholder="10000"
+			min="0"
 		/>
 	</status-container>
 
