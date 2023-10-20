@@ -28,9 +28,6 @@ export const actions = {
 		} catch (e) {
 			applicationDeadline = null;
 		}
-		if (!applicationDeadline || isNaN(applicationDeadline.getTime())) {
-			applicationDeadline = null;
-		}
 		const applicationLimitRaw = formData.get('applicationLimit');
 		let applicationLimit: number | null = parseInt(applicationLimitRaw as string);
 		if (isNaN(applicationLimit)) {

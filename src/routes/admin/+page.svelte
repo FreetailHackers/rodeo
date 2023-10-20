@@ -32,7 +32,8 @@
 	<status-container>
 		<label for="applicationDeadline">Hackers must apply before:</label>
 		<input
-			disabled={!applicationOpenStatus}
+			readonly={!applicationOpenStatus}
+			class:grayed={!applicationOpenStatus}
 			type="datetime-local"
 			name="applicationDeadline"
 			id="applicationDeadline"
@@ -49,7 +50,8 @@
 			ACCEPTED, or CONFIRMED (leaving empty will disable this limit)</label
 		>
 		<input
-			disabled={!applicationOpenStatus}
+			readonly={!applicationOpenStatus}
+			class:grayed={!applicationOpenStatus}
 			type="number"
 			name="applicationLimit"
 			id="applicationLimit"
@@ -145,5 +147,9 @@
 
 	status-container {
 		margin-top: 1rem;
+	}
+
+	.grayed {
+		background-color: rgb(182, 182, 182);
 	}
 </style>
