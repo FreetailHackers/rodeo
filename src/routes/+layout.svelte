@@ -34,7 +34,7 @@
 
 <nav>
 	<label for="hamburgerCheckbox" id="hamburger"
-		><img src="favicon.png" alt="Freetail logo" id="hamburger-logo" /><b>MENU</b></label
+		><img src="/favicon.png" alt="Freetail logo" id="hamburger-logo" /><b>MENU</b></label
 	>
 	<input
 		type="checkbox"
@@ -43,7 +43,7 @@
 		style="display: none"
 	/>
 	<menu id="menu" bind:this={menu}>
-		<img src="favicon.png" id="menu-logo" alt="Freetail logo" />
+		<img src="/favicon.png" id="menu-logo" alt="Freetail logo" />
 		<li>
 			<a href="/" class:active={$page.url.pathname === '/'}>Home</a>
 		</li>

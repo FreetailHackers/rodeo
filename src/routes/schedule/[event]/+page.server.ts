@@ -8,6 +8,9 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export const load = async ({ locals, params }) => {
+	if (Number.isNaN(Number(params.event))) {
+		throw error(404, 'Event not found');
+	}
 	const event = await trpc(locals.auth).events.get(Number(params.event));
 	const settings = await trpc(locals.auth).settings.getPublic();
 	if (event !== null) {
