@@ -66,7 +66,8 @@ export async function _upsert(providerUserAuth: ProviderUserAuth, email: string)
 			attributes: {
 				email,
 				roles: ['HACKER'],
-				status: 'VERIFIED',
+				status: 'CREATED',
+				verifiedEmail: true,
 			},
 		});
 		return newUser.id;

@@ -63,7 +63,7 @@ export const usersRouter = t.router({
 		.use(authenticate(['HACKER']))
 		.input(z.record(z.any()))
 		.mutation(async (req): Promise<void> => {
-			if (!(await canApply()) || req.ctx.user.status !== 'VERIFIED') {
+			if (!(await canApply()) || req.ctx.user.status !== 'CREATED') {
 				return;
 			}
 			// Validate application
@@ -122,7 +122,7 @@ export const usersRouter = t.router({
 		.use(authenticate(['HACKER']))
 		.mutation(async (req): Promise<Record<string, string>> => {
 			// Ensure applications are open and the user has not received a decision yet
-			if (!(await canApply()) || req.ctx.user.status !== 'VERIFIED') {
+			if (!(await canApply()) || req.ctx.user.status !== 'CREATED') {
 				return {};
 			}
 
@@ -215,7 +215,7 @@ export const usersRouter = t.router({
 			}
 			await prisma.authUser.update({
 				where: { id: req.ctx.user.id },
-				data: { status: 'VERIFIED' },
+				data: { status: 'CREATED' },
 			});
 		}),
 
@@ -308,7 +308,7 @@ export const usersRouter = t.router({
 	 * Throws an error if the user is already verified.
 	 */
 	sendVerificationEmail: t.procedure.use(authenticate()).mutation(async (req): Promise<void> => {
-		if (req.ctx.user.status !== 'CREATED') {
+		if (req.ctx.user.verifiedEmail) {
 			return;
 		}
 		const token = await emailVerificationToken.issue(req.ctx.user.id);
@@ -351,7 +351,7 @@ export const usersRouter = t.router({
 		const userId = await emailVerificationToken.validate(req.input);
 		await prisma.authUser.update({
 			where: { id: userId },
-			data: { status: 'VERIFIED' },
+			data: { verifiedEmail: true },
 		});
 	}),
 

@@ -130,7 +130,6 @@
 		{:else if key === 'status'}
 			<select name="search" bind:value={search} class="search">
 				<option value="CREATED">CREATED</option>
-				<option value="VERIFIED">VERIFIED</option>
 				<option value="APPLIED">APPLIED</option>
 				<option value="ACCEPTED">ACCEPTED</option>
 				<option value="REJECTED">REJECTED</option>

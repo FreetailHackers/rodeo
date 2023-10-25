@@ -177,8 +177,7 @@
 		text-decoration: none;
 	}
 
-	menu li:hover {
-		transform: 1s;
+	menu a:hover {
 		background-color: #502340;
 	}
 
@@ -208,11 +207,7 @@
 			align-items: center;
 		}
 
-		menu li {
-			padding: 0.5rem;
-		}
-
-		menu li:hover {
+		menu a:hover {
 			border-radius: 5px;
 		}
 
