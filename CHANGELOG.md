@@ -13,6 +13,7 @@
 [FIXED]
 
 - Enlargened hitbox for navbar tabs on desktop to match hover area
+- Preselecting current day on schedule no longer breaks after noon
 
 [REMOVED]
 

@@ -23,8 +23,10 @@
 		});
 
 	let currentDateTime = new Date();
+	currentDateTime.setHours(0, 0, 0);
 	const updateDateTime = () => {
 		currentDateTime = new Date();
+		currentDateTime.setHours(0, 0, 0);
 	};
 	setInterval(updateDateTime, 1000);
 
