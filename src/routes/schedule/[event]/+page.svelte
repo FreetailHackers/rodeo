@@ -4,6 +4,7 @@
 	import { generateIcsContent } from '$lib/ics';
 	import SvelteMarkdown from 'svelte-markdown';
 	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
+	import { confirmationDialog } from '$lib/actions.js';
 
 	export let data;
 
@@ -60,7 +61,20 @@
 
 {#if data.user?.roles.includes('ADMIN')}
 	<hr />
-	<h1>Edit Event</h1>
+	<div id="header">
+		<h1>Edit Event</h1>
+		<form method="POST" action="?/delete" use:enhance>
+			<input type="hidden" name="id" value={data.event.id} />
+			<button
+				use:confirmationDialog={{
+					text: 'Are you sure you want to delete this event?',
+					cancel: 'Cancel',
+					ok: 'Delete',
+				}}>X</button
+			>
+		</form>
+	</div>
+
 	<form
 		method="POST"
 		action="?/edit"
@@ -112,17 +126,23 @@
 
 		<button type="submit">Save</button>
 	</form>
-
-	<details>
-		<summary><h1>Delete Event</h1></summary>
-		<form method="POST" action="?/delete" use:enhance>
-			<input type="hidden" name="id" value={data.event.id} />
-			<button type="submit"><strong>DELETE EVENT (this cannot be undone!)</strong></button>
-		</form>
-	</details>
 {/if}
 
 <style>
+	#header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	#header > * {
+		margin: 1rem 0;
+	}
+
+	#header button {
+		padding: 0 1rem;
+	}
+
 	span {
 		display: inline-block;
 		vertical-align: middle;
@@ -131,12 +151,6 @@
 		padding: 6px;
 		font-size: small;
 		border-radius: 20px;
-	}
-
-	summary h1 {
-		display: inline-block;
-		vertical-align: middle;
-		padding-left: 0.5rem;
 	}
 
 	a {
@@ -151,6 +165,7 @@
 
 	select,
 	input,
+	form,
 	#description {
 		margin-bottom: 1rem;
 	}

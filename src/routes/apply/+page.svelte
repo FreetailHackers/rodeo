@@ -3,19 +3,17 @@
 	import Select from 'svelte-select';
 	import SvelteMarkdown from 'svelte-markdown';
 	import FileInput from '$lib/components/file-input.svelte';
+	import { confirmationDialog } from '$lib/actions.js';
 
 	export let data;
+	export let form;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const application = data.user.application as Record<string, any>;
-	export let form;
 
 	let applicationForm: HTMLFormElement;
 
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 	let saveButton: HTMLButtonElement;
-
-	let confirmAction = '';
-	let dialog: HTMLDialogElement;
 
 	const dropdownFilterTexts: Record<string, string> = {};
 </script>
@@ -82,30 +80,23 @@
 					})} to secure your spot. If you know you will not be able to attend, please decline so we can
 					offer your spot to someone else.
 				</p>
-				<form method="POST" id="rsvp" use:enhance={({ cancel }) => cancel()}>
+				<form method="POST" id="rsvp" use:enhance>
 					<button
 						formaction="?/decline"
-						on:click={() => {
-							confirmAction = 'decline';
-							dialog.showModal();
+						use:confirmationDialog={{
+							text: 'Are you sure you want to decline your attendance? This action cannot be undone!',
+							cancel: 'No, go back',
+							ok: 'Yes, I want to decline',
 						}}>Decline</button
 					>
 					<button
 						formaction="?/confirm"
-						on:click={() => {
-							confirmAction = 'confirm';
-							dialog.showModal();
+						use:confirmationDialog={{
+							text: 'Are you sure you want to confirm your attendance?',
+							cancel: 'No, go back',
+							ok: 'Yes, I want to confirm',
 						}}>Confirm</button
 					>
-					<dialog bind:this={dialog}>
-						<p>
-							Are you sure you want to {confirmAction} your attendance?
-						</p>
-						<form method="POST" use:enhance>
-							<button type="button" on:click={() => dialog.close()}>Cancel</button>
-							<button formaction={'?/' + confirmAction}>{confirmAction}</button>
-						</form>
-					</dialog>
 				</form>
 			{:else}
 				<p>
@@ -120,15 +111,14 @@
 			Glad you could make it! If you change your mind, please decline so we can offer your spot to
 			someone else. We look forward to seeing you at the event!
 		</p>
-		<form method="POST" use:enhance={({ cancel }) => cancel()} action="?/decline">
-			<button on:click={() => dialog.showModal()}>Decline</button>
-			<dialog bind:this={dialog}>
-				<p>Are you sure you want to decline your attendance?</p>
-				<form method="POST" use:enhance>
-					<button type="button" on:click={() => dialog.close()}>Cancel</button>
-					<button formaction="?/decline">Decline</button>
-				</form>
-			</dialog>
+		<form method="POST" use:enhance action="?/decline">
+			<button
+				use:confirmationDialog={{
+					text: 'Are you sure you want to decline your attendance? This action cannot be undone!',
+					cancel: 'No, go back',
+					ok: 'Yes, I want to decline',
+				}}>Decline</button
+			>
 		</form>
 	{:else if data.user.authUser.status === 'DECLINED'}
 		<h1>DECLINED</h1>

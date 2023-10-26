@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { confirmationDialog } from '$lib/actions';
 	import Toggle from '$lib/components/toggle.svelte';
 	import Graph from './line-graph.svelte';
 	export let data;
 
-	let releaseConfirm = false;
 	let applicationOpenStatus = data.settings.applicationOpen;
 </script>
 
@@ -93,26 +93,17 @@
 </form>
 
 <h2>Pending Decisions</h2>
-<form
-	method="POST"
-	action="?/release"
-	use:enhance={({ cancel }) => {
-		if (!releaseConfirm) {
-			cancel();
-			releaseConfirm = true;
-		} else {
-			releaseConfirm = false;
-		}
-	}}
->
-	{#if releaseConfirm}
-		<button type="submit" id="release">Are you sure? This is irreversible!</button>
-	{:else}
-		<button type="submit" id="release"
-			>Release all {Object.values(data.decisions).reduce((sum, array) => sum + array.length, 0)} pending
-			decisions</button
-		>
-	{/if}
+<form method="POST" action="?/release" use:enhance>
+	<button
+		id="release"
+		use:confirmationDialog={{
+			text: 'Are you sure you want to release all pending decisions?',
+			cancel: 'Cancel',
+			ok: 'OK',
+		}}
+		>Release all {Object.values(data.decisions).reduce((sum, array) => sum + array.length, 0)} pending
+		decisions</button
+	>
 </form>
 
 <style>

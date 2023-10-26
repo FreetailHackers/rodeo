@@ -1,5 +1,29 @@
 # Changelog
 
+## v0.8.2
+
+[ADDED]
+
+- Confirmation dialog for deleting questions/events, releasing decisions
+
+[CHANGED]
+
+- Dropdowns for multiselect questions now stay open after selection
+
+[FIXED]
+
+- Enlargened hitbox for navbar tabs on desktop to match hover area
+
+[REMOVED]
+
+- Replaced the VERIFIED status with an email verified attribute
+
+## v0.8.1
+
+[FIXED]
+
+- Prevent favicon requests on schedule from triggering 500 errors
+
 ## v0.8.0
 
 [ADDED]
@@ -63,7 +87,7 @@
 
 [ADDED]
 
-- Ability to filter users by decisions, registration questions, and scan options
+- Ability to filter users by decisions, questions, and scan actions
 - Sponsor portal
 
 ## v0.6.3
@@ -75,7 +99,7 @@
 [FIXED]
 
 - Schedule now always displays times in timezone of event
-- Admissions page not updating correctly after accepting/waitlisting/rejecting
+- Admissions page not updating correctly after accept/waitlist/reject
 
 ## v0.6.2
 
@@ -94,7 +118,7 @@
 
 [FIXED]
 
-- Errors when leaving an unanswered not-required non-custom-entry multiselect blank
+- Errors when submitting a blank optional non-custom-entry multiselect
 - User table showing out-of-order/mismatched data after searching
 
 ## v0.6.0

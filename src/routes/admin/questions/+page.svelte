@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { confirmationDialog } from '$lib/actions.js';
 	import Toggle from '$lib/components/toggle.svelte';
 
 	export let data;
@@ -47,7 +48,11 @@
 						name="id"
 						value={question.id}
 						formaction="?/delete"
-						class="deleteButton">✕</button
+						use:confirmationDialog={{
+							text: 'Are you sure you want to delete this question and all responses to it? This cannot be undone!',
+							cancel: 'Cancel',
+							ok: 'Delete',
+						}}>✕</button
 					>
 				</div>
 			</div>

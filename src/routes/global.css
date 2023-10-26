@@ -166,14 +166,15 @@ dialog {
 	box-shadow: 0.5rem 0.5rem 1rem rgba(0, 0, 0, 1);
 }
 
-dialog form {
-	flex-direction: row;
+dialog div {
+	display: flex;
+	flex-direction: row-reverse;
 	gap: 1rem;
 }
 
 dialog button {
-	flex-grow: 1;
-	text-transform: capitalize;
+	padding: 0 1rem;
+	margin-bottom: 1rem;
 }
 
 @media (max-width: 450px) {
@@ -182,8 +183,8 @@ dialog button {
 		width: 100%;
 	}
 
-	dialog form {
-		flex-direction: column;
+	dialog div {
+		flex-direction: column-reverse;
 		gap: 0;
 	}
 }
