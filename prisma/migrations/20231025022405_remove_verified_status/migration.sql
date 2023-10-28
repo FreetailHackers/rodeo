@@ -11,6 +11,7 @@ DROP FUNCTION user_status_change_trigger_function();
 ALTER TABLE "AuthUser" ADD COLUMN     "verifiedEmail" BOOLEAN NOT NULL DEFAULT false;
 UPDATE "AuthUser" SET "verifiedEmail" = true WHERE "status" != 'CREATED';
 UPDATE "AuthUser" SET "status" = 'CREATED' WHERE "status" = 'VERIFIED';
+DELETE FROM "StatusChange" WHERE "newStatus" = 'VERIFIED';
 
 -- AlterEnum
 BEGIN;
