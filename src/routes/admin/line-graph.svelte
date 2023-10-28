@@ -6,7 +6,6 @@
 	const statuses: Status[] = Object.keys(Status) as Status[];
 	const statusColorMap = new Map<Status, string>([
 		['CREATED', 'lightgray'],
-		['VERIFIED', 'rgb(135, 135, 135)'],
 		['APPLIED', 'rgb(63, 63, 63)'],
 		['ACCEPTED', 'rgb(93, 198, 93)'],
 		['REJECTED', 'rgb(255, 78, 78)'],

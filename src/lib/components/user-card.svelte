@@ -10,6 +10,7 @@
 	$: application = user.application as Record<string, any>;
 </script>
 
+<p><b>Verified Email</b> {user.authUser?.verifiedEmail}</p>
 <p><b>Role</b> {user.authUser?.roles.join(', ')}</p>
 <p>
 	<b>Status</b>
