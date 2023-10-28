@@ -117,7 +117,6 @@
 						<span class="grow" />
 						<select name="user-status">
 							<option value="CREATED">Created</option>
-							<option value="VERIFIED">Verified</option>
 							<option value="APPLIED">Applied</option>
 							<option value="ACCEPTED">Accepted</option>
 							<option value="REJECTED">Rejected</option>
@@ -329,10 +328,6 @@
 
 	.applied {
 		background: rgb(63, 63, 63);
-	}
-
-	.verified {
-		background: rgb(135, 135, 135);
 	}
 
 	.created {

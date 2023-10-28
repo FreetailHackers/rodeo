@@ -27,7 +27,7 @@
 <!-- Application status dialog -->
 <div id="status">
 	<p>Your application status is:</p>
-	{#if data.user.authUser.status === 'VERIFIED'}
+	{#if data.user.authUser.status === 'CREATED'}
 		<h1>INCOMPLETE</h1>
 		{#if data.settings.applicationDeadline !== null}
 			<p>
@@ -137,7 +137,7 @@
 </div>
 
 <!-- The actual application -->
-{#if data.user.authUser.status === 'VERIFIED'}
+{#if data.user.authUser.status === 'CREATED'}
 	{#if data.canApply}
 		<form
 			bind:this={applicationForm}
@@ -222,6 +222,7 @@
 							bind:value={application[question.id]}
 							bind:filterText={dropdownFilterTexts[question.id]}
 							multiple={Boolean(question.multiple)}
+							closeListOnChange={!question.multiple}
 							containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem; padding-left: 10px;"
 							inputStyles="margin: 0; height: initial"
 						>

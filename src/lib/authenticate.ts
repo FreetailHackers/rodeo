@@ -20,7 +20,11 @@ export async function authenticate(auth: AuthRequest, roles?: Role[]): Promise<U
 	if (roles !== undefined && !hasAnyRole(user.roles, roles)) {
 		throw redirect(303, '/?forbidden');
 	}
-	if (user.status === 'CREATED') {
+	// For all protected routes, we should make sure the user has
+	// verified their email. Note that this is not currently enforced
+	// in the backend; this is just a convenience to prevent users
+	// from using an account with a typo'd address.
+	if (!user.verifiedEmail) {
 		throw redirect(303, '/unverified');
 	}
 	return user;

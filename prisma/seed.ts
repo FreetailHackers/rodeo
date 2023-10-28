@@ -32,7 +32,8 @@ async function register(email: string, password: string): Promise<string> {
 		attributes: {
 			email: email,
 			roles: ['HACKER'],
-			status: 'VERIFIED',
+			status: 'CREATED',
+			verifiedEmail: true,
 		},
 		key: {
 			providerId: 'email',
@@ -84,9 +85,9 @@ async function main() {
 	const statusChanges: Prisma.StatusChangeCreateManyInput[] = [];
 	const maxSecondsBetweenStatusChanges = 60 * 60 * 24 * 7; // 1 week
 	const startingTime = new Date();
-	// We must allow enough time for 5 status changes
-	// (CREATED -> VERIFIED -> APPLIED -> ACCEPTED/REJECTED/WAITLISTED -> CONFIRMED/DECLINED)
-	startingTime.setSeconds(-maxSecondsBetweenStatusChanges * 6);
+	// We must allow enough time for 4 status changes
+	// (CREATED -> PPLIED -> ACCEPTED/REJECTED/WAITLISTED -> CONFIRMED/DECLINED)
+	startingTime.setSeconds(-maxSecondsBetweenStatusChanges * 5);
 
 	for (let i = 0; i < 1000; i++) {
 		const id = `hacker${String(i).padStart(3, '0')}@yopmail.com`;
@@ -164,7 +165,7 @@ function generateStatusFlow(
 	const statusChanges: Prisma.StatusChangeCreateManyInput[] = [];
 	const attritionRate = 0.1; // 10% of hackers drop out at each stage
 	let lastTimestamp = startingTime;
-	for (const status of ['CREATED', 'VERIFIED', 'APPLIED'] as Status[]) {
+	for (const status of ['CREATED', 'APPLIED'] as Status[]) {
 		lastTimestamp = new Date(
 			lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random()
 		);
