@@ -26,11 +26,16 @@
 			if (!r.ok) {
 				toasts.notify('Could not download file at ' + url + ': ' + r.statusText);
 			}
-			return await r.blob();
+			let blob = await r.blob();
+			completed++;
+			toasts.update(toast, `Downloading files (${completed}/${data.count} completed)...`);
+			return blob;
 		}
 		const zip = new JSZip();
 		const folder = zip.folder('files') || zip;
 		const files = await trpc().users.files.query({ key, search, searchFilter });
+		let completed = 0;
+		const toast = toasts.notify(`Downloading files (0/${data.count} completed)...`);
 		for (const user in files) {
 			for (const file of files[user]) {
 				folder.file(file.path, fetchFile(file.url));

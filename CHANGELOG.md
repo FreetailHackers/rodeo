@@ -5,6 +5,7 @@
 [ADDED]
 
 - Confirmation dialog for deleting questions/events, releasing decisions
+- Progress notification for downloading files
 
 [CHANGED]
 

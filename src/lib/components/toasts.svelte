@@ -4,7 +4,7 @@
 </script>
 
 <ol id="toasts">
-	{#each $toasts as toast (toast)}
+	{#each $toasts as toast (toast.id)}
 		<li in:fly={{ x: 1000, duration: 500 }} out:scale class="toast">
 			{toast.message}
 		</li>
