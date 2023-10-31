@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.8.3
+
+[FIXED]
+
+- Download files 100 at a time to reduce server load
+
 ## v0.8.2
 
 [ADDED]

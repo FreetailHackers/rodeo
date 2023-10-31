@@ -62,7 +62,15 @@
 			<li><a href="/apply" class:active={$page.url.pathname.startsWith('/apply')}>Apply</a></li>
 		{/if}
 		{#if data.user?.roles.includes('ADMIN') || data.user?.roles.includes('SPONSOR')}
-			<li><a href="/users" class:active={$page.url.pathname.startsWith('/users')}>Users</a></li>
+			<li>
+				<!-- HACK: Tell SvelteKit to force refresh on /users since
+				IDK how to reset the filters on the users page otherwise -->
+				<a
+					href="/users"
+					class:active={$page.url.pathname.startsWith('/users')}
+					data-sveltekit-reload>Users</a
+				>
+			</li>
 			{#if data.user?.roles.includes('ADMIN')}
 				<li><a href="/admin" class:active={$page.url.pathname.startsWith('/admin')}>Admin</a></li>
 				<li>

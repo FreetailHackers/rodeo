@@ -21,27 +21,43 @@
 
 	// Download all files of current search filter
 	async function downloadAllFiles() {
-		async function fetchFile(url: string) {
-			const r = await fetch(url);
-			if (!r.ok) {
-				toasts.notify('Could not download file at ' + url + ': ' + r.statusText);
+		async function fetchFiles(urls: string[]) {
+			async function fetchFile(url: string) {
+				const r = await fetch(url);
+				if (!r.ok) {
+					const message = `Could not download file at ${url}: ${r.statusText}`;
+					toasts.notify(message);
+					throw new Error(message);
+				}
+				let blob = await r.blob();
+				completed++;
+				toasts.update(toast, `Downloading files (${completed}/${allFiles.length} completed)...`);
+				return blob;
 			}
-			let blob = await r.blob();
-			completed++;
-			toasts.update(toast, `Downloading files (${completed}/${data.count} completed)...`);
-			return blob;
+			const files = await Promise.allSettled(urls.map(fetchFile));
+			return files.map((file) => (file.status === 'fulfilled' ? file.value : null));
 		}
 		const zip = new JSZip();
 		const folder = zip.folder('files') || zip;
-		const files = await trpc().users.files.query({ key, search, searchFilter });
+		const allFiles = await trpc().users.files.query({ key, search, searchFilter });
 		let completed = 0;
-		const toast = toasts.notify(`Downloading files (0/${data.count} completed)...`);
-		for (const user in files) {
-			for (const file of files[user]) {
-				folder.file(file.path, fetchFile(file.url));
+		const toast = toasts.notify(`Downloading files (0/${allFiles.length} completed)...`);
+		// Download 100 files at a time to avoid overloading the server/browser
+		// (Chrome will start throwing ERR_INSUFFICIENT_RESOURCES if there's too many outstanding requests,
+		// and the database might get overloaded as well)
+		for (let i = 0; i < allFiles.length; i += 100) {
+			const filesToDownload = allFiles.slice(i, i + 100);
+			const blobs = await fetchFiles(filesToDownload.map((file) => file.url));
+			for (let j = 0; j < filesToDownload.length; j++) {
+				const blob = blobs[j];
+				if (blob !== null) {
+					folder.file(filesToDownload[j].path, blob);
+				}
 			}
 		}
+		toasts.update(toast, 'Download complete, zipping...');
 		saveAs(await zip.generateAsync({ type: 'blob' }), 'files.zip');
+		toasts.update(toast, 'Download complete!');
 	}
 </script>
 
@@ -61,7 +77,7 @@
 >
 
 <!-- Search filters -->
-<form>
+<form data-sveltekit-keepfocus>
 	<fieldset class="filter">
 		<select
 			name="key"
@@ -242,6 +258,7 @@
 								bind:filterText={dropdownFilterTexts[question.id]}
 								bind:value={search}
 								multiple={Boolean(question.multiple)}
+								closeListOnChange={!question.multiple}
 								containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem; min-width: 60%"
 								inputStyles="margin: 0; height: initial"
 							>

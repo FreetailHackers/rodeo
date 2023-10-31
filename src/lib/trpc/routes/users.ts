@@ -531,7 +531,7 @@ export const usersRouter = t.router({
 				searchFilter: z.string(),
 			})
 		)
-		.query(async (req): Promise<Record<string, { path: string; url: string }[]>> => {
+		.query(async (req): Promise<{ path: string; url: string }[]> => {
 			let questions = (await getQuestions()).filter((question) => question.type === 'FILE');
 			if (!req.ctx.user.roles.includes('ADMIN')) {
 				questions = questions.filter((question) => question.sponsorView);
@@ -544,14 +544,13 @@ export const usersRouter = t.router({
 			);
 			const users = await prisma.user.findMany({ include: { authUser: true }, where });
 			// Remove questions that should not be visible to sponsors
-			const files: Record<string, { path: string; url: string }[]> = {};
+			const files: { path: string; url: string }[] = [];
 			users.forEach((user) => {
-				files[user.authUser.email] = [];
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const applicationData = user.application as Record<string, any>;
 				questions.forEach((question) => {
 					if (applicationData[question.id]) {
-						files[user.authUser.email].push({
+						files.push({
 							path: `${user.authUser.email}-${question.id}-${applicationData[question.id]}`,
 							url: `/files/${user.authUserId}/${question.id}`,
 						});
