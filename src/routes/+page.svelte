@@ -53,10 +53,10 @@
 		}}
 	>
 		<label for="email">Email</label>
-		<input id="email" name="email" required />
+		<input id="email" name="email" required autocomplete="username" />
 		<label for="password">Password (<a href="/login/reset-password">forgot?</a>)</label>
 		<!-- HACK: Not required so we can easily log into test accounts lol -->
-		<input type="password" id="password" name="password" />
+		<input type="password" id="password" name="password" autocomplete="current-password" />
 		<button>Continue</button>
 	</form>
 	<p>

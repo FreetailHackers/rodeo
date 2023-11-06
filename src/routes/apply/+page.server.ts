@@ -34,13 +34,7 @@ function formToApplication(questions: Question[], formData: FormData) {
 		} else if (question.type === 'DROPDOWN') {
 			const selected = formData.get(question.id) as string;
 			try {
-				if (question.multiple) {
-					application[question.id] = JSON.parse(selected).map(
-						(item: { value: string }) => item.value
-					);
-				} else {
-					application[question.id] = JSON.parse(selected).value;
-				}
+				application[question.id] = JSON.parse(selected);
 			} catch (ignore) {
 				// empty try-catch needed because JSON.parse on an empty string errors
 			}

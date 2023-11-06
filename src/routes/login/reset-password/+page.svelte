@@ -13,7 +13,7 @@
 	<h1>Reset Password</h1>
 	<form method="POST" action="?/email" use:enhance>
 		<label for="email">Enter the email you used to register:</label>
-		<input id="email" name="email" type="email" required />
+		<input id="email" name="email" type="email" required autocomplete="username" />
 		<button>Continue</button>
 	</form>
 {:else if $page.url.search === '?submitted'}
@@ -36,6 +36,7 @@
 			name="password"
 			required
 			minlength="8"
+			autocomplete="new-password"
 		/>
 		<input type="hidden" name="token" value={$page.url.searchParams.get('token')} />
 		<button type="submit">Reset</button>

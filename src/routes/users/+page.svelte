@@ -2,16 +2,14 @@
 	import UserTable from './user-table.svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import Select from 'svelte-select';
 	import Statistics from './statistics.svelte';
 	import saveAs from 'file-saver';
 	import JSZip from 'jszip';
 	import { trpc } from '$lib/trpc/client';
 	import { toasts } from '$lib/stores';
+	import Dropdown from '$lib/components/dropdown.svelte';
 
 	export let data;
-
-	const dropdownFilterTexts: Record<string, string> = {};
 
 	$: query = Object.fromEntries($page.url.searchParams);
 	let key = $page.url.searchParams.get('key') ?? 'email';
@@ -254,58 +252,14 @@
 							</select>
 						{/if}
 						{#if searchFilter !== 'unanswered'}
-							<Select
+							<Dropdown
 								name="search"
-								class="search"
-								items={question.custom && dropdownFilterTexts[question.id]
-									? [...new Set([...question.options, dropdownFilterTexts[question.id]])]
-									: question.options}
-								bind:filterText={dropdownFilterTexts[question.id]}
-								on:input={(event) => {
-									// Manually update search variable because binding it to justValue along with
-									// defining an expression for value causes an infinite loop for some reason 😭😭😭
-									if (question.multiple) {
-										// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-										// @ts-ignore: Svelte doesn't support TypeScript in HTML template expressions 😭
-										search = JSON.stringify(event.detail.map((item) => item.value));
-									} else {
-										search = JSON.stringify(event.detail.value);
-									}
-								}}
-								value={(() => {
-									// Ugly but this is the easiest way I found to populate the dropdown that works when
-									// you refresh the page
-									try {
-										return JSON.parse(search);
-									} catch (e) {
-										return '';
-									}
-								})()}
+								items={question.options}
+								custom={Boolean(question.custom)}
 								multiple={Boolean(question.multiple)}
-								closeListOnChange={!question.multiple}
-								containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem; min-width: 60%"
-								inputStyles="margin: 0; height: initial"
-							>
-								<!-- Horrible hack to make svelte-select submit just the values without the container object -->
-								<div slot="input-hidden" let:value>
-									<input
-										type="hidden"
-										name="search"
-										value={(() => {
-											if (question.multiple) {
-												return Array.isArray(value)
-													? JSON.stringify(value.map((item) => item.value))
-													: '';
-											}
-											return value ? JSON.stringify(value.value) : '';
-										})()}
-									/>
-								</div>
-								<div slot="item" let:item>
-									{question.options.includes(item.label) ? '' : 'Other: '}
-									{item.label}
-								</div>
-							</Select>
+								bind:value={search}
+								json
+							/>
 						{/if}
 					{:else if question.type === 'CHECKBOX'}
 						<select name="searchFilter" bind:value={searchFilter} class="searchFilter">

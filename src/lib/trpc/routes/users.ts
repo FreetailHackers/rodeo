@@ -892,6 +892,11 @@ async function getWhereConditionHelper(
 					if (searchFilter !== 'unanswered') {
 						try {
 							const parsed = JSON.parse(search);
+							// Special case: if the user is searching for an empty array, treat that as "return all"
+							// (since all responses vacuously contain the empty array)
+							if (parsed === '') {
+								return {};
+							}
 
 							// check if question allows multiple responses
 							if (question.multiple) {
