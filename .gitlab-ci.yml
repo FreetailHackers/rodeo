@@ -58,6 +58,8 @@ workflow:
   rules:
     - if: $CI_COMMIT_TAG
       when: never
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
     - when: always
 
 stages:
@@ -82,10 +84,6 @@ deploy-preview-job:
     name: review/$CI_COMMIT_BRANCH
     url: $DOMAIN_NAME
     on_stop: stop-preview-job
-  rules:
-    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-      when: never
-    - when: on_success
   script:
     - npm ci
     # Get environment variables from Vercel
