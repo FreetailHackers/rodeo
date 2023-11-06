@@ -37,12 +37,7 @@
 		}
 		const zip = new JSZip();
 		const folder = zip.folder('files') || zip;
-		const allFiles = await trpc().users.files.query({
-			key,
-			// HACK: search is an array for multiselects
-			search: typeof search === 'string' ? search : JSON.stringify(search),
-			searchFilter,
-		});
+		const allFiles = await trpc().users.files.query({ key, search, searchFilter });
 		let completed = 0;
 		const toast = toasts.notify(`Downloading files (0/${allFiles.length} completed)...`);
 		// Download 100 files at a time to avoid overloading the server/browser
@@ -254,6 +249,7 @@
 						{#if searchFilter !== 'unanswered'}
 							<Dropdown
 								name="search"
+								class="search"
 								items={question.options}
 								custom={Boolean(question.custom)}
 								multiple={Boolean(question.multiple)}

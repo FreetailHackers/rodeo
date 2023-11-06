@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
 	import Select from 'svelte-select';
+	import fuzzysort from 'fuzzysort';
 
 	export let name: string; // Name for the input
 	export let id = name; // ID for the input
@@ -18,7 +19,8 @@
 <Select
 	{id}
 	{name}
-	class="search"
+	class={$$props.class}
+	itemFilter={(label, filterText) => fuzzysort.go(filterText, [label]).length > 0}
 	items={custom && filterText ? [...new Set([...items, filterText])] : items}
 	bind:filterText
 	on:input={(event) => {
