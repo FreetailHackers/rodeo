@@ -54,6 +54,12 @@ default:
   # installed (see the relevant Dockerfile for details)
   image: registry.gitlab.com/freetail-hackers/rodeo
 
+workflow:
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - when: always
+
 stages:
   - test
   - deploy-preview
@@ -61,10 +67,6 @@ stages:
 
 test-job:
   stage: test
-  rules:
-    - if: $CI_COMMIT_TAG
-      when: never
-    - when: on_success
   script:
     - npm ci
     - npm run build
@@ -81,8 +83,6 @@ deploy-preview-job:
     url: $DOMAIN_NAME
     on_stop: stop-preview-job
   rules:
-    - if: $CI_COMMIT_TAG
-      when: never
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
       when: never
     - when: on_success
@@ -118,10 +118,7 @@ stop-preview-job:
   environment:
     name: review/$CI_COMMIT_BRANCH
     action: stop
-  rules:
-    - if: $CI_COMMIT_TAG
-      when: never
-    - when: manual
+  when: manual
   allow_failure: true
   script:
     # !!! WARNING !!! NEVER RUN ON PRODUCTION ENVIRONMENT !!!
@@ -134,10 +131,7 @@ deploy-production-job:
   environment:
     name: production
     url: https://rodeo.freetailhackers.com
-  rules:
-    - if: $CI_COMMIT_TAG
-      when: never
-    - when: manual
+  when: manual
   script:
     - npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
     - mv .vercel/.env.production.local .env
