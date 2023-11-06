@@ -39,12 +39,17 @@
 		}
 		const zip = new JSZip();
 		const folder = zip.folder('files') || zip;
-		const allFiles = await trpc().users.files.query({ key, search, searchFilter });
+		const allFiles = await trpc().users.files.query({
+			key,
+			// HACK: search is an array for multiselects
+			search: typeof search === 'string' ? search : JSON.stringify(search),
+			searchFilter,
+		});
 		let completed = 0;
 		const toast = toasts.notify(`Downloading files (0/${allFiles.length} completed)...`);
 		// Download 100 files at a time to avoid overloading the server/browser
 		// (Chrome will start throwing ERR_INSUFFICIENT_RESOURCES if there's too many outstanding requests,
-		// and the database might get overloaded as well)
+		// and I have received errors from the database being overloaded as well)
 		for (let i = 0; i < allFiles.length; i += 100) {
 			const filesToDownload = allFiles.slice(i, i + 100);
 			const blobs = await fetchFiles(filesToDownload.map((file) => file.url));
@@ -256,12 +261,46 @@
 									? [...new Set([...question.options, dropdownFilterTexts[question.id]])]
 									: question.options}
 								bind:filterText={dropdownFilterTexts[question.id]}
-								bind:value={search}
+								on:input={(event) => {
+									// Manually update search variable because binding it to justValue along with
+									// defining an expression for value causes an infinite loop for some reason 😭😭😭
+									if (question.multiple) {
+										// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+										// @ts-ignore: Svelte doesn't support TypeScript in HTML template expressions 😭
+										search = JSON.stringify(event.detail.map((item) => item.value));
+									} else {
+										search = JSON.stringify(event.detail.value);
+									}
+								}}
+								value={(() => {
+									// Ugly but this is the easiest way I found to populate the dropdown that works when
+									// you refresh the page
+									try {
+										return JSON.parse(search);
+									} catch (e) {
+										return '';
+									}
+								})()}
 								multiple={Boolean(question.multiple)}
 								closeListOnChange={!question.multiple}
 								containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem; min-width: 60%"
 								inputStyles="margin: 0; height: initial"
 							>
+								<!-- Horrible hack to make svelte-select submit just the values without the container object -->
+								<div slot="input-hidden" let:value>
+									<input
+										type="hidden"
+										name="search"
+										value={(() => {
+											if (question.multiple) {
+												return Array.isArray(value)
+													? JSON.stringify(value.map((item) => item.value))
+													: '';
+											}
+											return value ? JSON.stringify(value.value) : '';
+										})()}
+									/>
+								</div>
 								<div slot="item" let:item>
 									{question.options.includes(item.label) ? '' : 'Other: '}
 									{item.label}
