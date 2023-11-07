@@ -2,16 +2,14 @@
 	import UserTable from './user-table.svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import Select from 'svelte-select';
 	import Statistics from './statistics.svelte';
 	import saveAs from 'file-saver';
 	import JSZip from 'jszip';
 	import { trpc } from '$lib/trpc/client';
 	import { toasts } from '$lib/stores';
+	import Dropdown from '$lib/components/dropdown.svelte';
 
 	export let data;
-
-	const dropdownFilterTexts: Record<string, string> = {};
 
 	$: query = Object.fromEntries($page.url.searchParams);
 	let key = $page.url.searchParams.get('key') ?? 'email';
@@ -44,7 +42,7 @@
 		const toast = toasts.notify(`Downloading files (0/${allFiles.length} completed)...`);
 		// Download 100 files at a time to avoid overloading the server/browser
 		// (Chrome will start throwing ERR_INSUFFICIENT_RESOURCES if there's too many outstanding requests,
-		// and the database might get overloaded as well)
+		// and I have received errors from the database being overloaded as well)
 		for (let i = 0; i < allFiles.length; i += 100) {
 			const filesToDownload = allFiles.slice(i, i + 100);
 			const blobs = await fetchFiles(filesToDownload.map((file) => file.url));
@@ -249,24 +247,15 @@
 							</select>
 						{/if}
 						{#if searchFilter !== 'unanswered'}
-							<Select
+							<Dropdown
 								name="search"
 								class="search"
-								items={question.custom && dropdownFilterTexts[question.id]
-									? [...new Set([...question.options, dropdownFilterTexts[question.id]])]
-									: question.options}
-								bind:filterText={dropdownFilterTexts[question.id]}
-								bind:value={search}
+								items={question.options}
+								custom={Boolean(question.custom)}
 								multiple={Boolean(question.multiple)}
-								closeListOnChange={!question.multiple}
-								containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem; min-width: 60%"
-								inputStyles="margin: 0; height: initial"
-							>
-								<div slot="item" let:item>
-									{question.options.includes(item.label) ? '' : 'Other: '}
-									{item.label}
-								</div>
-							</Select>
+								bind:value={search}
+								json
+							/>
 						{/if}
 					{:else if question.type === 'CHECKBOX'}
 						<select name="searchFilter" bind:value={searchFilter} class="searchFilter">

@@ -23,14 +23,21 @@
 	}}
 >
 	<label for="email">Email</label>
-	<input type="email" id="email" name="email" required />
+	<input type="email" id="email" name="email" required autocomplete="username" />
 	<!-- svelte-ignore a11y-invalid-attribute -->
 	<label for="password">
 		Password (<a href="javascript:;" on:click={() => (hidden = !hidden)}>
 			{#if hidden}show{:else}hide{/if}</a
 		>)
 	</label>
-	<input type={hidden ? 'password' : 'text'} id="password" name="password" required minlength="8" />
+	<input
+		type={hidden ? 'password' : 'text'}
+		id="password"
+		name="password"
+		required
+		minlength="8"
+		autocomplete="new-password"
+	/>
 	<button>Continue</button>
 </form>
 
