@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import Select from 'svelte-select';
 	import SvelteMarkdown from 'svelte-markdown';
 	import FileInput from '$lib/components/file-input.svelte';
 	import { confirmationDialog } from '$lib/actions.js';
+	import Dropdown from '$lib/components/dropdown.svelte';
 
 	export let data;
 	export let form;
@@ -14,8 +14,6 @@
 
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 	let saveButton: HTMLButtonElement;
-
-	const dropdownFilterTexts: Record<string, string> = {};
 </script>
 
 <svelte:head>
@@ -131,6 +129,7 @@
 	{#if data.canApply}
 		<form
 			bind:this={applicationForm}
+			enctype="multipart/form-data"
 			method="POST"
 			action="?/save"
 			use:enhance={({ action }) => {
@@ -196,31 +195,14 @@
 							bind:checked={application[question.id]}
 						/>
 					{:else if question.type === 'DROPDOWN'}
-						<Select
+						<Dropdown
 							name={question.id}
-							id={question.id}
-							items={question.custom && dropdownFilterTexts[question.id]
-								? [...new Set([...question.options, dropdownFilterTexts[question.id]])]
-								: question.options}
-							on:change={() => {
-								if (question.custom) {
-									question.options.push(dropdownFilterTexts[question.id]);
-								}
-								applicationForm.dispatchEvent(new Event('input'));
-							}}
-							on:clear={() => applicationForm.dispatchEvent(new Event('input'))}
-							bind:value={application[question.id]}
-							bind:filterText={dropdownFilterTexts[question.id]}
+							items={question.options}
+							custom={Boolean(question.custom)}
 							multiple={Boolean(question.multiple)}
-							closeListOnChange={!question.multiple}
-							containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem; padding-left: 10px;"
-							inputStyles="margin: 0; height: initial"
-						>
-							<div slot="item" let:item>
-								{question.options.includes(item.label) ? '' : 'Other: '}
-								{item.label}
-							</div>
-						</Select>
+							bind:value={application[question.id]}
+							on:input={() => applicationForm.dispatchEvent(new Event('input'))}
+						/>
 					{:else if question.type === 'RADIO'}
 						{#each question.options as option}
 							<div class="radio-buttons">

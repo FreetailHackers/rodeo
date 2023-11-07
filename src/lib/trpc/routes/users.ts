@@ -890,26 +890,34 @@ async function getWhereConditionHelper(
 				} else if (question.type === 'DROPDOWN') {
 					// look to see if searchFilter is unanswered
 					if (searchFilter !== 'unanswered') {
-						const searchDictArray = JSON.parse(search);
-
-						// check if question allows multiple responses
-						if (question.multiple) {
-							const searchArray = searchDictArray.map((item: { value: string }) => item.value);
-
-							if (searchFilter === 'contains') {
-								return { application: { path: [question.id], array_contains: searchArray } };
-							} else if (searchFilter === 'exactly') {
-								return { application: { path: [question.id], equals: searchArray } };
+						try {
+							const parsed = JSON.parse(search);
+							// Special case: if the user is searching for an empty array, treat that as "return all"
+							// (since all responses vacuously contain the empty array)
+							if (parsed === '') {
+								return {};
 							}
-						} else {
-							// searchDictArray is a string
-							if (searchFilter === 'is') {
-								return { application: { path: [question.id], equals: searchDictArray.value } };
-							} else if (searchFilter === 'is_not') {
-								return { application: { path: [question.id], not: searchDictArray.value } };
-							} else if (searchFilter === 'unanswered') {
-								return { application: { path: [question.id], equals: Prisma.DbNull } };
+
+							// check if question allows multiple responses
+							if (question.multiple) {
+								if (searchFilter === 'contains') {
+									return { application: { path: [question.id], array_contains: parsed } };
+								} else if (searchFilter === 'exactly') {
+									return { application: { path: [question.id], equals: parsed } };
+								}
+							} else {
+								// searchDictArray is a string
+								if (searchFilter === 'is') {
+									return { application: { path: [question.id], equals: parsed } };
+								} else if (searchFilter === 'is_not') {
+									return { application: { path: [question.id], not: parsed } };
+								} else if (searchFilter === 'unanswered') {
+									return { application: { path: [question.id], equals: Prisma.DbNull } };
+								}
 							}
+						} catch (e) {
+							// In case of malformed JSON, just return all users
+							return {};
 						}
 					} else {
 						return { application: { path: [question.id], equals: Prisma.DbNull } };

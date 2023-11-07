@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.8.4
+
+[ADDED]
+
+- Fuzzy searching for dropdowns
+
+[FIXED]
+
+- Downloading files while filtering by a dropdown question now works
+
 ## v0.8.3
 
 [FIXED]
