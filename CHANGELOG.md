@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.8.5
+
+[FIXED]
+
+- Dropdowns now display all options when blank
+
 ## v0.8.4
 
 [ADDED]

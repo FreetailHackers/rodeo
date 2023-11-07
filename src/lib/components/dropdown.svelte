@@ -20,7 +20,8 @@
 	{id}
 	{name}
 	class={$$props.class}
-	itemFilter={(label, filterText) => fuzzysort.go(filterText, [label]).length > 0}
+	itemFilter={(label, filterText) =>
+		filterText === '' || fuzzysort.go(filterText, [label]).length > 0}
 	items={custom && filterText ? [...new Set([...items, filterText])] : items}
 	bind:filterText
 	on:input={(event) => {
