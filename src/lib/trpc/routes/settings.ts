@@ -7,7 +7,7 @@ import { t } from '../t';
 const settingsSchema = z
 	.object({
 		applicationOpen: z.boolean().optional(),
-		confirmBy: z.date().nullable().optional(),
+		daysRemainingForRSVP: z.number().nullable().optional(),
 		info: z.string().optional(),
 		homepageText: z.string().optional(),
 		rollingAdmissions: z.boolean().optional(),
@@ -36,7 +36,7 @@ export const settingsRouter = t.router({
 		async (): Promise<{
 			homepageText: string;
 			applicationOpen: boolean;
-			confirmBy: Date | null;
+			daysRemainingForRSVP: number | null;
 			info: string;
 			scanActions: string[];
 			timezone: string;
@@ -46,7 +46,7 @@ export const settingsRouter = t.router({
 			return {
 				homepageText: settings.homepageText,
 				applicationOpen: settings.applicationOpen,
-				confirmBy: settings.confirmBy,
+				daysRemainingForRSVP: settings.daysRemainingForRSVP,
 				info: settings.info,
 				scanActions: settings.scanActions,
 				timezone: settings.timezone,

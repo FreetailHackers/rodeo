@@ -14,6 +14,19 @@
 
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 	let saveButton: HTMLButtonElement;
+
+	// Function to add days to a DateTime and round to 11:59 PM
+	function addDaysAndRound(dateTime: Date | undefined, daysToAdd: number | null): Date | null {
+		if (daysToAdd === null || dateTime === undefined) {
+			return null;
+		}
+		const newDate = new Date(dateTime);
+		newDate.setDate(newDate.getDate() + daysToAdd);
+		newDate.setHours(23, 59, 0, 0);
+		return newDate;
+	}
+
+	let confirmBy = addDaysAndRound(data.status?.timestamp, data.settings.daysRemainingForRSVP);
 </script>
 
 <svelte:head>
@@ -66,10 +79,11 @@
 		<p>
 			Congratulations! We were impressed by your application and would like to invite you to attend.
 		</p>
-		{#if data.settings.confirmBy !== null}
-			{#if new Date() < data.settings.confirmBy}
+
+		{#if confirmBy !== null}
+			{#if new Date() < confirmBy}
 				<p>
-					You must confirm your attendance by {data.settings.confirmBy.toLocaleDateString('en-US', {
+					You must confirm your attendance by {confirmBy.toLocaleDateString('en-US', {
 						weekday: 'long',
 						month: 'long',
 						day: 'numeric',

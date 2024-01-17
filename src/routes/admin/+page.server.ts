@@ -34,19 +34,22 @@ export const actions = {
 			applicationLimit = null;
 		}
 		const applicationOpen = formData.get('applicationOpen') === 'on';
-		let confirmBy: Date | null;
+		let daysRemainingForRSVP: number | null;
+		const formDataValue = formData.get('daysRemainingForRSVP');
+
 		try {
-			confirmBy = dayjs.tz(formData.get('confirmBy') as string, timezone).toDate();
+			daysRemainingForRSVP = parseInt(formDataValue as string, 10);
 		} catch (e) {
-			confirmBy = null;
+			daysRemainingForRSVP = null;
 		}
+
 		const scanActions = (formData.get('scanActions') as string)
 			.split('\r\n')
 			.map((option: string) => option.trim())
 			.filter(Boolean);
 		await trpc(locals.auth).settings.update({
 			applicationOpen,
-			confirmBy,
+			daysRemainingForRSVP,
 			scanActions,
 			timezone,
 			applicationDeadline,

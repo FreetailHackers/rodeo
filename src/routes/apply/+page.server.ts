@@ -7,6 +7,7 @@ export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['HACKER']);
 	return {
 		user: await trpc(locals.auth).users.get(),
+		status: await trpc(locals.auth).users.getCurrentUserLatestStatusChange(),
 		questions: await trpc(locals.auth).questions.get(),
 		settings: await trpc(locals.auth).settings.getPublic(),
 		canApply: await trpc(locals.auth).admissions.canApply(),

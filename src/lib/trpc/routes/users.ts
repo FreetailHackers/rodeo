@@ -744,6 +744,20 @@ export const usersRouter = t.router({
 			});
 		}),
 
+	getCurrentUserLatestStatusChange: t.procedure.query(async (req): Promise<StatusChange | null> => {
+		const session = await req.ctx.validate();
+		if (session === null) {
+			throw new Error('Unauthorized');
+		}
+
+		const user = session.user;
+
+		return await prisma.statusChange.findFirst({
+			where: { userId: user.authUserId },
+			orderBy: { timestamp: 'desc' },
+		});
+	}),
+
 	sendEmailByStatus: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(z.object({ status: z.nativeEnum(Status), subject: z.string(), emailBody: z.string() }))

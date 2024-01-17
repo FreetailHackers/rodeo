@@ -61,17 +61,18 @@
 
 	<label for="statusChangeText"><h2>User Status Count Over Time</h2></label>
 	<Graph statusChanges={data.graph} />
-	<label for="confirmBy">
-		<h2>RSVP deadline (leaving empty will disable RSVPs):</h2>
+
+	<!-- New development -->
+	<label for="daysRemainingForRSVP">
+		<h2>Number of days until RSVP expires</h2>
 	</label>
 	<input
-		type="datetime-local"
-		id="confirmBy"
-		name="confirmBy"
-		value={data.settings.confirmBy
-			?.toLocaleString('sv', { timeZone: data.settings.timezone })
-			.replace(' ', 'T')
-			.slice(0, -3)}
+		type="number"
+		id="daysRemainingForRSVP"
+		name="daysRemainingForRSVP"
+		placeholder="10"
+		min="0"
+		value={data.settings.daysRemainingForRSVP}
 	/>
 
 	<label for="scanActions"><h2>Scan Options</h2></label>
