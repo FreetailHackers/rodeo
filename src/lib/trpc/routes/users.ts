@@ -11,6 +11,7 @@ import type { Session } from 'lucia';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { canApply } from './admissions';
+import * as natural from 'natural';
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
@@ -586,6 +587,9 @@ export const usersRouter = t.router({
 			if (!req.ctx.user.roles.includes('ADMIN')) {
 				questions = questions.filter((question) => question.sponsorView);
 			}
+
+			const tokenizer = new natural.WordTokenizer();
+
 			const responses: Record<string, Record<string, number | [number, number]>> = {};
 			users.forEach((user) => {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -612,22 +616,24 @@ export const usersRouter = t.router({
 						}
 					} else if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
 						if (answer) {
-							const words = answer.split(/\s+/);
-							const seen = new Set<string>();
+							const tokens = tokenizer.tokenize(answer);
 
-							words.forEach((word: string) => {
-								const answerData = responses[question.id];
-								if (!answerData[word]) {
-									answerData[word] = [0, 0];
-								}
+							if (tokens) {
+								const seen: { [key: string]: number } = {};
 
-								seen.add(word);
-								(answerData[word] as [number, number])[0] += 1;
-							});
+								tokens.forEach((word: string) => {
+									const answerData = responses[question.id];
+									const lowercasedTokens = word.toLowerCase();
 
-							seen.forEach((word: string) => {
-								(responses[question.id][word] as [number, number])[1] += 1;
-							});
+									if (!answerData[lowercasedTokens]) {
+										answerData[lowercasedTokens] = [0, 0];
+									}
+
+									seen[lowercasedTokens] = (seen[lowercasedTokens] || 0) + 1;
+									(answerData[lowercasedTokens] as [number, number])[0] += 1;
+									(answerData[lowercasedTokens] as [number, number])[1] = seen[lowercasedTokens];
+								});
+							}
 						}
 					} else if (question.type === 'CHECKBOX') {
 						const key = answer ?? false;
