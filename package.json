@@ -60,7 +60,7 @@
 		"@lucia-auth/adapter-prisma": "^3.0.1",
 		"@lucia-auth/oauth": "^3.0.0",
 		"@prisma/client": "^5.2.0",
-		"@sendgrid/mail": "^8.1.0",
+		"@sendgrid/mail": "^7.7.0",
 		"@trpc/client": "^10.7.0",
 		"@trpc/server": "^10.7.0",
 		"crypto-js": "^4.1.1",
