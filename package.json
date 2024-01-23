@@ -70,7 +70,6 @@
 		"html5-qrcode": "^2.3.7",
 		"jszip": "^3.10.1",
 		"lucia": "^2.4.2",
-		"natural": "^6.10.4",
 		"nodemailer": "^6.9.1",
 		"qrcode": "^1.5.1",
 		"superjson": "^1.12.2",
