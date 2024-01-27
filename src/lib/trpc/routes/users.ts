@@ -616,6 +616,7 @@ export const usersRouter = t.router({
 						}
 					} else if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
 						if (answer) {
+							// please work
 							const tokens = tokenizer.tokenize(answer);
 
 							if (tokens) {
