@@ -14,19 +14,6 @@
 
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 	let saveButton: HTMLButtonElement;
-
-	// Function to add days to a DateTime and round to 11:59 PM
-	function addDaysAndRound(dateTime: Date | undefined, daysToAdd: number | null): Date | null {
-		if (daysToAdd === null || dateTime === undefined) {
-			return null;
-		}
-		const newDate = new Date(dateTime);
-		newDate.setDate(newDate.getDate() + daysToAdd);
-		newDate.setHours(23, 59, 0, 0);
-		return newDate;
-	}
-
-	let confirmBy = addDaysAndRound(data.status?.timestamp, data.settings.daysRemainingForRSVP);
 </script>
 
 <svelte:head>
@@ -80,10 +67,10 @@
 			Congratulations! We were impressed by your application and would like to invite you to attend.
 		</p>
 
-		{#if confirmBy !== null}
-			{#if new Date() < confirmBy}
+		{#if data.rsvpDeadline === undefined || new Date() < data.rsvpDeadline}
+			{#if data.rsvpDeadline}
 				<p>
-					You must confirm your attendance by {confirmBy.toLocaleDateString('en-US', {
+					You must confirm your attendance by {data.rsvpDeadline.toLocaleDateString('en-US', {
 						weekday: 'long',
 						month: 'long',
 						day: 'numeric',
@@ -92,30 +79,30 @@
 					})} to secure your spot. If you know you will not be able to attend, please decline so we can
 					offer your spot to someone else.
 				</p>
-				<form method="POST" id="rsvp" use:enhance>
-					<button
-						formaction="?/decline"
-						use:confirmationDialog={{
-							text: 'Are you sure you want to decline your attendance? This action cannot be undone!',
-							cancel: 'No, go back',
-							ok: 'Yes, I want to decline',
-						}}>Decline</button
-					>
-					<button
-						formaction="?/confirm"
-						use:confirmationDialog={{
-							text: 'Are you sure you want to confirm your attendance?',
-							cancel: 'No, go back',
-							ok: 'Yes, I want to confirm',
-						}}>Confirm</button
-					>
-				</form>
-			{:else}
-				<p>
-					Sorry, the deadline to confirm your attendance has passed. If space permits, you may sign
-					up as a walk-in at the doors the day of the event, but we cannot make any guarantees.
-				</p>
 			{/if}
+			<form method="POST" id="rsvp" use:enhance>
+				<button
+					formaction="?/decline"
+					use:confirmationDialog={{
+						text: 'Are you sure you want to decline your attendance? This action cannot be undone!',
+						cancel: 'No, go back',
+						ok: 'Yes, I want to decline',
+					}}>Decline</button
+				>
+				<button
+					formaction="?/confirm"
+					use:confirmationDialog={{
+						text: 'Are you sure you want to confirm your attendance?',
+						cancel: 'No, go back',
+						ok: 'Yes, I want to confirm',
+					}}>Confirm</button
+				>
+			</form>
+		{:else}
+			<p>
+				Sorry, the deadline to confirm your attendance has passed. If space permits, you may sign up
+				as a walk-in at the doors the day of the event, but we cannot make any guarantees.
+			</p>
 		{/if}
 	{:else if data.user.authUser.status === 'CONFIRMED'}
 		<h1>CONFIRMED</h1>

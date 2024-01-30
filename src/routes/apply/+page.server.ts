@@ -2,14 +2,37 @@ import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import type { Question } from '@prisma/client';
 import { redirect } from '@sveltejs/kit';
+import dayjs from 'dayjs';
 
 export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['HACKER']);
+	const settings = await trpc(locals.auth).settings.getPublic();
+	const status = await trpc(locals.auth).users.getCurrentUserLatestStatusChange();
+
+	let timestamp = status?.timestamp;
+	if (settings.daysRemainingForRSVP !== null) {
+		try {
+			const timezone = settings.timezone;
+
+			if (timestamp) {
+				const timeOfAcceptance = dayjs.utc(new Date(timestamp)).tz(timezone, false);
+				timestamp = timeOfAcceptance
+					.add(settings.daysRemainingForRSVP, 'days')
+					.endOf('day')
+					.toDate();
+			}
+		} catch (e) {
+			timestamp = undefined;
+		}
+	} else {
+		timestamp = undefined;
+	}
+
 	return {
 		user: await trpc(locals.auth).users.get(),
-		status: await trpc(locals.auth).users.getCurrentUserLatestStatusChange(),
+		rsvpDeadline: timestamp,
 		questions: await trpc(locals.auth).questions.get(),
-		settings: await trpc(locals.auth).settings.getPublic(),
+		settings: settings,
 		canApply: await trpc(locals.auth).admissions.canApply(),
 	};
 };

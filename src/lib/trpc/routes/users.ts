@@ -7,10 +7,11 @@ import { t } from '../t';
 import { getQuestions } from './questions';
 import { getSettings } from './settings';
 import { auth, emailVerificationToken, resetPasswordToken } from '$lib/lucia';
-import type { Session } from 'lucia';
+import type { Session, User } from 'lucia';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { canApply } from './admissions';
+import dayjs from 'dayjs';
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
@@ -219,6 +220,17 @@ export const usersRouter = t.router({
 			});
 		}),
 
+	getCurrentUserLatestStatusChange: t.procedure.query(
+		async (req): Promise<StatusChange | null | undefined> => {
+			const session = await req.ctx.validate();
+			if (session === null) {
+				throw new Error('Unauthorized');
+			}
+
+			return await getUserStatus(session.user);
+		}
+	),
+
 	/**
 	 * Confirms or declines the logged in user's acceptance.
 	 */
@@ -226,7 +238,29 @@ export const usersRouter = t.router({
 		.use(authenticate(['HACKER']))
 		.input(z.enum(['CONFIRMED', 'DECLINED']))
 		.mutation(async (req): Promise<void> => {
-			const deadline = (await getSettings()).confirmBy;
+			const session = await req.ctx.validate();
+			if (session === null) {
+				throw new Error('Unauthorized');
+			}
+
+			let deadline = (await getUserStatus(session.user))?.timestamp ?? null;
+			const settings = await getSettings();
+			const daysToConfirmBy = settings.daysRemainingForRSVP;
+			const timezone = settings.timezone;
+
+			if (daysToConfirmBy !== null) {
+				try {
+					if (deadline) {
+						const timeOfAcceptance = dayjs.utc(new Date(deadline)).tz(timezone, false);
+						deadline = timeOfAcceptance.add(daysToConfirmBy, 'days').endOf('day').toDate();
+					}
+				} catch (e) {
+					deadline = null;
+				}
+			} else {
+				deadline = null;
+			}
+
 			if (req.input === 'CONFIRMED') {
 				// Hackers should only be able to confirm before deadline
 				if (req.ctx.user.status === 'ACCEPTED' && (deadline === null || new Date() < deadline)) {
@@ -744,20 +778,6 @@ export const usersRouter = t.router({
 			});
 		}),
 
-	getCurrentUserLatestStatusChange: t.procedure.query(async (req): Promise<StatusChange | null> => {
-		const session = await req.ctx.validate();
-		if (session === null) {
-			throw new Error('Unauthorized');
-		}
-
-		const user = session.user;
-
-		return await prisma.statusChange.findFirst({
-			where: { userId: user.authUserId },
-			orderBy: { timestamp: 'desc' },
-		});
-	}),
-
 	sendEmailByStatus: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(z.object({ status: z.nativeEnum(Status), subject: z.string(), emailBody: z.string() }))
@@ -970,4 +990,16 @@ async function getWhereConditionHelper(
 		}
 	}
 	return {};
+}
+
+async function getUserStatus(user: User) {
+	try {
+		const status = await prisma.statusChange.findFirst({
+			where: { userId: user.authUserId },
+			orderBy: { id: 'desc' },
+		});
+		return status;
+	} catch (error) {
+		console.error('Error in getUserStatus:', error);
+	}
 }

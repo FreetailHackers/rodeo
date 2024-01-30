@@ -36,9 +36,9 @@ export const actions = {
 		const applicationOpen = formData.get('applicationOpen') === 'on';
 		let daysRemainingForRSVP: number | null;
 		const formDataValue = formData.get('daysRemainingForRSVP');
-
 		try {
-			daysRemainingForRSVP = parseInt(formDataValue as string, 10);
+			const parsedValue = parseInt(formDataValue as string, 10);
+			daysRemainingForRSVP = isNaN(parsedValue) ? null : parsedValue;
 		} catch (e) {
 			daysRemainingForRSVP = null;
 		}
