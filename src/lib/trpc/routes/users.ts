@@ -11,7 +11,7 @@ import type { Session } from 'lucia';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { canApply } from './admissions';
-import * as natural from 'natural';
+import { WordTokenizer } from '../../../../node_modules/natural/lib/natural/tokenizers';
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
@@ -588,7 +588,7 @@ export const usersRouter = t.router({
 				questions = questions.filter((question) => question.sponsorView);
 			}
 
-			const tokenizer = new natural.WordTokenizer();
+			const tokenizer = new WordTokenizer();
 
 			const responses: Record<string, Record<string, number | [number, number]>> = {};
 			users.forEach((user) => {
@@ -616,7 +616,6 @@ export const usersRouter = t.router({
 						}
 					} else if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
 						if (answer) {
-							// please work
 							const tokens = tokenizer.tokenize(answer);
 
 							if (tokens) {
