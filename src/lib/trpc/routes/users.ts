@@ -238,20 +238,14 @@ export const usersRouter = t.router({
 		.use(authenticate(['HACKER']))
 		.input(z.enum(['CONFIRMED', 'DECLINED']))
 		.mutation(async (req): Promise<void> => {
-			const session = await req.ctx.validate();
-			if (session === null) {
-				throw new Error('Unauthorized');
-			}
-
-			let deadline = (await getUserStatus(session.user))?.timestamp ?? null;
+			let deadline = (await getUserStatus(req.ctx.user))?.timestamp ?? null;
 			const settings = await getSettings();
 			const daysToConfirmBy = settings.daysRemainingForRSVP;
-			const timezone = settings.timezone;
 
 			if (daysToConfirmBy !== null) {
 				try {
 					if (deadline) {
-						const timeOfAcceptance = dayjs.utc(new Date(deadline)).tz(timezone, false);
+						const timeOfAcceptance = dayjs.utc(new Date(deadline)).tz(settings.timezone, false);
 						deadline = timeOfAcceptance.add(daysToConfirmBy, 'days').endOf('day').toDate();
 					}
 				} catch (e) {
