@@ -1,38 +1,80 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { page } from '$app/stores';
 	import { Status } from '@prisma/client';
 	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
+	import { trpc } from '$lib/trpc/client';
+	import { toasts } from '$lib/stores';
+	import { sendEmails } from '$lib/trpc/email';
 	const statuses: Status[] = Object.keys(Status) as Status[];
 	export let data;
+
+	let key = $page.url.searchParams.get('key') ?? 'status';
+	let searchFilter = $page.url.searchParams.get('searchFilter') ?? '';
+
+	async function sendEmailsByStatus() {
+		let search = document.getElementsByName('status')[0].innerHTML as string;
+		let subject = document.getElementsByName('subject')[0].innerHTML as string;
+		let emailBody = document.getElementsByName('emailBody')[0].innerHTML as string;
+
+		// gets all the relevant email addresses based on selected status
+		const allEmails = await trpc().users.emails.query({ key, search, searchFilter });
+		let completed = 0;
+		const toast = toasts.notify(`Downloading files (0/${allEmails.length} completed)...`);
+
+		for (let i = 0; i < allEmails.length; i += 100) {
+			const emails = allEmails.slice(i, i + 100);
+			sendEmails(emails, subject, emailBody);
+			completed++;
+			toasts.update(toast, `Downloading files (${completed}/${allEmails.length} completed)...`);
+		}
+		toasts.update(toast, 'Download complete!');
+	}
 </script>
 
 <svelte:head>
 	<title>Rodeo | Admin - Email Templates</title>
 </svelte:head>
 
-<form
-	method="POST"
-	action="?/emailByStatus"
-	use:enhance={() => {
-		return async ({ update }) => {
-			update({ reset: false });
-		};
-	}}
+<!-- <form
+    method="POST"
+    action="?/emailByStatus"
+    use:enhance={() => {
+        return async ({ update }) => {
+            update({ reset: false });
+        };
+    }}
 >
-	<label for="homepageText"><h2>Group Email to Specific Status</h2></label>
+    <label for="homepageText"><h2>Group Email to Specific Status</h2></label>
 
-	<div class="flex-container">
-		<input class="textbox-margin" name="subject" placeholder="Type email subject here" required />
-		<select name="status" required>
-			{#each statuses as status}
-				<option value={status}>{status}</option>
-			{/each}
-		</select>
-	</div>
-	<MarkdownEditor placeholder="Type email body here" name="emailBody" required />
+    <div class="flex-container">
+        <input class="textbox-margin" name="subject" placeholder="Type email subject here" required />
+        <select name="status" required>
+            {#each statuses as status}
+                <option value={status}>{status}</option>
+            {/each}
+        </select>
+    </div>
+    <MarkdownEditor placeholder="Type email body here" name="emailBody" required />
 
-	<button id="email-by-status" type="submit">Send</button>
-</form>
+    <button id="email-by-status" type="submit">Send</button>
+    <button id="email-by-status" on:click={sendEmailsByStatus}>Send</button> -->
+<!-- </form> -->
+
+<label for="homepageText"><h2>Group Email to Specific Status</h2></label>
+
+<div class="flex-container">
+	<input class="textbox-margin" name="subject" placeholder="Type email subject here" required />
+	<select name="status" required>
+		{#each statuses as status}
+			<option value={status}>{status}</option>
+		{/each}
+	</select>
+</div>
+<MarkdownEditor placeholder="Type email body here" name="emailBody" required />
+
+<!-- <button id="email-by-status" type="submit">Send</button> -->
+<button id="email-by-status" on:click={sendEmailsByStatus}>Send</button>
 
 <form
 	method="POST"
