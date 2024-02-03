@@ -87,7 +87,7 @@ model Settings {
 
   // PUBLIC SETTINGS (all users must be able to see these)
   applicationOpen       Boolean     @default(true)
-  daysRemainingForRSVP  Int?
+  daysToRSVP            Int?
   info                  String      @default("Put everything anybody may need to know about your hackathon here.")
   homepageText          String      @default("This text can be edited from the admin panel. You can put deadlines, logistics, or other important information here.")
   scanActions           String[]

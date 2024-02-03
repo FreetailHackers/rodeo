@@ -34,14 +34,8 @@ export const actions = {
 			applicationLimit = null;
 		}
 		const applicationOpen = formData.get('applicationOpen') === 'on';
-		let daysRemainingForRSVP: number | null;
-		const formDataValue = formData.get('daysRemainingForRSVP');
-		try {
-			const parsedValue = parseInt(formDataValue as string, 10);
-			daysRemainingForRSVP = isNaN(parsedValue) ? null : parsedValue;
-		} catch (e) {
-			daysRemainingForRSVP = null;
-		}
+		const parsedDaysToRSVP = parseInt(formData.get('daysToRSVP') as string, 10);
+		const daysToRSVP: number | null = isNaN(parsedDaysToRSVP) ? null : parsedDaysToRSVP;
 
 		const scanActions = (formData.get('scanActions') as string)
 			.split('\r\n')
@@ -49,7 +43,7 @@ export const actions = {
 			.filter(Boolean);
 		await trpc(locals.auth).settings.update({
 			applicationOpen,
-			daysRemainingForRSVP,
+			daysToRSVP,
 			scanActions,
 			timezone,
 			applicationDeadline,

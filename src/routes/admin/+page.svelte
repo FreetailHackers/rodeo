@@ -62,17 +62,16 @@
 	<label for="statusChangeText"><h2>User Status Count Over Time</h2></label>
 	<Graph statusChanges={data.graph} />
 
-	<!-- New development -->
-	<label for="daysRemainingForRSVP">
-		<h2>Number of days until RSVP expires</h2>
+	<label for="daysToRSVP">
+		<h2>Hackers have this many days after being accepted to RSVP (leave blank to disable RSVPs)</h2>
 	</label>
 	<input
 		type="number"
-		id="daysRemainingForRSVP"
-		name="daysRemainingForRSVP"
+		id="daysToRSVP"
+		name="daysToRSVP"
 		placeholder="10"
 		min="0"
-		value={data.settings.daysRemainingForRSVP}
+		value={data.settings.daysToRSVP}
 	/>
 
 	<label for="scanActions"><h2>Scan Options</h2></label>

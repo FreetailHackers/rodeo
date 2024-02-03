@@ -11,19 +11,8 @@ import { getSettings } from './settings';
  * to determine whether or not new users can apply.
  * User must be an admin.
  */
-export const canApply = async (id?: string): Promise<boolean> => {
+export const canApply = async (): Promise<boolean> => {
 	const settings = await getSettings();
-	if (id !== undefined) {
-		const user = await prisma.authUser.findUniqueOrThrow({
-			where: {
-				id: id,
-			},
-		});
-		if (user.status !== 'APPLIED' && user.status !== 'WAITLISTED') {
-			return false;
-		}
-	}
-
 	const count = await prisma.authUser.count({
 		where: {
 			status: { in: ['APPLIED', 'ACCEPTED', 'CONFIRMED'] },

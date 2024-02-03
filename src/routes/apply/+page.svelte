@@ -67,7 +67,7 @@
 			Congratulations! We were impressed by your application and would like to invite you to attend.
 		</p>
 
-		{#if data.rsvpDeadline === undefined || new Date() < data.rsvpDeadline}
+		{#if data.rsvpDeadline === null || new Date() < data.rsvpDeadline}
 			{#if data.rsvpDeadline}
 				<p>
 					You must confirm your attendance by {data.rsvpDeadline.toLocaleDateString('en-US', {

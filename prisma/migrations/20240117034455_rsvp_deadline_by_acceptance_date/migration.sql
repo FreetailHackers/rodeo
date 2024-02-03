@@ -6,4 +6,4 @@
 */
 -- AlterTable
 ALTER TABLE "Settings" DROP COLUMN "confirmBy",
-ADD COLUMN     "daysRemainingForRSVP" INTEGER;
+ADD COLUMN     "daysToRSVP" INTEGER;
