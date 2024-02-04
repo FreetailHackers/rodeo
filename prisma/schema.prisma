@@ -93,6 +93,7 @@ model Settings {
   scanActions         String[]
   timezone            String    @default("America/Chicago")
   applicationDeadline DateTime?
+  spongebobCase     Boolean @default(false)
 
   // PRIVATE SETTINGS (settings that non-admins do not need)
   rollingAdmissions Boolean @default(false)

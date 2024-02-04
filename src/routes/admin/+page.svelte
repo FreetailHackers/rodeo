@@ -21,6 +21,12 @@
 		};
 	}}
 >
+	<Toggle
+		name="spongebobCase"
+		label="Enable spongebobCase"
+		bind:checked={data.settings.spongebobCase}
+	/>
+
 	<label for="applicationStatus"><h2>Application Status</h2></label>
 
 	<Toggle

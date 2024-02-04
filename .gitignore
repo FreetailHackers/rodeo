@@ -6,6 +6,7 @@ node_modules
 .env
 .env.*
 !.env.example
+.dockerignore
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vercel

@@ -10,6 +10,7 @@ const settingsSchema = z
 		confirmBy: z.date().nullable().optional(),
 		info: z.string().optional(),
 		homepageText: z.string().optional(),
+		spongebobCase: z.boolean().optional(),
 		rollingAdmissions: z.boolean().optional(),
 		submitTemplate: z.string().optional(),
 		acceptTemplate: z.string().optional(),
@@ -41,11 +42,13 @@ export const settingsRouter = t.router({
 			scanActions: string[];
 			timezone: string;
 			applicationDeadline: Date | null;
+			spongebobCase: boolean;
 		}> => {
 			const settings = await getSettings();
 			return {
 				homepageText: settings.homepageText,
 				applicationOpen: settings.applicationOpen,
+				spongebobCase: settings.spongebobCase,
 				confirmBy: settings.confirmBy,
 				info: settings.info,
 				scanActions: settings.scanActions,

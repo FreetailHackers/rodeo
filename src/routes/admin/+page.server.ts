@@ -33,6 +33,7 @@ export const actions = {
 		if (isNaN(applicationLimit)) {
 			applicationLimit = null;
 		}
+		const spongebobCase = formData.get('spongebobCase') === 'on';
 		const applicationOpen = formData.get('applicationOpen') === 'on';
 		let confirmBy: Date | null;
 		try {
@@ -45,6 +46,7 @@ export const actions = {
 			.map((option: string) => option.trim())
 			.filter(Boolean);
 		await trpc(locals.auth).settings.update({
+			spongebobCase,
 			applicationOpen,
 			confirmBy,
 			scanActions,
