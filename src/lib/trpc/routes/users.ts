@@ -220,14 +220,11 @@ export const usersRouter = t.router({
 			});
 		}),
 
-	getRSVPDeadline: t.procedure.query(async (req): Promise<Date | null> => {
-		const session = await req.ctx.validate();
-		if (session === null) {
-			throw new Error('Unauthorized');
-		}
-
-		return await getRSVPDeadline(session.user);
-	}),
+	getRSVPDeadline: t.procedure
+		.use(authenticate(['HACKER']))
+		.query(async (req): Promise<Date | null> => {
+			return await getRSVPDeadline(req.ctx.user);
+		}),
 
 	/**
 	 * Confirms or declines the logged in user's acceptance.
