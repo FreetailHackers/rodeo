@@ -1,2 +1,3 @@
 -- AlterTable
-ALTER TABLE "Settings" ADD COLUMN "daysToRSVP" INTEGER;
+ALTER TABLE "Settings" DROP COLUMN "confirmBy",
+ADD COLUMN "daysToRSVP" INTEGER;
