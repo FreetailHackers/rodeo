@@ -34,6 +34,7 @@ export const actions = {
 			applicationLimit = null;
 		}
 		const applicationOpen = formData.get('applicationOpen') === 'on';
+		const spongebobCase = formData.get('spongebobCase') === 'on';
 		let confirmBy: Date | null;
 		try {
 			confirmBy = dayjs.tz(formData.get('confirmBy') as string, timezone).toDate();
@@ -51,6 +52,7 @@ export const actions = {
 			timezone,
 			applicationDeadline,
 			applicationLimit,
+			spongebobCase,
 		});
 		return 'Saved settings!';
 	},

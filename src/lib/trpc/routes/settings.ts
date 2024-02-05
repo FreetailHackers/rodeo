@@ -21,6 +21,7 @@ const settingsSchema = z
 		timezone: z.string().optional(),
 		applicationDeadline: z.date().nullable().optional(),
 		applicationLimit: z.number().nullable().optional(),
+		spongebobCase: z.boolean().optional(),
 	})
 	.strict();
 
@@ -41,6 +42,7 @@ export const settingsRouter = t.router({
 			scanActions: string[];
 			timezone: string;
 			applicationDeadline: Date | null;
+			spongebobCase: boolean;
 		}> => {
 			const settings = await getSettings();
 			return {
@@ -51,6 +53,7 @@ export const settingsRouter = t.router({
 				scanActions: settings.scanActions,
 				timezone: settings.timezone,
 				applicationDeadline: settings.applicationDeadline,
+				spongebobCase: settings.spongebobCase,
 			};
 		}
 	),
