@@ -11,7 +11,8 @@ import type { Session } from 'lucia';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { canApply } from './admissions';
-import { WordTokenizer } from '../../../../node_modules/natural/lib/natural/tokenizers';
+import { WordTokenizer } from 'natural';
+import { removeStopwords } from 'stopword';
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
@@ -588,8 +589,6 @@ export const usersRouter = t.router({
 				questions = questions.filter((question) => question.sponsorView);
 			}
 
-			const tokenizer = new WordTokenizer();
-
 			const responses: Record<string, Record<string, number | [number, number]>> = {};
 			users.forEach((user) => {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -616,7 +615,17 @@ export const usersRouter = t.router({
 						}
 					} else if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
 						if (answer) {
-							const tokens = tokenizer.tokenize(answer);
+							const answerAdjusted = answer
+								.replace(/C\+\+/gi, 'CPlusPlus')
+								.replace(/C#/gi, 'CSHARP');
+							const tokenizer = new WordTokenizer();
+							const tokenized = tokenizer.tokenize(answerAdjusted);
+							let tokens = null;
+							if (tokenized) {
+								tokens = removeStopwords(tokenized);
+							} else {
+								throw new Error('Answer is null.');
+							}
 
 							if (tokens) {
 								const seen: { [key: string]: number } = {};
