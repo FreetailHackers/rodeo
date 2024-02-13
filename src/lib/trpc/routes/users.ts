@@ -11,7 +11,7 @@ import type { Session } from 'lucia';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { canApply } from './admissions';
-import { WordTokenizer } from '../../../../node_modules/natural/lib/natural/tokenizers'
+import { WordTokenizer } from '../../../../node_modules/natural/lib/natural/tokenizers';
 import { removeStopwords } from 'stopword';
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
