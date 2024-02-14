@@ -5,10 +5,14 @@ import { redirect } from '@sveltejs/kit';
 
 export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['HACKER']);
+	const settings = await trpc(locals.auth).settings.getPublic();
+	const deadline = await trpc(locals.auth).users.getRSVPDeadline();
+
 	return {
 		user: await trpc(locals.auth).users.get(),
+		rsvpDeadline: deadline,
 		questions: await trpc(locals.auth).questions.get(),
-		settings: await trpc(locals.auth).settings.getPublic(),
+		settings: settings,
 		canApply: await trpc(locals.auth).admissions.canApply(),
 	};
 };
