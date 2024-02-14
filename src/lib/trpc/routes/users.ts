@@ -624,8 +624,6 @@ export const usersRouter = t.router({
 							let tokens = null;
 							if (tokenized) {
 								tokens = removeStopwords(tokenized);
-							} else {
-								throw new Error('Answer is null.');
 							}
 
 							if (tokens) {
