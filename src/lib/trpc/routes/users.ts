@@ -637,7 +637,6 @@ export const usersRouter = t.router({
 
 									seen[lowercasedToken] = (seen[lowercasedToken] || 0) + 1;
 									(answerData[lowercasedToken] as [number, number])[0] += 1;
-									(answerData[lowercasedToken] as [number, number])[1] = seen[lowercasedToken];
 
 									const percentage =
 										(answerData[lowercasedToken] as [number, number])[0] / totalTokens;
