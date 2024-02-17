@@ -7,13 +7,14 @@ import { t } from '../t';
 import { getQuestions } from './questions';
 import { getSettings } from './settings';
 import { auth, emailVerificationToken, resetPasswordToken } from '$lib/lucia';
-import type { Session } from 'lucia';
+import type { Session, User } from 'lucia';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { canApply } from './admissions';
 import natural from 'natural';
 const { WordTokenizer } = natural;
 import { removeStopwords } from 'stopword';
+import dayjs from 'dayjs';
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
@@ -222,6 +223,12 @@ export const usersRouter = t.router({
 			});
 		}),
 
+	getRSVPDeadline: t.procedure
+		.use(authenticate(['HACKER']))
+		.query(async (req): Promise<Date | null> => {
+			return await getRSVPDeadline(req.ctx.user);
+		}),
+
 	/**
 	 * Confirms or declines the logged in user's acceptance.
 	 */
@@ -229,7 +236,7 @@ export const usersRouter = t.router({
 		.use(authenticate(['HACKER']))
 		.input(z.enum(['CONFIRMED', 'DECLINED']))
 		.mutation(async (req): Promise<void> => {
-			const deadline = (await getSettings()).confirmBy;
+			const deadline = await getRSVPDeadline(req.ctx.user);
 			if (req.input === 'CONFIRMED') {
 				// Hackers should only be able to confirm before deadline
 				if (req.ctx.user.status === 'ACCEPTED' && (deadline === null || new Date() < deadline)) {
@@ -971,4 +978,23 @@ async function getWhereConditionHelper(
 		}
 	}
 	return {};
+}
+
+async function getRSVPDeadline(user: User) {
+	const daysToConfirmBy = (
+		await prisma.statusChange.findFirstOrThrow({
+			where: { userId: user.authUserId },
+			orderBy: { timestamp: 'desc' },
+		})
+	).timestamp;
+
+	const settings = await getSettings();
+	const daysToRSVP = settings.daysToRSVP;
+
+	if (daysToRSVP !== null) {
+		const timeOfAcceptance = dayjs.utc(new Date(daysToConfirmBy)).tz(settings.timezone, false);
+		return timeOfAcceptance.add(daysToRSVP, 'days').endOf('day').toDate();
+	}
+
+	return null;
 }

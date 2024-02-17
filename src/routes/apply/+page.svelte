@@ -66,10 +66,11 @@
 		<p>
 			Congratulations! We were impressed by your application and would like to invite you to attend.
 		</p>
-		{#if data.settings.confirmBy !== null}
-			{#if new Date() < data.settings.confirmBy}
+
+		{#if data.rsvpDeadline === null || new Date() < data.rsvpDeadline}
+			{#if data.rsvpDeadline}
 				<p>
-					You must confirm your attendance by {data.settings.confirmBy.toLocaleDateString('en-US', {
+					You must confirm your attendance by {data.rsvpDeadline.toLocaleDateString('en-US', {
 						weekday: 'long',
 						month: 'long',
 						day: 'numeric',
@@ -78,30 +79,30 @@
 					})} to secure your spot. If you know you will not be able to attend, please decline so we can
 					offer your spot to someone else.
 				</p>
-				<form method="POST" id="rsvp" use:enhance>
-					<button
-						formaction="?/decline"
-						use:confirmationDialog={{
-							text: 'Are you sure you want to decline your attendance? This action cannot be undone!',
-							cancel: 'No, go back',
-							ok: 'Yes, I want to decline',
-						}}>Decline</button
-					>
-					<button
-						formaction="?/confirm"
-						use:confirmationDialog={{
-							text: 'Are you sure you want to confirm your attendance?',
-							cancel: 'No, go back',
-							ok: 'Yes, I want to confirm',
-						}}>Confirm</button
-					>
-				</form>
-			{:else}
-				<p>
-					Sorry, the deadline to confirm your attendance has passed. If space permits, you may sign
-					up as a walk-in at the doors the day of the event, but we cannot make any guarantees.
-				</p>
 			{/if}
+			<form method="POST" id="rsvp" use:enhance>
+				<button
+					formaction="?/decline"
+					use:confirmationDialog={{
+						text: 'Are you sure you want to decline your attendance? This action cannot be undone!',
+						cancel: 'No, go back',
+						ok: 'Yes, I want to decline',
+					}}>Decline</button
+				>
+				<button
+					formaction="?/confirm"
+					use:confirmationDialog={{
+						text: 'Are you sure you want to confirm your attendance?',
+						cancel: 'No, go back',
+						ok: 'Yes, I want to confirm',
+					}}>Confirm</button
+				>
+			</form>
+		{:else}
+			<p>
+				Sorry, the deadline to confirm your attendance has passed. If space permits, you may sign up
+				as a walk-in at the doors the day of the event, but we cannot make any guarantees.
+			</p>
 		{/if}
 	{:else if data.user.authUser.status === 'CONFIRMED'}
 		<h1>CONFIRMED</h1>
