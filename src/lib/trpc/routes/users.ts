@@ -616,30 +616,32 @@ export const usersRouter = t.router({
 						}
 					} else if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
 						if (answer) {
-							const answerAdjusted = answer
-								.replace(/C\+\+/gi, 'CPlusPlus')
-								.replace(/C#/gi, 'CSHARP');
 							const tokenizer = new WordTokenizer();
-							const tokenized = tokenizer.tokenize(answerAdjusted);
+							const tokenized = tokenizer.tokenize(answer);
 							let tokens = null;
 							if (tokenized) {
 								tokens = removeStopwords(tokenized);
 							}
 
 							if (tokens) {
+								const totalTokens = tokens.length;
 								const seen: { [key: string]: number } = {};
 
-								tokens.forEach((word: string) => {
+								tokens.forEach((token: string) => {
 									const answerData = responses[question.id];
-									const lowercasedTokens = word.toLowerCase();
+									const lowercasedToken = token.toLowerCase();
 
-									if (!answerData[lowercasedTokens]) {
-										answerData[lowercasedTokens] = [0, 0];
+									if (!answerData[lowercasedToken]) {
+										answerData[lowercasedToken] = [0, 0];
 									}
 
-									seen[lowercasedTokens] = (seen[lowercasedTokens] || 0) + 1;
-									(answerData[lowercasedTokens] as [number, number])[0] += 1;
-									(answerData[lowercasedTokens] as [number, number])[1] = seen[lowercasedTokens];
+									seen[lowercasedToken] = (seen[lowercasedToken] || 0) + 1;
+									(answerData[lowercasedToken] as [number, number])[0] += 1;
+									(answerData[lowercasedToken] as [number, number])[1] = seen[lowercasedToken];
+
+									const percentage =
+										(answerData[lowercasedToken] as [number, number])[0] / totalTokens;
+									(answerData[lowercasedToken] as [number, number])[1] = percentage;
 								});
 							}
 						}
