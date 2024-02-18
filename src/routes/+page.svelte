@@ -17,9 +17,40 @@
 	});
 </script>
 
+<!-- lores MLH badge-->
+<div class="show-small">
+	<a
+		id="mlh-trust-badge-small"
+		href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=black"
+		target="_blank"
+		rel="noreferrer"
+		><img
+			src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-black.svg"
+			alt="Major League Hacking 2024 Hackathon Season"
+			id="mlh-badge-image"
+		/></a
+	>
+</div>
+
 <svelte:head>
 	<title>Rodeo | Home</title>
 </svelte:head>
+
+<!-- hires MLH badge-->
+<div class="show-large">
+	<a
+		id="mlh-trust-badge-large"
+		href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=black"
+		target="_blank"
+		rel="noreferrer"
+		><img
+			src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-black.svg"
+			alt="Major League Hacking 2024 Hackathon Season"
+			id="mlh-badge-image"
+		/></a
+	>
+</div>
+<div class="show-small"><br /></div>
 
 {#if data.user !== undefined}
 	<SvelteMarkdown source={data.settings.homepageText} />
@@ -67,6 +98,53 @@
 {/if}
 
 <style>
+	#mlh-trust-badge-small {
+		display: block;
+		max-width: 6rem;
+		min-width: 3.75rem;
+		position: fixed;
+		right: 5px;
+		top: 0;
+		width: 10%;
+		z-index: 10000;
+	}
+
+	#mlh-trust-badge-large {
+		display: block;
+		max-width: 6rem;
+		min-width: 6rem;
+		position: fixed;
+		right: 6vw;
+		top: 56px;
+		width: 10%;
+		z-index: 10000;
+	}
+
+	#mlh-badge-image {
+		width: 100%;
+	}
+
+	.show-small {
+		display: none;
+	}
+	.show-large {
+		display: contents;
+	}
+
+	@media (max-width: 1089px) {
+		.show-small {
+			display: contents;
+		}
+
+		.show-large {
+			display: none;
+		}
+
+		#mlh-trust-badge-small {
+			max-width: 3.75rem;
+		}
+	}
+
 	label {
 		display: block;
 		margin-bottom: 0.5rem;
