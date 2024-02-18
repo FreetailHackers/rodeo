@@ -83,6 +83,38 @@
 		<li>
 			<a href="/feedback" class:active={$page.url.pathname.startsWith('/feedback')}>Feedback</a>
 		</li>
+		{#if $page.url.pathname === '/'}
+			<li>
+				<!-- Hires MLH banner -->
+				<div class="show-large">
+					<a
+						id="mlh-trust-badge-large"
+						href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=black"
+						target="_blank"
+						rel="noreferrer"
+						><img
+							src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-black.svg"
+							alt="Major League Hacking 2024 Hackathon Season"
+							id="mlh-badge-image"
+						/></a
+					>
+				</div>
+				<!-- Lores MLH banner -->
+				<div class="show-small">
+					<a
+						id="mlh-trust-badge-small"
+						href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=black"
+						target="_blank"
+						rel="noreferrer"
+						><img
+							src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-black.svg"
+							alt="Major League Hacking 2024 Hackathon Season"
+							id="mlh-badge-image"
+						/></a
+					>
+				</div>
+			</li>
+		{/if}
 	</menu>
 
 	{#if isLoading}
@@ -189,6 +221,13 @@
 		background-color: #502340;
 	}
 
+	.show-small {
+		display: contents;
+	}
+	.show-large {
+		display: none;
+	}
+
 	@media (min-width: 1090px) {
 		/* minimum width that can fit all navbar tabs for admin accounts (which have the most number of tabs currently) */
 		/* should be updated if we change the number of tabs */
@@ -224,6 +263,13 @@
 			width: initial;
 			text-decoration: none;
 		}
+
+		.show-small {
+			display: none;
+		}
+		.show-large {
+			display: contents;
+		}
 	}
 
 	.overlay {
@@ -242,5 +288,36 @@
 	.active {
 		font-weight: bold;
 		text-decoration: underline;
+	}
+
+	#mlh-trust-badge-large {
+		display: block;
+		max-width: 7rem;
+		min-width: 6rem;
+		position: fixed;
+		right: 15px;
+		top: -0.75em;
+		width: 10%;
+		z-index: 10000;
+	}
+
+	#mlh-trust-badge-small {
+		display: block;
+		max-width: 5.5rem;
+		min-width: 5.5rem;
+		position: fixed;
+		right: 0;
+		top: -0.75em;
+		width: 10%;
+		z-index: 10000;
+	}
+
+	#mlh-badge-image {
+		width: 100%;
+	}
+
+	#mlh-trust-badge-large:hover,
+	#mlh-trust-badge-small:hover {
+		background-color: transparent;
 	}
 </style>
