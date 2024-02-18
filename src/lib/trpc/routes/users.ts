@@ -628,27 +628,26 @@ export const usersRouter = t.router({
 							let tokens = null;
 							if (tokenized) {
 								tokens = removeStopwords(tokenized);
-							}
+								if (tokens) {
+									const totalTokens = tokens.length;
+									const seen: { [key: string]: number } = {};
 
-							if (tokens) {
-								const totalTokens = tokens.length;
-								const seen: { [key: string]: number } = {};
+									tokens.forEach((token: string) => {
+										const answerData = responses[question.id];
+										const lowercasedToken = token.toLowerCase();
 
-								tokens.forEach((token: string) => {
-									const answerData = responses[question.id];
-									const lowercasedToken = token.toLowerCase();
+										if (!answerData[lowercasedToken]) {
+											answerData[lowercasedToken] = [0, 0];
+										}
 
-									if (!answerData[lowercasedToken]) {
-										answerData[lowercasedToken] = [0, 0];
-									}
+										seen[lowercasedToken] = (seen[lowercasedToken] || 0) + 1;
+										(answerData[lowercasedToken] as [number, number])[0] += 1;
 
-									seen[lowercasedToken] = (seen[lowercasedToken] || 0) + 1;
-									(answerData[lowercasedToken] as [number, number])[0] += 1;
-
-									const percentage =
-										(answerData[lowercasedToken] as [number, number])[0] / totalTokens;
-									(answerData[lowercasedToken] as [number, number])[1] = percentage;
-								});
+										const percentage =
+											(answerData[lowercasedToken] as [number, number])[0] / totalTokens;
+										(answerData[lowercasedToken] as [number, number])[1] = percentage;
+									});
+								}
 							}
 						}
 					} else if (question.type === 'CHECKBOX') {
