@@ -598,6 +598,7 @@ export const usersRouter = t.router({
 			}
 
 			const responses: Record<string, Record<string, number | [number, number]>> = {};
+			const word_percentage_by_user: { [key: string]: [number, number] } = {};
 			users.forEach((user) => {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const applicationData = user.application as Record<string, any>;
@@ -629,7 +630,6 @@ export const usersRouter = t.router({
 							if (tokenized) {
 								tokens = removeStopwords(tokenized);
 								if (tokens) {
-									const totalTokens = tokens.length;
 									const seen: { [key: string]: number } = {};
 
 									tokens.forEach((token: string) => {
@@ -641,10 +641,16 @@ export const usersRouter = t.router({
 										}
 
 										seen[lowercasedToken] = (seen[lowercasedToken] || 0) + 1;
+										if (seen[lowercasedToken] === 1) {
+											if (!word_percentage_by_user[lowercasedToken]) {
+												word_percentage_by_user[lowercasedToken] = [0, 0];
+											}
+											word_percentage_by_user[lowercasedToken][0]++;
+											word_percentage_by_user[lowercasedToken][1] =
+												word_percentage_by_user[lowercasedToken][0];
+										}
 										(answerData[lowercasedToken] as [number, number])[0] += 1;
-
-										const percentage =
-											(answerData[lowercasedToken] as [number, number])[0] / totalTokens;
+										const percentage = word_percentage_by_user[lowercasedToken][1];
 										(answerData[lowercasedToken] as [number, number])[1] = percentage;
 									});
 								}
