@@ -627,9 +627,8 @@ export const usersRouter = t.router({
 					} else if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
 						if (answer) {
 							const tokenized = new WordTokenizer().tokenize(answer);
-							let tokens = null;
 							if (tokenized) {
-								tokens = removeStopwords(tokenized);
+								const tokens = removeStopwords(tokenized);
 								if (tokens) {
 									const seen: Record<string, number> = {};
 
@@ -643,10 +642,10 @@ export const usersRouter = t.router({
 
 										seen[lowercasedToken] = (seen[lowercasedToken] || 0) + 1;
 										if (seen[lowercasedToken] === 1) {
-											if (!wordPercentageByUser[lowercasedToken]) {
-												wordPercentageByUser[lowercasedToken] = [0, 0];
-											}
-											wordPercentageByUser[lowercasedToken][0]++;
+											wordPercentageByUser[lowercasedToken] = [
+												(wordPercentageByUser[lowercasedToken]?.[0] || 0) + 1,
+												0,
+											];
 											wordPercentageByUser[lowercasedToken][1] =
 												wordPercentageByUser[lowercasedToken][0];
 										}
