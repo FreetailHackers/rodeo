@@ -635,11 +635,7 @@ export const usersRouter = t.router({
 									tokens.forEach((token: string) => {
 										const answerData = responses[question.id];
 										const lowercasedToken = token.toLowerCase();
-
-										if (!answerData[lowercasedToken]) {
-											answerData[lowercasedToken] = [0, 0];
-										}
-
+										answerData[lowercasedToken] ||= [0, 0];
 										seen[lowercasedToken] = (seen[lowercasedToken] || 0) + 1;
 										if (seen[lowercasedToken] === 1) {
 											wordPercentageByUser[lowercasedToken] ||= [0, 0];
