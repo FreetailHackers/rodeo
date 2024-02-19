@@ -598,9 +598,7 @@ export const usersRouter = t.router({
 			}
 
 			const responses: Record<string, Record<string, number | [number, number]>> = {};
-			/* string is the user ID, calculates the number of users that have 
-			said a certain word at least once and calculates the percentage */
-			const wordPercentageByUser: Record<string, [number, number]> = {};
+			const seen: Record<string, number> = {};
 			users.forEach((user) => {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const applicationData = user.application as Record<string, any>;
@@ -630,22 +628,21 @@ export const usersRouter = t.router({
 							if (tokenized) {
 								const tokens = removeStopwords(tokenized);
 								if (tokens) {
-									const seen: Record<string, number> = {};
-
+									let answerData: Record<string, number | [number, number]> | null = null;
+									const userSeen: Set<string> = new Set();
 									tokens.forEach((token: string) => {
-										const answerData = responses[question.id];
+										answerData = responses[question.id];
 										const lowercasedToken = token.toLowerCase();
 										answerData[lowercasedToken] ||= [0, 0];
-										seen[lowercasedToken] = (seen[lowercasedToken] || 0) + 1;
-										if (seen[lowercasedToken] === 1) {
-											wordPercentageByUser[lowercasedToken] ||= [0, 0];
-											wordPercentageByUser[lowercasedToken][0]++;
-											wordPercentageByUser[lowercasedToken][1] =
-												wordPercentageByUser[lowercasedToken][0];
-										}
+										userSeen.add(lowercasedToken);
 										(answerData[lowercasedToken] as [number, number])[0] += 1;
-										(answerData[lowercasedToken] as [number, number])[1] =
-											wordPercentageByUser[lowercasedToken][1];
+									});
+									userSeen.forEach((word: string) => {
+										if (answerData) {
+											seen[word] ||= 0;
+											seen[word]++;
+											(answerData[word] as [number, number])[1] = seen[word];
+										}
 									});
 								}
 							}
