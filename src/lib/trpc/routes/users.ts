@@ -642,10 +642,8 @@ export const usersRouter = t.router({
 
 										seen[lowercasedToken] = (seen[lowercasedToken] || 0) + 1;
 										if (seen[lowercasedToken] === 1) {
-											wordPercentageByUser[lowercasedToken] = [
-												(wordPercentageByUser[lowercasedToken]?.[0] || 0) + 1,
-												0,
-											];
+											wordPercentageByUser[lowercasedToken] ||= [0, 0];
+											wordPercentageByUser[lowercasedToken][0]++;
 											wordPercentageByUser[lowercasedToken][1] =
 												wordPercentageByUser[lowercasedToken][0];
 										}
