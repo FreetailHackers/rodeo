@@ -83,38 +83,36 @@
 		<li>
 			<a href="/feedback" class:active={$page.url.pathname.startsWith('/feedback')}>Feedback</a>
 		</li>
-		{#if $page.url.pathname === '/'}
-			<li>
-				<!-- Hires MLH banner -->
-				<div class="show-large">
-					<a
-						id="mlh-trust-badge-large"
-						href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=white"
-						target="_blank"
-						rel="noreferrer"
-						><img
-							src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-white.svg"
-							alt="Major League Hacking 2024 Hackathon Season"
-							id="mlh-badge-image"
-						/></a
-					>
-				</div>
-				<!-- Lores MLH banner -->
-				<div class="show-small">
-					<a
-						id="mlh-trust-badge-small"
-						href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=white"
-						target="_blank"
-						rel="noreferrer"
-						><img
-							src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-white.svg"
-							alt="Major League Hacking 2024 Hackathon Season"
-							id="mlh-badge-image"
-						/></a
-					>
-				</div>
-			</li>
-		{/if}
+		<li>
+			<!-- Hires MLH banner -->
+			<div class="show-large">
+				<a
+					id="mlh-trust-badge-large"
+					href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=white"
+					target="_blank"
+					rel="noreferrer"
+					><img
+						src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-white.svg"
+						alt="Major League Hacking 2024 Hackathon Season"
+						id="mlh-badge-image"
+					/></a
+				>
+			</div>
+			<!-- Lores MLH banner -->
+			<div class="show-small">
+				<a
+					id="mlh-trust-badge-small"
+					href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=white"
+					target="_blank"
+					rel="noreferrer"
+					><img
+						src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-white.svg"
+						alt="Major League Hacking 2024 Hackathon Season"
+						id="mlh-badge-image"
+					/></a
+				>
+			</div>
+		</li>
 	</menu>
 
 	{#if isLoading}
