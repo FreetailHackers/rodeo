@@ -42,7 +42,7 @@
 		"pre-commit": "^1.2.2",
 		"prettier": "^2.8.0",
 		"prettier-plugin-svelte": "^2.8.1",
-		"prisma": "^5.3.1",
+		"prisma": "^5.10.1",
 		"svelte": "^3.54.0",
 		"svelte-check": "^3.5.1",
 		"ts-node": "^10.9.1",
