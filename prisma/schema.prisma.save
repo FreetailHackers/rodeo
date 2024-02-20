@@ -59,7 +59,8 @@ model SingleUseKey {
 model User {
   // Data about the user that is not used in authentication or authorization
   authUserId    String         @id @unique
-  authUser      AuthUser       @relation(fields: [authUserId], references: [id], onDelete: Cascade)
+  authUser      AuthUser       @relation(fields: [authUserId], references: [id], onDelete: 
+Cascade)
   decision      Decision?
   application   Json           @default("{}")
   scanCount     Json           @default("{}")
@@ -87,11 +88,10 @@ model Settings {
 
   // PUBLIC SETTINGS (all users must be able to see these)
   applicationOpen     Boolean   @default(true)
-  daysToRSVP          Int?
+  confirmBy           DateTime?
   info                String    @default("Put everything anybody may need to know about your hackathon here.")
   homepageText        String    @default("This text can be edited from the admin panel. You can put deadlines, logistics, or other important information here.")
   scanActions         String[]
-  blackLists          String[]
   timezone            String    @default("America/Chicago")
   applicationDeadline DateTime?
 

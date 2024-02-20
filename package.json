@@ -65,6 +65,7 @@
 		"@trpc/server": "^10.7.0",
 		"crypto-js": "^4.1.1",
 		"dayjs": "^1.11.7",
+		"esbuild": "^0.20.0",
 		"file-saver": "^2.0.5",
 		"fuzzysort": "^2.0.4",
 		"html5-qrcode": "^2.3.7",

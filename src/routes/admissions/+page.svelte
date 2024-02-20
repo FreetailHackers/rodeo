@@ -3,6 +3,9 @@
 	import UserCard from '$lib/components/user-card.svelte';
 
 	export let data;
+
+
+
 </script>
 
 <svelte:head>
@@ -13,6 +16,15 @@
 	<p>Congratulations! You've read every application.</p>
 {:else}
 	<h1>{data.user.authUser.email}</h1>
+	
+	{#each Object.values(data.settings.blackLists) as blackListedEmail}
+	
+		{#if blackListedEmail.trim().toLowerCase() === data.user.authUser.email.trim().toLowerCase()}
+			<h2> Warning: this user is blacklisted </h2>
+		{/if}
+	{/each}
+
+
 	<UserCard user={data.user} questions={data.questions} />
 	<div id="form">
 		<div id="padding" />

@@ -82,6 +82,14 @@
 		placeholder="Write one option per line, like this:&#13;OPTION 1&#13;OPTION 2&#13;OPTION 3"
 	/>
 
+	<label for="blackLists"><h2>Black List</h2></label>
+	<textarea
+		value={data.settings.blackLists.join('\n')}
+		name="blackLists"
+		id="blackLists"
+		placeholder="Write one blacklisted email per line like this &#13;johndoe@gmail.com &#13;janedoe@gmail.com"
+	/>
+
 	<label for="timezone"><h2>Timezone</h2></label>
 	<select name="timezone" id="timezone" value={data.settings.timezone}>
 		{#each Intl.supportedValuesOf('timeZone') as timezone}
