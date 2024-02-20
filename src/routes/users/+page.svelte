@@ -60,7 +60,7 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Users</title>
+	<title>Rodeo | Users 1</title>
 </svelte:head>
 <h1>Master Database</h1>
 {#if data.user.roles.includes('ADMIN')}
