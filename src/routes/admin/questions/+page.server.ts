@@ -73,6 +73,7 @@ export const actions = {
 		for (const id in questions) {
 			questions[id].required = questions[id].required === 'on';
 			questions[id].sponsorView = questions[id].sponsorView === 'on';
+			questions[id].isAdmission = questions[id].isAdmission === 'on';
 			if (questions[id].type === 'NUMBER') {
 				const min = Number(questions[id].min);
 				const max = Number(questions[id].max);
