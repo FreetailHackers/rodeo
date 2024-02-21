@@ -2,8 +2,6 @@
 	<title>Rodeo | Feedback</title>
 </svelte:head>
 
-<div class="show-small"><br /></div>
-
 <p>
 	Rodeo is our brand new hackathon management platform and we would appreciate any feedback you had
 	about it!
@@ -15,20 +13,3 @@
 		>Google Form</a
 	>.
 </p>
-
-<style>
-	br {
-		display: block;
-		margin-bottom: 2em;
-	}
-
-	.show-small {
-		display: contents;
-	}
-
-	@media (min-width: 1090px) {
-		.show-small {
-			display: none;
-		}
-	}
-</style>

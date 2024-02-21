@@ -22,7 +22,6 @@
 </svelte:head>
 
 {#if data.user !== undefined}
-	<div class="show-small"><br /></div>
 	<SvelteMarkdown source={data.settings.homepageText} />
 
 	<form method="POST" action="?/logout" use:enhance>
@@ -76,20 +75,5 @@
 	input {
 		display: block;
 		margin-bottom: 1rem;
-	}
-
-	br {
-		display: block;
-		margin-bottom: 2em;
-	}
-
-	.show-small {
-		display: contents;
-	}
-
-	@media (min-width: 1090px) {
-		.show-small {
-			display: none;
-		}
 	}
 </style>

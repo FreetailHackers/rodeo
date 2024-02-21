@@ -34,8 +34,6 @@ print('This is a multi-line code block.')
 	<title>Rodeo | Info</title>
 </svelte:head>
 
-<div class="show-small"><br /></div>
-
 {#if data.user?.roles.includes('ADMIN')}
 	<form
 		method="POST"
@@ -55,20 +53,5 @@ print('This is a multi-line code block.')
 <style>
 	button {
 		margin-top: 1rem;
-	}
-
-	br {
-		display: block;
-		margin-bottom: 2em;
-	}
-
-	.show-small {
-		display: contents;
-	}
-
-	@media (min-width: 1090px) {
-		.show-small {
-			display: none;
-		}
 	}
 </style>

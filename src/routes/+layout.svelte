@@ -171,6 +171,7 @@
 	nav {
 		position: sticky;
 		margin-top: 0;
+		margin-bottom: 3rem;
 		background-color: var(--primary-accent);
 		z-index: 99;
 	}
@@ -240,6 +241,10 @@
 
 		#hamburger {
 			display: none;
+		}
+
+		nav {
+			margin-bottom: 0.5rem;
 		}
 
 		menu {

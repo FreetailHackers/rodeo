@@ -20,8 +20,6 @@
 	<title>Rodeo | Apply</title>
 </svelte:head>
 
-<div class="show-small"><br /></div>
-
 <!-- Application status dialog -->
 <div id="status">
 	<p>Your application status is:</p>
@@ -332,20 +330,5 @@
 
 	bold {
 		font-weight: bold;
-	}
-
-	br {
-		display: block;
-		margin-bottom: 2em;
-	}
-
-	.show-small {
-		display: contents;
-	}
-
-	@media (min-width: 1090px) {
-		.show-small {
-			display: none;
-		}
 	}
 </style>
