@@ -41,12 +41,12 @@ export const actions = {
 			.split('\r\n')
 			.map((option: string) => option.trim())
 			.filter(Boolean);
-		
+
 		const blackLists = (formData.get('blackLists') as string)
-		.split('\r\n')
-		.map((option: string) => option.trim())
-		.filter(Boolean);
-		
+			.split('\r\n')
+			.map((option: string) => option.trim())
+			.filter(Boolean);
+
 		await trpc(locals.auth).settings.update({
 			applicationOpen,
 			daysToRSVP,
@@ -54,11 +54,10 @@ export const actions = {
 			timezone,
 			applicationDeadline,
 			applicationLimit,
-			blackLists
+			blackLists,
 		});
 
 		return 'Saved settings!';
-		
 	},
 
 	release: async ({ locals }) => {

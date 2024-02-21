@@ -7,6 +7,7 @@
 	export let users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
 	export let self: UserSchema;
 	export let questions: Question[];
+	export let blackLists: string[];
 
 	let action = 'admissions';
 	$: selected = users.map(() => false);
@@ -212,7 +213,7 @@
 						/>
 					</summary>
 					<div class="user">
-						<UserCard {user} {questions} />
+						<UserCard {user} {questions} {blackLists} />
 					</div>
 				</details>
 			</li>

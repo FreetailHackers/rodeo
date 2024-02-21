@@ -6,7 +6,7 @@ export const load = async ({ locals }) => {
 	return {
 		user: await trpc(locals.auth).admissions.getAppliedUser(),
 		questions: await trpc(locals.auth).questions.get(),
-		settings : await trpc(locals.auth).settings.getPublic(),
+		settings: await trpc(locals.auth).settings.getPublic(),
 	};
 };
 

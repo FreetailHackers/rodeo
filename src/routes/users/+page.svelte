@@ -313,7 +313,12 @@
 			<option value="100">Show 100</option>
 		</select>
 	</div>
-	<UserTable users={data.users} self={data.user} questions={data.questions} />
+	<UserTable
+		users={data.users}
+		self={data.user}
+		questions={data.questions}
+		blackLists={data.settings.blackLists}
+	/>
 
 	<!-- Pagination -->
 	<form>

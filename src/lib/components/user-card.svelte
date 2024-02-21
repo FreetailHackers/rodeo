@@ -5,12 +5,20 @@
 
 	export let user: Partial<Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>>;
 	export let questions: Question[];
+	export let blackLists: string[];
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	$: application = user.application as Record<string, any>;
 </script>
 
 <p><b>Verified Email</b> {user.authUser?.verifiedEmail}</p>
+
+{#each Object.values(blackLists) as blackListedEmail}
+	{#if blackListedEmail.trim().toLowerCase() === user.authUser?.email}
+		<p style="color:#D04848"><b>Warning: this user is blacklisted</b></p>
+	{/if}
+{/each}
+
 <p><b>Role</b> {user.authUser?.roles.join(', ')}</p>
 <p>
 	<b>Status</b>

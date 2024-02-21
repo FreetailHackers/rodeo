@@ -126,7 +126,7 @@
 		<br />
 		<details>
 			<summary>{user.authUser.email}</summary>
-			<UserCard {user} questions={data.questions} />
+			<UserCard {user} questions={data.questions} blackLists={data.settings.blackLists} />
 		</details>
 		<p class={(scanCount[$page.params.action] ?? 0) === 0 ? 'success' : 'error'}>
 			This user has scanned for {$page.params.action}

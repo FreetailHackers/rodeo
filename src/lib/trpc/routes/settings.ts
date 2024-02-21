@@ -21,7 +21,7 @@ const settingsSchema = z
 		timezone: z.string().optional(),
 		applicationDeadline: z.date().nullable().optional(),
 		applicationLimit: z.number().nullable().optional(),
-		blackLists: z.string().array().optional()
+		blackLists: z.string().array().optional(),
 	})
 	.strict();
 
@@ -53,7 +53,7 @@ export const settingsRouter = t.router({
 				scanActions: settings.scanActions,
 				timezone: settings.timezone,
 				applicationDeadline: settings.applicationDeadline,
-				blackLists: settings.blackLists
+				blackLists: settings.blackLists,
 			};
 		}
 	),
