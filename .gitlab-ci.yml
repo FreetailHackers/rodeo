@@ -92,7 +92,7 @@ deploy-preview-job:
     # Export .env to environment variables in shell so we can use them in this script
     - "export $(grep -v '^#' .vercel/.env.preview.local | xargs)"
     # Create a branch-specific database
-    - echo "CREATE DATABASE \"$CI_COMMIT_BRANCH\"" | psql $DATABASE_URL
+    - echo "CREATE DATABASE \"$CI_COMMIT_BRANCH\"" | psql $DATABASE_URL/master
     # Set database connection string to use preview database
     - export DATABASE_URL=$DATABASE_URL/$CI_COMMIT_BRANCH
     - export DIRECT_URL=$DIRECT_URL/$CI_COMMIT_BRANCH
