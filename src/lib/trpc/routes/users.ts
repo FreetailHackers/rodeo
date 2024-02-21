@@ -598,7 +598,6 @@ export const usersRouter = t.router({
 			}
 
 			const responses: Record<string, Record<string, number | [number, number]>> = {};
-			const seen: Record<string, number> = {};
 			users.forEach((user) => {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const applicationData = user.application as Record<string, any>;
@@ -624,27 +623,18 @@ export const usersRouter = t.router({
 						}
 					} else if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
 						if (answer) {
-							const tokenized = new WordTokenizer().tokenize(answer);
-							if (tokenized) {
-								const tokens = removeStopwords(tokenized);
-								if (tokens) {
-									let answerData: Record<string, number | [number, number]> | null = null;
-									const userSeen: Set<string> = new Set();
-									tokens.forEach((token: string) => {
-										answerData = responses[question.id];
-										const lowercasedToken = token.toLowerCase();
-										answerData[lowercasedToken] ||= [0, 0];
-										userSeen.add(lowercasedToken);
-										(answerData[lowercasedToken] as [number, number])[0] += 1;
-									});
-									userSeen.forEach((word: string) => {
-										if (answerData) {
-											seen[word] ||= 0;
-											seen[word]++;
-											(answerData[word] as [number, number])[1] = seen[word];
-										}
-									});
-								}
+							const seen = new Set<string>();
+							const tokenized = new WordTokenizer().tokenize(answer) || [];
+							const tokens = removeStopwords(tokenized);
+							const answerData = responses[question.id];
+							tokens.forEach((token: string) => {
+								const lowercasedToken = token.toLowerCase();
+								seen.add(lowercasedToken);
+								answerData[lowercasedToken] ||= [0, 0];
+								(answerData[lowercasedToken] as [number, number])[0] += 1;
+							});
+							for (const token of seen) {
+								(answerData[token] as [number, number])[1] += 1;
 							}
 						}
 					} else if (question.type === 'CHECKBOX') {
