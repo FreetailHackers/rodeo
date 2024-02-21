@@ -84,7 +84,7 @@
 			<a href="/feedback" class:active={$page.url.pathname.startsWith('/feedback')}>Feedback</a>
 		</li>
 		<li>
-			<!-- Hires MLH banner -->
+			<!-- MLH banner for high resolution devices -->
 			<div class="show-large">
 				<a
 					id="mlh-trust-badge-large"
@@ -98,7 +98,7 @@
 					/></a
 				>
 			</div>
-			<!-- Lores MLH banner -->
+			<!-- MLH banner for low resolution devices -->
 			<div class="show-small">
 				<a
 					id="mlh-trust-badge-small"
@@ -223,6 +223,7 @@
 	.show-small {
 		display: contents;
 	}
+
 	.show-large {
 		display: none;
 	}
@@ -270,6 +271,7 @@
 		.show-small {
 			display: none;
 		}
+
 		.show-large {
 			display: contents;
 		}
