@@ -177,11 +177,16 @@
 					</div>
 				</div>
 			{/if}
-			<div>
+			<div class="flex-row">
 				<Toggle
 					name={question.id + '_sponsorView'}
 					label="Viewable by Sponsors"
 					checked={question.sponsorView}
+				/>
+				<Toggle
+					name={question.id + '_hideAdmission'}
+					label="Hide Question From Admission"
+					checked={question.hideAdmission}
 				/>
 			</div>
 		</fieldset>
