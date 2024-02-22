@@ -187,9 +187,9 @@
 				</div>
 				<div>
 					<Toggle
-						name={question.id + '_isAdmission'}
-						label="Required for Admission"
-						checked={question.isAdmission}
+						name={question.id + '_hideAdmission'}
+						label="Hide Question From Admission"
+						checked={question.hideAdmission}
 					/>
 				</div>
 			</div>

@@ -106,23 +106,23 @@ model Settings {
 }
 
 model Question {
-  id          String       @id @default(uuid())
-  label       String
-  type        QuestionType
-  required    Boolean      @default(false)
-  order       Int          @unique
-  placeholder String       @default("") // For sentences, paragraphs, and numbers
-  multiple    Boolean? // For dropdowns to allow multiple selections
-  custom      Boolean? // For dropdowns to allow user to enter custom option
-  options     String[] // For dropdowns, checkboxes, and radios
-  min         Float? // For numbers
-  max         Float? // For numbers
-  step        Float? // For numbers
-  regex       String       @default("") // For sentences and paragraphs
-  accept      String       @default("") // For files
-  maxSizeMB   Float        @default(1) // For files
-  sponsorView Boolean      @default(false) // For all questions
-  isAdmission Boolean      @default(true) // True - shown, False - hidden
+  id            String       @id @default(uuid())
+  label         String
+  type          QuestionType
+  required      Boolean      @default(false)
+  order         Int          @unique
+  placeholder   String       @default("") // For sentences, paragraphs, and numbers
+  multiple      Boolean? // For dropdowns to allow multiple selections
+  custom        Boolean? // For dropdowns to allow user to enter custom option
+  options       String[] // For dropdowns, checkboxes, and radios
+  min           Float? // For numbers
+  max           Float? // For numbers
+  step          Float? // For numbers
+  regex         String       @default("") // For sentences and paragraphs
+  accept        String       @default("") // For files
+  maxSizeMB     Float        @default(1) // For files
+  sponsorView   Boolean      @default(false) // For all questions
+  hideAdmission Boolean      @default(false) // True - Hidden, False - Shown
 }
 
 model Event {
