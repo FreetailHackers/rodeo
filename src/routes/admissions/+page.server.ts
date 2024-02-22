@@ -4,11 +4,11 @@ import { trpc } from '$lib/trpc/router';
 export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['ADMIN']);
 	const questions = await trpc(locals.auth).questions.get();
-    const admissionRelevantQuestions = questions.filter(question => !question.hideAdmission);
-    return {
-        user: await trpc(locals.auth).admissions.getAppliedUser(),
-        questions: admissionRelevantQuestions,
-    };
+	const admissionRelevantQuestions = questions.filter((question) => !question.hideAdmission);
+	return {
+		user: await trpc(locals.auth).admissions.getAppliedUser(),
+		questions: admissionRelevantQuestions,
+	};
 };
 
 export const actions = {
