@@ -15,7 +15,7 @@
 
 {#each Object.values(blackLists) as blackListedEmail}
 	{#if blackListedEmail.trim().toLowerCase() === user.authUser?.email}
-		<p style="color:#D04848"><b>Warning: this user is blacklisted</b></p>
+		<p class="warning"><b>Warning: this user is blacklisted</b></p>
 	{/if}
 {/each}
 
@@ -51,5 +51,9 @@
 		padding: 0.5rem;
 		border-left: none;
 		border-left: #aaa 5px solid;
+	}
+
+	.warning {
+		color: #d04848;
 	}
 </style>
