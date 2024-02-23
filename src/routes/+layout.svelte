@@ -88,11 +88,11 @@
 			<div class="show-large">
 				<a
 					id="mlh-trust-badge-large"
-					href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=white"
+					href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=red"
 					target="_blank"
 					rel="noreferrer"
 					><img
-						src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-white.svg"
+						src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-red.svg"
 						alt="Major League Hacking 2024 Hackathon Season"
 						id="mlh-badge-image"
 					/></a
@@ -102,11 +102,11 @@
 			<div class="show-small">
 				<a
 					id="mlh-trust-badge-small"
-					href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=white"
+					href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=red"
 					target="_blank"
 					rel="noreferrer"
 					><img
-						src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-white.svg"
+						src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-red.svg"
 						alt="Major League Hacking 2024 Hackathon Season"
 						id="mlh-badge-image"
 					/></a
@@ -301,7 +301,7 @@
 		min-width: 6rem;
 		position: fixed;
 		right: 15px;
-		top: -0.75rem;
+		top: 2.8rem;
 		width: 100%;
 		z-index: 10000;
 	}
@@ -312,7 +312,7 @@
 		min-width: 5.5rem;
 		position: fixed;
 		right: 0;
-		top: -0.75rem;
+		top: 2.7rem;
 		width: 100%;
 		z-index: 10000;
 	}
