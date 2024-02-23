@@ -122,7 +122,7 @@ model Question {
   accept        String       @default("") // For files
   maxSizeMB     Float        @default(1) // For files
   sponsorView   Boolean      @default(false) // For all questions
-  hideAdmission Boolean      @default(false) // True - Hidden, False - Shown
+  hideAdmission Boolean      @default(false)
 }
 
 model Event {
