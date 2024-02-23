@@ -123,6 +123,7 @@ model Question {
   maxSizeMB     Float        @default(1) // For files
   sponsorView   Boolean      @default(false) // For all questions
   hideAdmission Boolean      @default(false)
+  hideScan      Boolean      @default(false)
 }
 
 model Event {

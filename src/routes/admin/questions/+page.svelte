@@ -179,16 +179,21 @@
 			{/if}
 			<div class="flex-row">
 				<Toggle
-					name={question.id + '_sponsorView'}
-					label="Viewable by Sponsors"
-					checked={question.sponsorView}
-				/>
-				<Toggle
 					name={question.id + '_hideAdmission'}
 					label="Hide Question From Admission"
 					checked={question.hideAdmission}
 				/>
+				<Toggle
+					name={question.id + '_hideScan'}
+					label="Hide Question From Scan Page"
+					checked={question.hideScan}
+				/>
 			</div>
+			<Toggle
+				name={question.id + '_sponsorView'}
+				label="Viewable by Sponsors"
+				checked={question.sponsorView}
+			/>
 		</fieldset>
 	{/each}
 
