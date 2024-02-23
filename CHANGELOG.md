@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.8.6
+
+[ADDED]
+
+- MLH Banner
+- NLP Tokenizer for word frequency statistics
+- RSVP Confirmation Waves
+
 ## v0.8.5
 
 [FIXED]
