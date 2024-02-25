@@ -7,12 +7,10 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export const load = async ({ locals }) => {
-	const events = await trpc(locals.auth).events.getAll();
-	const settings = await trpc(locals.auth).settings.getPublic();
 	return {
-		schedule: events,
+		schedule: await trpc(locals.auth).events.getAll(),
 		user: (await locals.auth.validate())?.user,
-		timezone: settings.timezone,
+		timezone: (await trpc(locals.auth).settings.getPublic()).timezone,
 	};
 };
 
