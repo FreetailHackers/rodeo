@@ -57,22 +57,22 @@
 <h1>Schedule</h1>
 
 <h2 class="subtitle">Filters</h2>
+<div class="button-container">
+	{#each filters as filter}
+		<button
+			class:active={selected === filter}
+			data-name={filter}
+			on:click={() => chosenFilter(filter)}
+		>
+			{filter}
+		</button>
+	{/each}
 
-{#each filters as filter}
-	<button
-		class:active={selected === filter}
-		data-name={filter}
-		on:click={() => chosenFilter(filter)}
-	>
-		{filter}
-	</button>
-{/each}
-
-{#if url && data.schedule.length > 0}
-	<button
-		><a class="calendar-export-link" href={url} download="events.ics">Download All Events</a
-		></button
-	>{/if}
+	{#if url && data.schedule.length > 0}
+		<button
+			><a class="calendar-export" href={url} download="events.ics">Download All Events</a></button
+		>{/if}
+</div>
 
 <div class="container">
 	{#each groupByDateArray as { day, events }}
@@ -188,72 +188,51 @@
 		font-size: 36px;
 	}
 
-	p {
-		all: unset;
-		font-family: 'Geologica', sans-serif;
-	}
-
-	p.name,
-	p.date {
-		font-size: 18px;
-	}
-
-	p.description {
-		padding-top: 3px;
-		text-align: left;
-	}
-
-	p.location,
-	p.description {
-		font-size: 14px;
-	}
-
-	label {
-		display: block;
-		margin-bottom: 0.5rem;
-	}
-
-	select,
-	input,
-	textarea {
-		margin-bottom: 1rem;
-	}
-
-	div {
-		display: inline-block;
-		text-align: center;
-	}
-
-	/* Admin view */
-
-	hr {
-		margin-top: 20px;
-	}
-
-	a.calendar-export-link {
-		text-decoration: none;
-		color: #303030;
-	}
-
-	/* .name,
-	.location,
-	.date {
-		flex: 1;
-	} */
-
-	/* .date {
-		text-align: right;
-	} */
-
 	button {
 		background-color: #f2ebd9;
 		color: #303030;
 		font-family: 'Geologica', sans-serif;
+		border-radius: 4px;
+		margin: 0px 4px 4px;
 	}
 
 	.active {
 		background-color: #303030;
 		color: #f2ebd9;
+	}
+
+	p {
+		all: unset;
+		font-family: 'Geologica', sans-serif;
+	}
+
+	.name,
+	.location,
+	.description {
+		text-align: left;
+	}
+
+	.name,
+	.date {
+		font-size: 18px;
+	}
+
+	.location,
+	.description {
+		font-size: 14px;
+	}
+
+	.date {
+		text-align: right;
+	}
+
+	.description {
+		padding-top: 3px;
+	}
+
+	.calendar-export {
+		text-decoration: none;
+		color: #303030;
 	}
 
 	.flex-row {
@@ -299,12 +278,8 @@
 	}
 
 	.column {
-		flex: 0 1 49%; /* Adjust the width as needed */
-		margin-bottom: 20px;
-	}
-
-	.edit {
-		color: #e1563f;
+		flex: 1 1;
+		margin: 0 10px 20px 10px;
 	}
 
 	@media (max-width: 768px) {
@@ -315,5 +290,25 @@
 		.column {
 			flex: 1 0 100%;
 		}
+	}
+	/* Admin view */
+
+	hr {
+		margin-top: 20px;
+	}
+
+	label {
+		display: block;
+		margin-bottom: 0.5rem;
+	}
+
+	select,
+	input,
+	textarea {
+		margin-bottom: 1rem;
+	}
+
+	.edit {
+		color: #e1563f;
 	}
 </style>

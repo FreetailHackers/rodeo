@@ -70,7 +70,7 @@
 					text: 'Are you sure you want to delete this event?',
 					cancel: 'Cancel',
 					ok: 'Delete',
-				}}>X</button
+				}}>Delete Event</button
 			>
 		</form>
 	</div>
