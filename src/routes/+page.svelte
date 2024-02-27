@@ -31,12 +31,12 @@
 	<h2>Announcements</h2>
 	<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
 	<!-- paste final sponsor code here 1-->
-	<hr>
+	<hr />
 	<h2>Sponsors</h2>
-	<div class="image"> 
-		<img alt="The project logo" src={"src/lib/assets/sponsors/1989_Placeholder.jpeg"} />
-		<img alt="The project logo" src={"src/lib/assets/sponsors/Lover_Placeholder.jpeg"} />
-		<img alt="The project logo" src={"src/lib/assets/sponsors/Speak_Now_Placeholder.jpeg"} />
+	<div class="image">
+		<img alt="The project logo" src={'src/lib/assets/sponsors/1989_Placeholder.jpeg'} />
+		<img alt="The project logo" src={'src/lib/assets/sponsors/Lover_Placeholder.jpeg'} />
+		<img alt="The project logo" src={'src/lib/assets/sponsors/Speak_Now_Placeholder.jpeg'} />
 	</div>
 {:else}
 	<!-- Signup page -->
@@ -72,18 +72,15 @@
 	</p>
 	<h2>Announcements</h2>
 	<Announcements announcements={data.announcements} admin={false} />
-	<hr>
+	<hr />
 	<h2>Sponsors</h2>
-	<div class="image"> 
-		<img alt="The project logo" src={"src/lib/assets/sponsors/1989_Placeholder.jpeg"} />
-		<img alt="The project logo" src={"src/lib/assets/sponsors/Lover_Placeholder.jpeg"} />
-		<img alt="The project logo" src={"src/lib/assets/sponsors/Speak_Now_Placeholder.jpeg"} />
-		<img alt="The project logo" src={"src/lib/assets/sponsors/Speak_Now_Placeholder.jpeg"} />
-		<img alt="The project logo" src={"src/lib/assets/sponsors/Speak_Now_Placeholder.jpeg"} />
+	<div class="image">
+		<img alt="The project logo" src={'src/lib/assets/sponsors/1989_Placeholder.jpeg'} />
+		<img alt="The project logo" src={'src/lib/assets/sponsors/Lover_Placeholder.jpeg'} />
+		<img alt="The project logo" src={'src/lib/assets/sponsors/Speak_Now_Placeholder.jpeg'} />
+		<img alt="The project logo" src={'src/lib/assets/sponsors/Speak_Now_Placeholder.jpeg'} />
+		<img alt="The project logo" src={'src/lib/assets/sponsors/Speak_Now_Placeholder.jpeg'} />
 	</div>
-
-
-	
 {/if}
 
 <style>

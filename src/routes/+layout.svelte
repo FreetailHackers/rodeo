@@ -34,7 +34,12 @@
 
 <nav>
 	<label for="hamburgerCheckbox" id="hamburger"
-		><img src="/burger_Menu.png" alt="Freetail logo" id="hamburger-logo" style="width:50px; height:20px"/><b>MENU</b></label
+		><img
+			src="/burger_Menu.png"
+			alt="Freetail logo"
+			id="hamburger-logo"
+			style="width:50px; height:20px"
+		/><b>MENU</b></label
 	>
 	<input
 		type="checkbox"
