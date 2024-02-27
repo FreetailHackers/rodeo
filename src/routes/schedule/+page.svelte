@@ -58,7 +58,7 @@
 
 	<div class="container">
 		<div class="sidebar">
-			<h2 class="subtitle">Filters</h2>
+			<h2>Filters</h2>
 			<div class="button-container">
 				{#each filters as filter}
 					<button
@@ -79,7 +79,7 @@
 		</div>
 		{#each groupByDateArray as { day, events }}
 			<div class="column">
-				<h2 class="subtitle">{day}</h2>
+				<h2>{day}</h2>
 				{#each events as event}
 					{#if selected === null || event.type === selected}
 						<div
@@ -201,7 +201,7 @@
 		text-shadow: 0 4px 12px black;
 	}
 
-	.subtitle {
+	h2 {
 		font-family: 'Fugaz One';
 		color: #f2ebd9;
 		text-align: left;
@@ -321,7 +321,9 @@
 
 	.admin-panel {
 		width: 50rem;
-		margin: auto;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
 	}
 
 	.column {
@@ -340,10 +342,17 @@
 
 		.container {
 			flex-direction: column;
+			margin-left: 10px;
+			margin-right: 10px;
 		}
 
 		.column {
 			flex: 1 0 100%;
+		}
+
+		.admin-panel {
+			width: auto;
+			margin: 0 5px 0 5px;
 		}
 	}
 	/* Admin view */
