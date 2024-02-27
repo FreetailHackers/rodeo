@@ -53,35 +53,32 @@
 {/if}
 
 <style>
-
-
-	li p{
-    	/* Styles for the entire paragraph */
-    	display: flex;
-    	align-items: center; 
+	li p {
+		/* Styles for the entire paragraph */
+		display: flex;
+		align-items: center;
 	}
 
 	li p span.date {
 		font-family: 'Fugaz One';
 		font-weight: 400;
 		font-size: 20px;
-        color: #E1563F;
-		margin-right: 10px; 
+		color: #e1563f;
+		margin-right: 10px;
 	}
 
 	li p span.time {
 		font-family: 'Fugaz One';
 		font-weight: 400;
 		font-size: 10px;
-        color: #E1563F; 
+		color: #e1563f;
 		opacity: 0.6;
 	}
 
 	.announcement-text {
-    	font-family: 'Fugaz One';
-    	font-weight: 400;
+		font-family: 'Fugaz One';
+		font-weight: 400;
 		margin-top: -10px;
-
 	}
 	ul {
 		list-style: none;
@@ -93,7 +90,7 @@
 		justify-content: center;
 		flex-direction: column;
 		background-image: url('announcement-images/announcement-item.png');
-    	background-size: cover; /* or contain */
+		background-size: cover; /* or contain */
 		padding: 1rem 2rem 2rem; /* Adjust padding as needed */
 		margin-bottom: 1rem; /* Adjust margin as needed */
 		margin-top: 1rem; /* Adjust margin as needed */
