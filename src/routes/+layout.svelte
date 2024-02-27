@@ -4,8 +4,8 @@
 	import { toasts } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import './global.css';
-	import { fly } from 'svelte/transition';
-	import { cubicOut } from 'svelte/easing';
+	// import { fly } from 'svelte/transition';
+	// import { cubicOut } from 'svelte/easing';
 	import Loader from '$lib/components/loader.svelte';
 	import { beforeNavigate, afterNavigate } from '$app/navigation';
 
@@ -124,9 +124,9 @@
 
 <div class="main-content">
 	{#key $page.url.pathname}
-		<div in:fly={{ easing: cubicOut, y: 10, duration: 300 }}>
-			<slot />
-		</div>
+		<!-- <div in:fly={{ easing: cubicOut, y: 10, duration: 300 }}> -->
+		<slot />
+		<!-- </div> -->
 	{/key}
 </div>
 
@@ -163,15 +163,15 @@
 	}
 
 	.main-content {
-		max-width: 50rem;
+		/* max-width: 50rem; */
 		margin: 0 auto;
-		padding: 0 1rem;
+		/* padding: 0 1rem; */
 	}
 
 	nav {
 		position: sticky;
 		margin-top: 0;
-		margin-bottom: 3rem;
+		/* margin-bottom: 3rem; */
 		background-color: var(--primary-accent);
 		z-index: 99;
 	}
@@ -244,10 +244,6 @@
 			display: none;
 		}
 
-		nav {
-			margin-bottom: 0.5rem;
-		}
-
 		menu {
 			margin: 0;
 			padding-top: 0.5rem;
@@ -274,6 +270,10 @@
 
 		.show-large {
 			display: contents;
+		}
+
+		nav {
+			margin-bottom: 0;
 		}
 	}
 
