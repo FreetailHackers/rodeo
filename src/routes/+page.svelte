@@ -30,6 +30,14 @@
 	<!-- Admin announcements panel -->
 	<h2>Announcements</h2>
 	<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
+	<!-- paste final sponsor code here 1-->
+	<hr>
+	<h2>Sponsors</h2>
+	<div class="image"> 
+		<img alt="The project logo" src={"src/lib/assets/sponsors/1989_Placeholder.jpeg"} />
+		<img alt="The project logo" src={"src/lib/assets/sponsors/Lover_Placeholder.jpeg"} />
+		<img alt="The project logo" src={"src/lib/assets/sponsors/Speak_Now_Placeholder.jpeg"} />
+	</div>
 {:else}
 	<!-- Signup page -->
 	{#if !data.canApply}
@@ -64,9 +72,26 @@
 	</p>
 	<h2>Announcements</h2>
 	<Announcements announcements={data.announcements} admin={false} />
+	<hr>
+	<h2>Sponsors</h2>
+	<div class="image"> 
+		<img alt="The project logo" src={"src/lib/assets/sponsors/1989_Placeholder.jpeg"} />
+		<img alt="The project logo" src={"src/lib/assets/sponsors/Lover_Placeholder.jpeg"} />
+		<img alt="The project logo" src={"src/lib/assets/sponsors/Speak_Now_Placeholder.jpeg"} />
+		<img alt="The project logo" src={"src/lib/assets/sponsors/Speak_Now_Placeholder.jpeg"} />
+		<img alt="The project logo" src={"src/lib/assets/sponsors/Speak_Now_Placeholder.jpeg"} />
+	</div>
+
+
+	
 {/if}
 
 <style>
+	.image {
+		display: flex;
+		justify-content: space-evenly;
+		flex-wrap: wrap;
+	}
 	label {
 		display: block;
 		margin-bottom: 0.5rem;

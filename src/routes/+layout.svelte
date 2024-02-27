@@ -34,7 +34,7 @@
 
 <nav>
 	<label for="hamburgerCheckbox" id="hamburger"
-		><img src="/favicon.png" alt="Freetail logo" id="hamburger-logo" /><b>MENU</b></label
+		><img src="/burger_Menu.png" alt="Freetail logo" id="hamburger-logo" style="width:50px; height:20px"/><b>MENU</b></label
 	>
 	<input
 		type="checkbox"
@@ -43,7 +43,7 @@
 		style="display: none"
 	/>
 	<menu id="menu" bind:this={menu}>
-		<img src="/favicon.png" id="menu-logo" alt="Freetail logo" />
+		<img src="/Freetail_bat.png" id="menu-logo" alt="Freetail logo" />
 		<li>
 			<a href="/" class:active={$page.url.pathname === '/'}>Home</a>
 		</li>
@@ -144,7 +144,7 @@
 <style>
 	label {
 		display: flex;
-		font-family: 'ruddy', sans-serif;
+		font-family: 'Geologica Medium', sans-serif;
 		font-weight: 700;
 		font-style: normal;
 		text-transform: uppercase;
@@ -172,7 +172,7 @@
 		position: sticky;
 		margin-top: 0;
 		margin-bottom: 3rem;
-		background-color: var(--primary-accent);
+		background-color: #404040;
 		z-index: 99;
 	}
 
@@ -181,11 +181,12 @@
 		margin: 0;
 		padding: 0;
 		transition: all 0.5s ease-out;
-		background-color: var(--primary-accent);
+		background-color: #404040;
 		max-height: 0;
 		overflow: hidden;
 		width: 100%;
-		font-family: 'ruddy', sans-serif;
+		font-family: 'Geologica Medium', sans-serif;
+		font-size: 15px;
 		font-weight: 700;
 		font-style: normal;
 		text-transform: uppercase;
