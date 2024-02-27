@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
-	import SvelteMarkdown from 'svelte-markdown';
 
 	export let data;
 
@@ -57,12 +56,10 @@ print('This is a multi-line code block.')
 			</div>
 		</div>
 	{/if}
-	</div>
+</div>
 
 <style>
 	@import url('https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap');
-
-
 
 	.background {
 		width: 100%;
