@@ -4,74 +4,95 @@
 	import { Status } from '@prisma/client';
 	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
 	import { trpc } from '$lib/trpc/client';
-	import { toasts } from '$lib/stores';
-	import { sendEmails } from '$lib/trpc/email';
+	// import { toasts } from '$lib/stores';
+	// import { sendEmails } from '$lib/trpc/email';
 	const statuses: Status[] = Object.keys(Status) as Status[];
 	export let data;
+
+	let search: Status;
+	let subject: string;
+	let emailBody: string;
+	// let splitEmailAddress: string[][];
 
 	let key = $page.url.searchParams.get('key') ?? 'status';
 	let searchFilter = $page.url.searchParams.get('searchFilter') ?? '';
 
 	async function sendEmailsByStatus() {
-		let search = document.getElementsByName('status')[0].innerHTML as string;
-		let subject = document.getElementsByName('subject')[0].innerHTML as string;
-		let emailBody = document.getElementsByName('emailBody')[0].innerHTML as string;
-
-		// gets all the relevant email addresses based on selected status
-		const allEmails = await trpc().users.emails.query({ key, search, searchFilter });
-		let completed = 0;
-		const toast = toasts.notify(`Downloading files (0/${allEmails.length} completed)...`);
-
-		for (let i = 0; i < allEmails.length; i += 100) {
-			const emails = allEmails.slice(i, i + 100);
-			sendEmails(emails, subject, emailBody);
-			completed++;
-			toasts.update(toast, `Downloading files (${completed}/${allEmails.length} completed)...`);
-		}
-		toasts.update(toast, 'Download complete!');
+		const allEmails = await trpc().users.getEmailsAddresses.query({ key, search, searchFilter });
+		console.log(allEmails);
 	}
+	// async function sendEmailsByStatus() {
+	// 	async function sendEmailsByStatusHelper(emails: string[], subject: string, emailBody: string) {
+	// 		let status = trpc().users.sendEmailHelper.mutate({emails, subject, emailBody});
+	// 	}
+
+	// 	let completed = 0;
+	// 	const allEmails = await trpc().users.getEmailsAddresses.query({key, search, searchFilter});
+	// 	const toast = toasts.notify(`Sending 0/${allEmails.length} emails`);
+
+	// 	while (allEmails.length > 0) {
+	// 		splitEmailAddress.push(allEmails.slice(0, 20));
+	// 	}
+
+	// 	for (let i = 0; i < allEmails.length; i++) {
+	// 		let emailStatus = Promise.allSettled(splitEmailAddress.map((emailAddresses) => sendEmailsByStatusHelper(emailAddresses, subject, emailBody)));
+	// 		emailStatus = emailStatus.filter((emailStat) => emailStat.status === 'fulfilled');
+	// 		//TODO cuz im really tired
+	// 		/*
+	// 		basically, take the statuses adn see how many are fulfilled
+	// 		count how many are fulfilled and add that to completed var
+	// 		updata toasts
+	// 		*/
+	// 	}
+	// }
+
+	// async function sendEmailsByStatus() {
+
+	// 	// gets all the relevant email addresses based on selected status
+	// 	console.log('key ' + key);
+	// 	console.log('search ' + search);
+	// 	console.log('search filter: ' + searchFilter);
+
+	// 	const allEmails = await trpc().users.getEmailsAddresses.query({ key, search, searchFilter });
+	// 	let completed = 0;
+	// 	const toast = toasts.notify(`Sending (0/${allEmails.length} emails)...`);
+
+	// 	for (let i = 0; i < allEmails.length; i += 100) {
+	// 		emailAddresses = allEmails.slice(i, i + 100);
+	// 		trpc().users.sendEmailHelper.mutate({ emailAddresses, subject, emailBody });
+	// 		completed += 100;
+	// 		toasts.update(toast, `Sending (${completed}/${allEmails.length} emails)...`);
+	// 	}
+	// 	toasts.update(toast, 'Sent all emails!');
+	// }
 </script>
 
 <svelte:head>
 	<title>Rodeo | Admin - Email Templates</title>
 </svelte:head>
 
-<!-- <form
-    method="POST"
-    action="?/emailByStatus"
-    use:enhance={() => {
-        return async ({ update }) => {
-            update({ reset: false });
-        };
-    }}
->
-    <label for="homepageText"><h2>Group Email to Specific Status</h2></label>
-
-    <div class="flex-container">
-        <input class="textbox-margin" name="subject" placeholder="Type email subject here" required />
-        <select name="status" required>
-            {#each statuses as status}
-                <option value={status}>{status}</option>
-            {/each}
-        </select>
-    </div>
-    <MarkdownEditor placeholder="Type email body here" name="emailBody" required />
-
-    <button id="email-by-status" type="submit">Send</button>
-    <button id="email-by-status" on:click={sendEmailsByStatus}>Send</button> -->
-<!-- </form> -->
-
 <label for="homepageText"><h2>Group Email to Specific Status</h2></label>
 
 <div class="flex-container">
-	<input class="textbox-margin" name="subject" placeholder="Type email subject here" required />
-	<select name="status" required>
+	<input
+		class="textbox-margin"
+		name="subject"
+		placeholder="Type email subject here"
+		bind:value={subject}
+		required
+	/>
+	<select name="status" bind:value={search} required>
 		{#each statuses as status}
 			<option value={status}>{status}</option>
 		{/each}
 	</select>
 </div>
-<MarkdownEditor placeholder="Type email body here" name="emailBody" required />
+<MarkdownEditor
+	placeholder="Type email body here"
+	name="emailBody"
+	required
+	bind:value={emailBody}
+/>
 
 <!-- <button id="email-by-status" type="submit">Send</button> -->
 <button id="email-by-status" on:click={sendEmailsByStatus}>Send</button>
