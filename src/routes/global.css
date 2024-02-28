@@ -203,6 +203,7 @@ img {
 }
 
 footer {
+	/* background-color: var(--background-color); */
 	padding: 0 1rem;
 	left: 0;
 	bottom: 0;
