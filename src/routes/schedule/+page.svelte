@@ -16,14 +16,14 @@
 	const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-	const groupByDateArray: { day: string; events: any[] }[] = [];
+	let groupByDateArray: { day: string; events: any[]; hasMatchingEvents: boolean }[] = [];
 
 	for (let event of data.schedule) {
 		const dayOfWeek = daysOfWeek[new Date(event.start).getDay()];
 		let dayEntry = groupByDateArray.find((entry) => entry.day === dayOfWeek);
 
 		if (!dayEntry) {
-			dayEntry = { day: dayOfWeek, events: [] };
+			dayEntry = { day: dayOfWeek, events: [], hasMatchingEvents: true };
 			groupByDateArray.push(dayEntry);
 		}
 
@@ -40,6 +40,15 @@
 
 	function chosenFilter(filter: string | null) {
 		selected = selected === filter ? null : filter;
+
+		groupByDateArray.forEach((group) => {
+			if (selected === null) {
+				group.hasMatchingEvents = true;
+			} else {
+				group.hasMatchingEvents = group.events.some((event) => event.type === selected);
+			}
+		});
+		groupByDateArray = groupByDateArray;
 	}
 
 	// Calendar functionality
@@ -77,64 +86,68 @@
 					>{/if}
 			</div>
 		</div>
-		{#each groupByDateArray as { day, events }}
+		{#each groupByDateArray as { day, events, hasMatchingEvents }}
 			<div class="column">
 				<h2>{day}</h2>
-				{#each events as event}
-					{#if selected === null || event.type === selected}
-						<div
-							class="card card-text {currentDateTime >= event.start && currentDateTime < event.end
-								? 'currentEvent'
-								: ''}"
-							on:mouseenter={() => {
-								hoveredId = event.id;
-							}}
-							on:mouseleave={() => {
-								hoveredId = null;
-							}}
-						>
-							<div class="flex-row">
-								<div class="name-location">
-									<p class="name">{event.name}</p>
-									<br />
-									<p class="location">{event.location}</p>
-									{#if data.user?.roles.includes('ADMIN')}
-										<p>
-											<a class="edit" href="/schedule/{event.id}">Edit</a>
+				{#if hasMatchingEvents}
+					{#each events as event}
+						{#if selected === null || event.type === selected}
+							<div
+								class="card card-text {currentDateTime >= event.start && currentDateTime < event.end
+									? 'currentEvent'
+									: ''}"
+								on:mouseenter={() => {
+									hoveredId = event.id;
+								}}
+								on:mouseleave={() => {
+									hoveredId = null;
+								}}
+							>
+								<div class="flex-row">
+									<div class="name-location">
+										<p class="name">{event.name}</p>
+										<br />
+										<p class="location">{event.location}</p>
+										{#if data.user?.roles.includes('ADMIN')}
+											<p>
+												<a class="edit" href="/schedule/{event.id}">Edit</a>
+											</p>
+										{/if}
+									</div>
+									{#if hoveredId !== event.id}
+										<p class="date">
+											{event.start.toLocaleString('en-US', {
+												timeZone: data.timezone,
+												hour: 'numeric',
+												minute: 'numeric',
+												hour12: true,
+											})}
+										</p>
+									{:else}
+										<p class="date">
+											from {event.start.toLocaleString('en-US', {
+												timeZone: data.timezone,
+												hour: 'numeric',
+												minute: 'numeric',
+												hour12: true,
+											})} <br /> to {event.end.toLocaleString('en-US', {
+												timeZone: data.timezone,
+												hour: 'numeric',
+												minute: 'numeric',
+												hour12: true,
+											})}
 										</p>
 									{/if}
 								</div>
-								{#if hoveredId !== event.id}
-									<p class="date">
-										{event.start.toLocaleString('en-US', {
-											timeZone: data.timezone,
-											hour: 'numeric',
-											minute: 'numeric',
-											hour12: true,
-										})}
-									</p>
-								{:else}
-									<p class="date">
-										from {event.start.toLocaleString('en-US', {
-											timeZone: data.timezone,
-											hour: 'numeric',
-											minute: 'numeric',
-											hour12: true,
-										})} <br /> to {event.end.toLocaleString('en-US', {
-											timeZone: data.timezone,
-											hour: 'numeric',
-											minute: 'numeric',
-											hour12: true,
-										})}
-									</p>
+								{#if hoveredId === event.id}
+									<p class="description">{event.description}</p>
 								{/if}
 							</div>
-							{#if hoveredId === event.id}
-								<p class="description">{event.description}</p>
-							{/if}
-						</div>
-					{/if}
-				{/each}
+						{/if}
+					{/each}
+				{:else}
+					<p class="no-matches">There are no events that fall under this filter.</p>
+				{/if}
 			</div>
 		{/each}
 	</div>
@@ -387,5 +400,9 @@
 
 	.edit {
 		color: #e1563f;
+	}
+
+	.no-matches {
+		color: #f2ebd9;
 	}
 </style>
