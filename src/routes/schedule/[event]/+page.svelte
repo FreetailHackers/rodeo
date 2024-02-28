@@ -164,8 +164,6 @@
 
 	.container {
 		max-width: 60vw;
-		/* backdrop-filter: blur(5px);
-		background-color: #f2ebd910; */
 		color: #f2ebd9;
 		margin: auto;
 		padding: 1rem;
