@@ -88,11 +88,15 @@ deploy-preview-job:
     - npm ci
     # Get environment variables from Vercel
     - npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+
     # Export .env to environment variables in shell so we can use them in this script
     - "export $(grep -v '^#' .vercel/.env.preview.local | xargs)"
+    # Create a branch-specific database
+    - echo "CREATE DATABASE \"$CI_COMMIT_BRANCH\"" | psql $DATABASE_URL/master
     # Set database connection string to use preview database
     - export DATABASE_URL=$DATABASE_URL/$CI_COMMIT_BRANCH
     - export DIRECT_URL=$DIRECT_URL/$CI_COMMIT_BRANCH
+
     # Deploy schema changes, if any
     # Fun fact: prisma migrate deploy will create the database if it doesn't exist, so no need to do that manually!
     - npx prisma migrate deploy
@@ -122,7 +126,7 @@ stop-preview-job:
     # !!! WARNING !!! NEVER RUN ON PRODUCTION ENVIRONMENT !!!
     - npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
     - "export $(grep -v '^#' .vercel/.env.preview.local | xargs)"
-    - echo "DROP DATABASE \"$CI_COMMIT_BRANCH\"" | psql $DATABASE_URL
+    - echo "DROP DATABASE \"$CI_COMMIT_BRANCH\"" | psql $DATABASE_URL/master
 
 deploy-production-job:
   stage: deploy-production

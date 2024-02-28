@@ -30,8 +30,10 @@
 		<button type="submit" id="logout">Logout</button>
 	</form>
 	<!-- Admin announcements panel -->
-	<h3 class="announcementYearHeader">SPRING 2024</h3>
-	<h1 class="announcementHeader">ANNOUNCEMENTS</h1>
+	<div class="header-container">
+		<h3 class="announcementYearHeader">SPRING 2024</h3>
+		<h1 class="announcementHeader">ANNOUNCEMENTS</h1>
+	</div>
 	<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
 {:else}
 	<!-- Signup page -->
@@ -65,7 +67,10 @@
 	<p>
 		Don't have an account yet? <a href="/register">Register here!</a>
 	</p>
-	<h1 class="announcementHeader">Announcements</h1>
+	<div class="header-container">
+		<h3 class="announcementYearHeader">SPRING 2024</h3>
+		<h1 class="announcementHeader">ANNOUNCEMENTS</h1>
+	</div>
 	<Announcements announcements={data.announcements} admin={false} />
 {/if}
 
@@ -97,26 +102,65 @@
 		display: block;
 		margin-bottom: 1rem;
 	}
+	.header-container {
+		display: flex;
+		justify-content: center; /* Center horizontally */
+		align-items: center; /* Center vertically */
+		flex-direction: column; /* Stack items vertically */
+	}
 	.announcementYearHeader {
 		text-align: center;
 		font-family: 'Fugaz One'; /* Use Zen Dots font */
-		color: #e1563f;
-		font-weight: 400;
 		font-size: 20px;
+		/*
 		line-height: 57px;
 		letter-spacing: 0em;
 		white-space: nowrap;
+		*/
 	}
 	.announcementHeader {
 		text-align: center;
 		font-family: 'Zen Dots';
-		color: #e1563f;
-		font-weight: 400;
 		font-size: 65px;
-		line-height: 156px;
-		letter-spacing: -0.07em;
 		white-space: nowrap;
-		margin-top: -80px;
-		margin-bottom: 10px;
+	}
+	.header-container {
+		color: #e1563f;
+		display: flex;
+		justify-content: center; /* Center horizontally */
+		align-items: center; /* Center vertically */
+		flex-direction: column; /* Stack items vertically */
+		font-weight: 400;
+	}
+
+	@media screen and (min-width: 768px) {
+		.announcementYearHeader {
+			margin-bottom: -40px;
+		}
+	}
+
+	@media screen and (max-width: 768px) {
+		.announcementYearHeader {
+			font-size: 16px; /* Adjust font size for smaller screens */
+			line-height: 40px; /* Adjust line height for smaller screens */
+			margin-bottom: -50px;
+		}
+
+		.announcementHeader {
+			font-size: 40px; /* Adjust font size for smaller screens */
+			line-height: 100px; /* Adjust line height for smaller screens */
+		}
+		@media screen and (max-width: 480px) {
+			.announcementYearHeader {
+				font-size: 14px; /* Adjust font size for even smaller screens */
+				line-height: 30px; /* Adjust line height for even smaller screens */
+				margin-bottom: -40px;
+			}
+
+			.announcementHeader {
+				font-size: 30px; /* Adjust font size for even smaller screens */
+				line-height: 70px; /* Adjust line height for even smaller screens */
+			}
+		}
 	}
 </style>

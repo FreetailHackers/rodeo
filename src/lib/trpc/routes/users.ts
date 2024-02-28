@@ -11,6 +11,9 @@ import type { Session, User } from 'lucia';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { canApply } from './admissions';
+import natural from 'natural';
+const { WordTokenizer } = natural;
+import { removeStopwords } from 'stopword';
 import dayjs from 'dayjs';
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
@@ -621,6 +624,7 @@ export const usersRouter = t.router({
 			if (!req.ctx.user.roles.includes('ADMIN')) {
 				questions = questions.filter((question) => question.sponsorView);
 			}
+
 			const responses: Record<string, Record<string, number | [number, number]>> = {};
 			users.forEach((user) => {
 				// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -647,22 +651,19 @@ export const usersRouter = t.router({
 						}
 					} else if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
 						if (answer) {
-							const words = answer.split(/\s+/);
 							const seen = new Set<string>();
-
-							words.forEach((word: string) => {
-								const answerData = responses[question.id];
-								if (!answerData[word]) {
-									answerData[word] = [0, 0];
-								}
-
-								seen.add(word);
-								(answerData[word] as [number, number])[0] += 1;
+							const tokenized = new WordTokenizer().tokenize(answer) || [];
+							const tokens = removeStopwords(tokenized);
+							const answerData = responses[question.id];
+							tokens.forEach((token: string) => {
+								const lowercasedToken = token.toLowerCase();
+								seen.add(lowercasedToken);
+								answerData[lowercasedToken] ||= [0, 0];
+								(answerData[lowercasedToken] as [number, number])[0] += 1;
 							});
-
-							seen.forEach((word: string) => {
-								(responses[question.id][word] as [number, number])[1] += 1;
-							});
+							for (const token of seen) {
+								(answerData[token] as [number, number])[1] += 1;
+							}
 						}
 					} else if (question.type === 'CHECKBOX') {
 						const key = answer ?? false;

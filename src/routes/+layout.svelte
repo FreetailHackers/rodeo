@@ -4,8 +4,8 @@
 	import { toasts } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import './global.css';
-	import { fly } from 'svelte/transition';
-	import { cubicOut } from 'svelte/easing';
+	// import { fly } from 'svelte/transition';
+	// import { cubicOut } from 'svelte/easing';
 	import Loader from '$lib/components/loader.svelte';
 	import { beforeNavigate, afterNavigate } from '$app/navigation';
 
@@ -83,6 +83,36 @@
 		<li>
 			<a href="/feedback" class:active={$page.url.pathname.startsWith('/feedback')}>Feedback</a>
 		</li>
+		<li>
+			<!-- MLH banner for high resolution devices -->
+			<div class="show-large">
+				<a
+					id="mlh-trust-badge-large"
+					href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=white"
+					target="_blank"
+					rel="noreferrer"
+					><img
+						src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-white.svg"
+						alt="Major League Hacking 2024 Hackathon Season"
+						id="mlh-badge-image"
+					/></a
+				>
+			</div>
+			<!-- MLH banner for low resolution devices -->
+			<div class="show-small">
+				<a
+					id="mlh-trust-badge-small"
+					href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=white"
+					target="_blank"
+					rel="noreferrer"
+					><img
+						src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-white.svg"
+						alt="Major League Hacking 2024 Hackathon Season"
+						id="mlh-badge-image"
+					/></a
+				>
+			</div>
+		</li>
 	</menu>
 
 	{#if isLoading}
@@ -94,16 +124,15 @@
 
 <div class="main-content">
 	{#key $page.url.pathname}
-		<div in:fly={{ easing: cubicOut, y: 10, duration: 300 }}>
-			<slot />
-		</div>
+		<!-- <div in:fly={{ easing: cubicOut, y: 10, duration: 300 }}> -->
+		<slot />
+		<!-- </div> -->
 	{/key}
 </div>
 
 <Toasts />
 
 <footer>
-	<hr />
 	<p>
 		Made with ❤️ by <a target="_blank" rel="noopener noreferrer" href="https://freetailhackers.com">
 			Freetail Hackers
@@ -133,14 +162,15 @@
 	}
 
 	.main-content {
-		max-width: 50rem;
+		/* max-width: 50rem; */
 		margin: 0 auto;
-		padding: 0 1rem;
+		/* padding: 0 1rem; */
 	}
 
 	nav {
 		position: sticky;
 		margin-top: 0;
+		/* margin-bottom: 3rem; */
 		background-color: var(--primary-accent);
 		z-index: 99;
 	}
@@ -189,6 +219,14 @@
 		background-color: #502340;
 	}
 
+	.show-small {
+		display: contents;
+	}
+
+	.show-large {
+		display: none;
+	}
+
 	@media (min-width: 1090px) {
 		/* minimum width that can fit all navbar tabs for admin accounts (which have the most number of tabs currently) */
 		/* should be updated if we change the number of tabs */
@@ -224,6 +262,18 @@
 			width: initial;
 			text-decoration: none;
 		}
+
+		.show-small {
+			display: none;
+		}
+
+		.show-large {
+			display: contents;
+		}
+
+		nav {
+			margin-bottom: 0;
+		}
 	}
 
 	.overlay {
@@ -242,5 +292,36 @@
 	.active {
 		font-weight: bold;
 		text-decoration: underline;
+	}
+
+	#mlh-trust-badge-large {
+		display: block;
+		max-width: 7rem;
+		min-width: 6rem;
+		position: fixed;
+		right: 15px;
+		top: -0.75rem;
+		width: 100%;
+		z-index: 10000;
+	}
+
+	#mlh-trust-badge-small {
+		display: block;
+		max-width: 5.5rem;
+		min-width: 5.5rem;
+		position: fixed;
+		right: 0;
+		top: -0.75rem;
+		width: 100%;
+		z-index: 10000;
+	}
+
+	#mlh-badge-image {
+		width: 100%;
+	}
+
+	#mlh-trust-badge-large:hover,
+	#mlh-trust-badge-small:hover {
+		background-color: transparent;
 	}
 </style>
