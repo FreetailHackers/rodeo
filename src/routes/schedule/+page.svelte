@@ -146,7 +146,7 @@
 						{/if}
 					{/each}
 				{:else}
-					<p class="no-matches">There are no events that fall under this filter.</p>
+					<p class="no-matches">There are no events that fall under this category.</p>
 				{/if}
 			</div>
 		{/each}
@@ -197,7 +197,7 @@
 	}
 
 	.bg-img {
-		background-image: url('vectorNOTOURS.svg');
+		background-image: url('/Topographic_Background.svg');
 		background-repeat: repeat;
 		background-size: 80%;
 	}
