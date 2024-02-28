@@ -81,7 +81,7 @@
 
 				{#if url && data.schedule.length > 0}
 					<button
-						><a class="calendar-export" href={url} download="events.ics">Download All Events</a
+						><a class="calendar-export" href={url} download="events.ics">Download Schedule</a
 						></button
 					>{/if}
 			</div>
