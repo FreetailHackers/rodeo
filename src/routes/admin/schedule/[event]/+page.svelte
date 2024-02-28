@@ -1,66 +1,16 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { onMount } from 'svelte';
-	import { generateIcsContent } from '$lib/ics';
-	import SvelteMarkdown from 'svelte-markdown';
 	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
 	import { confirmationDialog } from '$lib/actions.js';
 
 	export let data;
-
-	// Calendar functionality
-	let url: string;
-
-	onMount(() => {
-		url = generateIcsContent([data.event]);
-	});
 </script>
 
 <svelte:head>
-	<title>Rodeo | Schedule - {data.event.name}</title>
+	<title>Rodeo | Admin - Schedule - {data.event.name}</title>
 </svelte:head>
 
-<h1>{data.event.name}&nbsp;<span class={data.event.type}>{data.event.type}</span></h1>
-<h2>📍&nbsp;{data.event.location}</h2>
-<h2>
-	🕒&nbsp;
-	{data.event.start.toLocaleString('en-US', {
-		timeZone: data.timezone,
-		day: 'numeric',
-		weekday: 'long',
-		month: 'long',
-		hour: 'numeric',
-		minute: 'numeric',
-		hour12: true,
-	})} -
-	{#if data.event.start.toDateString() === data.event.end.toDateString()}
-		{data.event.end.toLocaleString('en-US', {
-			timeZone: data.timezone,
-			hour: 'numeric',
-			minute: 'numeric',
-			hour12: true,
-		})}
-	{:else}
-		{data.event.end.toLocaleString('en-US', {
-			timeZone: data.timezone,
-			day: 'numeric',
-			weekday: 'long',
-			month: 'long',
-			hour: 'numeric',
-			minute: 'numeric',
-			hour12: true,
-		})}
-	{/if}
-</h2>
-<SvelteMarkdown source={data.event.description} />
-
-<a href="/schedule/">Back to Schedule</a>
-{#if url}
-	<a href={url} download="event.ics">Add to Calendar</a>
-{/if}
-
-{#if data.user?.roles.includes('ADMIN')}
-	<hr />
+<div class="container">
 	<div id="header">
 		<h1>Edit Event</h1>
 		<form method="POST" action="?/delete" use:enhance>
@@ -126,7 +76,7 @@
 
 		<button type="submit">Save</button>
 	</form>
-{/if}
+</div>
 
 <style>
 	#header {
@@ -135,62 +85,10 @@
 		align-items: center;
 	}
 
-	#header > * {
-		margin: 1rem 0;
-	}
-
-	#header button {
-		padding: 0 1rem;
-	}
-
-	span {
-		display: inline-block;
-		vertical-align: middle;
-		white-space: nowrap;
-		text-align: center;
-		padding: 6px;
-		font-size: small;
-		border-radius: 20px;
-	}
-
-	a {
-		display: inline-block;
-		margin-bottom: 1rem;
-	}
-
-	label {
-		display: block;
-		margin-bottom: 0.5rem;
-	}
-
 	select,
 	input,
 	form,
 	#description {
 		margin-bottom: 1rem;
-	}
-
-	.Key-Event {
-		background-color: #c1e7e3;
-	}
-
-	.Workshop {
-		background-color: #b6fcf4;
-	}
-
-	.Speaker-Event {
-		background-color: #ff9bdf;
-	}
-
-	.Fun-Event {
-		background-color: #dabfde;
-	}
-
-	.Regular-Event {
-		background-color: #bbbddd;
-	}
-
-	a {
-		padding-right: 0.5rem;
 	}
 </style>

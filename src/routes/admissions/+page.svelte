@@ -8,22 +8,23 @@
 <svelte:head>
 	<title>Rodeo | Admissions</title>
 </svelte:head>
-
-{#if data.user === null}
-	<p>Congratulations! You've read every application.</p>
-{:else}
-	<h1>{data.user.authUser.email}</h1>
-	<UserCard user={data.user} questions={data.questions} />
-	<div id="form">
-		<div id="padding" />
-		<form method="POST" use:enhance>
-			<input type="hidden" name="id" value={data.user.authUserId} />
-			<button type="submit" formaction="?/accept">Accept</button>
-			<button type="submit" formaction="?/reject">Reject</button>
-			<button type="submit" formaction="?/waitlist">Waitlist</button>
-		</form>
-	</div>
-{/if}
+<div class="main-content">
+	{#if data.user === null}
+		<p>Congratulations! You've read every application.</p>
+	{:else}
+		<h1>{data.user.authUser.email}</h1>
+		<UserCard user={data.user} questions={data.questions} />
+		<div id="form">
+			<div id="padding" />
+			<form method="POST" use:enhance>
+				<input type="hidden" name="id" value={data.user.authUserId} />
+				<button type="submit" formaction="?/accept">Accept</button>
+				<button type="submit" formaction="?/reject">Reject</button>
+				<button type="submit" formaction="?/waitlist">Waitlist</button>
+			</form>
+		</div>
+	{/if}
+</div>
 
 <style>
 	#form {

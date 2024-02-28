@@ -1,15 +1,16 @@
 <svelte:head>
 	<title>Rodeo | Feedback</title>
 </svelte:head>
+<div class="main-content">
+	<p>
+		Rodeo is our brand new hackathon management platform and we would appreciate any feedback you
+		had about it!
+	</p>
 
-<p>
-	Rodeo is our brand new hackathon management platform and we would appreciate any feedback you had
-	about it!
-</p>
-
-<p>
-	You can let us know your thoughts on this anonymous <a
-		href="https://docs.google.com/forms/d/e/1FAIpQLSdQld-vgVLXOuIXIcUNpTFMwii_7Cu9Vqj7CVxXs3ScFsCIrg/viewform?usp=sf_link"
-		>Google Form</a
-	>.
-</p>
+	<p>
+		You can let us know your thoughts on this anonymous <a
+			href="https://docs.google.com/forms/d/e/1FAIpQLSdQld-vgVLXOuIXIcUNpTFMwii_7Cu9Vqj7CVxXs3ScFsCIrg/viewform?usp=sf_link"
+			>Google Form</a
+		>.
+	</p>
+</div>
