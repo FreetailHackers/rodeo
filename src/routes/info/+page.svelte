@@ -34,24 +34,38 @@ print('This is a multi-line code block.')
 	<title>Rodeo | Info</title>
 </svelte:head>
 
-{#if data.user?.roles.includes('ADMIN')}
-	<form
-		method="POST"
-		use:enhance={() => {
-			return async ({ update }) => {
-				update({ reset: false });
-			};
-		}}
-	>
-		<MarkdownEditor name="info" {placeholder} rows={25} value={data.info} />
-		<button type="submit">Save</button>
-	</form>
-{:else}
-	<SvelteMarkdown source={data.info} />
-{/if}
+<div class="background">
+	<div class="content">
+		{#if data.user?.roles.includes('ADMIN')}
+			<form
+				method="POST"
+				use:enhance={() => {
+					return async ({ update }) => {
+						update({ reset: false });
+					};
+				}}
+			>
+				<MarkdownEditor name="info" {placeholder} rows={25} value={data.info} />
+				<button type="submit">Save</button>
+			</form>
+		{:else}
+			<SvelteMarkdown source={data.info} />
+		{/if}
+	</div>
+</div>
 
 <style>
 	button {
 		margin-top: 1rem;
+	}
+
+	.background {
+		background-color: var(--background-color);
+	}
+
+	.content {
+		width: 75vh;
+
+		/* justify-content: center; */
 	}
 </style>

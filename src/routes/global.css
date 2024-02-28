@@ -6,6 +6,7 @@
 	--font-family: 'Helvetica Neue', 'Arial', sans-serif;
 	--font-size: 16px;
 	--primary-accent: #954479;
+	--background-color: #404040;
 }
 
 h1,
@@ -202,6 +203,7 @@ img {
 }
 
 footer {
+	/* background-color: var(--background-color); */
 	padding: 0 1rem;
 	left: 0;
 	bottom: 0;
