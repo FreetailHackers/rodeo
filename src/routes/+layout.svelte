@@ -176,7 +176,7 @@
 	nav {
 		position: sticky;
 		margin-top: 0;
-		margin-bottom: 3rem;
+		margin-bottom: 0rem;
 		background-color: #404040;
 		z-index: 99;
 	}
@@ -251,7 +251,7 @@
 		}
 
 		nav {
-			margin-bottom: 0.5rem;
+			margin-bottom: 0rem;
 		}
 
 		menu {
