@@ -188,6 +188,11 @@ dialog button {
 	padding: 0 1rem;
 }
 
+.topographic-background {
+	background-color: #303030;
+	background-image: url('/Topographic Background (Tilable).svg');
+}
+
 @media (max-width: 450px) {
 	dialog {
 		margin-block-end: 0;

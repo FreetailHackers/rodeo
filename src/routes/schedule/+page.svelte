@@ -62,7 +62,7 @@
 <svelte:head>
 	<title>Rodeo | Schedule</title>
 </svelte:head>
-<div class="bg-img">
+<div class="topographic-background">
 	<h1>Schedule</h1>
 
 	<div class="container">
@@ -189,18 +189,10 @@
 </div>
 
 <style>
-	.bg-img {
-		background-image: url('Topographic Background (Tilable).svg');
-
-		/* Khang */
-		/* background-repeat: repeat;
-		background-size: 100%; */
-		/* kick footer to bottom of page */
-		min-height: 100vh;
-		/* pad header to correct spot */
-		padding: 3rem 0.5rem 0 0.5rem;
-		/* Don't let user select the text. Might want to move to mobile only */
-		user-select: none;
+	.topographic-background {
+		min-height: 100vh; /* kick footer to bottom of page */
+		padding: 3rem 0.5rem 0 0.5rem; /* pad header to correct spot */
+		user-select: none; /* Don't let user select the text. Might want to move to mobile only */
 	}
 
 	.sidebar {

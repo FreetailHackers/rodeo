@@ -20,7 +20,7 @@
 	<title>Rodeo | Schedule - {data.event.name}</title>
 </svelte:head>
 
-<div class="bg">
+<div class="topographic-background">
 	<div class="container">
 		<h1>{data.event.name}&nbsp;<span class="event">{data.event.type}</span></h1>
 		<h2>📍&nbsp;{data.event.location}</h2>
@@ -155,11 +155,6 @@
 	h1,
 	h2 {
 		font-family: 'Fugaz One';
-	}
-
-	.bg {
-		background-color: #303030;
-		background-image: url('/Topographic Background (Tilable).svg');
 	}
 
 	.container {
