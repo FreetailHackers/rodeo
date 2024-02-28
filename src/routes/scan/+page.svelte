@@ -18,12 +18,6 @@
 </div>
 
 <style>
-	.main-content {
-		max-width: 50rem;
-		margin: 0 auto;
-		padding: 0 1rem;
-	}
-
 	section {
 		display: flex;
 		flex-direction: column;
