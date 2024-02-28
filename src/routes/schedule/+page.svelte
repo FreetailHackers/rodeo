@@ -106,7 +106,6 @@
 								<div class="flex-row">
 									<div class="name-location">
 										<p class="name">{event.name}</p>
-										<br />
 										<p class="location">{event.location}</p>
 										{#if data.user?.roles.includes('ADMIN')}
 											<p>
@@ -191,14 +190,22 @@
 
 <style>
 	.bg-img {
-		background-image: url('/Topographic_Background.svg');
-		background-repeat: repeat;
-		background-size: 80%;
+		background-image: url('Topographic Background (Tilable).svg');
+
+		/* Khang */
+		/* background-repeat: repeat;
+		background-size: 100%; */
+		/* kick footer to bottom of page */
+		min-height: 100vh;
+		/* pad header to correct spot */
+		padding: 3rem 0.5rem 0 0.5rem;
+		/* Don't let user select the text. Might want to move to mobile only */
+		user-select: none;
 	}
 
 	.sidebar {
-		width: 16.5rem;
-		padding-top: 12px;
+		width: 16rem;
+		margin: 0 10px;
 	}
 
 	h1 {
@@ -206,7 +213,6 @@
 		font-size: 64px;
 		font-weight: 400;
 		margin: 0;
-		padding-top: 4rem;
 		text-align: center;
 		text-shadow: 0 4px 12px black;
 	}
@@ -225,6 +231,13 @@
 		font-family: 'Geologica', sans-serif;
 		border-radius: 4px;
 		margin: 2px 2px;
+		flex-grow: 1;
+		justify-content: center;
+	}
+
+	.button-container {
+		display: flex;
+		flex-wrap: wrap;
 	}
 
 	.active {
@@ -295,17 +308,14 @@
 
 	.container {
 		display: flex;
-		justify-content: space-between;
 		flex-wrap: wrap;
 		max-width: 75rem;
 		margin: auto;
-		min-height: 70vh; /* Needs fixing (jittering)*/
-		position: relative;
 	}
 
 	.column {
 		flex: 1;
-		margin: 10px 5px;
+		margin: 0px 5px;
 	}
 
 	.empty-events {
@@ -317,6 +327,10 @@
 			font-size: 9.5vw;
 		}
 
+		.sidebar {
+			width: unset;
+		}
+
 		.container {
 			flex-direction: column;
 			margin: 0 10px 0 10px;
@@ -326,6 +340,7 @@
 			flex: 1 0 100%;
 		}
 	}
+
 	/* Admin view */
 	hr {
 		margin-top: 3rem;
