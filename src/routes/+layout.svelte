@@ -171,7 +171,7 @@
 	nav {
 		position: sticky;
 		margin-top: 0;
-		/* margin-bottom: 3rem; */
+		margin-bottom: 0;
 		background-color: var(--primary-accent);
 		z-index: 99;
 	}

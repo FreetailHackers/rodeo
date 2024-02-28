@@ -170,7 +170,7 @@
 					<option value="Workshop">Workshop</option>
 				</select>
 
-				<button type="submit">Save</button>
+				<button class="admin-button" type="submit">Save</button>
 			</form>
 		</div>
 	{/if}
@@ -210,7 +210,6 @@
 	}
 
 	button {
-		all: unset;
 		background-color: #f2ebd9;
 		color: #303030;
 		font-family: 'Geologica', sans-serif;
@@ -225,7 +224,6 @@
 	}
 
 	p {
-		all: unset;
 		font-family: 'Geologica', sans-serif;
 	}
 
@@ -324,6 +322,7 @@
 		display: block;
 		margin-left: auto;
 		margin-right: auto;
+		padding-bottom: 3rem;
 	}
 
 	.column {
@@ -357,6 +356,11 @@
 	}
 	/* Admin view */
 
+	.admin-button {
+		background-color: #e1563f;
+		color: #f2ebd9;
+		margin-bottom: 1rem;
+	}
 	hr {
 		margin-top: 20px;
 	}
