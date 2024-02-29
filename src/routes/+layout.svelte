@@ -162,8 +162,7 @@
 	nav {
 		position: sticky;
 		top: 0;
-		margin-top: 0;
-		margin-bottom: 0;
+		margin: 0;
 		background-color: var(--primary-accent);
 		z-index: 99;
 	}
@@ -264,9 +263,9 @@
 			display: contents;
 		}
 
-		nav {
+		/* nav {
 			margin-bottom: 0;
-		}
+		} */
 	}
 
 	.overlay {

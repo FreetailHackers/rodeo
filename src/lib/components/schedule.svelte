@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { generateIcsContent } from '$lib/ics';
+	import { windowWidth } from '$lib/stores';
 	import dayjs from 'dayjs';
 	import utc from 'dayjs/plugin/utc';
 	import timezone from 'dayjs/plugin/timezone';
@@ -18,6 +19,8 @@
 
 	/* eslint-disable @typescript-eslint/no-explicit-any */
 	let groupByDateArray: { day: string; events: any[]; hasMatchingEvents: boolean }[] = [];
+	let maxEventCountDesktop = 0,
+		maxEventCountMobile = 0;
 
 	for (let event of schedule) {
 		const dayOfWeek = daysOfWeek[new Date(event.start).getDay()];
@@ -29,6 +32,11 @@
 		}
 
 		dayEntry.events.push(event);
+
+		if (dayEntry.events.length > maxEventCountDesktop) {
+			maxEventCountDesktop = dayEntry.events.length;
+		}
+		maxEventCountMobile++;
 	}
 
 	let selected: string | null = null;
@@ -53,10 +61,17 @@
 	onMount(() => {
 		url = generateIcsContent(schedule);
 	});
+
+	let minHeight = '';
+	$: {
+		let isMobile = $windowWidth <= 768;
+		let maxEventCount = isMobile ? maxEventCountMobile : maxEventCountDesktop;
+		minHeight = `${maxEventCount * (isMobile ? 9 : 8)}em`;
+	}
 </script>
 
-<div class="topographic-background">
-	<h1>Schedule</h1>
+<div class="topographic-background" style="min-height: {minHeight}">
+	<h1>Schedule {minHeight}</h1>
 	{#if schedule.length > 0}
 		<div class="container">
 			<div class="sidebar">
@@ -154,7 +169,7 @@
 		background-color: #303030;
 		background-image: url('/Topographic Background.svg');
 		background-size: 110%;
-		min-height: 100vh; /*  kick footer to bottom of page */
+		min-height: 100vh; /* kick footer to bottom of page */
 		padding: 3rem 0.5rem 0 0.5rem; /* pad header to correct spot */
 		user-select: none; /* Don't let user select the text. Might want to move to mobile only */
 	}

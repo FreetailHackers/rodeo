@@ -61,3 +61,11 @@ function initToasts() {
  * and then call `toasts.notify('Hello, world!')` to display a toast.
  */
 export const toasts = initToasts();
+
+export const windowWidth = writable(typeof window !== 'undefined' ? window.innerWidth : 0);
+
+if (typeof window !== 'undefined') {
+	window.addEventListener('resize', () => {
+		windowWidth.set(window.innerWidth);
+	});
+}
