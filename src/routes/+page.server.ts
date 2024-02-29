@@ -1,5 +1,11 @@
 import { googleAuth, githubAuth } from '$lib/lucia';
 import { trpc } from '$lib/trpc/router';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 export const load = async ({ locals }) => {
 	return {
@@ -8,6 +14,7 @@ export const load = async ({ locals }) => {
 		settings: await trpc(locals.auth).settings.getPublic(),
 		// Check whether various OAuth providers are set up in
 		// environment variables so we can show/hide buttons.
+		schedule: await trpc(locals.auth).events.getAll(),
 		providers: {
 			google: googleAuth !== null,
 			github: githubAuth !== null,
