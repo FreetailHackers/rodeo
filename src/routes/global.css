@@ -2,8 +2,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Fugaz+One&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Geologica&display=swap');
 
-:root {
+* {
 	--font-family: 'Geologica', 'Helvetica Neue', 'Arial', sans-serif;
+}
+
+:root {
 	--font-size: 16px;
 	--primary-accent: #e1563f;
 }
