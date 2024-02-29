@@ -1,7 +1,13 @@
+@import url("https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fugaz+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Geologica&display=swap");
+
 :root {
 	--font-family: 'Helvetica Neue', 'Arial', sans-serif;
 	--font-size: 16px;
 	--primary-accent: #954479;
+	--black:black;
+	--burnt-orange:#E1563F;
 }
 
 h1,
