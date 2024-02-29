@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
+	// import MarkdownEditor from '$lib/components/markdown-editor.svelte';
 
 	export let data;
 
-	const placeholder = `This text can be formatted with Markdown. Syntax examples:
+	// const placeholder = `This text can be formatted with Markdown. Syntax examples:
 
-# Heading 1
+	`# Heading 1
 
 *italics* **bold** ***bold italic*** ~~strikethrough~~ \`inline code snippet\`
 
@@ -32,24 +32,50 @@ print('This is a multi-line code block.')
 <svelte:head>
 	<title>Rodeo | FAQ</title>
 </svelte:head>
-
-<div class="background">
-	<!-- <img src="/black_background.jpeg" alt="black background" class="bg-img" /> -->
+<!-- <img src="/black_background.jpeg" alt="black background" class="bg-img" /> -->
+<div class="body">
+	<div class="faq">
+		<h2 class="left-border-faq">FAQ</h2>
+		<h2 class="left-border-faq-2">FAQ</h2>
+	</div>
 	{#if data.user?.roles.includes('ADMIN')}
-		<form
-			method="POST"
-			use:enhance={() => {
-				return async ({ update }) => {
-					update({ reset: false });
-				};
-			}}
-		>
-			<MarkdownEditor name="info" {placeholder} rows={25} value={data.info} />
-			<button type="submit">Save</button>
-		</form>
+		<!-- <div class="faq_content">
+			<form
+				method="POST"
+				use:enhance={() => {
+					return async ({ update }) => {
+						update({ reset: false });
+					};
+				}}
+			>
+				<MarkdownEditor name="info" {placeholder} rows={25} value={data.info} />
+				<button type="submit">Save</button>
+			</form>
+		</div> -->
+		<!-- <div class="faq-content"> -->
+		<!-- <div class="faq_letters">
+				<h2 class="left-border-faq">FAQ</h2>
+				<h2 class="left-border-faq-2">FAQ</h2> -->
+		<!-- </div> -->
+		<div class="admin-panel">
+			<hr />
+			<h2>Create New Question</h2>
+			<form method="POST" use:enhance>
+				<input type="hidden" name="id" />
+
+				<label for="question">Question</label>
+				<input type="text" id="question" name="question" required />
+
+				<label for="answer">Answer</label>
+				<textarea id="answer" name="answer" required />
+
+				<button type="submit">Save</button>
+			</form>
+		</div>
+		<!-- </div> -->
 	{:else}
 		<!-- <SvelteMarkdown source={data.info} /> -->
-		<div class="faq-body">
+		<div class="faq_content">
 			<div class="side-faq">
 				<h2 class="left-border-faq">FAQ</h2>
 				<h2 class="left-border-faq-2">FAQ</h2>
@@ -61,67 +87,79 @@ print('This is a multi-line code block.')
 <style>
 	@import url('https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap');
 
-	.background {
-		width: 100%;
-		color: white;
+	/* button {
+		margin-top: 1rem;
+	} */
+
+	.body {
 		background-color: var(--background-color);
 	}
 
-	button {
-		margin-top: 1rem;
-	}
-
-	/* FAQ */
-	.faq-body {
-		display: flex;
-	}
-	.side-faq {
+	.faq {
+		/* margin-top: 100px; */
 		display: flex;
 		flex-direction: column;
 		align-items: flex-start;
+		padding-left: 0;
+		/* background-color: var(--background-color); */
 	}
 
-	.left-border-faq,
-	.left-border-faq-2 {
-		/* top: 4rem;
-		left: -7rem; */
-		/* position: absolute; */
-		/* position: relative; */
-
+	.left-border-faq {
 		font-family: 'Zen Dots', sans-serif;
 		font-style: normal;
-		font-weight: 400;
+		/* font-weight: 400; */
 		font-size: 10rem;
 		/* line-height: 240px; */
-
-		/* Beige */
 		color: #f2ebd9;
-
 		transform: rotate(90deg);
+		/* padding-left: 0; */
+		/* transform-origin: top; */
 	}
 
 	.left-border-faq-2 {
-		/* FAQ */
-
-		/* position: absolute; */
-
 		font-family: 'Zen Dots';
 		font-style: normal;
-		font-weight: 400;
-		font-size: 10rem;
-		/* font-size: 200px; */
-		/* line-height: 240px; */
-
-		/* White */
-		/* border: 1px solid #ffffff; */
-		/* text-shadow:
-    3px 3px 0 #f2ebd9,
-    -3px 3px 0 #f2ebd9,
-    -3px -3px 0 #f2ebd9,
-    3px -3px 0 #f2ebd9; */
+		/* font-weight: 400;
+		line-height: 240px;
+		font-size: 10rem; */
 		color: var(--background-color);
 		-webkit-text-stroke: 1px #f2ebd9;
-
 		transform: rotate(90deg);
+		/* margin-left: 0; */
+		/* transform-origin: top; */
+	}
+
+	.admin-panel {
+		width: 50rem;
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	h2 {
+		font-family: 'Fugaz One';
+		color: #f2ebd9;
+		text-align: left;
+		font-size: 36px;
+		text-shadow: 0 4px 8px rgb(0, 0, 0);
+	}
+
+	label {
+		display: block;
+		margin-bottom: 0.5rem;
+		color: #f2ebd9;
+		font-family: 'Geologica', sans-serif;
+		margin-top: 10px;
+	}
+
+	input,
+	textarea,
+	button {
+		background-color: var(--highlight-color);
+		color: var(--background-color);
+	}
+
+	button {
+		margin-bottom: 10px;
 	}
 </style>
