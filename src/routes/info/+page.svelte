@@ -34,9 +34,16 @@ print('This is a multi-line code block.')
 </svelte:head>
 <!-- <img src="/black_background.jpeg" alt="black background" class="bg-img" /> -->
 <div class="body">
-	<div class="faq">
-		<h2 class="left-border-faq">FAQ</h2>
-		<h2 class="left-border-faq-2">FAQ</h2>
+	<div class="show-large">
+		<div class="faq">
+			<h2 class="left-border-faq">FAQ</h2>
+			<h2 class="left-border-faq-2">FAQ</h2>
+		</div>
+	</div>
+	<div class="show-small">
+		<div class="faq">
+			<h2 class="mobile-title">FAQ</h2>
+		</div>
 	</div>
 	{#if data.user?.roles.includes('ADMIN')}
 		<!-- <div class="faq_content">
@@ -86,6 +93,24 @@ print('This is a multi-line code block.')
 		margin-top: 1rem;
 	} */
 
+	.show-large {
+		display: none;
+	}
+
+	.show-small {
+		display: contents;
+	}
+
+	@media (min-width: 1090px) {
+		.show-large {
+			display: contents;
+		}
+
+		.show-small {
+			display: none;
+		}
+	}
+
 	.body {
 		background-color: var(--background-color);
 	}
@@ -129,6 +154,10 @@ print('This is a multi-line code block.')
 		display: block;
 		margin-left: auto;
 		margin-right: auto;
+	}
+
+	.mobile-title {
+		margin-left: 2rem;
 	}
 
 	h2 {
