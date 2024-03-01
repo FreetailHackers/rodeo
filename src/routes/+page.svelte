@@ -35,9 +35,9 @@
 	<hr />
 	<h2>Sponsors</h2>
 	<div class="image">
-		<img alt="The project logo" src={'src/lib/assets/sponsors/1989_Placeholder.jpeg'} />
-		<img alt="The project logo" src={'src/lib/assets/sponsors/Lover_Placeholder.jpeg'} />
-		<img alt="The project logo" src={'src/lib/assets/sponsors/Speak_Now_Placeholder.jpeg'} />
+		<img alt="The project logo" src={'src/lib/assets/sponsors/Capital One Logo.png'} />
+		<img alt="The project logo" src={'src/lib/assets/sponsors/mercury_financial.jpeg'} />
+		<img alt="The project logo" src={'src/lib/assets/sponsors/Roblox Logo.png'} />
 	</div>
 {:else}
 	<!-- Signup page -->
@@ -76,21 +76,25 @@
 	<hr />
 	<h2>Sponsors</h2>
 	<div class="image">
-		<img alt="The project logo" src={'src/lib/assets/sponsors/1989_Placeholder.jpeg'} />
-		<img alt="The project logo" src={'src/lib/assets/sponsors/Lover_Placeholder.jpeg'} />
-		<img alt="The project logo" src={'src/lib/assets/sponsors/Speak_Now_Placeholder.jpeg'} />
-		<img alt="The project logo" src={'src/lib/assets/sponsors/Speak_Now_Placeholder.jpeg'} />
-		<img alt="The project logo" src={'src/lib/assets/sponsors/Speak_Now_Placeholder.jpeg'} />
+		<img alt="The project logo" src={'src/lib/assets/sponsors/Capital One Logo.png'} />
+		<img alt="The project logo" src={'src/lib/assets/sponsors/mercury_financial.jpeg'} />
+		<img alt="The project logo" src={'src/lib/assets/sponsors/Roblox Logo.png'} />
 	</div>
 {/if}
 
 <Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
 
 <style>
+	img {
+		width: 200px;
+		height: auto;
+	}
+
 	.image {
 		display: flex;
 		justify-content: space-evenly;
-		flex-wrap: wrap;
+		align-items: center;
+		width: 100%;
 	}
 	label {
 		display: block;
