@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { generateIcsContent } from '$lib/ics';
+	import type { Event, AuthUser } from '@prisma/client';
 	import dayjs from 'dayjs';
 	import utc from 'dayjs/plugin/utc';
 	import timezone from 'dayjs/plugin/timezone';
@@ -9,21 +10,28 @@
 	dayjs.extend(utc);
 	dayjs.extend(timezone);
 
-	/* eslint-disable @typescript-eslint/no-explicit-any */
-	export let user: any, schedule: any, settings_timezone: string;
+	export let user: AuthUser;
+	export let schedule: Event[];
+	export let settings_timezone: string;
 
 	let currentDateTime = new Date();
-	const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+	let groupByDateArray: { day: string; events: Event[] }[] = [];
 
-	/* eslint-disable @typescript-eslint/no-explicit-any */
-	let groupByDateArray: { day: string; events: any[]; hasMatchingEvents: boolean }[] = [];
-
+	// Assumes there are no events occurring on the same day of the week but in different weeks.
 	for (let event of schedule) {
-		const dayOfWeek = daysOfWeek[new Date(event.start).getDay()];
+		const dayOfWeek = [
+			'Sunday',
+			'Monday',
+			'Tuesday',
+			'Wednesday',
+			'Thursday',
+			'Friday',
+			'Saturday',
+		][new Date(event.start).getDay()];
 		let dayEntry = groupByDateArray.find((entry) => entry.day === dayOfWeek);
 
 		if (!dayEntry) {
-			dayEntry = { day: dayOfWeek, events: [], hasMatchingEvents: true };
+			dayEntry = { day: dayOfWeek, events: [] };
 			groupByDateArray.push(dayEntry);
 		}
 
@@ -31,21 +39,7 @@
 	}
 
 	let selected: string | null = null;
-	/* eslint-disable @typescript-eslint/no-explicit-any */
-	let filters = [...new Set(schedule.map((event: any) => event.type))] as (string | null)[];
-
-	function chosenFilter(filter: string | null) {
-		selected = selected === filter ? null : filter;
-
-		groupByDateArray.forEach((group) => {
-			if (selected === null) {
-				group.hasMatchingEvents = true;
-			} else {
-				group.hasMatchingEvents = group.events.some((event) => event.type === selected);
-			}
-		});
-		groupByDateArray = groupByDateArray;
-	}
+	let filters = [...new Set(schedule.map((event: Event) => event.type))] as (string | null)[];
 
 	let url: string;
 
@@ -65,7 +59,7 @@
 						<button
 							class:active={selected === filter}
 							data-name={filter}
-							on:click={() => chosenFilter(filter)}
+							on:click={() => (selected = selected === filter ? null : filter)}
 						>
 							{filter}
 						</button>
@@ -78,10 +72,10 @@
 						>{/if}
 				</div>
 			</div>
-			{#each groupByDateArray as { day, events, hasMatchingEvents }}
+			{#each groupByDateArray as { day, events }}
 				<div class="column">
 					<h2>{day}</h2>
-					{#if hasMatchingEvents}
+					{#if selected === null || events.some((event) => event.type === selected)}
 						{#each events as event}
 							{#if selected === null || event.type === selected}
 								<div
