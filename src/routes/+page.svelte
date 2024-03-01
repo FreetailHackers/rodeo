@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import Announcements from '$lib/components/announcements.svelte';
+	import Schedule from '$lib/components/schedule.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
 	import { toasts } from '$lib/stores';
 	export let data;
@@ -65,6 +66,8 @@
 	<h2>Announcements</h2>
 	<Announcements announcements={data.announcements} admin={false} />
 {/if}
+
+<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
 
 <style>
 	label {
