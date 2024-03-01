@@ -86,34 +86,17 @@
 			<a href="/feedback" class:active={$page.url.pathname.startsWith('/feedback')}>Feedback</a>
 		</li>
 		<li>
-			<!-- MLH banner for high resolution devices -->
-			<div class="show-large">
-				<a
-					id="mlh-trust-badge-large"
-					href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=white"
-					target="_blank"
-					rel="noreferrer"
-					><img
-						src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-white.svg"
-						alt="Major League Hacking 2024 Hackathon Season"
-						id="mlh-badge-image"
-					/></a
-				>
-			</div>
-			<!-- MLH banner for low resolution devices -->
-			<div class="show-small">
-				<a
-					id="mlh-trust-badge-small"
-					href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=white"
-					target="_blank"
-					rel="noreferrer"
-					><img
-						src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-white.svg"
-						alt="Major League Hacking 2024 Hackathon Season"
-						id="mlh-badge-image"
-					/></a
-				>
-			</div>
+			<a
+				id="mlh-trust-badge"
+				href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=red"
+				target="_blank"
+				rel="noreferrer"
+				><img
+					src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-red.svg"
+					alt="Major League Hacking 2024 Hackathon Season"
+					id="mlh-badge-image"
+				/></a
+			>
 		</li>
 	</menu>
 
@@ -295,12 +278,23 @@
 		background-color: #502340;
 	}
 
-	.show-small {
-		display: contents;
+	#mlh-trust-badge {
+		display: block;
+		max-width: 5.5rem;
+		min-width: 5.5rem;
+		position: fixed;
+		right: 0;
+		top: 1.9rem;
+		width: 100%;
+		z-index: 10000;
 	}
 
-	.show-large {
-		display: none;
+	#mlh-badge-image {
+		width: 100%;
+	}
+
+	#mlh-trust-badge:hover {
+		background-color: transparent;
 	}
 
 	@media (min-width: 1090px) {
@@ -339,12 +333,15 @@
 			text-decoration: none;
 		}
 
-		.show-small {
-			display: none;
-		}
-
-		.show-large {
-			display: contents;
+		#mlh-trust-badge {
+			display: block;
+			max-width: 7rem;
+			min-width: 6rem;
+			position: fixed;
+			right: 15px;
+			top: 2.8rem;
+			width: 100%;
+			z-index: 10000;
 		}
 
 		/* nav {
@@ -368,36 +365,5 @@
 	.active {
 		font-weight: bold;
 		text-decoration: underline;
-	}
-
-	#mlh-trust-badge-large {
-		display: block;
-		max-width: 7rem;
-		min-width: 6rem;
-		position: fixed;
-		right: 15px;
-		top: -0.75rem;
-		width: 100%;
-		z-index: 10000;
-	}
-
-	#mlh-trust-badge-small {
-		display: block;
-		max-width: 5.5rem;
-		min-width: 5.5rem;
-		position: fixed;
-		right: 0;
-		top: -0.75rem;
-		width: 100%;
-		z-index: 10000;
-	}
-
-	#mlh-badge-image {
-		width: 100%;
-	}
-
-	#mlh-trust-badge-large:hover,
-	#mlh-trust-badge-small:hover {
-		background-color: transparent;
 	}
 </style>
