@@ -22,6 +22,7 @@
 			<a href="/admin/faq" class:active={$page.url.pathname === '/admin/faq'}
 				>Frequently Asked Questions</a
 			>
+			<a href="/admin/prizes" class:active={$page.url.pathname === '/admin/prizes'}>Prizes</a>
 		</li>
 	</ul>
 
