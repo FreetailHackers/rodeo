@@ -169,6 +169,10 @@
 </footer>
 
 <style>
+	footer {
+		background-color: #404040;
+	}
+
 	.flex-container {
 		display: flex;
 		align-items: center;
@@ -177,7 +181,7 @@
 	.flex-item {
 		flex: 1; /* Makes each item (column) grow equally to fill the container */
 		padding: 10px; /* Optional padding */
-		/* color: white; */
+		color: white;
 	}
 
 	.bold {
@@ -185,12 +189,12 @@
 	}
 
 	a {
-		/* color: white; */
+		color: white;
 	}
 
 	label {
 		display: flex;
-		font-family: 'Geologica Medium', sans-serif;
+		font-family: 'Geologica', sans-serif;
 		font-weight: 700;
 		font-style: normal;
 		text-transform: uppercase;
@@ -212,7 +216,7 @@
 		position: sticky;
 		top: 0;
 		margin: 0;
-		background-color: var(--primary-accent);
+		background-color: #404040;
 		z-index: 99;
 	}
 
@@ -225,7 +229,7 @@
 		max-height: 0;
 		overflow: hidden;
 		width: 100%;
-		font-family: 'Geologica Medium', sans-serif;
+		font-family: 'Geologica', sans-serif;
 		font-size: 15px;
 		font-weight: 700;
 		font-style: normal;
