@@ -12,7 +12,6 @@
 	/* eslint-disable @typescript-eslint/no-explicit-any */
 	export let user: any, schedule: any, settings_timezone: string;
 
-	let hoveredId: number | null = null;
 	let currentDateTime = new Date();
 	const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -90,12 +89,6 @@
 									currentDateTime < event.end
 										? 'currentEvent'
 										: ''}"
-									on:mouseenter={() => {
-										hoveredId = event.id;
-									}}
-									on:mouseleave={() => {
-										hoveredId = null;
-									}}
 								>
 									<div class="flex-row">
 										<div>
@@ -107,34 +100,30 @@
 												</p>
 											{/if}
 										</div>
-										{#if hoveredId !== event.id}
-											<p class="date">
-												{event.start.toLocaleString('en-US', {
-													timeZone: settings_timezone,
-													hour: 'numeric',
-													minute: 'numeric',
-													hour12: true,
-												})}
-											</p>
-										{:else}
-											<p class="date">
-												from {event.start.toLocaleString('en-US', {
-													timeZone: settings_timezone,
-													hour: 'numeric',
-													minute: 'numeric',
-													hour12: true,
-												})} <br /> to {event.end.toLocaleString('en-US', {
-													timeZone: settings_timezone,
-													hour: 'numeric',
-													minute: 'numeric',
-													hour12: true,
-												})}
-											</p>
-										{/if}
+										<p class="date">
+											{event.start.toLocaleString('en-US', {
+												timeZone: settings_timezone,
+												hour: 'numeric',
+												minute: 'numeric',
+												hour12: true,
+											})}
+										</p>
+										<p class="date-hover">
+											from {event.start.toLocaleString('en-US', {
+												timeZone: settings_timezone,
+												hour: 'numeric',
+												minute: 'numeric',
+												hour12: true,
+											})} <br /> to {event.end.toLocaleString('en-US', {
+												timeZone: settings_timezone,
+												hour: 'numeric',
+												minute: 'numeric',
+												hour12: true,
+											})}
+										</p>
 									</div>
-									{#if hoveredId === event.id}
-										<p class="description">{event.description}</p>
-									{/if}
+
+									<p class="description">{event.description}</p>
 								</div>
 							{/if}
 						{/each}
@@ -210,8 +199,8 @@
 	}
 
 	.date,
-	.name,
-	.date {
+	.date-hover,
+	.name {
 		font-size: 18px;
 	}
 
@@ -220,6 +209,7 @@
 		font-size: 14px;
 	}
 
+	.date-hover,
 	.date {
 		text-align: right;
 		flex-shrink: 0;
@@ -227,6 +217,11 @@
 
 	.description {
 		padding-top: 3px;
+	}
+
+	.description,
+	.date-hover {
+		display: none;
 	}
 
 	.calendar-export {
@@ -256,6 +251,15 @@
 
 	.card:hover {
 		background-color: #f2ebd9;
+	}
+
+	.card:hover .description,
+	.card:hover .date-hover {
+		display: initial;
+	}
+
+	.card:hover .date {
+		display: none;
 	}
 
 	.card-text {
