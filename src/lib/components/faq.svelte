@@ -1,6 +1,6 @@
 <script lang="ts">
 	// import { enhance } from '$app/forms';
-	import type { FAQ, AuthUser } from '@prisma/client';
+	import type { FAQ } from '@prisma/client';
 
 	// export let user: AuthUser;
 	export let questions: FAQ[];

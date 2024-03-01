@@ -67,7 +67,8 @@
 	<Announcements announcements={data.announcements} admin={false} />
 {/if}
 
-<FAQ user={data.user} questions={data.questions} />
+<!-- <FAQ user={data.user} questions={data.questions} /> -->
+<FAQ questions={data.questions} />
 
 <style>
 	label {
