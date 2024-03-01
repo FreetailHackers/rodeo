@@ -133,10 +133,12 @@ model Event {
   type        String
 }
 
-model FAQ {
+model OtherStuff {
   id          Int     @id @default(autoincrement())
-  question    String
-  answer      String
+  title       String
+  response    String
+  type        CategoryType
+
 }
 
 model StatusChange {
@@ -182,6 +184,11 @@ enum QuestionType {
   CHECKBOX
   RADIO
   FILE
+}
+
+enum CategoryType {
+  FAQ
+  PRIZE
 }
 
 // This section lists the names of manually created triggers, and the

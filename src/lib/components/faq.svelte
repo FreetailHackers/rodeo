@@ -1,9 +1,9 @@
 <script lang="ts">
 	// import { enhance } from '$app/forms';
-	import type { FAQ } from '@prisma/client';
+	// import type { FAQ } from '@prisma/client';
 
 	// export let user: AuthUser;
-	export let questions: FAQ[];
+	// export let questions: FAQ[];
 </script>
 
 <svelte:head>
@@ -22,7 +22,7 @@
 	</div>
 
 	<div class="faq-view">
-		{#if questions.length > 0}
+		<!-- {#if questions.length > 0}
 			<div class="container">
 				{#each questions as question}
 					<div class="card">
@@ -39,7 +39,7 @@
 			</div>
 		{:else}
 			<h2>Check back for the FAQ!</h2>
-		{/if}
+		{/if} -->
 
 		<!-- <div class="faq-cards" /> -->
 	</div>
@@ -115,7 +115,7 @@
 	}
 
 	/* CARD SPECIFIC CSS */
-	.card {
+	/* .card {
 		border: 4px solid var(--highlight-color);
 		width: 25rem;
 		height: 200px;
@@ -126,7 +126,7 @@
 	.card:hover {
 		background-color: var(--secondary-color);
 		cursor: pointer;
-	}
+	} 
 
 	.card-container {
 		width: 100%;
@@ -135,4 +135,5 @@
 		transition: transform 1s;
 		transform-style: preserve-3d;
 	}
+	*/
 </style>

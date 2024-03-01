@@ -316,14 +316,26 @@ export const events: Prisma.EventCreateInput[] = [
 	},
 ];
 
-export const faqQuestions: Prisma.FAQCreateInput[] = [
+export const otherStuffs: Prisma.OtherStuffCreateInput[] = [
 	{
-		question: 'Where is the hackathon?',
-		answer: "It's at the GDC (Gates Dell Complex) on both March 22 and March 23!",
+		title: 'Where is the hackathon?',
+		response: "It's at the GDC (Gates Dell Complex) on both March 22 and March 23!",
+		type: 'FAQ',
 	},
 	{
-		question: 'Are there sleeping accomodations?',
-		answer:
+		title: 'Are there sleeping accomodations?',
+		response:
 			"We have one room, but we recommend getting somewhere to sleep since it's going to be crammed",
+		type: 'FAQ',
+	},
+	{
+		title: 'First Place Intermediate',
+		response: 'VISIO TVs!',
+		type: 'PRIZE',
+	},
+	{
+		title: 'Second Place Intermediate',
+		response: 'Mechanical Keyboard',
+		type: 'PRIZE',
 	},
 ];

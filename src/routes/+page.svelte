@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import Announcements from '$lib/components/announcements.svelte';
-	import FAQ from '$lib/components/faq.svelte';
+	// import FAQ from '$lib/components/faq.svelte';
 	import Schedule from '$lib/components/schedule.svelte';
 	import Prizes from '$lib/components/prizes.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
@@ -70,7 +70,7 @@
 {/if}
 
 <!-- <FAQ user={data.user} questions={data.questions} /> -->
-<FAQ questions={data.questions} />
+<!-- <FAQ questions={data.questions} /> -->
 <Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
 
 <Prizes />

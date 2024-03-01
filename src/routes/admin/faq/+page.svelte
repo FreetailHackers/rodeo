@@ -1,4 +1,4 @@
-<script lang="ts">
+<!-- <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { confirmationDialog } from '$lib/actions.js';
 </script>
@@ -37,4 +37,4 @@
 	textarea {
 		margin-bottom: 1rem;
 	}
-</style>
+</style> -->
