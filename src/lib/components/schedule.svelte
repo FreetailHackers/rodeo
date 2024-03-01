@@ -39,7 +39,7 @@
 	}
 
 	let selected: string | null = null;
-	let filters = [...new Set(schedule.map((event: Event) => event.type))] as (string | null)[];
+	let filters = [...new Set(schedule.map((event: Event) => event.type))];
 
 	let url: string;
 
