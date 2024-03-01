@@ -4,27 +4,26 @@ import { error, redirect } from '@sveltejs/kit';
 
 export const load = async ({ locals, params }) => {
 	await authenticate(locals.auth, ['ADMIN']);
-	if (Number.isNaN(Number(params.faqQuestion))) {
+	if (Number.isNaN(Number(params.specificPrize))) {
 		throw error(404, 'Event not found');
 	}
-	const question = await trpc(locals.auth).otherCategories.get(Number(params.faqQuestion));
-	if (question !== null) {
+	const prize = await trpc(locals.auth).otherCategories.get(Number(params.specificPrize));
+	if (prize !== null) {
 		return {
-			question,
+			prize,
 		};
 	}
-	throw error(404, 'Question not found');
+	throw error(404, 'Prize not found');
 };
 
 export const actions = {
 	edit: async ({ locals, request }) => {
 		const formData = await request.formData();
-
 		await trpc(locals.auth).otherCategories.update({
 			id: Number(formData.get('id') as string),
 			title: formData.get('title') as string,
 			response: formData.get('response') as string,
-			category: 'FAQ',
+			category: 'PRIZE',
 		});
 		return 'Saved event!';
 	},

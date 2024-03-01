@@ -1,40 +1,23 @@
 <script lang="ts">
-	let prizeCategories: Map<string, string> = new Map();
-	prizeCategories.set('Category 1', 'Prize description for Category 1');
-	prizeCategories.set('Category 2', 'Prize description for Category 2');
-	prizeCategories.set('Category 3', 'Prize description for Category 3');
-	prizeCategories.set('Category 4', 'Prize description for Category 4');
-	prizeCategories.set('Category 5', 'Prize description for Category 5');
-	prizeCategories.set('Category 6', 'Prize description for Category 6');
-	// prizeCategories.set('Category 7', 'Prize description for Category 7'); // Odd number of categories for testing
+	import type { OtherCategories, AuthUser } from '@prisma/client';
+
+	export let user: AuthUser;
+	export let prizes: OtherCategories[];
 
 	// Define which card is currently flipped
-	let flippedCard: string | null = null;
+	// let flippedCard: string | null = null;
 
 	// Function to toggle flipped state of a card
-	function toggleFlip(category: string | null) {
-		flippedCard = flippedCard === category ? null : category;
-	}
+	// function toggleFlip(category: string | null) {
+	// 	flippedCard = flippedCard === category ? null : category;
+	// }
 
 	// Handle keyboard events for accessibility
-	function handleKeyDown(event: KeyboardEvent, category: string | null) {
-		if (event.key === 'Enter') {
-			toggleFlip(category);
-		}
-	}
-
-	// Function to group categories into pairs
-	function groupIntoPairs(categories: string[]) {
-		const pairs = [];
-		for (let i = 0; i < categories.length; i += 2) {
-			const pair = [categories[i], categories[i + 1] || null]; // Add null for odd number of categories
-			pairs.push(pair);
-		}
-		return pairs;
-	}
-
-	// Group categories into pairs
-	let categoryPairs = groupIntoPairs(Array.from(prizeCategories.keys()));
+	// function handleKeyDown(event: KeyboardEvent, category: string | null) {
+	// 	if (event.key === 'Enter') {
+	// 		toggleFlip(category);
+	// 	}
+	// }
 </script>
 
 <div class="checkered-background">
@@ -43,25 +26,45 @@
 		<span class="bordered-text" data-text="Prizes">Prizes</span>
 	</h1>
 
-	{#each categoryPairs as pair}
-		<div class="container {pair[1] === null ? 'centered' : ''}">
-			{#each pair as category}
-				{#if category !== null}
-					<div
-						class="box {flippedCard === category ? 'flipped' : ''} {flippedCard === category
-							? 'orange'
-							: ''}"
-						on:click={() => toggleFlip(category)}
-						on:keydown={(event) => handleKeyDown(event, category)}
-					>
-						<div class="content {flippedCard === category ? 'description' : ''}">
-							{flippedCard === category ? prizeCategories.get(category) : category}
-						</div>
-					</div>
+	<div class="container">
+		{#each prizes as prize}
+			<div class="centered">
+				<div class="front">{prize.title}</div>
+				<div class="back">{prize.response}</div>
+				{#if user?.roles.includes('ADMIN')}
+					<p>
+						<a class="edit" href="/admin/prizes/{prize.id}">Edit</a>
+					</p>
 				{/if}
-			{/each}
+				<!-- <div
+					class="box {flippedCard === category ? 'flipped' : ''} {flippedCard === category
+						? 'orange'
+						: ''}"
+					on:click={() => toggleFlip(category)}
+					on:keydown={(event) => handleKeyDown(event, category)}
+				>
+					<div class="content {flippedCard === category ? 'description' : ''}">
+						{flippedCard === category ? prizeCategories.get(category) : category}
+					</div>
+				</div> -->
+			</div>
+		{/each}
+	</div>
+	<!-- {#each prizes as prize}
+		<div class="container centered">
+			<div
+				class="box {flippedCard === category ? 'flipped' : ''} {flippedCard === category
+					? 'orange'
+					: ''}"
+				on:click={() => toggleFlip(category)}
+				on:keydown={(event) => handleKeyDown(event, category)}
+			>
+				<div class="content {flippedCard === category ? 'description' : ''}">
+					{flippedCard === category ? prizeCategories.get(category) : category}
+				</div>
+			</div>
 		</div>
-	{/each}
+	{/each} -->
 </div>
 
 <style>
@@ -96,7 +99,7 @@
 		max-width: 90%;
 	}
 
-	.box {
+	/* .box {
 		width: calc(47.5%);
 		height: 25vh;
 		top: 234px;
@@ -136,5 +139,5 @@
 	.orange {
 		background-color: #e1563f;
 		color: #f2ebd9;
-	}
+	} */
 </style>

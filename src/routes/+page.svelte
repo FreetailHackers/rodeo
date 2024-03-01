@@ -73,7 +73,7 @@
 <!-- <FAQ questions={data.questions} /> -->
 <Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
 
-<Prizes />
+<Prizes user={data.user} prizes={data.prizes} />
 
 <style>
 	label {

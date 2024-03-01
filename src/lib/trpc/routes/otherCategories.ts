@@ -28,9 +28,11 @@ export const otherCategoriesRouter = t.router({
 	getAllOfCategory: t.procedure
 		.input(z.nativeEnum(CategoryType))
 		.query(async (req): Promise<OtherCategories[]> => {
-			return await prisma.otherCategories.findMany({ where: { category: req.input } });
+			return await prisma.otherCategories.findMany({
+				orderBy: { id: 'asc' },
+				where: { category: req.input },
+			});
 		}),
-
 	/**
 	 * Gets a record by ID.
 	 */
