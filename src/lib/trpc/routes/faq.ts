@@ -1,0 +1,63 @@
+// import type { Event } from '@prisma/client';
+// import { z } from 'zod';
+// import { prisma } from '../db';
+// import { authenticate } from '../middleware';
+// import { t } from '../t';
+
+// const faqSchema = z
+// 	.object({
+// 		question: z.string(),
+// 		answer: z.string(),
+// 	})
+// 	.strict();
+
+// export const faqRouter = t.router({
+// 	/**
+// 	 * Gets all events in the schedule, sorted by start time.
+// 	 */
+// 	getAll: t.procedure.query(async (): Promise<Event[]> => {
+// 		return await prisma.event.findMany({
+// 			orderBy: [{ start: 'asc' }],
+// 		});
+// 	}),
+
+// 	/**
+// 	 * Gets an event by ID.
+// 	 */
+// 	get: t.procedure.input(z.number()).query(async (req): Promise<Event | null> => {
+// 		return await prisma.event.findUnique({ where: { id: req.input } });
+// 	}),
+
+// 	/**
+// 	 * Adds an event to the schedule. User must be an admin.
+// 	 */
+// 	create: t.procedure
+// 		.use(authenticate(['ADMIN']))
+// 		.input(faqSchema)
+// 		.mutation(async (req): Promise<void> => {
+// 			await prisma.event.create({ data: { ...req.input } });
+// 		}),
+
+// 	/**
+// 	 * Updates an event in the schedule by ID. User must be an admin.
+// 	 */
+// 	update: t.procedure
+// 		.use(authenticate(['ADMIN']))
+// 		.input(faqSchema.merge(z.object({ id: z.number() })))
+// 		.mutation(async (req): Promise<void> => {
+// 			await prisma.event.update({
+// 				where: { id: req.input.id },
+// 				data: { ...req.input },
+// 			});
+// 		}),
+
+// 	/**
+// 	 * Deletes an event from the schedule. User must be an admin.
+// 	 */
+// 	delete: t.procedure
+// 		.use(authenticate(['ADMIN']))
+// 		.input(z.number())
+// 		.mutation(async (req): Promise<void> => {
+// 			await prisma.event.delete({ where: { id: req.input } });
+// 		}),
+// });
