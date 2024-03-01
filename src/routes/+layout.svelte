@@ -139,14 +139,48 @@
 
 <footer>
 	<hr />
-	<p>
-		Made with ❤️ by <a target="_blank" rel="noopener noreferrer" href="https://freetailhackers.com">
-			Freetail Hackers
-		</a>
-	</p>
+	<div class="flex-container">
+		<div class="flex-item">Made with ❤️ by <a target="_blank" rel="noopener noreferrer" href="https://freetailhackers.com">
+			Freetail Hackers</div>
+			<div class="flex-item">
+				<div class="row bold">Links</div>
+				<div class="row"><a target="_blank" rel="noopener noreferrer" href="https://www.instagram.com/freetailhackers?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="> Instagram</a></div>
+				<div class="row"><a target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/company/freetail-hackers"> LinkedIn</div>
+				<div class="row"><a target="_blank" rel="noopener noreferrer" href="https://freetailhackers.com/discord"> Discord</div>
+				<div class="row"><a target="_blank" rel="noopener noreferrer" href="https://linktr.ee/freetailhackers"> LinkTree</div>
+			  </div>
+			  <div class="flex-item">
+				<div class="row bold">Other Hackathons</div>
+				<div class="row"><a target="_blank" rel="noopener noreferrer" href="https://rowdyhacks.org/"> RowdyHacks</a></div>
+				<div class="row"><a target="_blank" rel="noopener noreferrer" href="https://tamuhack.org/"> TAMU hack</div>
+				<div class="row"><a target="_blank" rel="noopener noreferrer" href="https://hackutd.co/"> HackUTD</div>
+				<div class="row"><a target="_blank" rel="noopener noreferrer" href="https://www.unthackathon.com/"> HackUNT</div>
+					<div class="row"><a target="_blank" rel="noopener noreferrer" href="https://hackuta.org/"> HackUTA</div>
+			  </div>
+	  </div>
+	
 </footer>
 
 <style>
+	.flex-container {
+  display: flex;
+  align-items: center;
+}
+
+.flex-item {
+  flex: 1; /* Makes each item (column) grow equally to fill the container */
+  padding: 10px; /* Optional padding */
+  /* color: white; */
+}
+
+.bold {
+	font-weight: bold;
+}
+
+a {
+	/* color: white; */
+}
+
 	label {
 		display: flex;
 		font-family: 'Geologica Medium', sans-serif;
