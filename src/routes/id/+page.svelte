@@ -18,7 +18,6 @@
 </svelte:head>
 
 <div class="overall-container">
-
 	<div class="vertical-text" />
 
 	<div class="driver-scan-div">
@@ -38,8 +37,6 @@
 </div>
 
 <style>
-
-
 	.driver-div {
 		padding: 0.5rem 1.2rem 1.5rem;
 		box-shadow: 4px 4px 16px 0px #00000040;
@@ -95,8 +92,8 @@
 		background-image: url('hackerid.svg');
 		background-size: contain;
 		background-repeat: no-repeat;
-		width: 35%;
-		height: 60rem;
+		width: 30%;
+		height: 50rem;
 		position: absolute;
 		top: 50%;
 		left: 20%;
@@ -113,10 +110,9 @@
 		flex-direction: column;
 	}
 
-
 	@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
-	/* CSS rules specific to iPads: The banner text should be smaller here.*/
-		.vertical-text{
+		/* CSS rules specific to iPads: The banner text should be smaller here.*/
+		.vertical-text {
 			width: 20% !important;
 			height: 50rem;
 			top: 30%;
@@ -132,35 +128,31 @@
 
 	/* CSS for devices with a maximum width of 768 pixels (tablets and smartphones) */
 	@media only screen and (max-width: 768px) {
-	canvas {
-		width: 150px !important;
-		height: 150px !important;
+		canvas {
+			width: 150px !important;
+			height: 150px !important;
+		}
+
+		.driver-div {
+			padding: 0.7rem 1.2rem 1.7rem;
+			box-shadow: 4px 4px 16px 0px #00000040;
+			border-radius: 10px;
+		}
+
+		.driver-div-text {
+			font-size: 20px;
+		}
+		.ready-to-scan-text-ready {
+			font-size: 10px;
+			margin-left: -15px;
+		}
+
+		.ready-to-scan-text-scan {
+			font-size: 15px;
+		}
+
+		.vertical-text {
+			display: none;
+		}
 	}
-
-	.driver-div {
-		padding: 0.7rem 1.2rem 1.7rem;
-		box-shadow: 4px 4px 16px 0px #00000040;
-		border-radius: 10px;
-	}
-
-	.driver-div-text{
-		font-size: 20px;
-	}
-	.ready-to-scan-text-ready{
-		font-size: 10px;
-		margin-left: -15px;
-	}
-
-	.ready-to-scan-text-scan{
-		font-size: 15px;
-	}
-
-	.vertical-text{
-		display: none;
-	}
-
-	}
-
-
-
 </style>
