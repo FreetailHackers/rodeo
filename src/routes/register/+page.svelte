@@ -15,7 +15,7 @@
 	<div class="header">
 		<h1>Register</h1>
 	</div>
-	<div>
+	<div class="socials">
 		<SocialLogin providers={data.providers} />
 	</div>
 	<div class="form">
@@ -103,5 +103,9 @@
 		padding-left: 0.5rem;
 		padding-right: 0.5rem;
 		background-color: #f2ebd9;
+	}
+
+	.socials {
+		width: 40%;
 	}
 </style>
