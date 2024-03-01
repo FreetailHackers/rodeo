@@ -315,3 +315,15 @@ export const events: Prisma.EventCreateInput[] = [
 		type: 'Key-Event',
 	},
 ];
+
+export const faqQuestions: Prisma.FAQCreateInput[] = [
+	{
+		question: 'Where is the hackathon?',
+		answer: "It's at the GDC (Gates Dell Complex) on both March 22 and March 23!",
+	},
+	{
+		question: 'Are there sleeping accomodations?',
+		answer:
+			"We have one room, but we recommend getting somewhere to sleep since it's going to be crammed",
+	},
+];
