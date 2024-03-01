@@ -12,7 +12,7 @@
 
 import { lucia } from 'lucia';
 import 'lucia/polyfill/node';
-import { MY_TIMEZONE, events, questions, otherCategoriesEvents } from './data';
+import { MY_TIMEZONE, events, questions, otherCategoriesEvents } from './data.ts';
 import { PrismaClient, Status, Prisma } from '@prisma/client';
 import { prisma as prismaAdapter } from '@lucia-auth/adapter-prisma';
 
