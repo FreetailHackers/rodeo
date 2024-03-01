@@ -28,7 +28,14 @@
 			}}
 		>
 			<label for="email">Email</label>
-			<input type="email" id="email" name="email" value="Email" class="inputValues" autocomplete="username" />
+			<input
+				type="email"
+				id="email"
+				name="email"
+				placeholder="Email"
+				class="inputValues"
+				autocomplete="username"
+			/>
 			<!-- svelte-ignore a11y-invalid-attribute -->
 			<label for="password">
 				Password (<a href="javascript:;" on:click={() => (hidden = !hidden)}>
@@ -37,6 +44,7 @@
 			</label>
 			<input
 				class="inputValues"
+				placeholder="Password"
 				type={hidden ? 'password' : 'text'}
 				id="password"
 				name="password"
@@ -53,24 +61,24 @@
 	.topographic-background {
 		display: flex;
 		flex-direction: column;
-		align-items: center; 
+		align-items: center;
 		background-color: #303030;
 		background-image: url('/Topographic Background.svg');
 		background-size: 110%;
 		min-height: 100vh; /* kick footer to bottom of page */
 	}
-	
+
 	.header {
-		color: #F2EBD9;
-		margin-top: 4rem; 
+		color: #f2ebd9;
+		margin-top: 4rem;
 		width: 40%;
 		text-align: left;
 	}
 
 	label {
 		display: block;
-		color: #1C1C1C;
-		margin-top: 1rem;	
+		color: #1c1c1c;
+		margin-top: 1rem;
 		margin-bottom: 0.1rem;
 	}
 
@@ -80,7 +88,7 @@
 	}
 
 	.inputValues {
-		background-color: #F2EBD9;
+		background-color: #f2ebd9;
 		color: #404040;
 	}
 
@@ -89,12 +97,11 @@
 		margin-bottom: 1rem;
 		box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 	}
-	
-	.form {  
+
+	.form {
 		width: 40%;
 		padding-left: 0.5rem;
 		padding-right: 0.5rem;
-		background-color: #F2EBD9;
+		background-color: #f2ebd9;
 	}
-
 </style>

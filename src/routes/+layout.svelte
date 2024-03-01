@@ -76,7 +76,7 @@
 					>
 				</li>
 			{/if}
-		{/if}	
+		{/if}
 		<li>
 			<a href="/feedback" class:active={$page.url.pathname.startsWith('/feedback')}>Feedback</a>
 		</li>
