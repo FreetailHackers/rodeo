@@ -101,7 +101,7 @@
 		height: 25vh;
 		top: 234px;
 		left: 70px;
-		border-radius: 10px;
+		border-radius: 7px;
 		border: 3px solid white;
 		background-color: rgba(255, 255, 255, 0);
 		display: flex;

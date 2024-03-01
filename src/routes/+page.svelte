@@ -70,7 +70,7 @@
 
 <Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
 
-<Prizes user={data.user} prizes={data.prizes} settings_timezone={data.settings.timezone} />
+<Prizes />
 
 <style>
 	label {
