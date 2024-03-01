@@ -7,13 +7,13 @@ import { settingsRouter } from './routes/settings';
 import { usersRouter } from './routes/users';
 import { createContext, createContextTest, t, tTest } from './t';
 import type { AuthRequest } from 'lucia';
-import { faqRouter } from './routes/otherStuff';
+import { otherCategoriesRouter } from './routes/otherCategories';
 
 const routes = {
 	admissions: admissionsRouter,
 	announcements: announcementsRouter,
 	events: eventsRouter,
-	faq: faqRouter,
+	otherCategories: otherCategoriesRouter,
 	questions: questionsRouter,
 	settings: settingsRouter,
 	users: usersRouter,

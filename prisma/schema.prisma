@@ -133,11 +133,11 @@ model Event {
   type        String
 }
 
-model OtherStuff {
+model OtherCategories {
   id          Int     @id @default(autoincrement())
   title       String
   response    String
-  type        CategoryType
+  category        CategoryType
 
 }
 
