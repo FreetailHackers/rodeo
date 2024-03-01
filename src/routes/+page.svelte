@@ -93,10 +93,6 @@
 		/* display under all elements */
 		z-index: -1;
 	}
-	label {
-		display: block;
-		margin-bottom: 0.5rem;
-	}
 
 	input {
 		display: block;
@@ -104,19 +100,14 @@
 	}
 	.header-container {
 		display: flex;
-		justify-content: center; /* Center horizontally */
-		align-items: center; /* Center vertically */
-		flex-direction: column; /* Stack items vertically */
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
 	}
 	.announcementYearHeader {
 		text-align: center;
-		font-family: 'Fugaz One'; /* Use Zen Dots font */
+		font-family: 'Fugaz One';
 		font-size: 20px;
-		/*
-		line-height: 57px;
-		letter-spacing: 0em;
-		white-space: nowrap;
-		*/
 	}
 	.announcementHeader {
 		text-align: center;
@@ -127,9 +118,9 @@
 	.header-container {
 		color: #e1563f;
 		display: flex;
-		justify-content: center; /* Center horizontally */
-		align-items: center; /* Center vertically */
-		flex-direction: column; /* Stack items vertically */
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
 		font-weight: 400;
 	}
 
@@ -141,25 +132,25 @@
 
 	@media screen and (max-width: 768px) {
 		.announcementYearHeader {
-			font-size: 16px; /* Adjust font size for smaller screens */
-			line-height: 40px; /* Adjust line height for smaller screens */
+			font-size: 16px;
+			line-height: 40px;
 			margin-bottom: -50px;
 		}
 
 		.announcementHeader {
-			font-size: 40px; /* Adjust font size for smaller screens */
-			line-height: 100px; /* Adjust line height for smaller screens */
+			font-size: 40px;
+			line-height: 100px;
 		}
 		@media screen and (max-width: 480px) {
 			.announcementYearHeader {
-				font-size: 14px; /* Adjust font size for even smaller screens */
-				line-height: 30px; /* Adjust line height for even smaller screens */
+				font-size: 14px;
+				line-height: 30px;
 				margin-bottom: -40px;
 			}
 
 			.announcementHeader {
-				font-size: 30px; /* Adjust font size for even smaller screens */
-				line-height: 70px; /* Adjust line height for even smaller screens */
+				font-size: 30px;
+				line-height: 70px;
 			}
 		}
 	}

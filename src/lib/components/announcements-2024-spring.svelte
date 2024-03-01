@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import type { Announcement } from '@prisma/client';
 	import SvelteMarkdown from 'svelte-markdown';
-	import MarkdownEditor from './markdown-editor.svelte';
+	import MarkdownEditor from './markdown-editor-2024-spring.svelte';
 
 	export let admin: boolean;
 
@@ -14,7 +14,7 @@
 		<form method="POST" action="?/announce" use:enhance class="form">
 			<MarkdownEditor name="announcement" placeholder="Make an announcement here..." required />
 			<br />
-			<button>Announce</button>
+			<button class="announcement-button-label">Announce</button>
 		</form>
 	{/if}
 	{#if announcements.length > 0}
@@ -52,7 +52,7 @@
 			{/each}
 		</ul>
 	{:else}
-		<p>There are no announcements at this time.</p>
+		<p class="no-announcements-message">There are no announcements at this time.</p>
 	{/if}
 </div>
 
@@ -82,6 +82,18 @@
 	}
 	.form {
 		flex: 1 1 100%;
+	}
+	.announcement-button-label {
+		font-weight: 500;
+		font-family: 'Fugaz One';
+		color: #000000;
+	}
+	.no-announcements-message {
+		font-weight: 500;
+		font-family: 'Fugaz One';
+		color: #e1563f;
+		text-align: center;
+		font-size: 20px;
 	}
 	li p {
 		/* Styles for the entire paragraph */
