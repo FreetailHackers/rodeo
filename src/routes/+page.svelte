@@ -31,7 +31,6 @@
 	</form>
 	<!-- Admin announcements panel -->
 	<div class="header-container">
-		<h3 class="announcementYearHeader">SPRING 2024</h3>
 		<h1 class="announcementHeader">ANNOUNCEMENTS</h1>
 	</div>
 	<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
@@ -68,7 +67,6 @@
 		Don't have an account yet? <a href="/register">Register here!</a>
 	</p>
 	<div class="header-container">
-		<h3 class="announcementYearHeader">SPRING 2024</h3>
 		<h1 class="announcementHeader">ANNOUNCEMENTS</h1>
 	</div>
 	<Announcements announcements={data.announcements} admin={false} />
@@ -104,11 +102,6 @@
 		align-items: center;
 		flex-direction: column;
 	}
-	.announcementYearHeader {
-		text-align: center;
-		font-family: 'Fugaz One';
-		font-size: 20px;
-	}
 	.announcementHeader {
 		text-align: center;
 		font-family: 'Zen Dots';
@@ -124,29 +117,14 @@
 		font-weight: 400;
 	}
 
-	@media screen and (min-width: 768px) {
-		.announcementYearHeader {
-			margin-bottom: -40px;
-		}
-	}
 
 	@media screen and (max-width: 768px) {
-		.announcementYearHeader {
-			font-size: 16px;
-			line-height: 40px;
-			margin-bottom: -50px;
-		}
 
 		.announcementHeader {
 			font-size: 40px;
 			line-height: 100px;
 		}
 		@media screen and (max-width: 480px) {
-			.announcementYearHeader {
-				font-size: 14px;
-				line-height: 30px;
-				margin-bottom: -40px;
-			}
 
 			.announcementHeader {
 				font-size: 30px;
