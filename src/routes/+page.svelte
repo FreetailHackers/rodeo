@@ -117,15 +117,12 @@
 		font-weight: 400;
 	}
 
-
 	@media screen and (max-width: 768px) {
-
 		.announcementHeader {
 			font-size: 40px;
 			line-height: 100px;
 		}
 		@media screen and (max-width: 480px) {
-
 			.announcementHeader {
 				font-size: 30px;
 				line-height: 70px;
