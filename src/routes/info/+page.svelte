@@ -75,12 +75,7 @@ print('This is a multi-line code block.')
 		<!-- </div> -->
 	{:else}
 		<!-- <SvelteMarkdown source={data.info} /> -->
-		<div class="faq_content">
-			<div class="side-faq">
-				<h2 class="left-border-faq">FAQ</h2>
-				<h2 class="left-border-faq-2">FAQ</h2>
-			</div>
-		</div>
+		<div class="faq_content" />
 	{/if}
 </div>
 
