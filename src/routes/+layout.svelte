@@ -4,8 +4,8 @@
 	import { toasts } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import './global.css';
-	// import { fly } from 'svelte/transition';
-	// import { cubicOut } from 'svelte/easing';
+	import { fly } from 'svelte/transition';
+	import { cubicOut } from 'svelte/easing';
 	import Loader from '$lib/components/loader.svelte';
 	import { beforeNavigate, afterNavigate } from '$app/navigation';
 
@@ -50,7 +50,6 @@
 		<li>
 			<a href="/schedule" class:active={$page.url.pathname.startsWith('/schedule')}>Schedule</a>
 		</li>
-		<li><a href="/info" class:active={$page.url.pathname.startsWith('/info')}>Info</a></li>
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->
 		{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
 			<li><a href="/id" class:active={$page.url.pathname.startsWith('/id')}>My Hacker ID</a></li>
@@ -122,13 +121,11 @@
 	{/if}
 </nav>
 
-<div class="main-content">
-	{#key $page.url.pathname}
-		<!-- <div in:fly={{ easing: cubicOut, y: 10, duration: 300 }}> -->
+{#key $page.url.pathname}
+	<div in:fly={{ easing: cubicOut, y: -100, duration: 300 }}>
 		<slot />
-		<!-- </div> -->
-	{/key}
-</div>
+	</div>
+{/key}
 
 <Toasts />
 
@@ -161,16 +158,11 @@
 		display: none;
 	}
 
-	.main-content {
-		/* max-width: 50rem; */
-		margin: 0 auto;
-		/* padding: 0 1rem; */
-	}
-
 	nav {
 		position: sticky;
+		top: 0;
 		margin-top: 0;
-		/* margin-bottom: 3rem; */
+		margin-bottom: 0;
 		background-color: var(--primary-accent);
 		z-index: 99;
 	}

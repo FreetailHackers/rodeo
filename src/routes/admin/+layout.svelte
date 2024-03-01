@@ -2,24 +2,33 @@
 	import { page } from '$app/stores';
 </script>
 
-<h1>Admin Panel</h1>
+<div class="main-content">
+	<h1>Admin Panel</h1>
 
-<ul>
-	<li><a href="/admin" class:active={$page.url.pathname === '/admin'}>Admissions</a></li>
-	<li>
-		<a href="/admin/email" class:active={$page.url.pathname === '/admin/email'}>Email</a>
-	</li>
-	<li>
-		<a href="/admin/questions" class:active={$page.url.pathname === '/admin/questions'}
-			>Registration Questions</a
-		>
-	</li>
-</ul>
-<hr />
+	<ul>
+		<li><a href="/admin" class:active={$page.url.pathname === '/admin'}>Admissions</a></li>
+		<li>
+			<a href="/admin/email" class:active={$page.url.pathname === '/admin/email'}>Email</a>
+		</li>
+		<li>
+			<a href="/admin/questions" class:active={$page.url.pathname === '/admin/questions'}
+				>Registration Questions</a
+			>
+		</li>
+	</ul>
 
-<slot />
+	<hr />
+
+	<slot />
+</div>
 
 <style>
+	.main-content {
+		max-width: 50rem;
+		margin: 0 auto;
+		padding: 0 1rem;
+	}
+
 	h1 {
 		margin-bottom: 0;
 	}

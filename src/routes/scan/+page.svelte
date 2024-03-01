@@ -6,16 +6,24 @@
 	<title>Rodeo | Scan</title>
 </svelte:head>
 
-<section>
-	{#if data.scanActions.length === 0}
-		<i>No scan actions are configured. Add some in the <a href="/admin">admin panel</a>.</i>
-	{/if}
-	{#each data.scanActions as action}
-		<a href={'/scan/' + action}><button>{action}</button></a>
-	{/each}
-</section>
+<div class="main-content">
+	<section>
+		{#if data.scanActions.length === 0}
+			<i>No scan actions are configured. Add some in the <a href="/admin">admin panel</a>.</i>
+		{/if}
+		{#each data.scanActions as action}
+			<a href={'/scan/' + action}><button>{action}</button></a>
+		{/each}
+	</section>
+</div>
 
 <style>
+	.main-content {
+		max-width: 50rem;
+		margin: 0 auto;
+		padding: 0 1rem;
+	}
+
 	section {
 		display: flex;
 		flex-direction: column;

@@ -16,14 +16,14 @@
 	const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
-	const groupByDateArray: { day: string; events: any[] }[] = [];
+	let groupByDateArray: { day: string; events: any[]; hasMatchingEvents: boolean }[] = [];
 
 	for (let event of data.schedule) {
 		const dayOfWeek = daysOfWeek[new Date(event.start).getDay()];
 		let dayEntry = groupByDateArray.find((entry) => entry.day === dayOfWeek);
 
 		if (!dayEntry) {
-			dayEntry = { day: dayOfWeek, events: [] };
+			dayEntry = { day: dayOfWeek, events: [], hasMatchingEvents: true };
 			groupByDateArray.push(dayEntry);
 		}
 
@@ -40,6 +40,15 @@
 
 	function chosenFilter(filter: string | null) {
 		selected = selected === filter ? null : filter;
+
+		groupByDateArray.forEach((group) => {
+			if (selected === null) {
+				group.hasMatchingEvents = true;
+			} else {
+				group.hasMatchingEvents = group.events.some((event) => event.type === selected);
+			}
+		});
+		groupByDateArray = groupByDateArray;
 	}
 
 	// Calendar functionality
@@ -72,69 +81,72 @@
 
 				{#if url && data.schedule.length > 0}
 					<button
-						><a class="calendar-export" href={url} download="events.ics">Download All Events</a
+						><a class="calendar-export" href={url} download="events.ics">Download Schedule</a
 						></button
 					>{/if}
 			</div>
 		</div>
-		{#each groupByDateArray as { day, events }}
+		{#each groupByDateArray as { day, events, hasMatchingEvents }}
 			<div class="column">
 				<h2>{day}</h2>
-				{#each events as event}
-					{#if selected === null || event.type === selected}
-						<div
-							class="card card-text {currentDateTime >= event.start && currentDateTime < event.end
-								? 'currentEvent'
-								: ''}"
-							on:mouseenter={() => {
-								hoveredId = event.id;
-							}}
-							on:mouseleave={() => {
-								hoveredId = null;
-							}}
-						>
-							<div class="flex-row">
-								<div class="name-location">
-									<p class="name">{event.name}</p>
-									<br />
-									<p class="location">{event.location}</p>
-									{#if data.user?.roles.includes('ADMIN')}
-										<p>
-											<a class="edit" href="/schedule/{event.id}">Edit</a>
+				{#if hasMatchingEvents}
+					{#each events as event}
+						{#if selected === null || event.type === selected}
+							<div
+								class="card card-text {currentDateTime >= event.start && currentDateTime < event.end
+									? 'currentEvent'
+									: ''}"
+								on:mouseenter={() => {
+									hoveredId = event.id;
+								}}
+								on:mouseleave={() => {
+									hoveredId = null;
+								}}
+							>
+								<div class="flex-row">
+									<div class="name-location">
+										<p class="name">{event.name}</p>
+										<p class="location">{event.location}</p>
+										{#if data.user?.roles.includes('ADMIN')}
+											<p>
+												<a class="edit" href="/schedule/{event.id}">Edit</a>
+											</p>
+										{/if}
+									</div>
+									{#if hoveredId !== event.id}
+										<p class="date">
+											{event.start.toLocaleString('en-US', {
+												timeZone: data.timezone,
+												hour: 'numeric',
+												minute: 'numeric',
+												hour12: true,
+											})}
+										</p>
+									{:else}
+										<p class="date">
+											from {event.start.toLocaleString('en-US', {
+												timeZone: data.timezone,
+												hour: 'numeric',
+												minute: 'numeric',
+												hour12: true,
+											})} <br /> to {event.end.toLocaleString('en-US', {
+												timeZone: data.timezone,
+												hour: 'numeric',
+												minute: 'numeric',
+												hour12: true,
+											})}
 										</p>
 									{/if}
 								</div>
-								{#if hoveredId !== event.id}
-									<p class="date">
-										{event.start.toLocaleString('en-US', {
-											timeZone: data.timezone,
-											hour: 'numeric',
-											minute: 'numeric',
-											hour12: true,
-										})}
-									</p>
-								{:else}
-									<p class="date">
-										from {event.start.toLocaleString('en-US', {
-											timeZone: data.timezone,
-											hour: 'numeric',
-											minute: 'numeric',
-											hour12: true,
-										})} <br /> to {event.end.toLocaleString('en-US', {
-											timeZone: data.timezone,
-											hour: 'numeric',
-											minute: 'numeric',
-											hour12: true,
-										})}
-									</p>
+								{#if hoveredId === event.id}
+									<p class="description">{event.description}</p>
 								{/if}
 							</div>
-							{#if hoveredId === event.id}
-								<p class="description">{event.description}</p>
-							{/if}
-						</div>
-					{/if}
-				{/each}
+						{/if}
+					{/each}
+				{:else}
+					<p class="empty-events">There are no events that fall under this category.</p>
+				{/if}
 			</div>
 		{/each}
 	</div>
@@ -170,53 +182,62 @@
 					<option value="Workshop">Workshop</option>
 				</select>
 
-				<button type="submit">Save</button>
+				<button class="admin-button" type="submit">Save</button>
 			</form>
 		</div>
 	{/if}
 </div>
 
 <style>
-	.sidebar {
-		width: 16.5rem; /* Adjust the width as needed */
-		margin-right: 20px; /* Adjust the spacing between the sidebar and grid */
-		padding-top: 12px;
+	.bg-img {
+		background-image: url('Topographic Background (Tilable).svg');
+
+		/* Khang */
+		/* background-repeat: repeat;
+		background-size: 100%; */
+		/* kick footer to bottom of page */
+		min-height: 100vh;
+		/* pad header to correct spot */
+		padding: 3rem 0.5rem 0 0.5rem;
+		/* Don't let user select the text. Might want to move to mobile only */
+		user-select: none;
 	}
 
-	.bg-img {
-		background-image: url('vectorNOTOURS.svg');
-		background-repeat: repeat;
-		background-size: 80%;
+	.sidebar {
+		width: 16rem;
+		margin: 0 10px;
 	}
 
 	h1 {
-		margin-top: 0;
-		padding-top: 5rem;
-		font-family: 'Zen Dots', sans-serif;
-		font-weight: 400;
-		font-style: normal;
-		text-align: center;
-		font-size: 64px;
 		color: #f2ebd9;
+		font-size: 64px;
+		font-weight: 400;
+		margin: 0;
+		text-align: center;
 		text-shadow: 0 4px 12px black;
 	}
 
 	h2 {
-		font-family: 'Fugaz One';
 		color: #f2ebd9;
-		text-align: left;
+		font-family: 'Fugaz One';
 		font-size: 36px;
 		text-shadow: 0 4px 8px rgb(0, 0, 0);
 	}
 
 	button {
-		all: unset;
 		background-color: #f2ebd9;
 		color: #303030;
+		height: 2rem;
 		font-family: 'Geologica', sans-serif;
 		border-radius: 4px;
-		padding: 4px 12px;
 		margin: 2px 2px;
+		flex-grow: 1;
+		justify-content: center;
+	}
+
+	.button-container {
+		display: flex;
+		flex-wrap: wrap;
 	}
 
 	.active {
@@ -225,29 +246,10 @@
 	}
 
 	p {
-		all: unset;
-		font-family: 'Geologica', sans-serif;
+		margin: 0;
 	}
 
-	p.name {
-		font-size: 18px;
-	}
-	p.date {
-		font-size: 18px;
-		text-align: right;
-		flex-shrink: 0;
-	}
-
-	p.description {
-		padding-top: 0px;
-	}
-
-	.name,
-	.location,
-	.description {
-		text-align: left;
-	}
-
+	.date,
 	.name,
 	.date {
 		font-size: 18px;
@@ -260,6 +262,7 @@
 
 	.date {
 		text-align: right;
+		flex-shrink: 0;
 	}
 
 	.description {
@@ -281,12 +284,9 @@
 		background-color: #303030;
 		border-radius: 10px;
 		display: flex;
-		padding: 0.75rem;
 		flex-direction: column;
+		padding: 0.75rem;
 		margin-bottom: 0.75rem;
-		animation: cubic-bezier(0.165, 0.84, 0.44, 1);
-		animation-name: fly;
-		animation-duration: 300;
 	}
 
 	.currentEvent {
@@ -299,9 +299,6 @@
 	}
 
 	.card-text {
-		font-family: 'Geologica', sans-serif;
-		font-optical-sizing: auto;
-		font-style: normal;
 		color: #f2ebd9;
 	}
 
@@ -311,24 +308,18 @@
 
 	.container {
 		display: flex;
-		justify-content: space-between;
 		flex-wrap: wrap;
 		max-width: 75rem;
 		margin: auto;
-		min-height: 70vh;
-		position: relative;
-	}
-
-	.admin-panel {
-		width: 50rem;
-		display: block;
-		margin-left: auto;
-		margin-right: auto;
 	}
 
 	.column {
 		flex: 1;
-		margin: 10px 5px;
+		margin: 0px 5px;
+	}
+
+	.empty-events {
+		color: #f2ebd9;
 	}
 
 	@media (max-width: 768px) {
@@ -336,29 +327,37 @@
 			font-size: 9.5vw;
 		}
 
-		.bg-img {
-			background-size: 170%;
+		.sidebar {
+			width: unset;
 		}
 
 		.container {
 			flex-direction: column;
-			margin-left: 10px;
-			margin-right: 10px;
+			margin: 0 10px 0 10px;
 		}
 
 		.column {
 			flex: 1 0 100%;
 		}
-
-		.admin-panel {
-			width: auto;
-			margin: 0 5px 0 5px;
-		}
 	}
-	/* Admin view */
 
+	/* Admin view */
 	hr {
-		margin-top: 20px;
+		margin-top: 3rem;
+	}
+
+	.admin-panel {
+		max-width: 50rem;
+		margin-left: auto;
+		margin-right: auto;
+		padding: 0 10px 0 10px;
+		padding-bottom: 3rem;
+	}
+
+	.admin-button {
+		background-color: #e1563f;
+		color: #f2ebd9;
+		margin-bottom: 1rem;
 	}
 
 	label {
@@ -379,9 +378,5 @@
 	input,
 	textarea {
 		margin-bottom: 1rem;
-	}
-
-	.edit {
-		color: #e1563f;
 	}
 </style>
