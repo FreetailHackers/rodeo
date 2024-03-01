@@ -1,9 +1,8 @@
 <script lang="ts">
-	// import { enhance } from '$app/forms';
-	// import type { FAQ } from '@prisma/client';
+	import type { OtherCategories, AuthUser } from '@prisma/client';
 
-	// export let user: AuthUser;
-	// export let questions: FAQ[];
+	export let user: AuthUser;
+	export let questions: OtherCategories[] | null;
 </script>
 
 <svelte:head>
@@ -12,64 +11,40 @@
 
 <div class="background">
 	<div class="faq">
-		<div class="show-large">
-			<h2 class="left-border-faq">FAQ</h2>
-			<h2 class="left-border-faq-2">FAQ</h2>
-		</div>
-		<div class="show-small">
-			<h2 class="mobile-title">FAQ</h2>
-		</div>
+		<h2 class="left-border-faq">FAQ</h2>
+		<h2 class="left-border-faq-2">FAQ</h2>
 	</div>
 
 	<div class="faq-view">
-		<!-- {#if questions.length > 0}
-			<div class="container">
-				{#each questions as question}
-					<div class="card">
-						<div class="card-container">
-							<div class="faq-question">
-								{question.question}
-							</div>
-							<div class="faq-answer">
-								{question.answer}
+		<div class="faq-cards">
+			{#if questions !== null}
+				<div class="container">
+					{#each questions as question}
+						<div class="card">
+							<div class="card-container">
+								<div class="faq-question">
+									{question.title}
+								</div>
+								<div class="faq-answer">
+									{question.response}
+								</div>
 							</div>
 						</div>
-					</div>
-				{/each}
-			</div>
-		{:else}
-			<h2>Check back for the FAQ!</h2>
-		{/if} -->
-
-		<!-- <div class="faq-cards" /> -->
+					{/each}
+				</div>
+			{:else}
+				<h2>Check back for the FAQ!</h2>
+			{/if}
+		</div>
 	</div>
 </div>
 
 <style>
 	@import url('https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap');
 
-	.show-large {
-		display: none;
-	}
-
-	.show-small {
-		display: contents;
-	}
-
-	@media (min-width: 1090px) {
-		.show-large {
-			display: contents;
-		}
-
-		.show-small {
-			display: none;
-		}
-	}
-
 	.background {
 		background-color: var(--background-color);
 		display: flex;
-		align-items: center;
 	}
 
 	.faq {
@@ -102,10 +77,6 @@
 		transform: rotate(90deg);
 	}
 
-	.mobile-title {
-		margin-left: 2rem;
-	}
-
 	h2 {
 		font-family: 'Fugaz One';
 		color: #f2ebd9;
@@ -114,26 +85,15 @@
 		text-shadow: 0 4px 8px rgb(0, 0, 0);
 	}
 
-	/* CARD SPECIFIC CSS */
-	/* .card {
-		border: 4px solid var(--highlight-color);
-		width: 25rem;
-		height: 200px;
-		margin: 10px;
-		border-radius: 10px;
-	}
+	@media (max-width: 1089px) {
+		.left-border-faq {
+			margin-left: 2rem;
+			font-size: 36px;
+			transform: none;
+		}
 
-	.card:hover {
-		background-color: var(--secondary-color);
-		cursor: pointer;
-	} 
-
-	.card-container {
-		width: 100%;
-		height: 100%;
-		position: relative;
-		transition: transform 1s;
-		transform-style: preserve-3d;
+		.left-border-faq-2 {
+			display: none;
+		}
 	}
-	*/
 </style>

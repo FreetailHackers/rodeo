@@ -1,4 +1,4 @@
-<!-- <script lang="ts">
+<script lang="ts">
 	import { enhance } from '$app/forms';
 	import { confirmationDialog } from '$lib/actions.js';
 </script>
@@ -25,7 +25,7 @@
 <form method="POST" action="?/deleteAll" use:enhance>
 	<button
 		use:confirmationDialog={{
-			text: 'Are you sure you want to delete all events?',
+			text: 'Are you sure you want to delete all questions?',
 			cancel: 'Cancel',
 			ok: 'Delete',
 		}}>Delete</button
@@ -37,4 +37,4 @@
 	textarea {
 		margin-bottom: 1rem;
 	}
-</style> -->
+</style>

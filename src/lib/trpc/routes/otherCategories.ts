@@ -46,9 +46,6 @@ export const otherCategoriesRouter = t.router({
 		.use(authenticate(['ADMIN']))
 		.input(otherCategoriesSchema)
 		.mutation(async (req): Promise<void> => {
-			console.log('bob');
-			console.log(req.input);
-			console.log('said hi');
 			await prisma.otherCategories.create({ data: { ...req.input } });
 		}),
 
