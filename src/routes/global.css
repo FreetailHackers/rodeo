@@ -43,6 +43,7 @@ nav {
 }
 
 button {
+	font-family: var(--font-family);
 	height: 2.5rem;
 	font-size: var(--font-size);
 	color: white;
@@ -180,6 +181,12 @@ dialog div {
 dialog button {
 	padding: 0 1rem;
 	margin-bottom: 1rem;
+}
+
+.main-content {
+	max-width: 50rem;
+	margin: 0 auto;
+	padding: 0 1rem;
 }
 
 @media (max-width: 450px) {

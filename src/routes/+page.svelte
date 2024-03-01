@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import Announcements from '$lib/components/announcements-2024-spring.svelte';
+	import Schedule from '$lib/components/schedule.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
 	import { toasts } from '$lib/stores';
 	export let data;
@@ -71,6 +72,8 @@
 	</div>
 	<Announcements announcements={data.announcements} admin={false} />
 {/if}
+
+<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
 
 <style>
 	.bg-img {

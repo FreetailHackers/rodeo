@@ -47,9 +47,7 @@
 		<li>
 			<a href="/" class:active={$page.url.pathname === '/'}>Home</a>
 		</li>
-		<li>
-			<a href="/schedule" class:active={$page.url.pathname.startsWith('/schedule')}>Schedule</a>
-		</li>
+
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->
 		{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
 			<li><a href="/id" class:active={$page.url.pathname.startsWith('/id')}>My Hacker ID</a></li>
@@ -161,8 +159,7 @@
 	nav {
 		position: sticky;
 		top: 0;
-		margin-top: 0;
-		margin-bottom: 0;
+		margin: 0;
 		background-color: var(--primary-accent);
 		z-index: 99;
 	}
@@ -262,6 +259,10 @@
 		.show-large {
 			display: contents;
 		}
+
+		/* nav {
+			margin-bottom: 0;
+		} */
 
 		nav {
 			margin-bottom: 0;

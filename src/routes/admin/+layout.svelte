@@ -15,6 +15,9 @@
 				>Registration Questions</a
 			>
 		</li>
+		<li>
+			<a href="/admin/schedule" class:active={$page.url.pathname === '/admin/schedule'}>Schedule</a>
+		</li>
 	</ul>
 
 	<hr />

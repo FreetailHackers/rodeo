@@ -1,3 +1,4 @@
+import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -7,15 +8,11 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export const load = async ({ locals }) => {
-	return {
-		schedule: await trpc(locals.auth).events.getAll(),
-		user: (await locals.auth.validate())?.user,
-		timezone: (await trpc(locals.auth).settings.getPublic()).timezone,
-	};
+	await authenticate(locals.auth, ['ADMIN']);
 };
 
 export const actions = {
-	default: async ({ locals, request }) => {
+	create: async ({ locals, request }) => {
 		const timezone = (await trpc(locals.auth).settings.getPublic()).timezone;
 		const formData = await request.formData();
 		const fixedStartTime = dayjs.tz(formData.get('start') as string, timezone).toDate();
@@ -30,5 +27,9 @@ export const actions = {
 			type: formData.get('type') as string,
 		});
 		return 'Created event!';
+	},
+
+	deleteAll: async ({ locals }) => {
+		await trpc(locals.auth).events.deleteAll();
 	},
 };
