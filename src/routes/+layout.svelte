@@ -4,8 +4,8 @@
 	import { toasts } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import './global.css';
-	// import { fly } from 'svelte/transition';
-	// import { cubicOut } from 'svelte/easing';
+	import { fly } from 'svelte/transition';
+	import { cubicOut } from 'svelte/easing';
 	import Loader from '$lib/components/loader.svelte';
 	import { beforeNavigate, afterNavigate } from '$app/navigation';
 
@@ -76,7 +76,7 @@
 					>
 				</li>
 			{/if}
-		{/if}
+		{/if}	
 		<li>
 			<a href="/feedback" class:active={$page.url.pathname.startsWith('/feedback')}>Feedback</a>
 		</li>

@@ -28,11 +28,11 @@
 	<form method="POST" action="?/logout" use:enhance>
 		<button type="submit" id="logout">Logout</button>
 	</form>
-	<!-- Admin announcements panel -->
+	Admin announcements panel
 	<h2>Announcements</h2>
 	<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
 {:else}
-	<!-- Signup page -->
+	Signup page 
 	{#if !data.canApply}
 		<p>
 			<b>
@@ -56,7 +56,7 @@
 		<label for="email">Email</label>
 		<input id="email" name="email" required autocomplete="username" />
 		<label for="password">Password (<a href="/login/reset-password">forgot?</a>)</label>
-		<!-- HACK: Not required so we can easily log into test accounts lol -->
+		HACK: Not required so we can easily log into test accounts lol 
 		<input type="password" id="password" name="password" autocomplete="current-password" />
 		<button>Continue</button>
 	</form>
