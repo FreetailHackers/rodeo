@@ -5,6 +5,7 @@ export const load = async ({ locals }) => {
 	return {
 		user: (await locals.auth.validate())?.user,
 		announcements: await trpc(locals.auth).announcements.getAll(),
+		schedule: await trpc(locals.auth).events.getAll(),
 		settings: await trpc(locals.auth).settings.getPublic(),
 		// Check whether various OAuth providers are set up in
 		// environment variables so we can show/hide buttons.
