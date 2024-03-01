@@ -183,11 +183,11 @@ dialog button {
 	margin-bottom: 1rem;
 }
 
-.main-content {
+/* .main-content {
 	max-width: 50rem;
 	margin: 0 auto;
 	padding: 0 1rem;
-}
+} */
 
 @media (max-width: 450px) {
 	dialog {
