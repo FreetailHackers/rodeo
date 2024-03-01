@@ -43,6 +43,7 @@ nav {
 }
 
 button {
+	font-family: var(--font-family);
 	height: 2.5rem;
 	font-size: var(--font-size);
 	color: white;
