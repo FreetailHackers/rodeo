@@ -28,6 +28,11 @@
 								<div class="faq-answer">
 									{question.response}
 								</div>
+								{#if user?.roles.includes('ADMIN')}
+									<p>
+										<a class="edit" href="/admin/faq/{question.id}">Edit</a>
+									</p>
+								{/if}
 							</div>
 						</div>
 					{/each}

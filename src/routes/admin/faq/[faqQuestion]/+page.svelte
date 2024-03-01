@@ -1,4 +1,4 @@
-<!-- <script lang="ts">
+<script lang="ts">
 	import { enhance } from '$app/forms';
 	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
 	import { confirmationDialog } from '$lib/actions.js';
@@ -7,14 +7,14 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Admin - Schedule - {data.event.name}</title>
+	<title>Rodeo | Admin - FAQ - {data.question.title}</title>
 </svelte:head>
 
 <div class="container">
 	<div id="header">
 		<h1>Edit Event</h1>
 		<form method="POST" action="?/delete" use:enhance>
-			<input type="hidden" name="id" value={data.event.id} />
+			<input type="hidden" name="id" value={data.question.id} />
 			<button
 				use:confirmationDialog={{
 					text: 'Are you sure you want to delete this event?',
@@ -34,45 +34,13 @@
 			};
 		}}
 	>
-		<input type="hidden" name="id" value={data.event.id} />
+		<input type="hidden" name="id" value={data.question.id} />
 
-		<label for="name">Name</label>
-		<input type="text" id="name" name="name" required value={data.event.name} />
+		<label for="title">Title</label>
+		<input type="text" id="title" name="title" required value={data.question.title} />
 
-		<label for="description">Description</label>
-		<div id="description">
-			<MarkdownEditor id="description" name="description" value={data.event.description} required />
-		</div>
-
-		<label for="start">Start Time</label>
-		<input
-			type="datetime-local"
-			id="start"
-			name="start"
-			required
-			value={data.event.start.toLocaleString('sv', { timeZone: data.timezone })}
-		/>
-
-		<label for="end">End Time</label>
-		<input
-			type="datetime-local"
-			id="end"
-			name="end"
-			required
-			value={data.event.end.toLocaleString('sv', { timeZone: data.timezone })}
-		/>
-
-		<label for="location">Location</label>
-		<input type="text" id="location" name="location" required value={data.event.location} />
-
-		<label for="type">Event Type</label>
-		<select name="type" value={data.event.type} required>
-			<option value="Regular-Event">Regular Event</option>
-			<option value="Key-Event">Key Event</option>
-			<option value="Speaker-Event">Speaker Event</option>
-			<option value="Fun-Event">Fun Event</option>
-			<option value="Workshop">Workshop</option>
-		</select>
+		<label for="response">Response</label>
+		<MarkdownEditor id="response" name="response" required value={data.question.response} />
 
 		<button type="submit">Save</button>
 	</form>
@@ -85,11 +53,8 @@
 		align-items: center;
 	}
 
-	select,
 	input,
-	form,
-	#description {
+	form {
 		margin-bottom: 1rem;
 	}
 </style>
- -->
