@@ -8,7 +8,6 @@ const settingsSchema = z
 	.object({
 		applicationOpen: z.boolean().optional(),
 		daysToRSVP: z.number().nullable().optional(),
-		info: z.string().optional(),
 		homepageText: z.string().optional(),
 		rollingAdmissions: z.boolean().optional(),
 		submitTemplate: z.string().optional(),
@@ -37,7 +36,6 @@ export const settingsRouter = t.router({
 			homepageText: string;
 			applicationOpen: boolean;
 			daysToRSVP: number | null;
-			info: string;
 			scanActions: string[];
 			timezone: string;
 			applicationDeadline: Date | null;
@@ -47,7 +45,6 @@ export const settingsRouter = t.router({
 				homepageText: settings.homepageText,
 				applicationOpen: settings.applicationOpen,
 				daysToRSVP: settings.daysToRSVP,
-				info: settings.info,
 				scanActions: settings.scanActions,
 				timezone: settings.timezone,
 				applicationDeadline: settings.applicationDeadline,

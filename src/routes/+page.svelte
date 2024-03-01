@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import Announcements from '$lib/components/announcements.svelte';
+	import Schedule from '$lib/components/schedule.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
 	import { toasts } from '$lib/stores';
 	export let data;
@@ -82,6 +83,8 @@
 		<img alt="The project logo" src={'src/lib/assets/sponsors/Speak_Now_Placeholder.jpeg'} />
 	</div>
 {/if}
+
+<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
 
 <style>
 	.image {
