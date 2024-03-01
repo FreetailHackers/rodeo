@@ -1,8 +1,9 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
-	// import MarkdownEditor from '$lib/components/markdown-editor.svelte';
+	// import { enhance } from '$app/forms';
+	import type { FAQ, AuthUser } from '@prisma/client';
 
-	export let data;
+	// export let user: AuthUser;
+	export let questions: FAQ[];
 </script>
 
 <svelte:head>
@@ -21,25 +22,26 @@
 	</div>
 
 	<div class="faq-view">
-		<div class="faq-cards" />
-
-		{#if data.user?.roles.includes('ADMIN')}
-			<div class="faq-admin">
-				<hr />
-				<h2>Create New Question</h2>
-				<form method="POST" use:enhance>
-					<input type="hidden" name="id" />
-
-					<label for="question">Question</label>
-					<input type="text" id="question" name="question" required />
-
-					<label for="answer">Answer</label>
-					<textarea id="answer" name="answer" required />
-
-					<button type="submit">Save</button>
-				</form>
+		{#if questions.length > 0}
+			<div class="container">
+				{#each questions as question}
+					<div class="card">
+						<div class="card-container">
+							<div class="faq-question">
+								{question.question}
+							</div>
+							<div class="faq-answer">
+								{question.answer}
+							</div>
+						</div>
+					</div>
+				{/each}
 			</div>
+		{:else}
+			<h2>Check back for the FAQ!</h2>
 		{/if}
+
+		<!-- <div class="faq-cards" /> -->
 	</div>
 </div>
 
@@ -67,6 +69,7 @@
 	.background {
 		background-color: var(--background-color);
 		display: flex;
+		align-items: center;
 	}
 
 	.faq {
@@ -74,6 +77,7 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		margin-bottom: 1rem;
 		/* padding-left: 0; */
 		/* background-color: var(--background-color); */
 	}
@@ -83,22 +87,19 @@
 		font-style: normal;
 		font-size: 8rem;
 		color: #f2ebd9;
+		text-shadow: none;
 		transform: rotate(90deg);
 	}
 
 	.left-border-faq-2 {
 		font-family: 'Zen Dots';
 		font-style: normal;
+		font-size: 8rem;
+		font-weight: normal;
 		color: var(--background-color);
-		-webkit-text-stroke: 1px #f2ebd9;
+		text-shadow: none;
+		-webkit-text-stroke: 0.1rem #f2ebd9;
 		transform: rotate(90deg);
-	}
-
-	.faq-admin {
-		width: 50rem;
-		display: block;
-		margin-left: auto;
-		margin-right: auto;
 	}
 
 	.mobile-title {
@@ -113,22 +114,25 @@
 		text-shadow: 0 4px 8px rgb(0, 0, 0);
 	}
 
-	label {
-		display: block;
-		margin-bottom: 0.5rem;
-		color: #f2ebd9;
-		font-family: 'Geologica', sans-serif;
-		margin-top: 10px;
+	/* CARD SPECIFIC CSS */
+	.card {
+		border: 4px solid var(--highlight-color);
+		width: 25rem;
+		height: 200px;
+		margin: 10px;
+		border-radius: 10px;
 	}
 
-	input,
-	textarea,
-	button {
-		background-color: var(--highlight-color);
-		color: var(--background-color);
+	.card:hover {
+		background-color: var(--secondary-color);
+		cursor: pointer;
 	}
 
-	button {
-		margin-bottom: 10px;
+	.card-container {
+		width: 100%;
+		height: 100%;
+		position: relative;
+		transition: transform 1s;
+		transform-style: preserve-3d;
 	}
 </style>

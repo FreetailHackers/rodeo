@@ -47,10 +47,6 @@
 		<li>
 			<a href="/" class:active={$page.url.pathname === '/'}>Home</a>
 		</li>
-		<li>
-			<a href="/schedule" class:active={$page.url.pathname.startsWith('/schedule')}>Schedule</a>
-		</li>
-		<li><a href="/info" class:active={$page.url.pathname.startsWith('/info')}>FAQ</a></li>
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->
 		{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
 			<li><a href="/id" class:active={$page.url.pathname.startsWith('/id')}>My Hacker ID</a></li>

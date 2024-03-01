@@ -18,5 +18,6 @@ export const actions = {
 
 	deleteAll: async ({ locals }) => {
 		await trpc(locals.auth).faq.deleteAll();
+		return 'Deleted all questions!';
 	},
 };

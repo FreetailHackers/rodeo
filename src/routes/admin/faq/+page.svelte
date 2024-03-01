@@ -4,7 +4,7 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Admin - Schedule</title>
+	<title>Rodeo | Admin - FAQ</title>
 </svelte:head>
 
 <h2>Create New Question</h2>

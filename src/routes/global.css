@@ -5,9 +5,10 @@
 :root {
 	--font-family: 'Helvetica Neue', 'Arial', sans-serif;
 	--font-size: 16px;
-	--primary-accent: #954479;
+	--primary-accent: #ff4545;
 	--background-color: #404040;
 	--highlight-color: #f2ebd9;
+	--secondary-color: #4e656d;
 }
 
 h1,
