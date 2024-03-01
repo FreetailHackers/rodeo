@@ -3,9 +3,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Geologica&display=swap');
 
 :root {
-	--font-family: 'Helvetica Neue', 'Arial', sans-serif;
+	--font-family: 'Geologica', 'Helvetica Neue', 'Arial', sans-serif;
 	--font-size: 16px;
-	--primary-accent: #954479;
+	--primary-accent: #e1563f;
 }
 
 h1,
@@ -14,7 +14,7 @@ h3,
 h4,
 h5,
 h6 {
-	font-family: 'ruddy', sans-serif;
+	font-family: 'Zen Dots', 'ruddy', sans-serif;
 	font-weight: 700;
 	font-style: normal;
 	text-transform: uppercase;
@@ -24,6 +24,7 @@ html {
 	box-sizing: border-box;
 	overflow-y: scroll; /* prevent scrollbar from shifting layout */
 }
+
 *,
 *:before,
 *:after {
@@ -42,6 +43,7 @@ nav {
 }
 
 button {
+	font-family: var(--font-family);
 	height: 2.5rem;
 	font-size: var(--font-size);
 	color: white;
@@ -179,6 +181,12 @@ dialog div {
 dialog button {
 	padding: 0 1rem;
 	margin-bottom: 1rem;
+}
+
+.main-content {
+	max-width: 50rem;
+	margin: 0 auto;
+	padding: 0 1rem;
 }
 
 @media (max-width: 450px) {

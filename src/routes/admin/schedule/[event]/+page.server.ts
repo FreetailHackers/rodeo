@@ -1,3 +1,4 @@
+import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import { error, redirect } from '@sveltejs/kit';
 import dayjs from 'dayjs';
@@ -8,6 +9,7 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export const load = async ({ locals, params }) => {
+	await authenticate(locals.auth, ['ADMIN']);
 	if (Number.isNaN(Number(params.event))) {
 		throw error(404, 'Event not found');
 	}
@@ -16,7 +18,6 @@ export const load = async ({ locals, params }) => {
 	if (event !== null) {
 		return {
 			event,
-			user: (await locals.auth.validate())?.user,
 			timezone: settings.timezone,
 		};
 	}
@@ -45,6 +46,6 @@ export const actions = {
 	delete: async ({ locals, request }) => {
 		const formData = await request.formData();
 		await trpc(locals.auth).events.delete(Number(formData.get('id') as string));
-		throw redirect(303, '/schedule');
+		throw redirect(303, '/');
 	},
 };
