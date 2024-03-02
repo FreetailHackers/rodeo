@@ -80,14 +80,10 @@
 <style>
 	.container {
 		padding: 0 20px;
-		display: center;
-		margin-left: auto;
-		margin-right: auto;
-		justify-content: space-around;
 	}
 	.bg-img {
 		background-color: #1d1d1c;
-		background-image: url('announcement-images/background.svg');
+		/*background-image: url('announcement-images/background.svg');*/
 		background-size: 110%;
 		min-height: 100vh;
 	}
@@ -96,7 +92,7 @@
 		/* Perfectly crisp at all zoom levels */
 		/* We can edit colors as we like by editing the .svg itself in VSCode */
 		background-color: #1d1d1c;
-		background-image: url('announcement-images/background.svg');
+		/*background-image: url('announcement-images/background.svg');*/
 
 		background-repeat: repeat;
 		background-size: cover;

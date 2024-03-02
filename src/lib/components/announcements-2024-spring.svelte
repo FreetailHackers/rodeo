@@ -9,52 +9,50 @@
 	export let announcements: Announcement[];
 </script>
 
-<div class="container">
-	{#if admin}
-		<form method="POST" action="?/announce" use:enhance class="form">
-			<MarkdownEditor name="announcement" placeholder="Make an announcement here..." required />
-			<br />
-			<button class="announcement-button-label">Announce</button>
-		</form>
-	{/if}
-	{#if announcements.length > 0}
-		<ul>
-			{#each announcements as announcement}
-				<li>
-					<span>
-						<p>
-							<span class="date">
-								{announcement.published.toLocaleDateString('en-us', {
-									month: 'long',
-									day: 'numeric',
-								})}
-							</span>
-							<span class="time">
-								{announcement.published.toLocaleTimeString('en-us', {
-									hour: 'numeric',
-									minute: 'numeric',
-								})}
-							</span>
-						</p>
-						{#if admin}
-							<form method="POST" action="?/unannounce" use:enhance>
-								<input type="hidden" name="id" value={announcement.id} />
-								<button class="deleteButton">✕</button>
-							</form>
-						{/if}
-					</span>
-					<div class="announcement-text">
-						<SvelteMarkdown source={announcement.body} />
-					</div>
-					<!-- Corner piece -->
-					<div class="bottom-right-image" />
-				</li>
-			{/each}
-		</ul>
-	{:else}
-		<p class="no-announcements-message">There are no announcements at this time.</p>
-	{/if}
-</div>
+{#if admin}
+	<form method="POST" action="?/announce" use:enhance class="form">
+		<MarkdownEditor name="announcement" placeholder="Make an announcement here..." required />
+		<br />
+		<button class="announcement-button-label">Announce</button>
+	</form>
+{/if}
+{#if announcements.length > 0}
+	<ul>
+		{#each announcements as announcement}
+			<li>
+				<span>
+					<p>
+						<span class="date">
+							{announcement.published.toLocaleDateString('en-us', {
+								month: 'long',
+								day: 'numeric',
+							})}
+						</span>
+						<span class="time">
+							{announcement.published.toLocaleTimeString('en-us', {
+								hour: 'numeric',
+								minute: 'numeric',
+							})}
+						</span>
+					</p>
+					{#if admin}
+						<form method="POST" action="?/unannounce" use:enhance>
+							<input type="hidden" name="id" value={announcement.id} />
+							<button class="deleteButton">✕</button>
+						</form>
+					{/if}
+				</span>
+				<div class="announcement-text">
+					<SvelteMarkdown source={announcement.body} />
+				</div>
+				<!-- Corner piece -->
+				<div class="bottom-right-image" />
+			</li>
+		{/each}
+	</ul>
+{:else}
+	<p class="no-announcements-message">There are no announcements at this time.</p>
+{/if}
 
 <style>
 	li {
@@ -70,15 +68,6 @@
 		background-size: contain;
 		background-position: center bottom;
 		background-repeat: no-repeat;
-	}
-	.container {
-		display: flex;
-		justify-content: space-between;
-		flex-wrap: wrap;
-		max-width: 75rem;
-		margin: auto;
-		min-height: 70vh;
-		position: relative;
 	}
 	.form {
 		flex: 1 1 100%;
