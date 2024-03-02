@@ -9,10 +9,12 @@
 
 <div class="accordion">
 	<div class="header">
-		<button class="accordion-button" on:click={handleClick}> {open ? '-' : '+'} </button>
-		<div class="text">
-			<slot name="head" />
-		</div>
+		<button class="accordion-button" on:click={handleClick}>
+			{open ? '-' : '+'}
+			<span class="text">
+				<slot name="head" />
+			</span>
+		</button>
 	</div>
 
 	{#if open}
@@ -39,7 +41,6 @@
 
 	.header .text {
 		flex: 1;
-		padding: 0.7rem 0;
 		margin-left: 1rem;
 	}
 

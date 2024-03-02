@@ -83,16 +83,14 @@
 	}
 
 	.faq-questions {
-		display: flex;
-		flex-direction: column;
-		flex-wrap: wrap;
-		/* TODO: change this width to fill up */
-		flex-grow: 2;
-		max-height: 45rem;
+		display: grid;
+		align-items: baseline;
+		grid-template-columns: 1fr 1fr;
+		grid-gap: 1rem;
 	}
 
 	.question {
-		padding: 0 5vw;
+		padding: 0 7vw;
 	}
 
 	h1 {
@@ -125,7 +123,7 @@
 		}
 
 		.faq-questions {
-			max-height: unset;
+			grid-template-columns: 1fr;
 		}
 	}
 </style>
