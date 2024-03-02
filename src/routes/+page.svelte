@@ -23,7 +23,7 @@
 </svelte:head>
 <div class="bg-img-2" />
 <div class="bg-img">
-	<div class="container">
+	<div class="container-2 container">
 		{#if data.user !== undefined}
 			<SvelteMarkdown source={data.settings.homepageText} />
 
@@ -78,8 +78,11 @@
 <Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
 
 <style>
-	.container {
+	.container-2 {
 		padding: 0 20px;
+		flex-wrap: wrap;
+		max-width: 75rem;
+		margin: auto;
 	}
 	.bg-img {
 		background-color: #1d1d1c;
@@ -136,7 +139,7 @@
 		}
 		@media screen and (max-width: 768px) {
 			.announcementHeader {
-				font-size: 30px;
+				font-size: 35px;
 				line-height: 100px;
 			}
 			@media screen and (max-width: 480px) {
