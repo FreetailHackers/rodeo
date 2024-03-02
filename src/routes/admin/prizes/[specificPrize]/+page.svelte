@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
 	import { confirmationDialog } from '$lib/actions.js';
 
 	export let data;
@@ -40,7 +39,7 @@
 		<input type="text" id="title" name="title" required value={data.prize.title} />
 
 		<label for="response">Response</label>
-		<MarkdownEditor id="response" name="response" required value={data.prize.response} />
+		<textarea id="response" name="response" required value={data.prize.response} />
 
 		<button type="submit" style="margin-top: 1rem;">Save</button>
 	</form>
