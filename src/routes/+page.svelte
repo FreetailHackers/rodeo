@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import Announcements from '$lib/components/announcements-2024-spring.svelte';
 	import Schedule from '$lib/components/schedule.svelte';
-	import SvelteMarkdown from 'svelte-markdown';
+	//import SvelteMarkdown from 'svelte-markdown';
 	import { toasts } from '$lib/stores';
 	export let data;
 	import { onMount } from 'svelte';
@@ -23,9 +23,9 @@
 </svelte:head>
 <div class="bg-img-2" />
 <div class="bg-img">
-	<div class="container-2 container">
+	<div class="announcement-container">
 		{#if data.user !== undefined}
-			<SvelteMarkdown source={data.settings.homepageText} />
+			<!--<SvelteMarkdown source={data.settings.homepageText} />-->
 
 			<form method="POST" action="?/logout" use:enhance>
 				<button type="submit" id="logout">Logout</button>
@@ -75,10 +75,18 @@
 	</div>
 </div>
 
-<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
+<div class="topographic-background">
+	<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
+</div>
 
 <style>
-	.container-2 {
+	.topographic-background {
+		background-color: #303030;
+		background-image: url('/Topographic Background.svg');
+		background-size: 110%;
+		min-height: 100vh; /* kick footer to bottom of page */
+	}
+	.announcement-container {
 		padding: 0 20px;
 		flex-wrap: wrap;
 		max-width: 75rem;
@@ -86,17 +94,14 @@
 	}
 	.bg-img {
 		background-color: #1d1d1c;
-		/*background-image: url('announcement-images/background.svg');*/
 		background-size: 110%;
 		min-height: 100vh;
 	}
 
 	.bg-img-2 {
-		/* Perfectly crisp at all zoom levels */
+		/* Helps Cover a white bar appearing on top of announcements */
 		/* We can edit colors as we like by editing the .svg itself in VSCode */
 		background-color: #1d1d1c;
-		/*background-image: url('announcement-images/background.svg');*/
-
 		background-repeat: repeat;
 		background-size: cover;
 		filter: blur(0.05rem);
@@ -119,10 +124,10 @@
 	.announcementHeader {
 		text-align: center;
 		font-family: 'Zen Dots';
-		font-size: 65px; /* Default font size */
-		white-space: nowrap; /* Ensure header remains on one line */
-		margin: 0 auto; /* Center the header horizontally */
-		padding: 0 20px;
+		font-size: 65px;
+		white-space: nowrap;
+		margin: 0 auto;
+		margin-top: 20px;
 	}
 	.header-container {
 		color: #e1563f;
@@ -132,20 +137,25 @@
 		flex-direction: column;
 		font-weight: 400;
 	}
+
 	@media screen and (max-width: 1024px) {
 		.announcementHeader {
+			margin-top: 0px;
 			font-size: 50px;
 			line-height: 100px;
+			margin-bottom: -20px;
 		}
-		@media screen and (max-width: 768px) {
+		@media screen and (max-width: 740px) {
 			.announcementHeader {
 				font-size: 35px;
 				line-height: 100px;
+				margin-bottom: -30px;
 			}
 			@media screen and (max-width: 480px) {
 				.announcementHeader {
 					font-size: 20px;
 					line-height: 70px;
+					margin-bottom: -40px;
 				}
 			}
 		}
