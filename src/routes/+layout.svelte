@@ -176,7 +176,7 @@
 				>
 			</div>
 			<div class="row">
-				<a target="_blank" rel="noopener noreferrer" href="https://hackuta.org/"> HackUTA</a>
+				<a target="_blank" rel="noopener noreferrer" href="https://hackuta.org"> HackUTA</a>
 			</div>
 		</div>
 	</div>
