@@ -139,6 +139,10 @@
 			border-radius: 10px;
 		}
 
+		.driver-scan-div {
+			margin-left: 20%;
+		}
+
 		.driver-div-text {
 			font-size: 20px;
 		}
@@ -152,7 +156,10 @@
 		}
 
 		.vertical-text {
-			display: none;
+			width: 22%;
+			height: 70%;
+			top: 50%;
+			left: 15%;
 		}
 	}
 </style>
