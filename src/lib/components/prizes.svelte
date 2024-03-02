@@ -143,14 +143,6 @@
 		top: 30%;
 	}
 
-	.edit-wrapper {
-		width: 33.33%;
-		box-sizing: border-box;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-
 	.content {
 		text-align: center;
 		font-family: 'Zen Dots';
