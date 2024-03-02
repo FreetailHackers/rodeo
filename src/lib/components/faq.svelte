@@ -13,8 +13,8 @@
 <div class="background">
 	<div class="faq-container">
 		<div class="faq-title">
-			<h2 class="left-border-faq">FAQ</h2>
-			<h2 class="left-border-faq-2">FAQ</h2>
+			<h1 class="left-border-faq">FAQ</h1>
+			<h1 class="left-border-faq-2">FAQ</h1>
 		</div>
 		<div class="faq-questions">
 			{#if questions !== null}
@@ -90,7 +90,7 @@
 		padding: 0 5vw;
 	}
 
-	h2 {
+	h1 {
 		font-family: 'Fugaz One';
 		color: var(--highlight-color);
 		text-align: center;
