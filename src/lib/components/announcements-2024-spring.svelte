@@ -46,6 +46,7 @@
 					<SvelteMarkdown source={announcement.body} />
 				</div>
 				<!-- Corner piece -->
+				<div />
 				<div class="bottom-right-image" />
 			</li>
 		{/each}
