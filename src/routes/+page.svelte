@@ -88,11 +88,14 @@
 	img {
 		width: 200px;
 		height: auto;
+		padding-bottom: 2%;
+		padding-top: 2%;
 	}
 
 	.image {
 		display: flex;
 		justify-content: space-evenly;
+		flex-wrap: wrap;
 		align-items: center;
 		width: 100%;
 	}
