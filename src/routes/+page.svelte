@@ -33,7 +33,7 @@
 	<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
 	<!-- paste final sponsor code here 1-->
 	<hr />
-	<h2>Sponsors</h2>
+	<h1>Sponsors</h1>
 	<div class="image">
 		<img alt="The project logo" src={'src/lib/assets/sponsors/Capital One Logo.png'} />
 		<img alt="The project logo" src={'src/lib/assets/sponsors/mercury_financial.jpeg'} />
@@ -75,11 +75,12 @@
 	<h2>Announcements</h2>
 	<Announcements announcements={data.announcements} admin={false} />
 	<hr />
-	<h2>Sponsors</h2>
+	<h1>Sponsors</h1>
 	<div class="image">
 		<img alt="The project logo" src={'src/lib/assets/sponsors/Capital One Logo.png'} />
 		<img alt="The project logo" src={'src/lib/assets/sponsors/mercury_financial.jpeg'} />
 		<img alt="The project logo" src={'src/lib/assets/sponsors/Roblox Logo.png'} />
+		<img alt="The project logo" src={'src/lib/assets/sponsors/red_bull_logo.jpeg'} />
 	</div>
 {/if}
 
@@ -88,9 +89,15 @@
 </div>
 
 <style>
-	/* #Schedule {
-		scroll-margin-block-start: 10vh;
-	} */
+	h1 {
+		color: #e1563f;
+		font-size: 64px;
+		font-weight: 400;
+		margin: 0;
+		text-align: center;
+		padding-top: 48px;
+		padding-bottom: 48px;
+	}
 
 	img {
 		width: 200px;
