@@ -7,8 +7,11 @@
 	let flippedCard: number = -1;
 
 	function flipCard(index: number): void {
-		console.log('flipping card: ' + index);
-		flippedCard = index;
+		if (flippedCard === index) {
+			flippedCard = -1;
+		} else {
+			flippedCard = index;
+		}
 	}
 
 	function keyDown(event: KeyboardEvent, index: number): void {
@@ -29,12 +32,12 @@
 		<div class="faq-cards">
 			{#if questions !== null}
 				{#each questions as question, index}
-					<div class="card">
-						<div
-							class="card-container"
-							on:click={() => flipCard(index)}
-							on:keydown={(event) => keyDown(event, index)}
-						>
+					<div
+						class="card"
+						on:click={() => flipCard(index)}
+						on:keydown={(event) => keyDown(event, index)}
+					>
+						<div class="card-container">
 							{#if flippedCard === index}
 								<div class="faq-answer">
 									{question.response}
