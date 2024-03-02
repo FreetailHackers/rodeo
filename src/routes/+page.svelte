@@ -83,9 +83,15 @@
 	</div>
 {/if}
 
-<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
+<div id="Schedule">
+	<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
+</div>
 
 <style>
+	/* #Schedule {
+		scroll-margin-block-start: 10vh;
+	} */
+
 	img {
 		width: 200px;
 		height: auto;

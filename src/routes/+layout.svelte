@@ -52,6 +52,9 @@
 		<li>
 			<a href="/" class:active={$page.url.pathname === '/'}>Home</a>
 		</li>
+		<li>
+			<a href="/#Schedule">Schedule</a>
+		</li>
 
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->
 		{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
@@ -117,67 +120,43 @@
 <Toasts />
 
 <footer>
-	<hr />
-	<div class="flex-container">
-		<div class="flex-item">
+	<div class="footer-flex">
+		<div>
 			Made with ❤️ by <a
+				class="freetail-link"
 				target="_blank"
 				rel="noopener noreferrer"
-				href="https://freetailhackers.com"
-			>
-				Freetail Hackers</a
+				href="https://freetailhackers.com">Freetail Hackers</a
 			>
 		</div>
-		<div class="flex-item">
+		<div class="flex-column">
 			<div class="row bold">Links</div>
-			<div class="row">
-				<a
-					target="_blank"
-					rel="noopener noreferrer"
-					href="https://www.instagram.com/freetailhackers?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
-				>
-					Instagram</a
-				>
-			</div>
-			<div class="row">
-				<a
-					target="_blank"
-					rel="noopener noreferrer"
-					href="https://www.linkedin.com/company/freetail-hackers"
-				>
-					LinkedIn</a
-				>
-			</div>
-			<div class="row">
-				<a target="_blank" rel="noopener noreferrer" href="https://freetailhackers.com/discord">
-					Discord</a
-				>
-			</div>
-			<div class="row">
-				<a target="_blank" rel="noopener noreferrer" href="https://linktr.ee/freetailhackers">
-					LinkTree</a
-				>
-			</div>
+			<a
+				target="_blank"
+				rel="noopener noreferrer"
+				href="https://www.instagram.com/freetailhackers?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+				>Instagram</a
+			>
+			<a
+				target="_blank"
+				rel="noopener noreferrer"
+				href="https://www.linkedin.com/company/freetail-hackers">LinkedIn</a
+			>
+			<a target="_blank" rel="noopener noreferrer" href="https://freetailhackers.com/discord"
+				>Discord</a
+			>
+			<a target="_blank" rel="noopener noreferrer" href="https://linktr.ee/freetailhackers"
+				>LinkTree</a
+			>
+			<a href="mailto:admin@freetailhackers.com">Contact Us</a>
 		</div>
-		<div class="flex-item">
+		<div class="flex-column">
 			<div class="row bold">Other Hackathons</div>
-			<div class="row">
-				<a target="_blank" rel="noopener noreferrer" href="https://rowdyhacks.org/"> RowdyHacks</a>
-			</div>
-			<div class="row">
-				<a target="_blank" rel="noopener noreferrer" href="https://tamuhack.org/"> TAMU hack</a>
-			</div>
-			<div class="row">
-				<a target="_blank" rel="noopener noreferrer" href="https://hackutd.co/"> HackUTD</a>
-			</div>
-			<div class="row">
-				<a target="_blank" rel="noopener noreferrer" href="https://www.unthackathon.com/">
-					HackUNT</a
-				>
-			</div>
-			<div class="row">
-				<a target="_blank" rel="noopener noreferrer" href="https://hackuta.org"> HackUTA</a>
-			</div>
+			<a target="_blank" rel="noopener noreferrer" href="https://rowdyhacks.org/"> RowdyHacks</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://tamuhack.org/"> TAMU hack</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://hackutd.co/"> HackUTD</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://www.unthackathon.com/">HackUNT</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://hackuta.org"> HackUTA</a>
 		</div>
 	</div>
 </footer>
@@ -202,23 +181,40 @@
 		background-color: #404040;
 	}
 
-	.flex-container {
+	.flex-column {
 		display: flex;
-		align-items: center;
+		flex-direction: column;
 	}
 
-	.flex-item {
-		flex: 1; /* Makes each item (column) grow equally to fill the container */
-		padding: 10px; /* Optional padding */
+	.footer-flex {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 		color: white;
+		line-height: 1.5;
+		flex-wrap: wrap;
+		max-width: 50vw;
+		margin: auto;
+	}
+
+	.freetail-link {
+		color: #e1563f;
+		text-decoration: underline;
+	}
+
+	a {
+		color: #f2ebd9;
+		text-decoration: none;
+	}
+
+	a:hover {
+		text-decoration-line: underline;
+		text-decoration-color: var(--primary-accent);
+		color: var(--primary-accent);
 	}
 
 	.bold {
 		font-weight: bold;
-	}
-
-	a {
-		color: white;
 	}
 
 	label {
@@ -291,7 +287,17 @@
 	}
 
 	menu a:hover {
-		background-color: #502340;
+		background-color: #303030;
+	}
+
+	@media (max-width: 768px) {
+		.flex-column {
+			display: none;
+		}
+
+		.footer-flex {
+			max-width: 60vw;
+		}
 	}
 
 	@media (min-width: 1090px) {

@@ -40,6 +40,7 @@ body {
 
 nav {
 	margin: 1rem 0;
+	box-shadow: 0rem 0.5rem 0.75rem black;
 }
 
 button {
@@ -210,9 +211,8 @@ img {
 }
 
 footer {
-	padding: 0 1rem;
-	left: 0;
-	bottom: 0;
-	text-align: center;
-	margin: 0 auto;
+	background-color: #303030;
+	color: #f2ebd9;
+	text-align: left;
+	padding: 1em 1em;
 }
