@@ -4,6 +4,8 @@
 
 	export let user: AuthUser;
 	export let questions: OtherCategories[] | null;
+
+	let questionsLength: number = questions ? questions.length : 0;
 </script>
 
 <svelte:head>
@@ -64,7 +66,8 @@
 		font-size: 8rem;
 		color: var(--highlight-color);
 		text-shadow: none;
-		transform: rotate(90deg);
+		writing-mode: vertical-rl;
+		text-orientation: mixed;
 	}
 
 	.left-border-faq-2 {
@@ -75,7 +78,8 @@
 		color: var(--background-color);
 		text-shadow: none;
 		-webkit-text-stroke: 0.1rem var(--highlight-color);
-		transform: rotate(90deg);
+		writing-mode: vertical-rl;
+		text-orientation: mixed;
 	}
 
 	.faq-questions {
@@ -84,6 +88,7 @@
 		flex-wrap: wrap;
 		/* TODO: change this width to fill up */
 		flex-grow: 2;
+		max-height: 45rem;
 	}
 
 	.question {
@@ -95,24 +100,32 @@
 		color: var(--highlight-color);
 		text-align: center;
 		font-size: 36px;
-		margin-top: 0;
-		margin-bottom: 0;
+		margin: 0;
 	}
 
 	@media (max-width: 1089px) {
 		.faq-container {
 			flex-direction: column;
+			width: 100vw;
+		}
+
+		.faq-title {
+			justify-content: center;
 		}
 
 		.left-border-faq {
 			text-align: center;
 			margin-bottom: 1rem;
 			font-size: 4rem;
-			transform: none;
+			writing-mode: unset;
 		}
 
 		.left-border-faq-2 {
 			display: none;
+		}
+
+		.faq-questions {
+			max-height: unset;
 		}
 	}
 </style>
