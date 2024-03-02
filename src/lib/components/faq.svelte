@@ -10,33 +10,30 @@
 </svelte:head>
 
 <div class="background">
-	<div class="faq">
-		<h2 class="left-border-faq">FAQ</h2>
-		<h2 class="left-border-faq-2">FAQ</h2>
-	</div>
-
-	<div class="faq-view">
+	<div class="faq-container">
+		<div class="faq-title">
+			<h2 class="left-border-faq">FAQ</h2>
+			<h2 class="left-border-faq-2">FAQ</h2>
+		</div>
 		<div class="faq-cards">
 			{#if questions !== null}
-				<div class="container">
-					{#each questions as question}
-						<div class="card">
-							<div class="card-container">
-								<div class="faq-question">
-									{question.title}
-								</div>
-								<div class="faq-answer">
-									{question.response}
-								</div>
-								{#if user?.roles.includes('ADMIN')}
-									<p>
-										<a class="edit" href="/admin/faq/{question.id}">Edit</a>
-									</p>
-								{/if}
+				{#each questions as question}
+					<div class="card">
+						<div class="card-container">
+							<div class="faq-question">
+								{question.title}
 							</div>
+							<div class="faq-answer">
+								{question.response}
+							</div>
+							{#if user?.roles.includes('ADMIN')}
+								<p>
+									<a class="edit" href="/admin/faq/{question.id}">Edit</a>
+								</p>
+							{/if}
 						</div>
-					{/each}
-				</div>
+					</div>
+				{/each}
 			{:else}
 				<h2>Check back for the FAQ!</h2>
 			{/if}
@@ -49,17 +46,15 @@
 
 	.background {
 		background-color: var(--background-color);
+	}
+
+	.faq-container {
 		display: flex;
 	}
 
-	.faq {
-		/* margin-top: 100px; */
+	.faq-title {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
-		margin-bottom: 1rem;
-		/* padding-left: 0; */
-		/* background-color: var(--background-color); */
 	}
 
 	.left-border-faq {
@@ -82,6 +77,40 @@
 		transform: rotate(90deg);
 	}
 
+	.faq-cards {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex-wrap: wrap;
+		flex-grow: 1;
+		flex-basis: 1rem;
+		padding-right: 1rem;
+	}
+
+	.card {
+		width: calc(47.5%);
+		height: 25vh;
+		top: 234px;
+		left: 70px;
+		border-radius: 7px;
+		border: 3px solid white;
+		background-color: rgba(255, 255, 255, 0);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: white;
+		font-size: 16px;
+		font-weight: bold;
+	}
+
+	.faq-question {
+		/* TODO */
+	}
+
+	.faq-answer {
+		/* TODO */
+	}
+
 	h2 {
 		font-family: 'Fugaz One';
 		color: #f2ebd9;
@@ -91,9 +120,24 @@
 	}
 
 	@media (max-width: 1089px) {
+		.faq-container {
+			flex-direction: column;
+		}
+
+		.faq-cards {
+			flex-direction: column;
+			padding-right: 0;
+		}
+
+		.card {
+			width: calc(75%);
+			margin-bottom: 1rem;
+		}
+
 		.left-border-faq {
-			margin-left: 2rem;
-			font-size: 36px;
+			text-align: center;
+			margin-bottom: 1rem;
+			font-size: 4rem;
 			transform: none;
 		}
 
