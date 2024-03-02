@@ -16,8 +16,6 @@
 	let saveButton: HTMLButtonElement;
 
 	let userStatus = data.user.authUser.status;
-
-	console.log(userStatus);
 </script>
 
 <svelte:head>
@@ -266,8 +264,9 @@
 		display: flex;
 		margin-top: 0px;
 		justify-content: center;
-		align-items: center;
-		height: 100vh;
+		padding: 5rem 0 0;
+		position: relative;
+		overflow: hidden;
 	}
 
 	.admission-top {
@@ -286,6 +285,8 @@
 		height: 100%;
 		position: absolute;
 		z-index: 1;
+		bottom: 0;
+		left: 0;
 	}
 
 	#rsvp {
@@ -331,6 +332,9 @@
 		z-index: 2;
 		border-radius: 24px;
 		position: relative;
+		height: fit-content;
+		margin: 0 40px 0;
+		text-align: center;
 	}
 
 	#status h1 {
@@ -407,5 +411,26 @@
 
 	bold {
 		font-weight: bold;
+	}
+
+	/* Styles for viewport widths up to 768 pixels (typical for mobile devices) */
+	@media screen and (max-width: 768px) {
+		#status {
+			padding: 30px 60px 100px;
+		}
+
+		.race-car {
+			background-size: contain;
+			width: 100%;
+			height: 60%;
+		}
+
+		#status h2 {
+			font-size: 15px;
+		}
+
+		#status h1 {
+			font-size: 20px;
+		}
 	}
 </style>
