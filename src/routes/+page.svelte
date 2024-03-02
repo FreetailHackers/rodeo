@@ -38,6 +38,7 @@
 		<img alt="The project logo" src={'src/lib/assets/sponsors/Capital One Logo.png'} />
 		<img alt="The project logo" src={'src/lib/assets/sponsors/mercury_financial.jpeg'} />
 		<img alt="The project logo" src={'src/lib/assets/sponsors/Roblox Logo.png'} />
+		<img alt="The project logo" src={'src/lib/assets/sponsors/red_bull_logo.jpeg'} />
 	</div>
 {:else}
 	<!-- Signup page -->
