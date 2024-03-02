@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import Announcements from '$lib/components/announcements-2024-spring.svelte';
+	import Announcements from '$lib/components/announcements.svelte';
 	import Schedule from '$lib/components/schedule.svelte';
 	//import SvelteMarkdown from 'svelte-markdown';
 	import { toasts } from '$lib/stores';
@@ -75,17 +75,9 @@
 	</div>
 </div>
 
-<div class="topographic-background">
-	<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
-</div>
+<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
 
 <style>
-	.topographic-background {
-		background-color: #303030;
-		background-image: url('/Topographic Background.svg');
-		background-size: 110%;
-		min-height: 100vh; /* kick footer to bottom of page */
-	}
 	.announcement-container {
 		padding: 0 20px;
 		flex-wrap: wrap;
@@ -125,6 +117,8 @@
 		text-align: center;
 		font-family: 'Zen Dots';
 		font-size: 65px;
+		width: 100%;
+
 		white-space: nowrap;
 		margin: 0 auto;
 		margin-top: 20px;

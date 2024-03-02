@@ -23,27 +23,49 @@
 </script>
 
 <div>
-	<button type="button" class:selected={!previewing} on:click={() => (previewing = false)}
-		>Write</button
+	<button
+		class="announcement-font"
+		type="button"
+		class:selected={!previewing}
+		on:click={() => (previewing = false)}>Write</button
 	>
-	<button type="button" class:selected={previewing} on:click={() => (previewing = true)}
-		>Preview</button
+	<button
+		class="announcement-font"
+		type="button"
+		class:selected={previewing}
+		on:click={() => (previewing = true)}>Preview</button
 	>
 </div>
 {#if previewing}
-	<div class="border">
+	<div class="border" style="background-color: white;">
 		{#if value === ''}
-			<p class="empty-preview">Nothing to preview.</p>
+			<p class="empty-preview announcement-font">Nothing to preview.</p>
 		{:else}
-			<SvelteMarkdown source={value} />
+			<div class="announcement-font">
+				<SvelteMarkdown source={value} />
+			</div>
 		{/if}
 	</div>
-	<textarea style="display: none" {id} {name} {required} {value} />
+	<textarea class="announcement-font" style="display: none;" {id} {name} {required} {value} />
 {:else}
-	<textarea {id} {name} {placeholder} {required} {rows} bind:value bind:this={textarea} />
+	<textarea
+		class="announcement-font"
+		{id}
+		{name}
+		{placeholder}
+		{required}
+		{rows}
+		bind:value
+		bind:this={textarea}
+	/>
 {/if}
 
 <style>
+	.announcement-font {
+		font-family: 'Fugaz One';
+		font-weight: 400;
+		color: #000000;
+	}
 	button {
 		padding: 0 1rem;
 		background-color: #ddd;
