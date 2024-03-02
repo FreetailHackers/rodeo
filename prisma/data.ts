@@ -318,24 +318,6 @@ export const events: Prisma.EventCreateInput[] = [
 
 export const otherCategoriesEvents: Prisma.OtherCategoriesCreateInput[] = [
 	{
-		title: 'Where is Formula Hacks?',
-		response:
-			'Formula Hacks will take place on the University of Texas at Austin campus! Hacking, judging, mini-events, and more will occur fully in-person!',
-		category: 'FAQ',
-	},
-	{
-		title: 'Are there sleeping accomodations?',
-		response:
-			"We have one room, but we recommend getting somewhere to sleep since it's going to be crammed",
-		category: 'FAQ',
-	},
-	{
-		title: 'What is Formula Hacks?',
-		response:
-			'Formula Hacks is our beginner friendly spring hackathon only open to the University of Texas at Austin and Austin Community College students. No prior experience required and all majors welcome!',
-		category: 'FAQ',
-	},
-	{
 		title: 'First Place Intermediate',
 		response: 'VISIO TVs!',
 		category: 'PRIZE',
@@ -347,6 +329,21 @@ export const otherCategoriesEvents: Prisma.OtherCategoriesCreateInput[] = [
 	},
 	{
 		title: 'Third Place Intermediate',
+		response: 'Apple Keyboard',
+		category: 'PRIZE',
+	},
+	{
+		title: 'First Place Advanced',
+		response: 'VISIO TVs!',
+		category: 'PRIZE',
+	},
+	{
+		title: 'Second Place Advanced',
+		response: 'Mechanical Keyboard',
+		category: 'PRIZE',
+	},
+	{
+		title: 'Third Place Advanced',
 		response: 'Apple Keyboard',
 		category: 'PRIZE',
 	},

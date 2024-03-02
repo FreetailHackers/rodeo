@@ -14,15 +14,6 @@ const otherCategoriesSchema = z
 
 export const otherCategoriesRouter = t.router({
 	/**
-	 * Gets all the records in the table, sorted by type, id
-	 */
-	getAll: t.procedure.query(async (): Promise<OtherCategories[]> => {
-		return await prisma.otherCategories.findMany({
-			orderBy: [{ category: 'asc', id: 'asc' }],
-		});
-	}),
-
-	/**
 	 * Gets all the records in the table by category
 	 */
 	getAllOfCategory: t.procedure
@@ -75,7 +66,7 @@ export const otherCategoriesRouter = t.router({
 		}),
 
 	/**
-	 * Deletes all events from the page by category. User must be an admin.
+	 * Deletes all prizes from the page by category. User must be an admin.
 	 */
 	deleteAllOfCategory: t.procedure
 		.use(authenticate(['ADMIN']))
@@ -83,11 +74,4 @@ export const otherCategoriesRouter = t.router({
 		.mutation(async (req): Promise<void> => {
 			await prisma.otherCategories.deleteMany({ where: { category: req.input } });
 		}),
-
-	/**
-	 * Deletes all events from the page by category. User must be an admin.
-	 */
-	deleteAll: t.procedure.use(authenticate(['ADMIN'])).mutation(async (): Promise<void> => {
-		await prisma.otherCategories.deleteMany();
-	}),
 });

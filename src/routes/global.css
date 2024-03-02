@@ -5,9 +5,6 @@
 :root {
 	--font-family: 'Geologica', 'Helvetica Neue', 'Arial', sans-serif;
 	--font-size: 16px;
-	--highlight-color: #f2ebd9;
-	--secondary-color: #4e656d;
-	--background-color: #1c1c1c;
 	--primary-accent: #e1563f;
 }
 
@@ -213,7 +210,6 @@ img {
 }
 
 footer {
-	/* background-color: var(--background-color); */
 	padding: 0 1rem;
 	left: 0;
 	bottom: 0;

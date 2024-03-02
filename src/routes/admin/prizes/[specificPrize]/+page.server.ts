@@ -25,7 +25,7 @@ export const actions = {
 			response: formData.get('response') as string,
 			category: 'PRIZE',
 		});
-		return 'Saved event!';
+		return 'Saved prize!';
 	},
 
 	delete: async ({ locals, request }) => {
