@@ -89,7 +89,7 @@
 	}
 
 	.vertical-text {
-		background-image: url('hackerid.svg');
+		background-image: url('/hackerid/hackerid.svg');
 		background-size: contain;
 		background-repeat: no-repeat;
 		width: 30%;
