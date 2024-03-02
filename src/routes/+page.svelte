@@ -21,6 +21,7 @@
 <svelte:head>
 	<title>Rodeo | Home</title>
 </svelte:head>
+<div class="bg-img-2" />
 <div class="bg-img">
 	<div class="container">
 		{#if data.user !== undefined}
@@ -82,12 +83,34 @@
 		display: center;
 		margin-left: auto;
 		margin-right: auto;
+		justify-content: space-around;
 	}
 	.bg-img {
 		background-color: #1d1d1c;
 		background-image: url('announcement-images/background.svg');
 		background-size: 110%;
 		min-height: 100vh;
+	}
+
+	.bg-img-2 {
+		/* Perfectly crisp at all zoom levels */
+		/* We can edit colors as we like by editing the .svg itself in VSCode */
+		background-color: #1d1d1c;
+		background-image: url('announcement-images/background.svg');
+
+		background-repeat: repeat;
+		background-size: cover;
+		filter: blur(0.05rem);
+
+		/* Absolute position so we can shift it to cover the whole screen */
+		position: fixed;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+
+		/* display under all elements */
+		z-index: -1;
 	}
 
 	input {
