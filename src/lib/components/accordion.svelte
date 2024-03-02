@@ -5,16 +5,18 @@
 	function handleClick(): void {
 		open = !open;
 	}
+
+	function handleKeyDown(event: KeyboardEvent): void {
+		if (event.key === 'Enter') handleClick();
+	}
 </script>
 
 <div class="accordion">
-	<div class="header">
-		<button class="accordion-button" on:click={handleClick}>
-			{open ? '-' : '+'}
-			<span class="text">
-				<slot name="head" />
-			</span>
-		</button>
+	<div class="header" on:click={handleClick} on:keydown={handleKeyDown}>
+		<span class="sign">{open ? '-' : '+'}</span>
+		<span class="text">
+			<slot name="head" />
+		</span>
 	</div>
 
 	{#if open}
@@ -26,12 +28,8 @@
 
 <style>
 	.accordion {
-		margin: 1rem 0;
+		margin: 2rem 0;
 		color: var(--highlight-color);
-	}
-
-	.accordion-button {
-		background-color: transparent;
 	}
 
 	.header {
@@ -46,5 +44,6 @@
 
 	.details {
 		padding: 1rem;
+		color: #7d7a72;
 	}
 </style>

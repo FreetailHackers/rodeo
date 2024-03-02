@@ -4,8 +4,6 @@
 
 	export let user: AuthUser;
 	export let questions: OtherCategories[] | null;
-
-	let questionsLength: number = questions ? questions.length : 0;
 </script>
 
 <svelte:head>
@@ -58,6 +56,7 @@
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
+		padding-right: 5vw;
 	}
 
 	.left-border-faq {
@@ -85,12 +84,9 @@
 	.faq-questions {
 		display: grid;
 		align-items: baseline;
-		grid-template-columns: 1fr 1fr;
-		grid-gap: 1rem;
-	}
-
-	.question {
-		padding: 0 7vw;
+		grid-template-columns: 35vw 35vw;
+		grid-auto-rows: min-content;
+		padding-top: 2.5vw;
 	}
 
 	h1 {
@@ -101,7 +97,7 @@
 		margin: 0;
 	}
 
-	@media (max-width: 1089px) {
+	@media (max-width: 768px) {
 		.faq-container {
 			flex-direction: column;
 			width: 100vw;
@@ -123,7 +119,7 @@
 		}
 
 		.faq-questions {
-			grid-template-columns: 1fr;
+			grid-template-columns: 100vw;
 		}
 	}
 </style>
