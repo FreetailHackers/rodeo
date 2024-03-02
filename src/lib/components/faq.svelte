@@ -3,6 +3,17 @@
 
 	export let user: AuthUser;
 	export let questions: OtherCategories[] | null;
+
+	let flippedCard: number = -1;
+
+	function flipCard(index: number): undefined {
+		console.log('flipping card: ' + index);
+		flippedCard = index;
+	}
+
+	function keyDown(event: KeyboardEvent, index: number): undefined {
+		if (event.key === 'Enter') flipCard(index);
+	}
 </script>
 
 <svelte:head>
@@ -17,15 +28,23 @@
 		</div>
 		<div class="faq-cards">
 			{#if questions !== null}
-				{#each questions as question}
+				{#each questions as question, index}
 					<div class="card">
-						<div class="card-container">
-							<div class="faq-question">
-								{question.title}
-							</div>
-							<div class="faq-answer">
-								{question.response}
-							</div>
+						<div
+							class="card-container"
+							on:click={flipCard(index)}
+							on:keydown={(event) => keyDown(event, index)}
+						>
+							{console.log(flippedCard + ' ' + index)}
+							{#if flippedCard !== index}
+								<div class="faq-question">
+									{question.title}
+								</div>
+							{:else}
+								<div class="faq-answer">
+									{question.response}
+								</div>
+							{/if}
 							{#if user?.roles.includes('ADMIN')}
 								<p>
 									<a class="edit" href="/admin/faq/{question.id}">Edit</a>
@@ -84,7 +103,7 @@
 		flex-wrap: wrap;
 		flex-grow: 1;
 		flex-basis: 1rem;
-		padding-right: 1rem;
+		padding-right: 8vw;
 	}
 
 	.card {
