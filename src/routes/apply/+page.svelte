@@ -24,80 +24,103 @@
 
 <!-- Application status dialog -->
 <div class="inside-main-content">
-	<div class="race-car" />
-	<div id="status" class={userStatus}>
-		<div class="admission-top" />
+	<div class="race-car-status-div">
+		<div class="race-car" />
+		<div id="status" class={userStatus}>
+			<div class="admission-top" />
 
-		<h2>Application Status</h2>
-		<p>Your application status is:</p>
-		{#if data.user.authUser.status === 'CREATED'}
-			<h1>INCOMPLETE</h1>
-			{#if data.settings.applicationDeadline !== null}
-				<p>
-					You must complete your application by
-					<bold
-						>{data.settings.applicationDeadline.toLocaleDateString('en-US', {
-							weekday: 'long',
-							month: 'long',
-							day: 'numeric',
-							hour: 'numeric',
-							minute: 'numeric',
-						})}
-					</bold>
-					to be considered for admission.
-				</p>
-			{:else}
-				<p>You must complete your application to be considered for admission.</p>
-			{/if}
-		{:else if data.user.authUser.status === 'APPLIED'}
-			<h1>SUBMITTED</h1>
-			<p>Thanks for applying! The team will review your application soon.</p>
-			<form method="POST" action="?/withdraw" use:enhance>
-				{#if data.canApply}
-					<button>Withdraw and Edit</button>
-				{:else}
-					<button disabled>Cannot edit because applications are closed.</button>
-				{/if}
-			</form>
-		{:else if data.user.authUser.status === 'REJECTED'}
-			<h1>REJECTED</h1>
-			<p>Unfortunately, we do not have the space to offer you admission this year.</p>
-		{:else if data.user.authUser.status === 'WAITLISTED'}
-			<h1>WAITLISTED</h1>
-			<p>
-				Unfortunately, we do not have the space to offer you admission at this time. We will contact
-				you should this situation change.
-			</p>
-		{:else if data.user.authUser.status === 'ACCEPTED'}
-			<h1>{data.user.authUser.status}</h1>
-
-			{#if data.rsvpDeadline === null || new Date() < data.rsvpDeadline}
-				{#if data.rsvpDeadline}
+			<h2>Application Status</h2>
+			<p>Your application status is:</p>
+			{#if data.user.authUser.status === 'CREATED'}
+				<h1>INCOMPLETE</h1>
+				{#if data.settings.applicationDeadline !== null}
 					<p>
-						You must confirm your attendance by {data.rsvpDeadline.toLocaleDateString('en-US', {
-							weekday: 'long',
-							month: 'long',
-							day: 'numeric',
-							hour: 'numeric',
-							minute: 'numeric',
-						})} to secure your spot. If you know you will not be able to attend, please decline so we
-						can offer your spot to someone else.
+						You must complete your application by
+						<bold
+							>{data.settings.applicationDeadline.toLocaleDateString('en-US', {
+								weekday: 'long',
+								month: 'long',
+								day: 'numeric',
+								hour: 'numeric',
+								minute: 'numeric',
+							})}
+						</bold>
+						to be considered for admission.
+					</p>
+				{:else}
+					<p>You must complete your application to be considered for admission.</p>
+				{/if}
+			{:else if data.user.authUser.status === 'APPLIED'}
+				<h1>SUBMITTED</h1>
+				<p>Thanks for applying! The team will review your application soon.</p>
+				<form method="POST" action="?/withdraw" use:enhance>
+					{#if data.canApply}
+						<button>Withdraw and Edit</button>
+					{:else}
+						<button disabled>Cannot edit because applications are closed.</button>
+					{/if}
+				</form>
+			{:else if data.user.authUser.status === 'REJECTED'}
+				<h1>REJECTED</h1>
+				<p>Unfortunately, we do not have the space to offer you admission this year.</p>
+			{:else if data.user.authUser.status === 'WAITLISTED'}
+				<h1>WAITLISTED</h1>
+				<p>
+					Unfortunately, we do not have the space to offer you admission at this time. We will
+					contact you should this situation change.
+				</p>
+			{:else if data.user.authUser.status === 'ACCEPTED'}
+				<h1>{data.user.authUser.status}</h1>
+
+				{#if data.rsvpDeadline === null || new Date() < data.rsvpDeadline}
+					{#if data.rsvpDeadline}
+						<p>
+							You must confirm your attendance by {data.rsvpDeadline.toLocaleDateString('en-US', {
+								weekday: 'long',
+								month: 'long',
+								day: 'numeric',
+								hour: 'numeric',
+								minute: 'numeric',
+							})} to secure your spot. If you know you will not be able to attend, please decline so
+							we can offer your spot to someone else.
+						</p>
+					{/if}
+					<form method="POST" id="rsvp" use:enhance>
+						<button
+							class="accept-btn"
+							formaction="?/confirm"
+							use:confirmationDialog={{
+								text: 'Are you sure you want to confirm your attendance?',
+								cancel: 'No, go back',
+								ok: 'Yes, I want to confirm',
+							}}>Confirm</button
+						>
+
+						<button
+							class="decline-btn"
+							formaction="?/decline"
+							use:confirmationDialog={{
+								text: 'Are you sure you want to decline your attendance? This action cannot be undone!',
+								cancel: 'No, go back',
+								ok: 'Yes, I want to decline',
+							}}>Decline</button
+						>
+					</form>
+				{:else}
+					<p>
+						Sorry, the deadline to confirm your attendance has passed. If space permits, you may
+						sign up as a walk-in at the doors the day of the event, but we cannot make any
+						guarantees.
 					</p>
 				{/if}
-				<form method="POST" id="rsvp" use:enhance>
+			{:else if data.user.authUser.status === 'CONFIRMED'}
+				<h1>CONFIRMED</h1>
+				<p>
+					Glad you could make it! If you change your mind, please decline so we can offer your spot
+					to someone else. We look forward to seeing you at the event!
+				</p>
+				<form method="POST" use:enhance action="?/decline">
 					<button
-						class="accept-btn"
-						formaction="?/confirm"
-						use:confirmationDialog={{
-							text: 'Are you sure you want to confirm your attendance?',
-							cancel: 'No, go back',
-							ok: 'Yes, I want to confirm',
-						}}>Confirm</button
-					>
-
-					<button
-						class="decline-btn"
-						formaction="?/decline"
 						use:confirmationDialog={{
 							text: 'Are you sure you want to decline your attendance? This action cannot be undone!',
 							cancel: 'No, go back',
@@ -105,31 +128,13 @@
 						}}>Decline</button
 					>
 				</form>
-			{:else}
+			{:else if data.user.authUser.status === 'DECLINED'}
+				<h1>DECLINED</h1>
 				<p>
-					Sorry, the deadline to confirm your attendance has passed. If space permits, you may sign
-					up as a walk-in at the doors the day of the event, but we cannot make any guarantees.
+					We're sorry to hear that you will not be able to attend. We hope to see you next year!
 				</p>
 			{/if}
-		{:else if data.user.authUser.status === 'CONFIRMED'}
-			<h1>CONFIRMED</h1>
-			<p>
-				Glad you could make it! If you change your mind, please decline so we can offer your spot to
-				someone else. We look forward to seeing you at the event!
-			</p>
-			<form method="POST" use:enhance action="?/decline">
-				<button
-					use:confirmationDialog={{
-						text: 'Are you sure you want to decline your attendance? This action cannot be undone!',
-						cancel: 'No, go back',
-						ok: 'Yes, I want to decline',
-					}}>Decline</button
-				>
-			</form>
-		{:else if data.user.authUser.status === 'DECLINED'}
-			<h1>DECLINED</h1>
-			<p>We're sorry to hear that you will not be able to attend. We hope to see you next year!</p>
-		{/if}
+		</div>
 	</div>
 
 	<!-- The actual application -->
@@ -140,6 +145,7 @@
 				enctype="multipart/form-data"
 				method="POST"
 				action="?/save"
+				class="form-apply-div"
 				use:enhance={({ action }) => {
 					return async ({ update }) => {
 						if (action.search === '?/finish') {
@@ -264,9 +270,24 @@
 		display: flex;
 		margin-top: 0px;
 		justify-content: center;
-		padding: 5rem 0 0;
 		position: relative;
 		overflow: hidden;
+		flex-direction: column;
+	}
+
+	.race-car-status-div {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.form-apply-div {
+		z-index: 2;
+		padding: 5rem 2rem 2rem;
+	}
+
+	.form-apply-div label {
+		color: white;
 	}
 
 	.admission-top {
@@ -286,6 +307,7 @@
 		position: absolute;
 		z-index: 1;
 		bottom: 0;
+		background-size: contain;
 		left: 0;
 	}
 
@@ -333,8 +355,9 @@
 		border-radius: 24px;
 		position: relative;
 		height: fit-content;
-		margin: 0 40px 0;
+		margin: 0 auto;
 		text-align: center;
+		max-width: 600px;
 	}
 
 	#status h1 {
@@ -384,8 +407,7 @@
 		justify-content: space-between;
 		gap: 0.5rem;
 		position: sticky;
-		padding-bottom: 1rem;
-		background: white;
+		background-color: black;
 	}
 
 	#actions > * {
@@ -420,7 +442,6 @@
 		}
 
 		.race-car {
-			background-size: contain;
 			width: 100%;
 			height: 60%;
 		}
