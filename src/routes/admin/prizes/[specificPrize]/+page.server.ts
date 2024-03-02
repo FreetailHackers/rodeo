@@ -5,7 +5,7 @@ import { error, redirect } from '@sveltejs/kit';
 export const load = async ({ locals, params }) => {
 	await authenticate(locals.auth, ['ADMIN']);
 	if (Number.isNaN(Number(params.specificPrize))) {
-		throw error(404, 'Event not found');
+		throw error(404, 'Prize not found');
 	}
 	const prize = await trpc(locals.auth).otherCategories.get(Number(params.specificPrize));
 	if (prize !== null) {
