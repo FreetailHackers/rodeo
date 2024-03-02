@@ -141,7 +141,7 @@
 			}
 			@media screen and (max-width: 480px) {
 				.announcementHeader {
-					font-size: 15px;
+					font-size: 20px;
 					line-height: 70px;
 				}
 			}
