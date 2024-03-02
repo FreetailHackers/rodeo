@@ -4,8 +4,8 @@
 	import { toasts } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import './global.css';
-	// import { fly } from 'svelte/transition';
-	// import { cubicOut } from 'svelte/easing';
+	import { fly } from 'svelte/transition';
+	import { cubicOut } from 'svelte/easing';
 	import Loader from '$lib/components/loader.svelte';
 	import { beforeNavigate, afterNavigate } from '$app/navigation';
 
@@ -94,10 +94,24 @@
 	{/if}
 </nav>
 
+{#if $page.url.pathname === '/'}
+	<a
+		id="mlh-trust-badge"
+		href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=red"
+		target="_blank"
+		rel="noreferrer"
+		><img
+			src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-red.svg"
+			alt="Major League Hacking 2024 Hackathon Season"
+			id="mlh-badge-image"
+		/></a
+	>
+{/if}
+
 {#key $page.url.pathname}
-	<!-- <div in:fly={{ easing: cubicOut, y: -100, duration: 300 }}> -->
-	<slot />
-	<!-- </div> -->
+	<div in:fly={{ easing: cubicOut, y: -100, duration: 300 }}>
+		<slot />
+	</div>
 {/key}
 
 <Toasts />
@@ -169,6 +183,21 @@
 </footer>
 
 <style>
+	#mlh-trust-badge {
+		display: block;
+		max-width: 5.5rem;
+		min-width: 5.5rem;
+		position: absolute;
+		right: 15px;
+		top: 2.25rem;
+		width: 100%;
+		z-index: 1;
+	}
+
+	#mlh-badge-image {
+		width: 100%;
+	}
+
 	footer {
 		background-color: #404040;
 	}
@@ -299,6 +328,12 @@
 			display: inline;
 			width: initial;
 			text-decoration: none;
+		}
+
+		#mlh-trust-badge {
+			max-width: 6rem;
+			min-width: 5rem;
+			top: 3.25rem;
 		}
 
 		/* nav {

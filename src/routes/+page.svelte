@@ -25,18 +25,6 @@
 {#if data.user !== undefined}
 	<SvelteMarkdown source={data.settings.homepageText} />
 
-	<a
-		id="mlh-trust-badge"
-		href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=red"
-		target="_blank"
-		rel="noreferrer"
-		><img
-			src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-red.svg"
-			alt="Major League Hacking 2024 Hackathon Season"
-			id="mlh-badge-image"
-		/></a
-	>
-
 	<form method="POST" action="?/logout" use:enhance>
 		<button type="submit" id="logout">Logout</button>
 	</form>
@@ -116,28 +104,5 @@
 	input {
 		display: block;
 		margin-bottom: 1rem;
-	}
-
-	#mlh-trust-badge {
-		display: block;
-		max-width: 5.5rem;
-		min-width: 5.5rem;
-		position: absolute;
-		right: 15px;
-		top: 2.25rem;
-		width: 100%;
-		z-index: 0;
-	}
-
-	#mlh-badge-image {
-		width: 100%;
-	}
-
-	@media (min-width: 1090px) {
-		#mlh-trust-badge {
-			max-width: 6rem;
-			min-width: 5rem;
-			top: 3.25rem;
-		}
 	}
 </style>
