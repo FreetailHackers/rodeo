@@ -6,12 +6,12 @@
 
 	let flippedCard: number = -1;
 
-	function flipCard(index: number): undefined {
+	function flipCard(index: number): void {
 		console.log('flipping card: ' + index);
 		flippedCard = index;
 	}
 
-	function keyDown(event: KeyboardEvent, index: number): undefined {
+	function keyDown(event: KeyboardEvent, index: number): void {
 		if (event.key === 'Enter') flipCard(index);
 	}
 </script>
@@ -32,17 +32,16 @@
 					<div class="card">
 						<div
 							class="card-container"
-							on:click={flipCard(index)}
+							on:click={() => flipCard(index)}
 							on:keydown={(event) => keyDown(event, index)}
 						>
-							{console.log(flippedCard + ' ' + index)}
-							{#if flippedCard !== index}
-								<div class="faq-question">
-									{question.title}
-								</div>
-							{:else}
+							{#if flippedCard === index}
 								<div class="faq-answer">
 									{question.response}
+								</div>
+							{:else}
+								<div class="faq-question">
+									{question.title}
 								</div>
 							{/if}
 							{#if user?.roles.includes('ADMIN')}
