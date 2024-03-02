@@ -147,9 +147,9 @@
 			}
 			@media screen and (max-width: 480px) {
 				.announcementHeader {
-					font-size: 20px;
+					font-size: 25px;
 					line-height: 70px;
-					margin-bottom: -40px;
+					margin-bottom: -30px;
 				}
 			}
 		}
