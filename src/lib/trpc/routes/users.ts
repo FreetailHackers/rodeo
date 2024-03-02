@@ -571,34 +571,6 @@ export const usersRouter = t.router({
 		}),
 
 	/**
-	 * Gets emails from users with a certain status
-	 */
-	emails: t.procedure
-		.use(authenticate(['ADMIN', 'SPONSOR']))
-		.input(
-			z.object({
-				key: z.string(),
-				search: z.string(),
-				searchFilter: z.string(),
-			})
-		)
-		.query(async (req): Promise<string[]> => {
-			const where = await getWhereCondition(
-				req.input.key,
-				req.input.searchFilter,
-				req.input.search,
-				req.ctx.user.roles
-			);
-
-			const allEmails = [] as string[];
-			const users = await prisma.user.findMany({ include: { authUser: true }, where });
-			users.forEach((user) => {
-				allEmails.push(user.authUser.email);
-			});
-			return allEmails;
-		}),
-
-	/**
 	 * Gets statistics on the given users for the given questions. User
 	 * must be an admin or sponsor.
 	 */

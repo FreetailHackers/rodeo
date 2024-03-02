@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import Announcements from '$lib/components/announcements.svelte';
 	import Schedule from '$lib/components/schedule.svelte';
-	//import SvelteMarkdown from 'svelte-markdown';
+	import SvelteMarkdown from 'svelte-markdown';
 	import { toasts } from '$lib/stores';
 	export let data;
 	import { onMount } from 'svelte';
@@ -21,11 +21,11 @@
 <svelte:head>
 	<title>Rodeo | Home</title>
 </svelte:head>
-<div class="bg-img-2" />
+
 <div class="bg-img">
 	<div class="announcement-container">
 		{#if data.user !== undefined}
-			<!--<SvelteMarkdown source={data.settings.homepageText} />-->
+			<SvelteMarkdown source={data.settings.homepageText} />
 
 			<form method="POST" action="?/logout" use:enhance>
 				<button type="submit" id="logout">Logout</button>
@@ -88,25 +88,8 @@
 		background-color: #1d1d1c;
 		background-size: 110%;
 		min-height: 100vh;
-	}
-
-	.bg-img-2 {
-		/* Helps Cover a white bar appearing on top of announcements */
-		/* We can edit colors as we like by editing the .svg itself in VSCode */
-		background-color: #1d1d1c;
-		background-repeat: repeat;
-		background-size: cover;
-		filter: blur(0.05rem);
-
-		/* Absolute position so we can shift it to cover the whole screen */
-		position: fixed;
-		top: 0;
-		left: 0;
-		bottom: 0;
-		right: 0;
-
-		/* display under all elements */
-		z-index: -1;
+		padding-top: 1px;
+		padding-bottom: 1px;
 	}
 
 	input {

@@ -10,7 +10,7 @@
 </script>
 
 {#if admin}
-	<form method="POST" action="?/announce" use:enhance class="form">
+	<form method="POST" action="?/announce" use:enhance>
 		<MarkdownEditor name="announcement" placeholder="Make an announcement here..." required />
 		<br />
 		<button class="announcement-button-label">Announce</button>
@@ -68,9 +68,6 @@
 		right: 0;
 		width: 75px;
 		height: 75px;
-	}
-	.form {
-		flex: 1 1 100%;
 	}
 	.announcement-button-label {
 		font-weight: 500;
