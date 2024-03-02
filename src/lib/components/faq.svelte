@@ -4,11 +4,11 @@
 	export let user: AuthUser;
 	export let questions: OtherCategories[] | null;
 
-	let flippedCard: number = -1;
+	let flippedCard: number | null = null;
 
 	function flipCard(index: number): void {
 		if (flippedCard === index) {
-			flippedCard = -1;
+			flippedCard = null;
 		} else {
 			flippedCard = index;
 		}
@@ -33,7 +33,7 @@
 			{#if questions !== null}
 				{#each questions as question, index}
 					<div
-						class="card"
+						class="card {flippedCard === index ? 'flipped' : ''}"
 						on:click={() => flipCard(index)}
 						on:keydown={(event) => keyDown(event, index)}
 					>
@@ -82,7 +82,7 @@
 		font-family: 'Zen Dots', sans-serif;
 		font-style: normal;
 		font-size: 8rem;
-		color: #f2ebd9;
+		color: var(--highlight-color);
 		text-shadow: none;
 		transform: rotate(90deg);
 	}
@@ -94,7 +94,7 @@
 		font-weight: normal;
 		color: var(--background-color);
 		text-shadow: none;
-		-webkit-text-stroke: 0.1rem #f2ebd9;
+		-webkit-text-stroke: 0.1rem var(--highlight-color);
 		transform: rotate(90deg);
 	}
 
@@ -108,28 +108,50 @@
 		padding-right: 8vw;
 	}
 
+	.card-container {
+		margin: 0.5rem;
+	}
+
 	.card {
 		width: calc(47.5%);
 		height: 25vh;
 		top: 234px;
 		left: 70px;
 		border-radius: 7px;
-		border: 3px solid white;
-		background-color: rgba(255, 255, 255, 0);
+		border: 3px solid var(--highlight-color);
+		background-color: var(--background-color);
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		color: white;
-		font-size: 16px;
-		font-weight: bold;
+	}
+
+	.card:hover {
+		background-color: var(--secondary-color);
+	}
+
+	.card:hover .card-container {
+		margin-bottom: 1rem;
+	}
+
+	.flipped,
+	.flipped:hover {
+		border-color: var(--background-color);
+		background-color: var(--highlight-color);
+	}
+
+	.flipped:hover .card-container {
+		margin-bottom: 0.5rem;
 	}
 
 	.faq-question {
-		/* TODO */
+		font-weight: bold;
+		font-size: 1.5rem;
+		color: var(--highlight-color);
 	}
 
 	.faq-answer {
-		/* TODO */
+		font-size: 16px;
+		color: var(--background-color);
 	}
 
 	h2 {
