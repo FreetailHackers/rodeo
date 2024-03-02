@@ -42,7 +42,7 @@
 		<label for="response">Response</label>
 		<MarkdownEditor id="response" name="response" required value={data.prize.response} />
 
-		<button type="submit">Save</button>
+		<button type="submit" style="margin-top: 1rem;">Save</button>
 	</form>
 </div>
 
@@ -55,6 +55,6 @@
 
 	input,
 	form {
-		margin-bottom: 1rem;
+		margin-bottom: 2rem;
 	}
 </style>
