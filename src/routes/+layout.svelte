@@ -263,10 +263,6 @@
 		/* nav {
 			margin-bottom: 0;
 		} */
-
-		nav {
-			margin-bottom: 0;
-		}
 	}
 
 	.overlay {

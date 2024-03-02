@@ -26,12 +26,6 @@
 </div>
 
 <style>
-	.main-content {
-		max-width: 50rem;
-		margin: 0 auto;
-		padding: 0 1rem;
-	}
-
 	h1 {
 		margin-bottom: 0;
 	}

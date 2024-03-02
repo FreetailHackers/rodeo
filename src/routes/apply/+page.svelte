@@ -254,12 +254,6 @@
 </div>
 
 <style>
-	.main-content {
-		max-width: 50rem;
-		margin: 0 auto;
-		padding: 0 1rem;
-	}
-
 	#rsvp {
 		flex-direction: row;
 		justify-content: space-between;
