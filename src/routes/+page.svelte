@@ -111,6 +111,7 @@
 		font-size: 65px; /* Default font size */
 		white-space: nowrap; /* Ensure header remains on one line */
 		margin: 0 auto; /* Center the header horizontally */
+		padding: 0 20px;
 	}
 	.header-container {
 		color: #e1563f;
@@ -132,7 +133,7 @@
 			}
 			@media screen and (max-width: 480px) {
 				.announcementHeader {
-					font-size: 30px;
+					font-size: 20px;
 					line-height: 70px;
 				}
 			}
