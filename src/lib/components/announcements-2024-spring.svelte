@@ -47,9 +47,8 @@
 				</div>
 				<!-- Corner piece -->
 				<div />
-				<div class="bottom-right-format">
-					<div class="bottom-right-image" />
-				</div>
+
+				<div class="bottom-right-image" />
 			</li>
 		{/each}
 	</ul>
@@ -61,18 +60,16 @@
 	li {
 		position: relative;
 	}
-	.bottom-right-format {
+	.bottom-right-image {
+		background-image: url('/announcement-corner.png');
+		background-size: contain;
+		background-position: center bottom;
+		background-repeat: no-repeat;
 		position: absolute;
 		bottom: 0;
 		right: 0;
 		width: 75px;
 		height: 75px;
-	}
-	.bottom-right-image {
-		background-image: url('/announcement-images/announcement-corner.png');
-		background-size: contain;
-		background-position: center bottom;
-		background-repeat: no-repeat;
 	}
 	.form {
 		flex: 1 1 100%;
