@@ -1,22 +1,9 @@
 <script lang="ts">
 	import type { OtherCategories, AuthUser } from '@prisma/client';
+	import Accordion from './accordion.svelte';
 
 	export let user: AuthUser;
 	export let questions: OtherCategories[] | null;
-
-	let flippedCard: number | null = null;
-
-	function flipCard(index: number): void {
-		if (flippedCard === index) {
-			flippedCard = null;
-		} else {
-			flippedCard = index;
-		}
-	}
-
-	function keyDown(event: KeyboardEvent, index: number): void {
-		if (event.key === 'Enter') flipCard(index);
-	}
 </script>
 
 <svelte:head>
@@ -29,30 +16,21 @@
 			<h2 class="left-border-faq">FAQ</h2>
 			<h2 class="left-border-faq-2">FAQ</h2>
 		</div>
-		<div class="faq-cards">
+		<div class="faq-questions">
 			{#if questions !== null}
-				{#each questions as question, index}
-					<div
-						class="card {flippedCard === index ? 'flipped' : ''}"
-						on:click={() => flipCard(index)}
-						on:keydown={(event) => keyDown(event, index)}
-					>
-						<div class="card-container">
-							{#if flippedCard === index}
-								<div class="faq-answer">
-									{question.response}
-								</div>
-							{:else}
-								<div class="faq-question">
-									{question.title}
-								</div>
-							{/if}
-							{#if user?.roles.includes('ADMIN')}
-								<p>
-									<a class="edit" href="/admin/faq/{question.id}">Edit</a>
-								</p>
-							{/if}
-						</div>
+				{#each questions as question}
+					<div class="question">
+						<Accordion>
+							<span slot="head" class="question-title">{question.title}</span>
+							<div slot="details" class="question-answer">
+								<p>{question.response}</p>
+								{#if user?.roles.includes('ADMIN')}
+									<p>
+										<a class="edit" href="/admin/faq/{question.id}">Edit</a>
+									</p>
+								{/if}
+							</div>
+						</Accordion>
 					</div>
 				{/each}
 			{:else}
@@ -67,6 +45,7 @@
 
 	.background {
 		background-color: var(--background-color);
+		display: flex;
 	}
 
 	.faq-container {
@@ -76,6 +55,7 @@
 	.faq-title {
 		display: flex;
 		flex-direction: column;
+		flex-grow: 1;
 	}
 
 	.left-border-faq {
@@ -98,83 +78,30 @@
 		transform: rotate(90deg);
 	}
 
-	.faq-cards {
+	.faq-questions {
 		display: flex;
-		justify-content: space-between;
-		align-items: center;
+		flex-direction: column;
 		flex-wrap: wrap;
-		flex-grow: 1;
-		flex-basis: 1rem;
-		padding-right: 8vw;
+		/* TODO: change this width to fill up */
+		flex-grow: 2;
 	}
 
-	.card-container {
-		margin: 0.5rem;
-	}
-
-	.card {
-		width: calc(47.5%);
-		height: 25vh;
-		top: 234px;
-		left: 70px;
-		border-radius: 7px;
-		border: 3px solid var(--highlight-color);
-		background-color: var(--background-color);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.card:hover {
-		background-color: var(--secondary-color);
-	}
-
-	.card:hover .card-container {
-		margin-bottom: 1rem;
-	}
-
-	.flipped,
-	.flipped:hover {
-		border-color: var(--background-color);
-		background-color: var(--highlight-color);
-	}
-
-	.flipped:hover .card-container {
-		margin-bottom: 0.5rem;
-	}
-
-	.faq-question {
-		font-weight: bold;
-		font-size: 1.5rem;
-		color: var(--highlight-color);
-	}
-
-	.faq-answer {
-		font-size: 16px;
-		color: var(--background-color);
+	.question {
+		padding: 0 5vw;
 	}
 
 	h2 {
 		font-family: 'Fugaz One';
-		color: #f2ebd9;
-		text-align: left;
+		color: var(--highlight-color);
+		text-align: center;
 		font-size: 36px;
-		text-shadow: 0 4px 8px rgb(0, 0, 0);
+		margin-top: 0;
+		margin-bottom: 0;
 	}
 
 	@media (max-width: 1089px) {
 		.faq-container {
 			flex-direction: column;
-		}
-
-		.faq-cards {
-			flex-direction: column;
-			padding-right: 0;
-		}
-
-		.card {
-			width: calc(75%);
-			margin-bottom: 1rem;
 		}
 
 		.left-border-faq {
