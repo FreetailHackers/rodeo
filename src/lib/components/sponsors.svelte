@@ -43,10 +43,11 @@
 	}
 
 	button {
-		height: 2.5em;
 		font-size: 20px;
 		display: block;
 		margin: 20px auto;
+		padding: 0 2em;
+		box-shadow: 0 0.5rem 0.75rem black;
 	}
 
 	.background-grid {
