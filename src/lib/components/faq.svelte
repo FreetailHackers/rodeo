@@ -142,16 +142,14 @@
 		.faq-title-container {
 			position: unset;
 			height: unset;
-		}
-
-		.faq-title {
 			justify-content: center;
+			width: auto;
 		}
 
 		.left-border-faq {
 			text-align: center;
 			margin-bottom: 1rem;
-			font-size: 4rem;
+			font-size: 3rem;
 			writing-mode: unset;
 			padding-top: unset;
 		}
