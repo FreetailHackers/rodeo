@@ -23,9 +23,11 @@
 
 <div class="background">
 	<div class="faq-container">
-		<div class="faq-title">
-			<h1 class="left-border-faq">FAQ</h1>
-			<h1 class="left-border-faq-2">FAQ</h1>
+		<div class="faq-title-container">
+			<div class="faq-title">
+				<h1 class="left-border-faq">FAQ</h1>
+				<h1 class="left-border-faq-2">FAQ</h1>
+			</div>
 		</div>
 		<div class="faq-questions">
 			{#if questions !== null}
@@ -66,10 +68,18 @@
 		display: flex;
 	}
 
+	.faq-title-container {
+		position: sticky;
+		top: 7vh;
+		height: 100vh;
+		overflow-y: auto;
+	}
+
 	.faq-title {
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
+		overflow-y: auto;
 	}
 
 	.left-border-faq {
