@@ -12,10 +12,9 @@
 
 	function getCurrentQuestion(half: number, halfIndex: number): OtherCategories | null {
 		if (!questions) return null;
-		return questions[Math.floor(half * getHalfLength(half) + halfIndex + half)];
+		let addOn = questions.length % 2;
+		return questions[Math.floor(half * getHalfLength(half) + halfIndex) + half * addOn];
 	}
-
-	console.log(questions);
 </script>
 
 <svelte:head>
