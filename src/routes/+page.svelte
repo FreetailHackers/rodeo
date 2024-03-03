@@ -19,12 +19,16 @@
 <svelte:head>
 	<title>Rodeo | Home</title>
 </svelte:head>
-{#if data.user !== undefined}
+
+<!-- {#if data.user !== undefined}
 	<SvelteMarkdown source={data.settings.homepageText} />
-	<!-- Admin announcements panel -->
+	Admin announcements panel
 	<h2>Announcements</h2>
 	<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
-{/if}
+{:else}
+	<h2>Announcements</h2>
+	<Announcements announcements={data.announcements} admin={false} />
+{/if} -->
 
 <!-- <SvelteMarkdown source={data.settings.homepageText} /> -->
 <div class="topographic-background">
