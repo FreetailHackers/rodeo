@@ -12,15 +12,15 @@
 
 <div class="container">
 	<div id="header">
-		<h1>Edit Event</h1>
+		<h1>Edit FAQ</h1>
 		<form method="POST" action="?/delete" use:enhance>
 			<input type="hidden" name="id" value={data.question.id} />
 			<button
 				use:confirmationDialog={{
-					text: 'Are you sure you want to delete this event?',
+					text: 'Are you sure you want to delete this FAQ?',
 					cancel: 'Cancel',
 					ok: 'Delete',
-				}}>Delete Event</button
+				}}>Delete FAQ</button
 			>
 		</form>
 	</div>
