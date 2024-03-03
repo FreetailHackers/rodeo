@@ -68,8 +68,8 @@
 	<Announcements announcements={data.announcements} admin={false} />
 {/if}
 
-<FAQ user={data.user} questions={data.faqs} />
 <Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
+<FAQ user={data.user} questions={data.faqs} />
 
 <style>
 	label {
