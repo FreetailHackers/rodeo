@@ -318,36 +318,92 @@ export const events: Prisma.EventCreateInput[] = [
 
 export const otherCategoriesEvents: Prisma.OtherCategoriesCreateInput[] = [
 	{
-		title: 'Where is Formula Hacks?',
-		response:
-			'Formula Hacks will take place on the University of Texas at Austin campus! Hacking, judging, mini-events, and more will occur fully in-person!',
-		category: 'FAQ',
-	},
-	{
-		title: 'Are there sleeping accomodations?',
-		response:
-			"We have one room, but we recommend getting somewhere to sleep since it's going to be crammed",
-		category: 'FAQ',
-	},
-	{
 		title: 'What is Formula Hacks?',
 		response:
 			'Formula Hacks is our beginner friendly spring hackathon only open to the University of Texas at Austin and Austin Community College students. No prior experience required and all majors welcome!',
 		category: 'FAQ',
 	},
 	{
-		title: 'First Place Intermediate',
-		response: 'VISIO TVs!',
-		category: 'PRIZE',
+		title: 'Where is Formula Hacks?',
+		response:
+			'Formula Hacks will take place on the University of Texas at Austin campus! Hacking, judging, mini-events, and more will occur fully in-person!',
+		category: 'FAQ',
 	},
 	{
-		title: 'Second Place Intermediate',
-		response: 'Mechanical Keyboard',
-		category: 'PRIZE',
+		title: 'When is Formula Hacks?',
+		response: 'Formula Hacks starts on March 22st, 2024 and ends on March 23rd, 2024.',
+		category: 'FAQ',
 	},
 	{
-		title: 'Third Place Intermediate',
-		response: 'Apple Keyboard',
-		category: 'PRIZE',
+		title: 'When is the application deadline?',
+		response:
+			'Applications will close on March 18th 11:59PM CDT. However, please apply early since we will be releasing decisions in waves!',
+		category: 'FAQ',
+	},
+	{
+		title: 'What can I do if I missed the application deadline or got rejected?',
+		response:
+			'We will have walk-in registration on Friday, March 22nd. The specific closing time for walk-in registration will be announced on our website during the event week, so be on the lookout! This is first come, first serve until we hit capacity. Admission to the event is not guaranteed so we advise non-Austin attendees to not travel for walk-in registration.',
+		category: 'FAQ',
+	},
+	{
+		title: 'How much money will this cost me?',
+		response:
+			"Zero. Zip. Zilch. Nada. Nothing. Gratis. It's free. Freetail Hackers provides students with Wi-Fi, meals, swag, workspace, and prizes for all of our events!",
+		category: 'FAQ',
+	},
+	{
+		title: 'What’s the schedule?',
+		response:
+			'We’ll release a more detailed schedule in the coming weeks, but our event will start roughly around 9am on Friday, March 22nd and end around 6-7pm on March 23rd.',
+		category: 'FAQ',
+	},
+	{
+		title: 'Will there be prizes?',
+		response:
+			'Yes! We will have prizes for our challenges as well as smaller activities and mini-events! Specific details will be revealed at the opening ceremony!',
+		category: 'FAQ',
+	},
+	{
+		title: 'What do I wear?',
+		response:
+			'Wear whatever you are most comfortable in! No need to wear anything professional. However, we do require you to be within the MLH Code of Conduct.',
+		category: 'FAQ',
+	},
+	{
+		title: 'Any rules?',
+		response:
+			"All work must be done at the event. You can't demo something you didn't build. Don't talk about Fight Club. All attendees (hackers, supporters, mentors, volunteers, etc.) must abide by the MLH Code of Conduct.",
+		category: 'FAQ',
+	},
+	{
+		title: 'How do teams work?',
+		response:
+			"Teams can be up to 4 members. If you don't have a team, don't worry! Joining a team of new friends is the best part of a hackathon. We will have team matching available for everyone on the day of the event, but if you would like to create a team beforehand, that works too!",
+		category: 'FAQ',
+	},
+	{
+		title: 'What should I bring?',
+		response:
+			'Yourself, your valid university ID, a form of ID proving you are over 18 years old, a laptop, chargers, or anything else you might need within the 24 hours. Firearms, weapons, alcohol, illegal drugs, and power tools are not allowed. Smiles and high-fives are welcome.',
+		category: 'FAQ',
+	},
+	{
+		title: 'How do I volunteer?',
+		response:
+			'We are always looking for mentors to answer student questions or workshop suggestions, as well as general volunteers to help run our event. If you want to help out at our event, shoot us an email at hello@freetailhackers.com!',
+		category: 'FAQ',
+	},
+	{
+		title: "Do y'all give travel reimbursements?",
+		response:
+			'Unfortunately, we will not be able to provide travel reimbursements this year. We encourage you to look at low-cost transportation methods such as Amtrak, Flixbus, and Redcoach.',
+		category: 'FAQ',
+	},
+	{
+		title: 'I have more questions. Who do I contact?',
+		response:
+			"If you have further questions for us, don't hesitate to reach out to hello@freetailhackers.com",
+		category: 'FAQ',
 	},
 ];
