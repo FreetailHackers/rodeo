@@ -119,6 +119,7 @@
 		.faq-container {
 			flex-direction: column;
 			width: 100vw;
+			padding-top: 10vw;
 		}
 
 		.faq-title {
