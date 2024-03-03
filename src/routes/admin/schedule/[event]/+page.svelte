@@ -41,7 +41,7 @@
 
 		<label for="description">Description</label>
 		<div id="description">
-			<MarkdownEditor id="description" name="description" value={data.event.description} required />
+			<textarea id="description" name="description" value={data.event.description} required />
 		</div>
 
 		<label for="start">Start Time</label>
@@ -83,6 +83,10 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+	}
+
+	textarea {
+		width: 100%;
 	}
 
 	select,

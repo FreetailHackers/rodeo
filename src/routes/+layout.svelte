@@ -50,10 +50,13 @@
 	<menu id="menu" bind:this={menu}>
 		<img src="/Freetail_bat.png" id="menu-logo" alt="Freetail logo" />
 		<li>
-			<a href="/" class:active={$page.url.pathname === '/'}>Home</a>
+			<a href="/" class:active={$page.url.pathname === '/' && $page.url.hash === ''}>Home</a>
 		</li>
 		<li>
-			<a href="/#Schedule">Schedule</a>
+			<a href="/#Schedule" class={$page.url.hash === '#Schedule' ? 'active' : ''}>Schedule</a>
+		</li>
+		<li>
+			<a href="/#Sponsors" class={$page.url.hash === '#Sponsors' ? 'active' : ''}>Sponsors</a>
 		</li>
 
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->

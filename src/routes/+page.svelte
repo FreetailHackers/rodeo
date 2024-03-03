@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import Announcements from '$lib/components/announcements.svelte';
 	import Schedule from '$lib/components/schedule.svelte';
+	import Sponsors from '$lib/components/sponsors.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
 	import { toasts } from '$lib/stores';
 	export let data;
@@ -70,17 +71,15 @@
 	<hr />
 {/if}
 
-<div id="Schedule">
+<section id="Schedule">
 	<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
-</div>
+</section>
 
-<h1>Sponsors</h1>
-<div class="image">
-	<img alt="The project logo" src={'/Capital One Logo.png'} />
-	<img alt="The project logo" src={'/mercury_financial.jpeg'} />
-	<img alt="The project logo" src={'/Roblox Logo.png'} />
-	<img alt="The project logo" src={'/red_bull_logo.jpeg'} />
-</div>
+<section id="Sponsors">
+	<Sponsors
+		sponsors={['Roblox', 'Capital One', 'Mercury Financial', 'Red Bull', 'Stand Out Stickers']}
+	/>
+</section>
 
 <style>
 	h1 {
@@ -93,22 +92,6 @@
 		padding-bottom: 48px;
 	}
 
-	img {
-		width: 250px;
-		height: auto;
-		padding-bottom: 2%;
-		padding-top: 2%;
-		padding-left: 2%;
-		padding-right: 2%;
-	}
-
-	.image {
-		display: flex;
-		justify-content: space-evenly;
-		flex-wrap: wrap;
-		align-items: center;
-		width: 100%;
-	}
 	label {
 		display: block;
 		margin-bottom: 0.5rem;
