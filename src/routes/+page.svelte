@@ -33,13 +33,7 @@
 	<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
 	<!-- paste final sponsor code here 1-->
 	<hr />
-	<h1>Sponsors</h1>
-	<div class="image">
-		<img alt="The project logo" src={'src/lib/assets/sponsors/Capital One Logo.png'} />
-		<img alt="The project logo" src={'src/lib/assets/sponsors/mercury_financial.jpeg'} />
-		<img alt="The project logo" src={'src/lib/assets/sponsors/Roblox Logo.png'} />
-		<img alt="The project logo" src={'src/lib/assets/sponsors/red_bull_logo.jpeg'} />
-	</div>
+	
 {:else}
 	<!-- Signup page -->
 	{#if !data.canApply}
@@ -75,18 +69,19 @@
 	<h2>Announcements</h2>
 	<Announcements announcements={data.announcements} admin={false} />
 	<hr />
-	<h1>Sponsors</h1>
-	<div class="image">
-		<img alt="The project logo" src={'src/lib/assets/sponsors/Capital One Logo.png'} />
-		<img alt="The project logo" src={'src/lib/assets/sponsors/mercury_financial.jpeg'} />
-		<img alt="The project logo" src={'src/lib/assets/sponsors/Roblox Logo.png'} />
-		<img alt="The project logo" src={'src/lib/assets/sponsors/red_bull_logo.jpeg'} />
-	</div>
 {/if}
 
 <div id="Schedule">
 	<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
 </div>
+
+	<h1>Sponsors</h1>
+	<div class="image">
+		<img alt="The project logo" src={'/Capital One Logo.png'} />
+		<img alt="The project logo" src={'/mercury_financial.jpeg'} />
+		<img alt="The project logo" src={'/Roblox Logo.png'} />
+		<img alt="The project logo" src={'/red_bull_logo.jpeg'} />
+	</div>
 
 <style>
 	h1 {
