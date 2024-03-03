@@ -16,8 +16,12 @@
 		</div>
 		{#if admin}
 			<form method="POST" action="?/announce" use:enhance>
-				<MarkdownEditor name="announcement" placeholder="Make an announcement here..." required />
-				<br />
+				<MarkdownEditor
+					name="announcement"
+					placeholder="Make an announcement here..."
+					required
+					useAnnouncementFont={true}
+				/>
 				<button class="announcement-button-label">Announce</button>
 			</form>
 		{/if}
@@ -67,6 +71,11 @@
 		flex-wrap: wrap;
 		max-width: 75rem;
 		margin: auto;
+		font-weight: 500;
+		font-family: 'Fugaz One';
+		color: #e1563f;
+		flex-direction: column;
+		justify-content: center;
 	}
 	.bg-img {
 		background-color: #1d1d1c;
@@ -85,12 +94,8 @@
 		margin-top: 20px;
 	}
 	.header-container {
-		color: #e1563f;
 		display: flex;
-		justify-content: center;
 		align-items: center;
-		flex-direction: column;
-		font-weight: 400;
 	}
 
 	@media screen and (max-width: 1024px) {
@@ -115,10 +120,6 @@
 			}
 		}
 	}
-
-	li {
-		position: relative;
-	}
 	.bottom-right-image {
 		background-image: url('/announcement-corner.png');
 		background-size: contain;
@@ -131,43 +132,37 @@
 		height: 75px;
 	}
 	.announcement-button-label {
-		font-weight: 500;
+		color: #1d1d1c;
 		font-family: 'Fugaz One';
-		color: #000000;
 	}
 	.no-announcements-message {
-		font-weight: 500;
-		font-family: 'Fugaz One';
-		color: #e1563f;
 		text-align: center;
 		font-size: 20px;
 		margin-top: 20px;
 		margin-bottom: 40px;
 	}
-	li p {
+	p {
 		/* Styles for the entire paragraph */
 		display: flex;
 		align-items: center;
-	}
-
-	li p span.date {
-		font-family: 'Fugaz One';
-		font-weight: 400;
 		font-size: 20px;
 		color: #e1563f;
+		margin: 0;
+		flex-grow: 1;
+	}
+
+	p span.date {
 		margin-right: 10px;
 	}
 
-	li p span.time {
-		font-family: 'Fugaz One';
-		font-weight: 400;
+	p span.time {
 		font-size: 10px;
-		color: #e1563f;
 		opacity: 0.6;
 	}
 
 	.announcement-text {
 		font-family: 'Fugaz One';
+		color: #1d1d1c;
 		font-weight: 400;
 		margin-top: -10px;
 	}
@@ -184,11 +179,7 @@
 		padding: 1rem 2rem 2rem;
 		margin-bottom: 1rem;
 		margin-top: 1.5rem;
-	}
-
-	p {
-		margin: 0;
-		flex-grow: 1;
+		position: relative;
 	}
 
 	span {

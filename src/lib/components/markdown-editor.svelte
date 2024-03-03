@@ -12,6 +12,8 @@
 	let previewing = false;
 	let textarea: HTMLTextAreaElement;
 
+	export let useAnnouncementFont: boolean = false;
+
 	// HACK: This is a workaround for Svelte not updating input bindings a form is reset
 	onMount(() => {
 		textarea.form?.addEventListener('reset', () => {
@@ -24,20 +26,20 @@
 
 <div>
 	<button
-		class="announcement-font"
+		class={useAnnouncementFont ? 'announcement-font' : ''}
 		type="button"
 		class:selected={!previewing}
 		on:click={() => (previewing = false)}>Write</button
 	>
 	<button
-		class="announcement-font"
+		class={useAnnouncementFont ? 'announcement-font' : ''}
 		type="button"
 		class:selected={previewing}
 		on:click={() => (previewing = true)}>Preview</button
 	>
 </div>
 {#if previewing}
-	<div class="border" style="background-color: white;">
+	<div class="border white-preview-background">
 		{#if value === ''}
 			<p class="empty-preview announcement-font">Nothing to preview.</p>
 		{:else}
@@ -46,10 +48,17 @@
 			</div>
 		{/if}
 	</div>
-	<textarea class="announcement-font" style="display: none;" {id} {name} {required} {value} />
+	<textarea
+		class={useAnnouncementFont ? 'announcement-font' : ''}
+		style="display: none;"
+		{id}
+		{name}
+		{required}
+		{value}
+	/>
 {:else}
 	<textarea
-		class="announcement-font"
+		class={useAnnouncementFont ? 'announcement-font' : ''}
 		{id}
 		{name}
 		{placeholder}
@@ -61,6 +70,9 @@
 {/if}
 
 <style>
+	.white-preview-background {
+		background: white;
+	}
 	button {
 		padding: 0 1rem;
 		background-color: #ddd;
@@ -86,7 +98,6 @@
 		font-style: italic;
 	}
 
-	/*Replace all announcement fonts */
 	.announcement-font {
 		font-family: 'Fugaz One';
 		font-weight: 400;
