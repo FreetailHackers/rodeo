@@ -32,7 +32,6 @@
 	<!-- Admin announcements panel -->
 	<h2>Announcements</h2>
 	<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
-	<!-- paste final sponsor code here 1-->
 	<hr />
 {:else}
 	<!-- Signup page -->
