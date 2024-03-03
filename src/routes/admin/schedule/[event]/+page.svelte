@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
 	import { confirmationDialog } from '$lib/actions.js';
 
 	export let data;
