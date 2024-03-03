@@ -133,7 +133,7 @@
 			>
 		</div>
 		<div class="flex-column">
-			<div class="row bold">Links</div>
+			<div class="row category">Links</div>
 			<a
 				target="_blank"
 				rel="noopener noreferrer"
@@ -154,7 +154,7 @@
 			<a href="mailto:admin@freetailhackers.com">Contact Us</a>
 		</div>
 		<div class="flex-column">
-			<div class="row bold">Other Hackathons</div>
+			<div class="row category">Other Hackathons</div>
 			<a target="_blank" rel="noopener noreferrer" href="https://rowdyhacks.org/"> RowdyHacks</a>
 			<a target="_blank" rel="noopener noreferrer" href="https://tamuhack.org/"> TAMUhack</a>
 			<a target="_blank" rel="noopener noreferrer" href="https://hackutd.co/"> HackUTD</a>
@@ -204,6 +204,7 @@
 	.flex-column {
 		display: flex;
 		flex-direction: column;
+		font-size: 14px;
 	}
 
 	a {
@@ -218,8 +219,8 @@
 		color: var(--primary-accent);
 	}
 
-	.bold {
-		font-weight: bold;
+	.category {
+		font-size: 17px;
 	}
 
 	label {
