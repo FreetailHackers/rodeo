@@ -132,6 +132,11 @@
 			padding-top: 10vw;
 		}
 
+		.faq-title-container {
+			position: unset;
+			height: unset;
+		}
+
 		.faq-title {
 			justify-content: center;
 		}
