@@ -4,6 +4,13 @@
 
 	export let user: AuthUser;
 	export let questions: OtherCategories[] | null;
+
+	function getCurrentQuestion(half: number, halfIndex: number): OtherCategories | null {
+		if (!questions) return null;
+		return questions[Math.floor(half * (questions.length / 2) + halfIndex)];
+	}
+
+	console.log(questions);
 </script>
 
 <svelte:head>
@@ -22,17 +29,13 @@
 					<div class="faq-questions-col-{2 - (idx % 2)}">
 						{#each { length: questions.length / 2 } as _j, jdx}
 							<Accordion>
-								<span slot="head" class="question-title"
-									>{questions[idx * (questions.length / 2) + jdx].title}</span
+								<span slot="head" class="question-title">{getCurrentQuestion(idx, jdx)?.title}</span
 								>
 								<div slot="details" class="question-answer">
-									<p>{questions[idx * (questions.length / 2) + jdx].response}</p>
+									<p>{getCurrentQuestion(idx, jdx)?.response}</p>
 									{#if user?.roles.includes('ADMIN')}
 										<p>
-											<a
-												class="edit"
-												href="/admin/faq/{questions[idx * (questions.length / 2) + jdx].id}">Edit</a
-											>
+											<a class="edit" href="/admin/faq/{getCurrentQuestion(idx, jdx)?.id}">Edit</a>
 										</p>
 									{/if}
 								</div>
@@ -63,7 +66,6 @@
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
-		padding-right: 5vw;
 	}
 
 	.left-border-faq {
@@ -91,9 +93,14 @@
 	.faq-questions {
 		display: grid;
 		align-items: baseline;
-		grid-template-columns: 40vw 40vw;
+		grid-template-columns: 35vw 35vw;
 		grid-auto-rows: min-content;
 		padding-top: 5vw;
+	}
+
+	.faq-questions-col-1,
+	.faq-questions-col-2 {
+		padding-left: 5vw;
 	}
 
 	h1 {
