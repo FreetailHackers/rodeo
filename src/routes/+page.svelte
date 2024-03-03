@@ -94,10 +94,12 @@
 	}
 
 	img {
-		width: 200px;
+		width: 250px;
 		height: auto;
 		padding-bottom: 2%;
 		padding-top: 2%;
+		padding-left: 2%;
+		padding-right: 2%;
 	}
 
 	.image {

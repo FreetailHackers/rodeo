@@ -190,7 +190,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		color: white;
+		color: #f2ebd9;
 		line-height: 1.5;
 		flex-wrap: wrap;
 		max-width: 50vw;
@@ -223,7 +223,7 @@
 		font-weight: 700;
 		font-style: normal;
 		text-transform: uppercase;
-		color: white;
+		color: #f2ebd9;
 	}
 
 	#hamburger-logo {
@@ -282,7 +282,7 @@
 		display: block;
 		width: 100%;
 		padding: 0.7rem 1rem;
-		color: white;
+		color: #f2ebd9;
 		text-decoration: none;
 	}
 
