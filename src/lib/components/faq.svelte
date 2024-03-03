@@ -70,7 +70,7 @@
 
 	.faq-title-container {
 		position: sticky;
-		top: 7vh;
+		top: 10vh;
 		height: 100vh;
 		overflow-y: auto;
 	}
@@ -79,7 +79,6 @@
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
-		overflow-y: auto;
 	}
 
 	.left-border-faq {
