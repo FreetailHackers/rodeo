@@ -80,6 +80,8 @@
 		color: #e1563f;
 		text-align: center;
 		font-size: 20px;
+		margin-top: 20px;
+		margin-bottom: 40px;
 	}
 	li p {
 		/* Styles for the entire paragraph */
