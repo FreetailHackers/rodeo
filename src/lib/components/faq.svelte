@@ -12,6 +12,9 @@
 	let columnTwo: OtherCategories[] | undefined = questions?.slice(
 		Math.ceil(questions.length / 2) + 1
 	);
+
+	let questionsSplit: OtherCategories[][] | undefined =
+		questions && columnOne && columnTwo ? [columnOne, columnTwo] : undefined;
 </script>
 
 <svelte:head>
@@ -27,37 +30,24 @@
 			</div>
 		</div>
 		<div class="faq-questions">
-			{#if questions && columnOne && columnTwo}
-				<div class="faq-questions-col-1">
-					{#each columnOne as question}
-						<Accordion>
-							<span slot="head" class="question-title">{question.title}</span>
-							<div slot="details" class="question-answer">
-								<p>{question.response}</p>
-								{#if user?.roles.includes('ADMIN')}
-									<p>
-										<a class="edit" href="/admin/faq/{question.id}">Edit</a>
-									</p>
-								{/if}
-							</div>
-						</Accordion>
-					{/each}
-				</div>
-				<div class="faq-questions-col-2">
-					{#each columnTwo as question}
-						<Accordion>
-							<span slot="head" class="question-title">{question.title}</span>
-							<div slot="details" class="question-answer">
-								<p>{question.response}</p>
-								{#if user?.roles.includes('ADMIN')}
-									<p>
-										<a class="edit" href="/admin/faq/{question.id}">Edit</a>
-									</p>
-								{/if}
-							</div>
-						</Accordion>
-					{/each}
-				</div>
+			{#if questionsSplit}
+				{#each { length: 2 } as _i, idx}
+					<div class="faq-questions-col-{2 - (idx % 2)}">
+						{#each questionsSplit[idx] as question}
+							<Accordion>
+								<span slot="head" class="question-title">{question.title}</span>
+								<div slot="details" class="question-answer">
+									<p>{question.response}</p>
+									{#if user?.roles.includes('ADMIN')}
+										<p>
+											<a class="edit" href="/admin/faq/{question.id}">Edit</a>
+										</p>
+									{/if}
+								</div>
+							</Accordion>
+						{/each}
+					</div>
+				{/each}
 			{:else}
 				<h2>Check back for the FAQ!</h2>
 			{/if}
@@ -142,8 +132,8 @@
 		.faq-title-container {
 			position: unset;
 			height: unset;
-			justify-content: center;
 			width: auto;
+			justify-content: center;
 		}
 
 		.left-border-faq {
