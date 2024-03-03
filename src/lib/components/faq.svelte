@@ -18,19 +18,26 @@
 		</div>
 		<div class="faq-questions">
 			{#if questions !== null}
-				{#each questions as question}
-					<div class="question">
-						<Accordion>
-							<span slot="head" class="question-title">{question.title}</span>
-							<div slot="details" class="question-answer">
-								<p>{question.response}</p>
-								{#if user?.roles.includes('ADMIN')}
-									<p>
-										<a class="edit" href="/admin/faq/{question.id}">Edit</a>
-									</p>
-								{/if}
-							</div>
-						</Accordion>
+				{#each { length: 2 } as _i, idx}
+					<div class="faq-questions-col-{2 - (idx % 2)}">
+						{#each { length: questions.length / 2 } as _j, jdx}
+							<Accordion>
+								<span slot="head" class="question-title"
+									>{questions[idx * (questions.length / 2) + jdx].title}</span
+								>
+								<div slot="details" class="question-answer">
+									<p>{questions[idx * (questions.length / 2) + jdx].response}</p>
+									{#if user?.roles.includes('ADMIN')}
+										<p>
+											<a
+												class="edit"
+												href="/admin/faq/{questions[idx * (questions.length / 2) + jdx].id}">Edit</a
+											>
+										</p>
+									{/if}
+								</div>
+							</Accordion>
+						{/each}
 					</div>
 				{/each}
 			{:else}
@@ -84,9 +91,9 @@
 	.faq-questions {
 		display: grid;
 		align-items: baseline;
-		grid-template-columns: 35vw 35vw;
+		grid-template-columns: 40vw 40vw;
 		grid-auto-rows: min-content;
-		padding-top: 2.5vw;
+		padding-top: 5vw;
 	}
 
 	h1 {
@@ -119,8 +126,9 @@
 		}
 
 		.faq-questions {
-			grid-template-columns: 100vw;
+			grid-template-columns: 70vw;
 			padding-left: 5vw;
+			gap: 0;
 		}
 	}
 </style>

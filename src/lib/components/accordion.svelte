@@ -28,7 +28,7 @@
 
 <style>
 	.accordion {
-		margin: 2rem 0;
+		margin-bottom: 2.5rem;
 		color: var(--highlight-color);
 	}
 
