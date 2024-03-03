@@ -22,19 +22,12 @@
 	<title>Rodeo | Home</title>
 </svelte:head>
 {#if data.user !== undefined}
-	<div class="bg-img">
-		<div class="announcement-container">
-			<SvelteMarkdown source={data.settings.homepageText} />
-			<form method="POST" action="?/logout" use:enhance>
-				<button type="submit" id="logout">Logout</button>
-			</form>
-			<!-- Admin announcements panel -->
-			<div class="header-container">
-				<h1 class="announcementHeader">ANNOUNCEMENTS</h1>
-			</div>
-			<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
-		</div>
-	</div>
+	<SvelteMarkdown source={data.settings.homepageText} />
+	<form method="POST" action="?/logout" use:enhance>
+		<button type="submit" id="logout">Logout</button>
+	</form>
+	<!-- Admin announcements panel -->
+	<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
 {:else}
 	<!-- Signup page -->
 	{#if !data.canApply}
@@ -67,74 +60,11 @@
 	<p>
 		Don't have an account yet? <a href="/register">Register here!</a>
 	</p>
-	<div class="bg-img">
-		<div class="announcement-container">
-			<div class="header-container">
-				<h1 class="announcementHeader">ANNOUNCEMENTS</h1>
-			</div>
-			<Announcements announcements={data.announcements} admin={false} />
-		</div>
-	</div>
+
+	<Announcements announcements={data.announcements} admin={false} />
 {/if}
 
 <Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
 
 <style>
-	.announcement-container {
-		padding: 0 20px;
-		flex-wrap: wrap;
-		max-width: 75rem;
-		margin: auto;
-	}
-	.bg-img {
-		background-color: #1d1d1c;
-		background-size: 110%;
-		padding-top: 1px;
-		padding-bottom: 1px;
-	}
-	input {
-		display: block;
-		margin-bottom: 1rem;
-	}
-	.announcementHeader {
-		text-align: center;
-		font-family: 'Zen Dots';
-		font-size: 65px;
-		width: 100%;
-
-		white-space: nowrap;
-		margin: 0 auto;
-		margin-top: 20px;
-	}
-	.header-container {
-		color: #e1563f;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		flex-direction: column;
-		font-weight: 400;
-	}
-
-	@media screen and (max-width: 1024px) {
-		.announcementHeader {
-			margin-top: 0px;
-			font-size: 50px;
-			line-height: 100px;
-			margin-bottom: -20px;
-		}
-		@media screen and (max-width: 740px) {
-			.announcementHeader {
-				font-size: 35px;
-				line-height: 100px;
-				margin-bottom: -30px;
-			}
-			@media screen and (max-width: 480px) {
-				.announcementHeader {
-					font-size: 25px;
-					line-height: 70px;
-					margin-bottom: -30px;
-				}
-			}
-		}
-	}
 </style>

@@ -9,52 +9,113 @@
 	export let announcements: Announcement[];
 </script>
 
-{#if admin}
-	<form method="POST" action="?/announce" use:enhance>
-		<MarkdownEditor name="announcement" placeholder="Make an announcement here..." required />
-		<br />
-		<button class="announcement-button-label">Announce</button>
-	</form>
-{/if}
-{#if announcements.length > 0}
-	<ul>
-		{#each announcements as announcement}
-			<li>
-				<span>
-					<p>
-						<span class="date">
-							{announcement.published.toLocaleDateString('en-us', {
-								month: 'long',
-								day: 'numeric',
-							})}
+<div class="bg-img">
+	<div class="announcement-container">
+		<div class="header-container">
+			<h1 class="announcementHeader">ANNOUNCEMENTS</h1>
+		</div>
+		{#if admin}
+			<form method="POST" action="?/announce" use:enhance>
+				<MarkdownEditor name="announcement" placeholder="Make an announcement here..." required />
+				<br />
+				<button class="announcement-button-label">Announce</button>
+			</form>
+		{/if}
+		{#if announcements.length > 0}
+			<ul>
+				{#each announcements as announcement}
+					<li>
+						<span>
+							<p>
+								<span class="date">
+									{announcement.published.toLocaleDateString('en-us', {
+										month: 'long',
+										day: 'numeric',
+									})}
+								</span>
+								<span class="time">
+									{announcement.published.toLocaleTimeString('en-us', {
+										hour: 'numeric',
+										minute: 'numeric',
+									})}
+								</span>
+							</p>
+							{#if admin}
+								<form method="POST" action="?/unannounce" use:enhance>
+									<input type="hidden" name="id" value={announcement.id} />
+									<button class="deleteButton">✕</button>
+								</form>
+							{/if}
 						</span>
-						<span class="time">
-							{announcement.published.toLocaleTimeString('en-us', {
-								hour: 'numeric',
-								minute: 'numeric',
-							})}
-						</span>
-					</p>
-					{#if admin}
-						<form method="POST" action="?/unannounce" use:enhance>
-							<input type="hidden" name="id" value={announcement.id} />
-							<button class="deleteButton">✕</button>
-						</form>
-					{/if}
-				</span>
-				<div class="announcement-text">
-					<SvelteMarkdown source={announcement.body} />
-				</div>
-				<!-- Corner piece -->
-				<div class="bottom-right-image" />
-			</li>
-		{/each}
-	</ul>
-{:else}
-	<p class="no-announcements-message">There are no announcements at this time.</p>
-{/if}
+						<div class="announcement-text">
+							<SvelteMarkdown source={announcement.body} />
+						</div>
+						<!-- Corner piece -->
+						<div class="bottom-right-image" />
+					</li>
+				{/each}
+			</ul>
+		{:else}
+			<p class="no-announcements-message">There are no announcements at this time.</p>
+		{/if}
+	</div>
+</div>
 
 <style>
+	.announcement-container {
+		padding: 0 20px;
+		flex-wrap: wrap;
+		max-width: 75rem;
+		margin: auto;
+	}
+	.bg-img {
+		background-color: #1d1d1c;
+		background-size: 110%;
+		padding-top: 1px;
+		padding-bottom: 1px;
+	}
+	.announcementHeader {
+		text-align: center;
+		font-family: 'Zen Dots';
+		font-size: 65px;
+		width: 100%;
+
+		white-space: nowrap;
+		margin: 0 auto;
+		margin-top: 20px;
+	}
+	.header-container {
+		color: #e1563f;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+		font-weight: 400;
+	}
+
+	@media screen and (max-width: 1024px) {
+		.announcementHeader {
+			margin-top: 0px;
+			font-size: 50px;
+			line-height: 100px;
+			margin-bottom: -20px;
+		}
+		@media screen and (max-width: 740px) {
+			.announcementHeader {
+				font-size: 35px;
+				line-height: 100px;
+				margin-bottom: -30px;
+			}
+			@media screen and (max-width: 480px) {
+				.announcementHeader {
+					font-size: 25px;
+					line-height: 70px;
+					margin-bottom: -30px;
+				}
+			}
+		}
+	}
+
 	li {
 		position: relative;
 	}

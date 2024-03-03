@@ -61,11 +61,6 @@
 {/if}
 
 <style>
-	.announcement-font {
-		font-family: 'Fugaz One';
-		font-weight: 400;
-		color: #000000;
-	}
 	button {
 		padding: 0 1rem;
 		background-color: #ddd;
@@ -89,5 +84,12 @@
 	.empty-preview {
 		color: gray;
 		font-style: italic;
+	}
+
+	/*Replace all announcement fonts */
+	.announcement-font {
+		font-family: 'Fugaz One';
+		font-weight: 400;
+		color: #000000;
 	}
 </style>
