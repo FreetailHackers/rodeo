@@ -124,7 +124,7 @@
 
 <footer>
 	<div class="footer-flex">
-		<div>
+		<div class="made-with-love">
 			Made with ❤️ by <a
 				class="freetail-link"
 				target="_blank"
@@ -184,20 +184,16 @@
 		background-color: #404040;
 	}
 
-	.flex-column {
-		display: flex;
-		flex-direction: column;
-	}
-
 	.footer-flex {
 		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		color: #f2ebd9;
-		line-height: 1.5;
-		flex-wrap: wrap;
-		max-width: 50vw;
+		justify-content: space-around;
 		margin: auto;
+		max-width: 75em;
+		color: #f2ebd9;
+	}
+
+	.made-with-love {
+		align-self: center;
 	}
 
 	.freetail-link {
@@ -205,9 +201,15 @@
 		text-decoration: underline;
 	}
 
+	.flex-column {
+		display: flex;
+		flex-direction: column;
+	}
+
 	a {
 		color: #f2ebd9;
 		text-decoration: none;
+		line-height: 1.5;
 	}
 
 	a:hover {
