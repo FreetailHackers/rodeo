@@ -71,8 +71,8 @@
 	.faq-title-container {
 		position: sticky;
 		top: 5vh;
-		height: 100vh;
-		overflow: hidden;
+		height: 800px;
+		width: 154px;
 	}
 
 	.faq-title {
