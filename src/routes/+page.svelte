@@ -1,10 +1,8 @@
 <script lang="ts">
-	import Announcements from '$lib/components/announcements.svelte';
 	import Schedule from '$lib/components/schedule.svelte';
 	import { toasts } from '$lib/stores';
 	export let data;
 	import { onMount } from 'svelte';
-	import SvelteMarkdown from 'svelte-markdown';
 
 	// Some helpful error messages triggered in /src/lib/authenticate.ts
 	onMount(() => {
