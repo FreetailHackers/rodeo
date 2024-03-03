@@ -120,6 +120,7 @@
 
 		.faq-questions {
 			grid-template-columns: 100vw;
+			padding-left: 5vw;
 		}
 	}
 </style>
