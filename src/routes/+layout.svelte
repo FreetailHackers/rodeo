@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
 	import Toasts from '$lib/components/toasts.svelte';
 	import { toasts } from '$lib/stores';
@@ -79,6 +80,15 @@
 		{/if}
 		<li>
 			<a href="/feedback" class:active={$page.url.pathname.startsWith('/feedback')}>Feedback</a>
+		</li>
+		<li>
+			{#if data.user === undefined}
+				<a href="/login" class:active={$page.url.pathname.startsWith('/login')}>Login</a>
+			{:else}
+				<form method="POST" action="?/logout" use:enhance>
+					<button type="submit" id="logout">Logout</button>
+				</form>
+			{/if}
 		</li>
 		<li>
 			<!-- MLH banner for high resolution devices -->

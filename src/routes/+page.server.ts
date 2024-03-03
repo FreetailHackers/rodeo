@@ -18,17 +18,6 @@ export const load = async ({ locals }) => {
 };
 
 export const actions = {
-	login: async ({ locals, request }) => {
-		const formData = await request.formData();
-		const email = formData.get('email') as string;
-		const password = formData.get('password') as string;
-		try {
-			locals.auth.setSession(await trpc(locals.auth).users.login({ email, password }));
-		} catch (error) {
-			return 'Invalid email or password.';
-		}
-	},
-
 	logout: async ({ locals }) => {
 		await trpc(locals.auth).users.logout();
 		locals.auth.setSession(null);

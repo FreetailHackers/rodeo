@@ -1,19 +1,27 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { toasts } from '$lib/stores';
+	export let data;
+	import { onMount } from 'svelte';
 	import SocialLogin from '$lib/components/social-login.svelte';
 
-	export let data;
-
-	let hidden = true;
+	// Some helpful error messages triggered in /src/lib/authenticate.ts
+	onMount(() => {
+		if (location.search === '?unauthenticated') {
+			toasts.notify('You must be logged in to do perform that action.');
+		} else if (location.search === '?forbidden') {
+			toasts.notify('You do not have permissions to do that.');
+		}
+	});
 </script>
 
 <svelte:head>
-	<title>Rodeo | Register</title>
+	<title>Rodeo | Login</title>
 </svelte:head>
 
 <div class="topographic-background">
 	<div class="header">
-		<h1>Register</h1>
+		<h1>Login</h1>
 	</div>
 	<div class="socials">
 		<SocialLogin providers={data.providers} />
@@ -21,6 +29,7 @@
 	<div class="form">
 		<form
 			method="POST"
+			action="?/login"
 			use:enhance={() => {
 				return async ({ update }) => {
 					update({ reset: false });
@@ -28,34 +37,14 @@
 			}}
 		>
 			<label for="email">Email</label>
-			<input
-				type="email"
-				id="email"
-				name="email"
-				placeholder="Email"
-				class="inputValues"
-				autocomplete="username"
-			/>
-			<!-- svelte-ignore a11y-invalid-attribute -->
-			<label for="password">
-				Password (<a href="javascript:;" on:click={() => (hidden = !hidden)}>
-					{#if hidden}show{:else}hide{/if}</a
-				>)
-			</label>
-			<input
-				class="inputValues"
-				placeholder="Password"
-				type={hidden ? 'password' : 'text'}
-				id="password"
-				name="password"
-				required
-				minlength="8"
-				autocomplete="new-password"
-			/>
+			<input id="email" name="email" required autocomplete="username" />
+			<label for="password">Password (<a href="/login/reset-password">forgot?</a>)</label>
+			<!-- HACK: Not required so we can easily log into test accounts lol -->
+			<input type="password" id="password" name="password" autocomplete="current-password" />
 			<button>Continue</button>
 		</form>
 		<p>
-			Already have an account? <a href="/login">Login here!</a>
+			Don't have an account yet? <a href="/register">Register here!</a>
 		</p>
 	</div>
 </div>
@@ -90,13 +79,9 @@
 		border-width: 1px;
 	}
 
-	.inputValues {
-		background-color: #f2ebd9;
-		color: #404040;
-	}
-
 	button {
 		margin-top: 2vw;
+		margin-bottom: 0.5vw;
 		box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 	}
 
