@@ -5,9 +5,14 @@
 	export let user: AuthUser;
 	export let questions: OtherCategories[] | null;
 
+	function getHalfLength(half: number): number {
+		if (!questions) return 0;
+		return half ? Math.floor(questions.length / 2) : Math.ceil(questions.length / 2);
+	}
+
 	function getCurrentQuestion(half: number, halfIndex: number): OtherCategories | null {
 		if (!questions) return null;
-		return questions[Math.floor(half * (questions.length / 2) + halfIndex)];
+		return questions[Math.floor(half * getHalfLength(half) + halfIndex + half)];
 	}
 
 	console.log(questions);
@@ -27,7 +32,7 @@
 			{#if questions !== null}
 				{#each { length: 2 } as _i, idx}
 					<div class="faq-questions-col-{2 - (idx % 2)}">
-						{#each { length: questions.length / 2 } as _j, jdx}
+						{#each { length: getHalfLength(idx) } as _j, jdx}
 							<Accordion>
 								<span slot="head" class="question-title">{getCurrentQuestion(idx, jdx)?.title}</span
 								>
