@@ -1,4 +1,3 @@
-
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import SvelteMarkdown from 'svelte-markdown';
@@ -13,9 +12,9 @@
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 	let saveButton: HTMLButtonElement;
 
-	let userStatus = data.user.authUser.status
-
+	let userStatus = data.user.authUser.status;
 </script>
+
 <svelte:head>
 	<title>Rodeo | Apply</title>
 </svelte:head>
@@ -25,12 +24,12 @@
 		<div class="race-car {userStatus}" />
 	{/if}
 
-	<div class = "status status-{userStatus}">
+	<div class="status status-{userStatus}">
 		{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'REJECTED'}
 			<div class="admission-top" />
 			<h2>Application Status</h2>
 		{/if}
-	
+
 		<p>Your application status is:</p>
 		{#if data.user.authUser.status === 'CREATED'}
 			<h1>INCOMPLETE</h1>
@@ -86,7 +85,6 @@
 					</p>
 				{/if}
 				<form method="POST" id="rsvp" use:enhance>
-
 					<button
 						formaction="?/confirm"
 						use:confirmationDialog={{
@@ -98,14 +96,13 @@
 
 					<button
 						formaction="?/decline"
-						class = "decline-btn"
+						class="decline-btn"
 						use:confirmationDialog={{
 							text: 'Are you sure you want to decline your attendance? This action cannot be undone!',
 							cancel: 'No, go back',
 							ok: 'Yes, I want to decline',
 						}}>Decline</button
 					>
-			
 				</form>
 			{:else}
 				<p>
@@ -257,18 +254,18 @@
 		{/if}
 	{/if}
 </div>
-<style>
 
-	.main-content-ACCEPTED, .main-content-REJECTED {
+<style>
+	.main-content-ACCEPTED,
+	.main-content-REJECTED {
 		max-width: 100%;
 		padding: 5rem 2rem 0;
-		position:relative;
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		background-color: #1C1C1C;
-
+		background-color: #1c1c1c;
 	}
 
 	.race-car {
@@ -294,7 +291,8 @@
 		margin-bottom: 1rem;
 	}
 
-	.status-ACCEPTED, .status-REJECTED  {
+	.status-ACCEPTED,
+	.status-REJECTED {
 		color: white;
 		display: flex;
 		align-items: center;
@@ -321,11 +319,13 @@
 		background-repeat: no-repeat;
 	}
 
-	.status-ACCEPTED h2, .status-REJECTED h2{
+	.status-ACCEPTED h2,
+	.status-REJECTED h2 {
 		margin-bottom: 50px;
 	}
 
-	.status-ACCEPTED h1, .status-REJECTED h1{
+	.status-ACCEPTED h1,
+	.status-REJECTED h1 {
 		margin-bottom: 40px;
 	}
 
@@ -352,7 +352,7 @@
 		color: var(--primary-accent);
 	}
 
-	.status button:hover{
+	.status button:hover {
 		transform: translateY(-5px);
 	}
 
@@ -360,7 +360,6 @@
 		flex-direction: column;
 		gap: 1rem;
 		min-width: 50%;
-
 	}
 	form {
 		display: flex;
@@ -385,7 +384,7 @@
 	#rsvp > * {
 		flex-grow: 1;
 	}
-	
+
 	#actions-container {
 		position: sticky;
 		bottom: 0;
@@ -418,7 +417,7 @@
 		font-weight: bold;
 	}
 
-		/* Styles for viewport widths up to 768 pixels (typical for mobile devices) */
+	/* Styles for viewport widths up to 768 pixels (typical for mobile devices) */
 	@media screen and (max-width: 768px) {
 		.status {
 			padding: 30px 30px 50px;
@@ -437,9 +436,9 @@
 			font-size: 20px;
 		}
 
-		.admission-top{
+		.admission-top {
 			left: -80px;
-   			top: -70px;
+			top: -70px;
 		}
 	}
 </style>
