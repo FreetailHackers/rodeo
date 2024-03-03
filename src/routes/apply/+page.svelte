@@ -269,7 +269,7 @@
 	}
 
 	.race-car {
-		background-image: url(admission/admission-car.svg);
+		background-image: url(/admission/admission-car.svg);
 		background-repeat: no-repeat;
 		width: 100%;
 		height: 100%;
@@ -310,7 +310,7 @@
 	}
 
 	.admission-top {
-		background-image: url(admission/admission-top.svg);
+		background-image: url(/admission/admission-top.svg);
 		width: 100%;
 		height: 100px;
 		position: absolute;
