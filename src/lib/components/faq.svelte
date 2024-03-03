@@ -5,16 +5,13 @@
 	export let user: AuthUser;
 	export let questions: OtherCategories[] | null;
 
-	function getHalfLength(half: number): number {
-		if (!questions) return 0;
-		return half ? Math.floor(questions.length / 2) : Math.ceil(questions.length / 2);
-	}
-
-	function getCurrentQuestion(half: number, halfIndex: number): OtherCategories | null {
-		if (!questions) return null;
-		let addOn = questions.length % 2;
-		return questions[Math.floor(half * getHalfLength(half) + halfIndex) + half * addOn];
-	}
+	let columnOne: OtherCategories[] | undefined = questions?.slice(
+		0,
+		Math.ceil(questions.length / 2)
+	);
+	let columnTwo: OtherCategories[] | undefined = questions?.slice(
+		Math.ceil(questions.length / 2) + 1
+	);
 </script>
 
 <svelte:head>
@@ -30,25 +27,37 @@
 			</div>
 		</div>
 		<div class="faq-questions">
-			{#if questions !== null}
-				{#each { length: 2 } as _i, idx}
-					<div class="faq-questions-col-{2 - (idx % 2)}">
-						{#each { length: getHalfLength(idx) } as _j, jdx}
-							<Accordion>
-								<span slot="head" class="question-title">{getCurrentQuestion(idx, jdx)?.title}</span
-								>
-								<div slot="details" class="question-answer">
-									<p>{getCurrentQuestion(idx, jdx)?.response}</p>
-									{#if user?.roles.includes('ADMIN')}
-										<p>
-											<a class="edit" href="/admin/faq/{getCurrentQuestion(idx, jdx)?.id}">Edit</a>
-										</p>
-									{/if}
-								</div>
-							</Accordion>
-						{/each}
-					</div>
-				{/each}
+			{#if questions && columnOne && columnTwo}
+				<div class="faq-questions-col-1">
+					{#each columnOne as question}
+						<Accordion>
+							<span slot="head" class="question-title">{question.title}</span>
+							<div slot="details" class="question-answer">
+								<p>{question.response}</p>
+								{#if user?.roles.includes('ADMIN')}
+									<p>
+										<a class="edit" href="/admin/faq/{question.id}">Edit</a>
+									</p>
+								{/if}
+							</div>
+						</Accordion>
+					{/each}
+				</div>
+				<div class="faq-questions-col-2">
+					{#each columnTwo as question}
+						<Accordion>
+							<span slot="head" class="question-title">{question.title}</span>
+							<div slot="details" class="question-answer">
+								<p>{question.response}</p>
+								{#if user?.roles.includes('ADMIN')}
+									<p>
+										<a class="edit" href="/admin/faq/{question.id}">Edit</a>
+									</p>
+								{/if}
+							</div>
+						</Accordion>
+					{/each}
+				</div>
 			{:else}
 				<h2>Check back for the FAQ!</h2>
 			{/if}
@@ -57,8 +66,6 @@
 </div>
 
 <style>
-	@import url('https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap');
-
 	.background {
 		background-color: var(--background-color);
 		display: flex;
