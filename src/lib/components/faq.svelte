@@ -72,7 +72,7 @@
 		position: sticky;
 		top: 5vh;
 		height: 100vh;
-		overflow-y: auto;
+		overflow: hidden;
 	}
 
 	.faq-title {
