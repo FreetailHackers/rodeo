@@ -70,7 +70,7 @@
 
 	.faq-title-container {
 		position: sticky;
-		top: 10vh;
+		top: 5vh;
 		height: 100vh;
 		overflow-y: auto;
 	}
@@ -89,6 +89,7 @@
 		text-shadow: none;
 		writing-mode: vertical-rl;
 		text-orientation: mixed;
+		padding-top: 5vh;
 	}
 
 	.left-border-faq-2 {
@@ -145,6 +146,7 @@
 			margin-bottom: 1rem;
 			font-size: 4rem;
 			writing-mode: unset;
+			padding-top: unset;
 		}
 
 		.left-border-faq-2 {
