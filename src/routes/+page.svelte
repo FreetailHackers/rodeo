@@ -22,15 +22,12 @@
 <svelte:head>
 	<title>Rodeo | Home</title>
 </svelte:head>
-
 {#if data.user !== undefined}
 	<SvelteMarkdown source={data.settings.homepageText} />
-
 	<form method="POST" action="?/logout" use:enhance>
 		<button type="submit" id="logout">Logout</button>
 	</form>
 	<!-- Admin announcements panel -->
-	<h2>Announcements</h2>
 	<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
 {:else}
 	<!-- Signup page -->
@@ -64,7 +61,7 @@
 	<p>
 		Don't have an account yet? <a href="/register">Register here!</a>
 	</p>
-	<h2>Announcements</h2>
+
 	<Announcements announcements={data.announcements} admin={false} />
 {/if}
 
