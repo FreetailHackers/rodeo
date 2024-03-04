@@ -127,7 +127,6 @@
 <Toasts />
 
 <footer>
-	<hr />
 	<p>
 		Made with ❤️ by <a target="_blank" rel="noopener noreferrer" href="https://freetailhackers.com">
 			Freetail Hackers
