@@ -53,6 +53,11 @@
 			<a href="/" class:active={$page.url.pathname === '/' && $page.url.hash === ''}>Home</a>
 		</li>
 		<li>
+			<a href="/#Announcements" class={$page.url.hash === '#Announcements' ? 'active' : ''}
+				>Announcements</a
+			>
+		</li>
+		<li>
 			<a href="/#Schedule" class={$page.url.hash === '#Schedule' ? 'active' : ''}>Schedule</a>
 		</li>
 		<li>
