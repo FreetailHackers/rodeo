@@ -1,20 +1,14 @@
 <script lang="ts">
-	import type { OtherCategories, AuthUser } from '@prisma/client';
+	import type { InfoBox, AuthUser } from '@prisma/client';
 	import Accordion from './accordion.svelte';
 
 	export let user: AuthUser;
-	export let questions: OtherCategories[] | null;
+	export let questions: InfoBox[];
 
-	let columnOne: OtherCategories[] | undefined = questions?.slice(
-		0,
-		Math.ceil(questions.length / 2)
-	);
-	let columnTwo: OtherCategories[] | undefined = questions?.slice(
-		Math.ceil(questions.length / 2) + 1
-	);
+	let columnOne: InfoBox[] = questions?.slice(0, Math.ceil(questions.length / 2));
+	let columnTwo: InfoBox[] = questions?.slice(Math.ceil(questions.length / 2) + 1);
 
-	let questionsSplit: OtherCategories[][] | undefined =
-		questions && columnOne && columnTwo ? [columnOne, columnTwo] : undefined;
+	let questionsSplit: InfoBox[][] = [columnOne, columnTwo];
 </script>
 
 <svelte:head>
@@ -30,7 +24,7 @@
 			</div>
 		</div>
 		<div class="faq-questions">
-			{#if questionsSplit}
+			{#if questionsSplit.length > 0}
 				{#each { length: 2 } as _i, idx}
 					<div class="faq-questions-col-{2 - (idx % 2)}">
 						{#each questionsSplit[idx] as question}
@@ -39,8 +33,8 @@
 								<div slot="details" class="question-answer">
 									<p>{question.response}</p>
 									{#if user?.roles.includes('ADMIN')}
-										<p>
-											<a class="edit" href="/admin/faq/{question.id}">Edit</a>
+										<p class="edit">
+											<a href="/admin/faq/{question.id}">Edit</a>
 										</p>
 									{/if}
 								</div>
@@ -153,5 +147,17 @@
 			padding-left: 5vw;
 			gap: 0;
 		}
+	}
+
+	.edit {
+		margin: 0px;
+	}
+
+	.details {
+		padding-bottom: 0px;
+	}
+
+	.question-answer {
+		padding-bottom: 0px;
 	}
 </style>

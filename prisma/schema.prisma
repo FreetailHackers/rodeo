@@ -133,7 +133,7 @@ model Event {
   type        String
 }
 
-model OtherCategories {
+model InfoBox {
   id          Int     @id @default(autoincrement())
   title       String
   response    String

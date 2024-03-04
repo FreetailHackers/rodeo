@@ -41,7 +41,7 @@
 		<label for="response">Response</label>
 		<textarea id="response" name="response" required value={data.question.response} />
 
-		<button type="submit">Save</button>
+		<button class="submit" type="submit">Save</button>
 	</form>
 </div>
 
@@ -59,5 +59,9 @@
 	input,
 	form {
 		margin-bottom: 1rem;
+	}
+
+	.submit {
+		margin-top: 15px;
 	}
 </style>

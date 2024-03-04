@@ -17,7 +17,7 @@
 	<label for="answer">Answer</label>
 	<textarea id="answer" name="answer" required />
 
-	<button type="submit">Save</button>
+	<button class="submit" type="submit">Save</button>
 </form>
 
 <h2>Delete All FAQs</h2>
@@ -36,5 +36,9 @@
 	input,
 	textarea {
 		margin-bottom: 1rem;
+	}
+
+	.submit {
+		margin-bottom: 20px;
 	}
 </style>

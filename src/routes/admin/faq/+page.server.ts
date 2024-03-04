@@ -9,7 +9,7 @@ export const actions = {
 	create: async ({ locals, request }) => {
 		const formData = await request.formData();
 
-		await trpc(locals.auth).otherCategories.create({
+		await trpc(locals.auth).infoBox.create({
 			title: formData.get('question') as string,
 			response: formData.get('answer') as string,
 			category: 'FAQ',
@@ -18,7 +18,7 @@ export const actions = {
 	},
 
 	deleteAll: async ({ locals }) => {
-		await trpc(locals.auth).otherCategories.deleteAllOfCategory('FAQ');
+		await trpc(locals.auth).infoBox.deleteAllOfCategory('FAQ');
 		return 'Deleted all questions!';
 	},
 };

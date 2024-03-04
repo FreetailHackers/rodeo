@@ -12,7 +12,7 @@
 
 import { lucia } from 'lucia';
 import 'lucia/polyfill/node';
-import { MY_TIMEZONE, events, questions, otherCategoriesEvents } from './data.ts';
+import { MY_TIMEZONE, events, questions, infoBoxEvents } from './data.ts';
 import { PrismaClient, Status, Prisma } from '@prisma/client';
 import { prisma as prismaAdapter } from '@lucia-auth/adapter-prisma';
 
@@ -55,7 +55,7 @@ async function main() {
 	await prisma.authUser.deleteMany();
 	await prisma.authSession.deleteMany();
 	await prisma.authKey.deleteMany();
-	await prisma.otherCategories.deleteMany();
+	await prisma.infoBox.deleteMany();
 
 	// Create example announcement
 	await prisma.announcement.create({
@@ -78,7 +78,7 @@ async function main() {
 	await prisma.settings.create({ data: { timezone: MY_TIMEZONE } });
 
 	// Create example FAQ and Prizes
-	await prisma.otherCategories.createMany({ data: otherCategoriesEvents });
+	await prisma.infoBox.createMany({ data: infoBoxEvents });
 
 	// Generate fake users and status changes
 	// NOTE: By "fake", I mean the fact that there is no way to sign in
