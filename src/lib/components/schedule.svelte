@@ -134,8 +134,15 @@
 
 <style>
 	.topographic-background {
-		background-color: #303030;
-		background-image: url('/Topographic Background.svg');
+		padding-bottom: 5rem;
+		background: linear-gradient(
+				to bottom,
+				#1c1c1cff 0%,
+				transparent 30%,
+				transparent 60%,
+				#1c1c1cff 100%
+			),
+			url('/Topographic Background.svg');
 		background-size: 110%;
 	}
 

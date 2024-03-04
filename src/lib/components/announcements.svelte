@@ -28,7 +28,7 @@
 		{#if announcements.length > 0}
 			<ul>
 				{#each announcements as announcement}
-					<li>
+					<li class="announcement-card">
 						<span>
 							<p>
 								<span class="date">
@@ -66,6 +66,10 @@
 </div>
 
 <style>
+	.announcement-card {
+		background: ivory;
+	}
+
 	.announcement-container {
 		padding: 0 20px;
 		flex-wrap: wrap;
@@ -79,7 +83,7 @@
 		padding-bottom: 20px;
 	}
 	.bg-img {
-		background-color: #1d1d1c;
+		background-color: #1c1c1c;
 		background-size: 110%;
 		padding-top: 1px;
 		padding-bottom: 1px;
