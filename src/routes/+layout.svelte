@@ -249,9 +249,10 @@
 	}
 
 	nav {
-		position: sticky;
+		position: fixed;
 		top: 0;
 		margin: 0;
+		width: 100vw;
 		background-color: #404040;
 		z-index: 99;
 	}
