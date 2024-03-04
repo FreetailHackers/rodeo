@@ -20,7 +20,7 @@
 </svelte:head>
 <!-- Application status dialog -->
 <div class="main-content main-content-{userStatus}">
-	{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'REJECTED'}
+	{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'REJECTED' || data.user.authUser.status === 'APPLIED'}
 		<div class="race-car {userStatus}" />
 	{/if}
 
