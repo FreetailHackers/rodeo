@@ -18,7 +18,10 @@
 </svelte:head>
 
 <div class="overall-container">
-	<div class="vertical-text" />
+	<div
+		class="vertical-text"
+		aria-label="Decorative element featuring three textual elements labeled 'Hacker ID"
+	/>
 
 	<div class="driver-scan-div">
 		<div class="driver-div">
@@ -113,7 +116,7 @@
 	@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
 		/* CSS rules specific to iPads: The banner text should be smaller here.*/
 		.vertical-text {
-			width: 20% !important;
+			width: 25% !important;
 			height: 50rem;
 			top: 30%;
 			left: 20%;
