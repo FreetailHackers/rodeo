@@ -22,7 +22,7 @@
 <div class="topographic-background">
 	<div class="red-image">
 		<!-- svelte-ignore a11y-img-redundant-alt -->
-		<img src="/Group 34Red Stripe.svg" alt="Red-stripe picture" />
+		<img src="/Homepage Red Background.svg" alt="Red-stripe picture" />
 		<div class="car">
 			<img src="/pcar.png" alt="Car" class="car-image" />
 		</div>
@@ -60,6 +60,7 @@
 
 	.red-image {
 		position: relative;
+		width: 100%;
 		z-index: -1;
 	}
 
@@ -120,18 +121,161 @@
 		max-width: 80%;
 	}
 
-	@media (max-width: 1900px) {
+	@media (max-width: 5000px) {
+		.formula {
+			font-size: 1450%;
+		}
+		.hacks {
+			font-size: 1450%;
+		}
+		.car {
+			width: 65%;
+		}
 		.twenty-twenty-four {
 			position: absolute;
-			top: 65%;
+			top: 67%;
+			left: 5%;
+			color: #404040;
+			font-family: 'Geo';
+			font-size: 750%;
+		}
+		.what-is {
+			position: absolute;
+			top: 72%;
+			left: 3%;
+			color: rgba(255, 255, 255, 1);
+			font-family: 'Fugaz One';
+			font-size: 1300%;
+		}
+		.paragraph {
+			position: absolute;
+			top: 83%;
+			left: 3%;
+			color: rgba(0, 0, 0, 1);
+			font-family: 'Geologica';
+			font-size: 775%;
+			max-width: 80%;
+		}
+	}
+
+	@media (max-width: 3000px) {
+		.formula {
+			font-size: 850%;
+		}
+		.hacks {
+			font-size: 850%;
+		}
+		.car {
+			width: 65%;
+		}
+		.twenty-twenty-four {
+			position: absolute;
+			top: 67.1%;
+			left: 5%;
+			color: #404040;
+			font-family: 'Geo';
+			font-size: 430%;
+		}
+		.what-is {
+			position: absolute;
+			top: 72%;
+			left: 3%;
+			color: rgba(255, 255, 255, 1);
+			font-family: 'Fugaz One';
+			font-size: 775%;
+		}
+		.paragraph {
+			position: absolute;
+			top: 83%;
+			left: 3%;
+			color: rgba(0, 0, 0, 1);
+			font-family: 'Geologica';
+			font-size: 470%;
+			max-width: 80%;
+		}
+	}
+
+	@media (max-width: 2250px) {
+		.formula {
+			font-size: 620%;
+		}
+		.hacks {
+			font-size: 620%;
+		}
+		.car {
+			width: 65%;
+		}
+		.twenty-twenty-four {
+			position: absolute;
+			top: 66.25%;
+			left: 5%;
+			color: #404040;
+			font-family: 'Geo';
+			font-size: 400%;
+		}
+		.what-is {
+			position: absolute;
+			top: 72%;
+			left: 3%;
+			color: rgba(255, 255, 255, 1);
+			font-family: 'Fugaz One';
+			font-size: 580%;
+		}
+		.paragraph {
+			position: absolute;
+			top: 83%;
+			left: 3%;
+			color: rgba(0, 0, 0, 1);
+			font-family: 'Geologica';
+			font-size: 345%;
+			max-width: 80%;
+		}
+	}
+
+	@media (max-width: 1900px) {
+		.formula {
+			font-size: 520%;
+		}
+		.hacks {
+			font-size: 520%;
+		}
+		.car {
+			width: 65%;
+		}
+		.twenty-twenty-four {
+			position: absolute;
+			top: 65.5%;
 			left: 5%;
 			color: #404040;
 			font-family: 'Geo';
 			font-size: 380%;
 		}
+		.what-is {
+			position: absolute;
+			top: 71.7%;
+			left: 3%;
+			color: rgba(255, 255, 255, 1);
+			font-family: 'Fugaz One';
+			font-size: 500%;
+		}
+		.paragraph {
+			position: absolute;
+			top: 82.5%;
+			left: 3%;
+			color: rgba(0, 0, 0, 1);
+			font-family: 'Geologica';
+			font-size: 290%;
+			max-width: 80%;
+		}
 	}
 
 	@media (max-width: 1700px) {
+		.formula {
+			font-size: 450%;
+		}
+		.hacks {
+			font-size: 450%;
+		}
 		.twenty-twenty-four {
 			position: absolute;
 			top: 65%;
@@ -139,6 +283,23 @@
 			color: #404040;
 			font-family: 'Geo';
 			font-size: 360%;
+		}
+		.what-is {
+			position: absolute;
+			top: 71.5%;
+			left: 3%;
+			color: rgba(255, 255, 255, 1);
+			font-family: 'Fugaz One';
+			font-size: 440%;
+		}
+		.paragraph {
+			position: absolute;
+			top: 82.5%;
+			left: 3%;
+			color: rgba(0, 0, 0, 1);
+			font-family: 'Geologica';
+			font-size: 250%;
+			max-width: 80%;
 		}
 	}
 
@@ -158,14 +319,6 @@
 			font-family: 'Geo';
 			font-size: 340%;
 		}
-		.paragraph {
-			position: absolute;
-			top: 82.5%;
-			left: 3%;
-			color: rgba(0, 0, 0, 1);
-			font-family: 'Geologica';
-			font-size: 250%;
-		}
 		.what-is {
 			position: absolute;
 			top: 71.5%;
@@ -181,7 +334,7 @@
 			left: 3%;
 			color: rgba(0, 0, 0, 1);
 			font-family: 'Geologica';
-			font-size: 230%;
+			font-size: 225%;
 		}
 	}
 
@@ -207,7 +360,7 @@
 			left: 3%;
 			color: rgba(255, 255, 255, 1);
 			font-family: 'Fugaz One';
-			font-size: 330%;
+			font-size: 350%;
 		}
 
 		.paragraph {
@@ -216,7 +369,7 @@
 			left: 3%;
 			color: rgba(0, 0, 0, 1);
 			font-family: 'Geologica';
-			font-size: 190%;
+			font-size: 205%;
 		}
 	}
 
