@@ -111,7 +111,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		box-shadow: 0.8vw 0.8vw #e1563f;
+		box-shadow: 10px 10px #e1563f;
 		transition: all 0.4s ease;
 	}
 
