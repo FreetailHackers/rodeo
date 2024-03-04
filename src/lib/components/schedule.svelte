@@ -295,6 +295,10 @@
 			font-size: 9.5vw;
 		}
 
+		h2 {
+			font-size: 6vw;
+		}
+
 		.sidebar {
 			width: unset;
 		}

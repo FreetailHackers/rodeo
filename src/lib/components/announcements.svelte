@@ -91,13 +91,16 @@
 	.announcementHeader {
 		text-align: center;
 		font-family: 'Zen Dots';
-		font-size: 65px;
+		font-size: 64px;
+		font-weight: 400;
+		text-shadow: 0 4px 12px black;
 		width: 100%;
-
+		padding-top: 48px;
 		white-space: nowrap;
 		margin: 0 auto;
 		margin-top: 20px;
 	}
+
 	.header-container {
 		display: flex;
 		align-items: center;

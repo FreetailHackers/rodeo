@@ -90,6 +90,8 @@
 		margin: 0;
 		padding: 24px 0;
 		color: #e1563f;
+		text-shadow: 0 4px 12px black;
+		white-space: nowrap;
 	}
 
 	a {

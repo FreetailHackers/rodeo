@@ -198,6 +198,7 @@
 	}
 
 	.made-with-love {
+		white-space: nowrap;
 		align-self: center;
 	}
 
