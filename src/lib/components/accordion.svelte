@@ -28,7 +28,7 @@
 
 <style>
 	.accordion {
-		margin-bottom: 2.5rem;
+		margin-bottom: 1.5rem;
 		color: var(--highlight-color);
 	}
 
@@ -43,7 +43,7 @@
 	}
 
 	.details {
-		padding: 1rem;
+		padding: 0.5rem;
 		color: #7d7a72;
 	}
 </style>
