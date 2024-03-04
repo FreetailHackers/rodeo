@@ -3,6 +3,7 @@
 	import { toasts } from '$lib/stores';
 	export let data;
 	import { onMount } from 'svelte';
+	import SvelteMarkdown from 'svelte-markdown';
 
 	// Some helpful error messages triggered in /src/lib/authenticate.ts
 	onMount(() => {
@@ -18,17 +19,6 @@
 	<title>Rodeo | Home</title>
 </svelte:head>
 
-<!-- {#if data.user !== undefined}
-	<SvelteMarkdown source={data.settings.homepageText} />
-	Admin announcements panel
-	<h2>Announcements</h2>
-	<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
-{:else}
-	<h2>Announcements</h2>
-	<Announcements announcements={data.announcements} admin={false} />
-{/if} -->
-
-<!-- <SvelteMarkdown source={data.settings.homepageText} /> -->
 <div class="topographic-background">
 	<div class="red-image">
 		<!-- svelte-ignore a11y-img-redundant-alt -->
@@ -49,12 +39,7 @@
 			<p>WHAT IS FORMULA HACKS?</p>
 		</div>
 		<div class="paragraph">
-			<p>
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-				labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-				laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
-				voluptate
-			</p>
+			<SvelteMarkdown source={data.settings.homepageText} />
 		</div>
 	</div>
 </div>

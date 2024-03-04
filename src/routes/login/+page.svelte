@@ -37,10 +37,24 @@
 			}}
 		>
 			<label for="email">Email</label>
-			<input id="email" name="email" required autocomplete="username" />
+			<input
+				class="inputValues"
+				placeholder="Email"
+				id="email"
+				name="email"
+				required
+				autocomplete="username"
+			/>
 			<label for="password">Password (<a href="/login/reset-password">forgot?</a>)</label>
 			<!-- HACK: Not required so we can easily log into test accounts lol -->
-			<input type="password" id="password" name="password" autocomplete="current-password" />
+			<input
+				class="inputValues"
+				type="password"
+				placeholder="Password"
+				id="password"
+				name="password"
+				autocomplete="current-password"
+			/>
 			<button>Continue</button>
 		</form>
 		<p>
@@ -64,7 +78,7 @@
 		margin-top: 4vw;
 		width: 40%;
 		text-align: left;
-		font-size: 2vw;
+		font-size: 180%;
 	}
 
 	label {
@@ -93,8 +107,13 @@
 		background-color: #f2ebd9;
 	}
 
+	.inputValues {
+		background-color: #f2ebd9;
+		color: #404040;
+	}
+
 	p {
-		font-size: 1vw;
+		font-size: 90%;
 	}
 
 	@media (max-width: 768px) {

@@ -75,7 +75,7 @@
 		margin-top: 4vw;
 		width: 40%;
 		text-align: left;
-		font-size: 2vw;
+		font-size: 180%;
 	}
 
 	label {
@@ -109,7 +109,19 @@
 	}
 
 	p {
-		font-size: 1vw;
+		font-size: 90%;
+	}
+
+	@media (max-width: 1000px) {
+		.header {
+			font-size: 150%;
+		}
+	}
+
+	@media (max-width: 850px) {
+		.header {
+			font-size: 120%;
+		}
 	}
 
 	@media (max-width: 768px) {
