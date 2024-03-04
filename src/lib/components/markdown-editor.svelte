@@ -12,6 +12,8 @@
 	let previewing = false;
 	let textarea: HTMLTextAreaElement;
 
+	export let useAnnouncementFont: boolean = false;
+
 	// HACK: This is a workaround for Svelte not updating input bindings a form is reset
 	onMount(() => {
 		textarea.form?.addEventListener('reset', () => {
@@ -23,27 +25,54 @@
 </script>
 
 <div>
-	<button type="button" class:selected={!previewing} on:click={() => (previewing = false)}
-		>Write</button
+	<button
+		class={useAnnouncementFont ? 'announcement-font' : ''}
+		type="button"
+		class:selected={!previewing}
+		on:click={() => (previewing = false)}>Write</button
 	>
-	<button type="button" class:selected={previewing} on:click={() => (previewing = true)}
-		>Preview</button
+	<button
+		class={useAnnouncementFont ? 'announcement-font' : ''}
+		type="button"
+		class:selected={previewing}
+		on:click={() => (previewing = true)}>Preview</button
 	>
 </div>
 {#if previewing}
-	<div class="border">
+	<div class="border white-preview-background">
 		{#if value === ''}
-			<p class="empty-preview">Nothing to preview.</p>
+			<p class="empty-preview announcement-font">Nothing to preview.</p>
 		{:else}
-			<SvelteMarkdown source={value} />
+			<div class="announcement-font">
+				<SvelteMarkdown source={value} />
+			</div>
 		{/if}
 	</div>
-	<textarea style="display: none" {id} {name} {required} {value} />
+	<textarea
+		class={useAnnouncementFont ? 'announcement-font' : ''}
+		style="display: none;"
+		{id}
+		{name}
+		{required}
+		{value}
+	/>
 {:else}
-	<textarea {id} {name} {placeholder} {required} {rows} bind:value bind:this={textarea} />
+	<textarea
+		class={useAnnouncementFont ? 'announcement-font' : ''}
+		{id}
+		{name}
+		{placeholder}
+		{required}
+		{rows}
+		bind:value
+		bind:this={textarea}
+	/>
 {/if}
 
 <style>
+	.white-preview-background {
+		background: white;
+	}
 	button {
 		padding: 0 1rem;
 		background-color: #ddd;
@@ -67,5 +96,11 @@
 	.empty-preview {
 		color: gray;
 		font-style: italic;
+	}
+
+	.announcement-font {
+		font-family: 'Fugaz One';
+		font-weight: 400;
+		color: #000000;
 	}
 </style>

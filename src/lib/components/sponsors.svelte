@@ -11,7 +11,7 @@
 			more.
 		</p>
 
-		<!-- This code assumes that the sponsor logo is saved under the company name and is in PNG format. -->
+		<!-- This code assumes that the sponsor logo is saved under /static/Sponsors/ as a PNG with the same name as the company. -->
 		<button><a href="mailto:corporate@freetailhackers.com">Become a sponsor</a></button>
 		<div class="sponsor-container">
 			{#each sponsors as sponsor}
@@ -111,7 +111,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		box-shadow: 0.8vw 0.8vw #e1563f;
+		box-shadow: 10px 10px #e1563f;
 		transition: all 0.4s ease;
 	}
 

@@ -137,7 +137,6 @@
 		background-color: #303030;
 		background-image: url('/Topographic Background.svg');
 		background-size: 110%;
-		min-height: 100vh; /* kick footer to bottom of page */
 	}
 
 	.sidebar {
