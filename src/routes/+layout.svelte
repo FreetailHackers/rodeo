@@ -4,7 +4,7 @@
 	import { toasts } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import './global.css';
-	import { fly } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import Loader from '$lib/components/loader.svelte';
 	import { beforeNavigate, afterNavigate } from '$app/navigation';
@@ -93,9 +93,6 @@
 				</li>
 			{/if}
 		{/if}
-		<li>
-			<a href="/feedback" class:active={$page.url.pathname.startsWith('/feedback')}>Feedback</a>
-		</li>
 	</menu>
 
 	{#if isLoading}
@@ -120,7 +117,7 @@
 {/if}
 
 {#key $page.url.pathname}
-	<div in:fly={{ easing: cubicOut, y: -100, duration: 300 }}>
+	<div in:fade={{ easing: cubicOut, duration: 300 }}>
 		<slot />
 	</div>
 {/key}
@@ -153,8 +150,11 @@
 			<a target="_blank" rel="noopener noreferrer" href="https://freetailhackers.com/discord"
 				>Discord</a
 			>
-			<a target="_blank" rel="noopener noreferrer" href="https://linktr.ee/freetailhackers"
-				>LinkTree</a
+			<a
+				target="_blank"
+				rel="noopener noreferrer"
+				href="https://docs.google.com/forms/d/e/1FAIpQLSdQld-vgVLXOuIXIcUNpTFMwii_7Cu9Vqj7CVxXs3ScFsCIrg/viewform?usp=sf_link"
+				>Feedback</a
 			>
 			<a href="mailto:admin@freetailhackers.com">Contact Us</a>
 		</div>
@@ -352,10 +352,6 @@
 			min-width: 5rem;
 			top: 3.25rem;
 		}
-
-		/* nav {
-			margin-bottom: 0;
-		} */
 	}
 
 	.overlay {

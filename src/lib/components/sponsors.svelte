@@ -61,7 +61,13 @@
 		pointer-events: none;
 		opacity: 0.8;
 		object-fit: cover;
-		mask-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1));
+		mask-image: linear-gradient(
+			to bottom,
+			transparent 0%,
+			rgba(0, 0, 0, 0.5) 40%,
+			rgba(0, 0, 0, 0.5) 60%,
+			transparent 100%
+		);
 	}
 
 	.content-container {
