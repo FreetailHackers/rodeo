@@ -25,7 +25,7 @@
 	{/if}
 
 	<div class="status status-{userStatus}">
-		{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'REJECTED'}
+		{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'REJECTED' || data.user.authUser.status === 'APPLIED'}
 			<div class="admission-top" />
 			<h2>Application Status</h2>
 		{/if}
@@ -69,7 +69,7 @@
 				you should this situation change.
 			</p>
 		{:else if data.user.authUser.status === 'ACCEPTED'}
-			<h1>{data.user.authUser.status}</h1>
+			<h1>APPROVED</h1>
 
 			{#if data.rsvpDeadline === null || new Date() < data.rsvpDeadline}
 				{#if data.rsvpDeadline}
@@ -87,6 +87,7 @@
 				<form method="POST" id="rsvp" use:enhance>
 					<button
 						formaction="?/confirm"
+						class="accept-btn"
 						use:confirmationDialog={{
 							text: 'Are you sure you want to confirm your attendance?',
 							cancel: 'No, go back',
@@ -96,7 +97,6 @@
 
 					<button
 						formaction="?/decline"
-						class="decline-btn"
 						use:confirmationDialog={{
 							text: 'Are you sure you want to decline your attendance? This action cannot be undone!',
 							cancel: 'No, go back',
@@ -257,7 +257,8 @@
 
 <style>
 	.main-content-ACCEPTED,
-	.main-content-REJECTED {
+	.main-content-REJECTED,
+	.main-content-APPLIED {
 		max-width: 100%;
 		padding: 5rem 2rem 0;
 		position: relative;
@@ -292,7 +293,8 @@
 	}
 
 	.status-ACCEPTED,
-	.status-REJECTED {
+	.status-REJECTED,
+	.status-APPLIED {
 		color: white;
 		display: flex;
 		align-items: center;
@@ -327,6 +329,10 @@
 	.status-ACCEPTED h1,
 	.status-REJECTED h1 {
 		margin-bottom: 40px;
+		font-family: 'Fugaz One';
+	}
+	.status-APPLIED {
+		background: linear-gradient(180deg, #5a6068 66%, rgba(255, 255, 255, 0) 100%);
 	}
 
 	.status-ACCEPTED {
@@ -345,7 +351,7 @@
 		color: #810606;
 	}
 
-	.status .decline-btn {
+	.status .accept-btn {
 		box-shadow: 0px 4px 4px 0px #00000040;
 		background-color: transparent;
 		border: 1px solid var(--primary-accent);
