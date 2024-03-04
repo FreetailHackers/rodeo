@@ -88,9 +88,6 @@
 				</li>
 			{/if}
 		{/if}
-		<li>
-			<a href="/feedback" class:active={$page.url.pathname.startsWith('/feedback')}>Feedback</a>
-		</li>
 	</menu>
 
 	{#if isLoading}
@@ -148,8 +145,11 @@
 			<a target="_blank" rel="noopener noreferrer" href="https://freetailhackers.com/discord"
 				>Discord</a
 			>
-			<a target="_blank" rel="noopener noreferrer" href="https://linktr.ee/freetailhackers"
-				>LinkTree</a
+			<a
+				target="_blank"
+				rel="noopener noreferrer"
+				href="https://docs.google.com/forms/d/e/1FAIpQLSdQld-vgVLXOuIXIcUNpTFMwii_7Cu9Vqj7CVxXs3ScFsCIrg/viewform?usp=sf_link"
+				>Feedback</a
 			>
 			<a href="mailto:admin@freetailhackers.com">Contact Us</a>
 		</div>
@@ -243,9 +243,10 @@
 	}
 
 	nav {
-		position: sticky;
+		position: fixed;
 		top: 0;
 		margin: 0;
+		width: 100vw;
 		background-color: #404040;
 		z-index: 99;
 	}

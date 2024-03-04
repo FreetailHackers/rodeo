@@ -81,6 +81,10 @@
 </section>
 
 <style>
+	section {
+		scroll-margin: 5vh;
+	}
+
 	h1 {
 		color: #e1563f;
 		font-size: 64px;
