@@ -11,14 +11,14 @@ export const actions = {
 
 		await trpc(locals.auth).otherCategories.create({
 			title: formData.get('category') as string,
-			response: formData.get('prize') as string,
-			category: 'PRIZE',
+			response: formData.get('challenge') as string,
+			category: 'CHALLENGE',
 		});
-		return 'Created event!';
+		return 'Created challenge!';
 	},
 
 	deleteAll: async ({ locals }) => {
-		await trpc(locals.auth).otherCategories.deleteAllOfCategory('PRIZE');
-		return 'Deleted all questions!';
+		await trpc(locals.auth).otherCategories.deleteAllOfCategory('CHALLENGE');
+		return 'Deleted all challenges!';
 	},
 };

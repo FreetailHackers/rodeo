@@ -19,7 +19,7 @@
 			<a href="/admin/schedule" class:active={$page.url.pathname === '/admin/schedule'}>Schedule</a>
 		</li>
 		<li>
-			<a href="/admin/prizes" class:active={$page.url.pathname === '/admin/prizes'}>Prizes</a>
+			<a href="/admin/challenges" class:active={$page.url.pathname === '/admin/challenges'}>Challenges</a>
 		</li>
 	</ul>
 

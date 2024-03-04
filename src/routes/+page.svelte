@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import Announcements from '$lib/components/announcements.svelte';
 	import Schedule from '$lib/components/schedule.svelte';
-	import Prizes from '$lib/components/prizes.svelte';
+	import Challenges from '$lib/components/challenges.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
 	import { toasts } from '$lib/stores';
 	export let data;
@@ -70,7 +70,7 @@
 
 <Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
 
-<Prizes user={data.user} prizes={data.prizes} />
+<Challenges user={data.user} challenges={data.challenges} />
 
 <style>
 	label {

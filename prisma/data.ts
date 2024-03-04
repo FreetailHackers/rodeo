@@ -318,33 +318,33 @@ export const events: Prisma.EventCreateInput[] = [
 
 export const otherCategoriesEvents: Prisma.OtherCategoriesCreateInput[] = [
 	{
-		title: 'First Place Intermediate',
-		response: 'VISIO TVs!',
-		category: 'PRIZE',
+		title: 'Sustainability Challenge',
+		response: 'Lorem ipsum dolor sit amet, consectetur  adipiscing elit, sed do eiusmod tempor  incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate',
+		category: 'CHALLENGE',
 	},
 	{
-		title: 'Second Place Intermediate',
-		response: 'Mechanical Keyboard',
-		category: 'PRIZE',
+		title: 'Health & Safety Challenge',
+		response: 'Lorem ipsum dolor sit amet, consectetur  adipiscing elit, sed do eiusmod tempor  incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate',
+		category: 'CHALLENGE',
 	},
 	{
-		title: 'Third Place Intermediate',
-		response: 'Apple Keyboard',
-		category: 'PRIZE',
+		title: 'Blockchain & Security Challenge',
+		response: 'Lorem ipsum dolor sit amet, consectetur  adipiscing elit, sed do eiusmod tempor  incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate',
+		category: 'CHALLENGE',
 	},
 	{
-		title: 'First Place Advanced',
-		response: 'VISIO TVs!',
-		category: 'PRIZE',
+		title: 'Human Computer Interaction Challenge',
+		response: 'Lorem ipsum dolor sit amet, consectetur  adipiscing elit, sed do eiusmod tempor  incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate',
+		category: 'CHALLENGE',
 	},
 	{
-		title: 'Second Place Advanced',
-		response: 'Mechanical Keyboard',
-		category: 'PRIZE',
+		title: 'Education Challenge',
+		response: 'Lorem ipsum dolor sit amet, consectetur  adipiscing elit, sed do eiusmod tempor  incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate',
+		category: 'CHALLENGE',
 	},
 	{
-		title: 'Third Place Advanced',
-		response: 'Apple Keyboard',
-		category: 'PRIZE',
+		title: 'Earth & Space Challenge',
+		response: 'Lorem ipsum dolor sit amet, consectetur  adipiscing elit, sed do eiusmod tempor  incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate',
+		category: 'CHALLENGE',
 	},
 ];

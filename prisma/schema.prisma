@@ -188,7 +188,7 @@ enum QuestionType {
 
 enum CategoryType {
   FAQ
-  PRIZE
+  CHALLENGE
 }
 
 // This section lists the names of manually created triggers, and the

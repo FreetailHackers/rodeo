@@ -4,16 +4,16 @@ import { error, redirect } from '@sveltejs/kit';
 
 export const load = async ({ locals, params }) => {
 	await authenticate(locals.auth, ['ADMIN']);
-	if (Number.isNaN(Number(params.specificPrize))) {
-		throw error(404, 'Prize not found');
+	if (Number.isNaN(Number(params.specificChallenge))) {
+		throw error(404, 'Challenge not found');
 	}
-	const prize = await trpc(locals.auth).otherCategories.get(Number(params.specificPrize));
-	if (prize !== null) {
+	const challenge = await trpc(locals.auth).otherCategories.get(Number(params.specificChallenge));
+	if (challenge !== null) {
 		return {
-			prize,
+			challenge,
 		};
 	}
-	throw error(404, 'Prize not found');
+	throw error(404, 'Challenge not found');
 };
 
 export const actions = {
@@ -23,9 +23,9 @@ export const actions = {
 			id: Number(formData.get('id') as string),
 			title: formData.get('title') as string,
 			response: formData.get('response') as string,
-			category: 'PRIZE',
+			category: 'CHALLENGE',
 		});
-		return 'Saved prize!';
+		return 'Saved challenge!';
 	},
 
 	delete: async ({ locals, request }) => {

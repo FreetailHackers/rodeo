@@ -2,7 +2,7 @@
 	import type { OtherCategories, AuthUser } from '@prisma/client';
 
 	export let user: AuthUser;
-	export let prizes: OtherCategories[];
+	export let challenges: OtherCategories[];
 
 	let flippedCard: string | null = null;
 
@@ -30,26 +30,26 @@
 
 <div class="checkered-background">
 	<h1 class="desktop">
-		<span class="bordered-text" data-text="Prizes">Prizes</span> Prizes
-		<span class="bordered-text" data-text="Prizes">Prizes</span>
+		<span class="bordered-text" data-text="Challenges">Challenges</span> Challenges
+		<span class="bordered-text" data-text="Challenges">Challenges</span>
 	</h1>
-	<h1 class="mobile">Prizes</h1>
+	<h1 class="mobile">Challenges</h1>
 
 	<div class="container">
-		{#each prizes as prize}
+		{#each challenges as challenge}
 			<div class="category-wrapper" on:mouseleave={() => handleMouseLeave()}>
 				<div
-					class="category-box {flippedCard === prize.title ? 'flipped' : ''}"
-					on:click={() => handleClick(prize.title)}
-					on:keydown={(event) => handleKeyDown(event, prize.title)}
+					class="category-box {flippedCard === challenge.title ? 'flipped' : ''}"
+					on:click={() => handleClick(challenge.title)}
+					on:keydown={(event) => handleKeyDown(event, challenge.title)}
 				>
-					<div class={flippedCard === prize.title ? 'description-text' : 'content'}>
-						{flippedCard === prize.title ? prize.response : prize.title}
+					<div class={flippedCard === challenge.title ? 'description-text' : 'content'}>
+						{flippedCard === challenge.title ? challenge.response : challenge.title}
 					</div>
 				</div>
 				{#if user?.roles.includes('ADMIN')}
 					<div class="edit">
-						<a href="/admin/prizes/{prize.id}">Edit</a>
+						<a href="/admin/challenges/{challenge.id}">Edit</a>
 					</div>
 				{/if}
 			</div>
@@ -62,7 +62,6 @@
 		background-color: #303030;
 		background-image: url('/Checkered Background.svg');
 		background-size: cover; /* Ensure the background covers the entire container */
-		min-height: 100vh;
 	}
 
 	.bordered-text {
@@ -74,7 +73,7 @@
 
 	h1 {
 		color: #ffffff;
-		font-size: 64px;
+		font-size: 44px;
 		font-weight: 400;
 		margin: 0;
 		text-align: center;
@@ -91,6 +90,7 @@
 	}
 
 	.category-box {
+		word-wrap: break-word;
 		position: relative;
 		width: 100%;
 		height: 150px;
@@ -130,7 +130,7 @@
 	}
 
 	.category-wrapper {
-		width: 33.33%;
+		width: 50%;
 		padding: 10px;
 		box-sizing: border-box;
 		display: flex;
@@ -166,6 +166,7 @@
 		width: 87.5%;
 		transform: translate(-50%, -50%);
 		transition: top 0.3s ease;
+		user-select: none;
 	}
 
 	.category-box:hover {
