@@ -28,7 +28,7 @@
 		{#if announcements.length > 0}
 			<ul>
 				{#each announcements as announcement}
-					<li>
+					<li class="announcement-card">
 						<span>
 							<p>
 								<span class="date">
@@ -66,6 +66,10 @@
 </div>
 
 <style>
+	.announcement-card {
+		background: ivory;
+	}
+
 	.announcement-container {
 		padding: 0 20px;
 		flex-wrap: wrap;
@@ -76,9 +80,10 @@
 		color: #e1563f;
 		flex-direction: column;
 		justify-content: center;
+		padding-bottom: 20px;
 	}
 	.bg-img {
-		background-color: #1d1d1c;
+		background-color: #1c1c1c;
 		background-size: 110%;
 		padding-top: 1px;
 		padding-bottom: 1px;
@@ -86,13 +91,16 @@
 	.announcementHeader {
 		text-align: center;
 		font-family: 'Zen Dots';
-		font-size: 65px;
+		font-size: 64px;
+		font-weight: 400;
+		text-shadow: 0 4px 12px black;
 		width: 100%;
-
+		padding-top: 48px;
 		white-space: nowrap;
 		margin: 0 auto;
 		margin-top: 20px;
 	}
+
 	.header-container {
 		display: flex;
 		align-items: center;
