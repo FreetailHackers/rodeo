@@ -67,7 +67,7 @@ export const infoBoxRouter = t.router({
 		}),
 
 	/**
-	 * Deletes all events from the page by category. User must be an admin.
+	 * Deletes all InfoBox from the page by category. User must be an admin.
 	 */
 	deleteAllOfCategory: t.procedure
 		.use(authenticate(['ADMIN']))

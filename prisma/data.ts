@@ -316,7 +316,7 @@ export const events: Prisma.EventCreateInput[] = [
 	},
 ];
 
-export const infoBoxEvents: Prisma.InfoBoxCreateInput[] = [
+export const faq: Prisma.InfoBoxCreateInput[] = [
 	{
 		title: 'What is Formula Hacks?',
 		response:
