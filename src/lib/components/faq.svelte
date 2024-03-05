@@ -54,7 +54,6 @@
 		background-color: var(--background-color);
 		display: flex;
 		justify-content: center;
-		padding-top: 4vh;
 	}
 
 	.faq-container {
@@ -124,7 +123,7 @@
 		.faq-container {
 			flex-direction: column;
 			width: 100vw;
-			padding-top: 8vw;
+			padding-top: 4vw;
 		}
 
 		.faq-title-container {
