@@ -22,7 +22,7 @@
 </svelte:head>
 
 <div class="topographic-background">
-	<div class="red-image">
+	<div>
 		<!-- svelte-ignore a11y-img-redundant-alt -->
 		<img src="/Landing.svg" alt="svg" class="home-svg" />
 		<div class="homepage-text">
@@ -91,13 +91,7 @@
 		scroll-margin-top: 5vh;
 	}
 
-	@media (max-width: 768px) {
-		.homepage-text {
-			font-size: 16px;
-		}
-	}
-
-	@media (max-aspect-ratio: 1) {
+	@media (max-width: 768px), (max-aspect-ratio: 1) {
 		.homepage-text {
 			font-size: 16px;
 		}

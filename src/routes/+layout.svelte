@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
 	import Toasts from '$lib/components/toasts.svelte';
 	import { toasts } from '$lib/stores';
@@ -99,9 +98,7 @@
 			{#if data.user === undefined}
 				<a href="/login" class:active={$page.url.pathname.startsWith('/login')}>Login</a>
 			{:else}
-				<form method="POST" action="?/logout" use:enhance>
-					<button type="submit" id="logout">Logout</button>
-				</form>
+				<a href="/logout">Logout</a>
 			{/if}
 		</li>
 	</menu>
@@ -222,15 +219,13 @@
 		font-size: 14px;
 	}
 
-	a,
-	button {
+	a {
 		color: #f2ebd9;
 		text-decoration: none;
 		line-height: 1.5;
 	}
 
-	a:hover,
-	button:hover {
+	a:hover {
 		text-decoration-line: underline;
 		text-decoration-color: var(--primary-accent);
 		color: var(--primary-accent);
@@ -258,13 +253,6 @@
 
 	#menu-logo {
 		display: none;
-	}
-
-	button {
-		background-color: #404040;
-		text-transform: uppercase;
-		font-family: 'Geologica', sans-serif;
-		font-weight: 700;
 	}
 
 	nav {
@@ -317,8 +305,7 @@
 		text-decoration: none;
 	}
 
-	menu a:hover,
-	button:hover {
+	menu a:hover {
 		background-color: #303030;
 	}
 
