@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
 	import Toasts from '$lib/components/toasts.svelte';
 	import { toasts } from '$lib/stores';
@@ -102,8 +101,8 @@
 			{#if data.user === undefined}
 				<a href="/login" class:active={$page.url.pathname.startsWith('/login')}>Login</a>
 			{:else}
-				<form method="POST" action="/logout" use:enhance>
-					<button type="submit" id="logout">Logout</button>
+				<form method="POST" action="/logout">
+					<button class="button" type="submit">Logout</button>
 				</form>
 			{/if}
 		</li>
@@ -227,7 +226,7 @@
 
 	a,
 	button {
-		color: #f2ebd9;
+		color: #e1563f;
 		text-decoration: none;
 		line-height: 1.5;
 	}
@@ -338,9 +337,21 @@
 		#mlh-trust-badge {
 			width: 5rem;
 		}
-
 		.footer-flex {
 			max-width: 60vw;
+		}
+	}
+
+	@media (max-width: 1090px) {
+		.button {
+			display: flex;
+			width: 100%;
+			padding-top: 0.3rem;
+			padding-bottom: 0.7rem;
+			padding-left: 1rem;
+			justify-content: flex-start;
+			flex-wrap: nowrap;
+			flex-direction: row;
 		}
 	}
 

@@ -20,11 +20,6 @@ export const load = async ({ locals }) => {
 };
 
 export const actions = {
-	logout: async ({ locals }) => {
-		await trpc(locals.auth).users.logout();
-		locals.auth.setSession(null);
-	},
-
 	announce: async ({ locals, request }) => {
 		const formData = await request.formData();
 		const body = formData.get('announcement') as string;
