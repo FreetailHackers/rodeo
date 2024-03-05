@@ -1,9 +1,11 @@
 <script lang="ts">
 	import Schedule from '$lib/components/schedule.svelte';
+	import Sponsors from '$lib/components/sponsors.svelte';
+	import SvelteMarkdown from 'svelte-markdown';
 	import { toasts } from '$lib/stores';
 	export let data;
 	import { onMount } from 'svelte';
-	import SvelteMarkdown from 'svelte-markdown';
+	import Announcements from '$lib/components/announcements.svelte';
 
 	// Some helpful error messages triggered in /src/lib/authenticate.ts
 	onMount(() => {
@@ -43,8 +45,28 @@
 		</div>
 	</div>
 </div>
+<div class="pad">
+	{#if data.user !== undefined}
+		<!-- Admin announcements panel -->
+		<section id="Announcements">
+			<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
+		</section>
+	{:else}
+		<section id="Announcements">
+			<Announcements announcements={data.announcements} admin={false} />
+		</section>
+	{/if}
+</div>
 
-<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
+<section id="Schedule">
+	<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
+</section>
+
+<section id="Sponsors">
+	<Sponsors
+		sponsors={['Roblox', 'Capital One', 'Mercury Financial', 'Red Bull', 'Stand Out Stickers']}
+	/>
+</section>
 
 <style>
 	.topographic-background {
@@ -129,7 +151,8 @@
 			font-size: 1450%;
 		}
 		.car {
-			width: 65%;
+			top: -1%;
+			width: 61%;
 		}
 		.twenty-twenty-four {
 			position: absolute;
@@ -166,7 +189,8 @@
 			font-size: 850%;
 		}
 		.car {
-			width: 65%;
+			top: -1%;
+			width: 62%;
 		}
 		.twenty-twenty-four {
 			position: absolute;
@@ -203,6 +227,7 @@
 			font-size: 620%;
 		}
 		.car {
+			top: -1%;
 			width: 65%;
 		}
 		.twenty-twenty-four {
@@ -240,6 +265,7 @@
 			font-size: 520%;
 		}
 		.car {
+			top: -1%;
 			width: 65%;
 		}
 		.twenty-twenty-four {
@@ -276,6 +302,9 @@
 		.hacks {
 			font-size: 450%;
 		}
+		.car {
+			top: -1%;
+		}
 		.twenty-twenty-four {
 			position: absolute;
 			top: 65%;
@@ -309,6 +338,7 @@
 			font-size: 410%;
 		}
 		.car {
+			top: -1%;
 			width: 67%;
 		}
 		.twenty-twenty-four {
@@ -449,6 +479,7 @@
 			font-size: 285%;
 		}
 		.car {
+			top: -1%;
 			width: 68%;
 		}
 		.twenty-twenty-four {
@@ -484,6 +515,7 @@
 			font-size: 260%;
 		}
 		.car {
+			top: -0.5%;
 			width: 69%;
 		}
 		.twenty-twenty-four {
@@ -515,14 +547,15 @@
 
 	@media (max-width: 800px) {
 		.formula {
-			top: 16.5%;
+			top: 17.5%;
 			font-size: 212.5%;
 		}
 		.hacks {
-			top: 24%;
+			top: 25%;
 			font-size: 212.5%;
 		}
 		.car {
+			top: -0.25%;
 			width: 68%;
 		}
 		.twenty-twenty-four {
@@ -554,14 +587,15 @@
 
 	@media (max-width: 600px) {
 		.formula {
-			top: 15%;
-			font-size: 160%;
+			top: 19%;
+			font-size: 170%;
 		}
 		.hacks {
-			top: 22.5%;
-			font-size: 160%;
+			top: 26%;
+			font-size: 170%;
 		}
 		.car {
+			top: 1%;
 			width: 67%;
 		}
 		.twenty-twenty-four {
@@ -593,14 +627,15 @@
 
 	@media (max-width: 500px) {
 		.formula {
-			top: 14%;
-			font-size: 125%;
+			top: 20%;
+			font-size: 140%;
 		}
 		.hacks {
-			top: 21.5%;
-			font-size: 125%;
+			top: 27%;
+			font-size: 140%;
 		}
 		.car {
+			top: 2%;
 			width: 66%;
 		}
 		.twenty-twenty-four {
@@ -632,15 +667,19 @@
 
 	@media (max-width: 400px) {
 		.formula {
-			top: 14%;
-			font-size: 85%;
+			top: 21%;
+			left: 8%;
+			font-size: 120%;
 		}
 		.hacks {
-			top: 21%;
-			font-size: 85%;
+			top: 28%;
+			left: 8%;
+			font-size: 120%;
 		}
 		.car {
-			width: 65%;
+			top: 4%;
+			left: 8%;
+			width: 68%;
 		}
 		.twenty-twenty-four {
 			position: absolute;
@@ -671,15 +710,17 @@
 
 	@media (max-width: 300px) {
 		.formula {
-			top: 10.5%;
-			font-size: 60%;
+			top: 23%;
+			font-size: 75%;
 		}
 		.hacks {
-			top: 17.5%;
-			font-size: 60%;
+			top: 30%;
+			font-size: 75%;
 		}
 		.car {
-			width: 55%;
+			top: 8%;
+			left: 8%;
+			width: 60%;
 		}
 		.twenty-twenty-four {
 			position: absolute;
@@ -706,5 +747,12 @@
 			font-family: 'Geologica';
 			font-size: 45%;
 		}
+	}
+	.pad {
+		padding-top: 5vh;
+	}
+
+	section {
+		scroll-margin-top: 5vh;
 	}
 </style>
