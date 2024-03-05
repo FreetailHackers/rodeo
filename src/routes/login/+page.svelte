@@ -1,19 +1,27 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { toasts } from '$lib/stores';
+	export let data;
+	import { onMount } from 'svelte';
 	import SocialLogin from '$lib/components/social-login.svelte';
 
-	export let data;
-
-	let hidden = true;
+	// Some helpful error messages triggered in /src/lib/authenticate.ts
+	onMount(() => {
+		if (location.search === '?unauthenticated') {
+			toasts.notify('You must be logged in to do perform that action.');
+		} else if (location.search === '?forbidden') {
+			toasts.notify('You do not have permissions to do that.');
+		}
+	});
 </script>
 
 <svelte:head>
-	<title>Rodeo | Register</title>
+	<title>Rodeo | Login</title>
 </svelte:head>
 
 <div class="topographic-background">
 	<div class="header">
-		<h1>Register</h1>
+		<h1>Login</h1>
 	</div>
 	<div class="socials">
 		<SocialLogin providers={data.providers} />
@@ -21,6 +29,7 @@
 	<div class="form">
 		<form
 			method="POST"
+			action="?/login"
 			use:enhance={() => {
 				return async ({ update }) => {
 					update({ reset: false });
@@ -29,43 +38,37 @@
 		>
 			<label for="email">Email</label>
 			<input
-				type="email"
+				class="inputValues"
+				placeholder="Email"
 				id="email"
 				name="email"
-				placeholder="Email"
-				class="inputValues"
+				required
 				autocomplete="username"
 			/>
-			<!-- svelte-ignore a11y-invalid-attribute -->
-			<label for="password">
-				Password (<a href="javascript:;" on:click={() => (hidden = !hidden)}>
-					{#if hidden}show{:else}hide{/if}</a
-				>)
-			</label>
+			<label for="password">Password (<a href="/login/reset-password">forgot?</a>)</label>
+			<!-- HACK: Not required so we can easily log into test accounts lol -->
 			<input
 				class="inputValues"
+				type="password"
 				placeholder="Password"
-				type={hidden ? 'password' : 'text'}
 				id="password"
 				name="password"
-				required
-				minlength="8"
-				autocomplete="new-password"
+				autocomplete="current-password"
 			/>
 			<button>Continue</button>
 		</form>
 	</div>
-	<div class="login">
-		<p>Already have an account?</p>
+	<div class="register">
+		<p>Don't have an account yet?</p>
 		<!-- svelte-ignore a11y-missing-content -->
-		<a href="/login">
-			<button class="login-button">Login Here!</button>
+		<a href="/register">
+			<button class="register-button">Register Here!</button>
 		</a>
 	</div>
 </div>
 
 <style>
-	.login {
+	.register {
 		background: #f2ebd9;
 		display: flex;
 		flex-wrap: wrap;
@@ -77,7 +80,7 @@
 		margin-top: 1em;
 	}
 
-	.login-button {
+	.register-button {
 		min-width: 15em;
 		flex-grow: 1;
 	}
@@ -87,15 +90,6 @@
 		margin-bottom: 0.5em;
 		padding-top: 0.5em;
 		flex-grow: 1;
-	}
-
-	.topographic-background {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		background-color: #303030;
-		background-image: url('/Topographic Background.svg');
-		background-size: 110%;
 	}
 
 	.topographic-background {
@@ -142,11 +136,15 @@
 		color: #404040;
 	}
 
+	.socials {
+		width: 40%;
+	}
+
 	@media (max-width: 768px) {
 		.form,
 		.socials,
 		.header,
-		.login {
+		.register {
 			width: 80%;
 		}
 		.header {
@@ -172,9 +170,5 @@
 			margin-top: 0.5vw;
 			margin-bottom: 0.5vw;
 		}
-	}
-
-	.socials {
-		width: 40%;
 	}
 </style>

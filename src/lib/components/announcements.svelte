@@ -15,7 +15,7 @@
 			<h1 class="announcementHeader">ANNOUNCEMENTS</h1>
 		</div>
 		{#if admin}
-			<form method="POST" action="?/announce" use:enhance>
+			<form class="pad" method="POST" action="?/announce" use:enhance>
 				<MarkdownEditor
 					name="announcement"
 					placeholder="Make an announcement here..."
@@ -166,6 +166,10 @@
 	p span.time {
 		font-size: 10px;
 		opacity: 0.6;
+	}
+
+	.pad {
+		padding-top: 15px;
 	}
 
 	.announcement-text {
