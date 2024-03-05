@@ -55,8 +55,7 @@
 	}
 
 	@media (max-width: 1000px) {
-		.social button::after {
-			content: 'Sign in with ';
+		button {
 			visibility: hidden;
 		}
 	}
