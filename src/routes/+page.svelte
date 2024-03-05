@@ -75,10 +75,6 @@
 	<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
 </section>
 
-<Announcements announcements={data.announcements} admin={false} />
-
-<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
-<FAQ user={data.user} questions={data.faqs} />
 <section id="FAQ">
 	<FAQ user={data.user} questions={data.faqs} />
 </section>
