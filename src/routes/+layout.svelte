@@ -99,7 +99,9 @@
 		{/if}
 		<li>
 			{#if data.user === undefined}
-				<a href="/login" class:active={$page.url.pathname.startsWith('/login')}>Login</a>
+				<a class="login" href="/login" class:active={$page.url.pathname.startsWith('/login')}
+					>Login</a
+				>
 			{:else}
 				<form method="POST" action="/logout">
 					<button class="button" type="submit">Logout</button>
@@ -208,6 +210,10 @@
 		color: #f2ebd9;
 	}
 
+	.login {
+		color: #e1563f;
+	}
+
 	.made-with-love {
 		white-space: nowrap;
 		align-self: center;
@@ -229,6 +235,9 @@
 		color: #e1563f;
 		text-decoration: none;
 		line-height: 1.5;
+		padding-left: 1rem;
+		padding-right: 1rem;
+		/* padding: 0.7rem 1rem; */
 	}
 
 	a:hover,
