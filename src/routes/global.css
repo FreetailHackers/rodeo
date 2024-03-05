@@ -10,6 +10,9 @@ html {
 :root {
 	--font-family: 'Geologica', 'Helvetica Neue', 'Arial', sans-serif;
 	--font-size: 16px;
+	--highlight-color: #f2ebd9;
+	--secondary-color: #4e656d;
+	--background-color: #1c1c1c;
 	--primary-accent: #e1563f;
 }
 

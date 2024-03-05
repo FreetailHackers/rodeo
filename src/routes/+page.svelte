@@ -1,11 +1,12 @@
 <script lang="ts">
+	import Announcements from '$lib/components/announcements.svelte';
+	import FAQ from '$lib/components/faq.svelte';
 	import Schedule from '$lib/components/schedule.svelte';
 	import Sponsors from '$lib/components/sponsors.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
 	import { toasts } from '$lib/stores';
 	export let data;
 	import { onMount } from 'svelte';
-	import Announcements from '$lib/components/announcements.svelte';
 
 	// Some helpful error messages triggered in /src/lib/authenticate.ts
 	onMount(() => {
@@ -45,6 +46,10 @@
 
 <section id="Schedule">
 	<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
+</section>
+
+<section id="FAQ">
+	<FAQ user={data.user} questions={data.faqs} />
 </section>
 
 <section id="Sponsors">
