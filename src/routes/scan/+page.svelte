@@ -22,6 +22,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 1rem;
+		padding-top: 60px;
 	}
 
 	button {

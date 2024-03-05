@@ -1,12 +1,12 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import Announcements from '$lib/components/announcements.svelte';
+	import FAQ from '$lib/components/faq.svelte';
 	import Schedule from '$lib/components/schedule.svelte';
+	import Sponsors from '$lib/components/sponsors.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
 	import { toasts } from '$lib/stores';
 	export let data;
 	import { onMount } from 'svelte';
-	import SocialLogin from '$lib/components/social-login.svelte';
 
 	// Some helpful error messages triggered in /src/lib/authenticate.ts
 	onMount(() => {
@@ -22,61 +22,83 @@
 	<title>Rodeo | Home</title>
 </svelte:head>
 
-{#if data.user !== undefined}
-	<SvelteMarkdown source={data.settings.homepageText} />
-
-	<form method="POST" action="?/logout" use:enhance>
-		<button type="submit" id="logout">Logout</button>
-	</form>
-	<!-- Admin announcements panel -->
-	<h2>Announcements</h2>
-	<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
-{:else}
-	<!-- Signup page -->
-	{#if !data.canApply}
-		<p>
-			<b>
-				NOTE: Applications are closed. If you would like to be notified of future events, you may
-				enter your email below to subscribe to our mailing list.
-			</b>
-		</p>
+<div class="topographic-background">
+	<div>
+		<!-- svelte-ignore a11y-img-redundant-alt -->
+		<img src="/Landing.svg" alt="svg" class="home-svg" />
+		<div class="homepage-text">
+			<SvelteMarkdown source={data.settings.homepageText} />
+		</div>
+	</div>
+</div>
+<div>
+	{#if data.user !== undefined}
+		<!-- Admin announcements panel -->
+		<section id="Announcements">
+			<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
+		</section>
+	{:else}
+		<section id="Announcements">
+			<Announcements announcements={data.announcements} admin={false} />
+		</section>
 	{/if}
-	<h1>Login</h1>
-	<SocialLogin providers={data.providers} />
+</div>
 
-	<form
-		method="POST"
-		action="?/login"
-		use:enhance={() => {
-			return async ({ update }) => {
-				update({ reset: false });
-			};
-		}}
-	>
-		<label for="email">Email</label>
-		<input id="email" name="email" required autocomplete="username" />
-		<label for="password">Password (<a href="/login/reset-password">forgot?</a>)</label>
-		<!-- HACK: Not required so we can easily log into test accounts lol -->
-		<input type="password" id="password" name="password" autocomplete="current-password" />
-		<button>Continue</button>
-	</form>
-	<p>
-		Don't have an account yet? <a href="/register">Register here!</a>
-	</p>
-	<h2>Announcements</h2>
-	<Announcements announcements={data.announcements} admin={false} />
-{/if}
+<section id="Schedule">
+	<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
+</section>
 
-<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
+<section id="FAQ">
+	<FAQ user={data.user} questions={data.faqs} />
+</section>
+
+<section id="Sponsors">
+	<Sponsors
+		sponsors={['Roblox', 'Capital One', 'Mercury Financial', 'Red Bull', 'Stand Out Stickers']}
+	/>
+</section>
 
 <style>
-	label {
-		display: block;
-		margin-bottom: 0.5rem;
+	.home-svg {
+		width: 100vw;
+		height: auto;
+		margin-top: calc(2rem - 0.5vw);
 	}
 
-	input {
-		display: block;
-		margin-bottom: 1rem;
+	.topographic-background {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		background-color: #303030;
+		background: linear-gradient(
+				to bottom,
+				#1c1c1c 0%,
+				transparent 30%,
+				transparent 50%,
+				#1c1c1c 100%
+			),
+			url('/Topographic Background.svg');
+		background-size: 110%;
+		position: relative;
+		z-index: -10;
+	}
+
+	.homepage-text {
+		position: absolute;
+		top: 82.5%;
+		left: 3%;
+		color: #f2ebd9;
+		font-family: 'Geologica';
+		font-size: 32px;
+		max-width: 80%;
+	}
+	section {
+		scroll-margin-top: 5vh;
+	}
+
+	@media (max-width: 768px), (max-aspect-ratio: 1) {
+		.homepage-text {
+			font-size: 16px;
+		}
 	}
 </style>

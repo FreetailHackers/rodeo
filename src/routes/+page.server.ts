@@ -7,6 +7,8 @@ export const load = async ({ locals }) => {
 		announcements: await trpc(locals.auth).announcements.getAll(),
 		schedule: await trpc(locals.auth).events.getAll(),
 		settings: await trpc(locals.auth).settings.getPublic(),
+		faqs: await trpc(locals.auth).infoBox.getAllOfCategory('FAQ'),
+
 		// Check whether various OAuth providers are set up in
 		// environment variables so we can show/hide buttons.
 		providers: {
@@ -18,22 +20,6 @@ export const load = async ({ locals }) => {
 };
 
 export const actions = {
-	login: async ({ locals, request }) => {
-		const formData = await request.formData();
-		const email = formData.get('email') as string;
-		const password = formData.get('password') as string;
-		try {
-			locals.auth.setSession(await trpc(locals.auth).users.login({ email, password }));
-		} catch (error) {
-			return 'Invalid email or password.';
-		}
-	},
-
-	logout: async ({ locals }) => {
-		await trpc(locals.auth).users.logout();
-		locals.auth.setSession(null);
-	},
-
 	announce: async ({ locals, request }) => {
 		const formData = await request.formData();
 		const body = formData.get('announcement') as string;
