@@ -145,7 +145,7 @@
 		.form,
 		.socials,
 		.header,
-		.register {
+		.login {
 			width: 80%;
 		}
 		.header {

@@ -24,7 +24,7 @@
 <div class="topographic-background">
 	<div class="red-image">
 		<!-- svelte-ignore a11y-img-redundant-alt -->
-		<img src="/Landing.svg" alt="Red-stripe picture" />
+		<img src="/Landing.svg" alt="svg" class="home-svg" />
 		<div class="paragraph">
 			<SvelteMarkdown source={data.settings.homepageText} />
 		</div>

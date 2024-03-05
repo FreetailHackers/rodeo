@@ -53,18 +53,19 @@
 		<li>
 			<a href="/" class:active={$page.url.pathname === '/' && $page.url.hash === ''}>Home</a>
 		</li>
-		<li>
-			<a href="/#Announcements" class={$page.url.hash === '#Announcements' ? 'active' : ''}
-				>Announcements</a
-			>
-		</li>
-		<li>
-			<a href="/#Schedule" class={$page.url.hash === '#Schedule' ? 'active' : ''}>Schedule</a>
-		</li>
-		<li>
-			<a href="/#Sponsors" class={$page.url.hash === '#Sponsors' ? 'active' : ''}>Sponsors</a>
-		</li>
-
+		{#if !data.user?.roles.includes('ADMIN')}
+			<li>
+				<a href="/#Announcements" class={$page.url.hash === '#Announcements' ? 'active' : ''}
+					>Announcements</a
+				>
+			</li>
+			<li>
+				<a href="/#Schedule" class={$page.url.hash === '#Schedule' ? 'active' : ''}>Schedule</a>
+			</li>
+			<li>
+				<a href="/#Sponsors" class={$page.url.hash === '#Sponsors' ? 'active' : ''}>Sponsors</a>
+			</li>
+		{/if}
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->
 		{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
 			<li><a href="/id" class:active={$page.url.pathname.startsWith('/id')}>My Hacker ID</a></li>
