@@ -136,6 +136,10 @@
 		color: #404040;
 	}
 
+	.socials {
+		width: 40%;
+	}
+
 	@media (max-width: 768px) {
 		.form,
 		.socials,
@@ -166,9 +170,5 @@
 			margin-top: 0.5vw;
 			margin-bottom: 0.5vw;
 		}
-	}
-
-	.socials {
-		width: 40%;
 	}
 </style>
