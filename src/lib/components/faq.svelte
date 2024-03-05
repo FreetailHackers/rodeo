@@ -5,8 +5,8 @@
 	export let user: AuthUser;
 	export let questions: InfoBox[];
 
-	let columnOne: InfoBox[] = questions?.slice(0, Math.ceil(questions.length / 2));
-	let columnTwo: InfoBox[] = questions?.slice(Math.ceil(questions.length / 2) + 1);
+	let columnOne: InfoBox[] = questions.slice(0, Math.ceil(questions.length / 2));
+	let columnTwo: InfoBox[] = questions.slice(Math.ceil(questions.length / 2) + 1);
 
 	let questionsSplit: InfoBox[][] = [columnOne, columnTwo];
 </script>
@@ -59,12 +59,14 @@
 	.faq-container {
 		display: flex;
 		max-width: 75rem;
-		align-items: center;
 		margin: auto;
 	}
 
 	.faq-title-container {
-		margin: 0;
+		position: sticky;
+		top: 5vh;
+		height: 700px;
+		width: 154px;
 	}
 
 	.faq-title {
@@ -101,6 +103,7 @@
 		grid-template-columns: 1fr 1fr;
 		grid-auto-rows: min-content;
 		margin-top: 1vh;
+		align-content: center;
 	}
 
 	.faq-questions-col-1,
@@ -121,7 +124,7 @@
 		.faq-container {
 			flex-direction: column;
 			width: 100vw;
-			padding-top: 10vw;
+			padding-top: 8vw;
 		}
 
 		.faq-title-container {
@@ -136,13 +139,11 @@
 		.left-border-faq {
 			text-align: center;
 			margin-bottom: 1rem;
-			/* font-size: 3rem; */
+			font-size: 9.5vw;
 			writing-mode: unset;
 			padding-top: unset;
 			font-size: 64px;
 			font-weight: 400;
-			/* margin: 48px; */
-			/* padding-top: 48px; */
 		}
 
 		.left-border-faq-2 {
@@ -151,7 +152,7 @@
 
 		.faq-questions {
 			grid-template-columns: 70vw;
-			padding-left: 5vw;
+			padding-left: 0;
 			gap: 0;
 		}
 	}
@@ -160,12 +161,7 @@
 		margin: 0px;
 	}
 
-	.details {
-		padding-bottom: 0px;
-	}
-
 	.question-answer {
 		padding-bottom: 0px;
-		display: flex;
 	}
 </style>
