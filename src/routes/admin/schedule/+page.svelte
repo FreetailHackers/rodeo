@@ -52,7 +52,8 @@
 <style>
 	select,
 	input,
-	textarea {
+	textarea,
+	button {
 		margin-bottom: 1rem;
 	}
 </style>
