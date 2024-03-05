@@ -54,18 +54,18 @@
 		</li>
 		{#if !data.user?.roles.includes('ADMIN')}
 			<li>
-				<a href="/#Announcements" class={$page.url.hash === '#Announcements' ? 'active' : ''}
+				<a href="/#Announcements" class:active={$page.url.hash === '#Announcements'}
 					>Announcements</a
 				>
 			</li>
 			<li>
-				<a href="/#Schedule" class={$page.url.hash === '#Schedule' ? 'active' : ''}>Schedule</a>
+				<a href="/#Schedule" class:active={$page.url.hash === '#Schedule'}>Schedule</a>
 			</li>
 			<li>
-				<a href="/#FAQ" class={$page.url.hash === '#FAQ' ? 'active' : ''}>FAQ</a>
+				<a href="/#FAQ" class:active={$page.url.hash === '#FAQ'}>FAQ</a>
 			</li>
 			<li>
-				<a href="/#Sponsors" class={$page.url.hash === '#Sponsors' ? 'active' : ''}>Sponsors</a>
+				<a href="/#Sponsors" class:active={$page.url.hash === '#Sponsors'}>Sponsors</a>
 			</li>
 		{/if}
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->
