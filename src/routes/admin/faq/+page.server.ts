@@ -14,11 +14,11 @@ export const actions = {
 			response: formData.get('answer') as string,
 			category: 'FAQ',
 		});
-		return 'Created event!';
+		return 'Created FAQ!';
 	},
 
 	deleteAll: async ({ locals }) => {
 		await trpc(locals.auth).infoBox.deleteAllOfCategory('FAQ');
-		return 'Deleted all questions!';
+		return 'Deleted all FAQ!';
 	},
 };
