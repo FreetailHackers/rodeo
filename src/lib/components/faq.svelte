@@ -60,6 +60,7 @@
 		display: flex;
 		max-width: 75rem;
 		margin: auto;
+		padding-top: 9vh;
 	}
 
 	.faq-title-container {
@@ -150,7 +151,7 @@
 		}
 
 		.faq-questions {
-			grid-template-columns: 70vw;
+			grid-template-columns: auto;
 			padding-left: 0;
 			gap: 0;
 		}
