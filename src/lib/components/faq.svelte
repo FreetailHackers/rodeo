@@ -64,8 +64,7 @@
 	}
 
 	.faq-title-container {
-		width: 16rem;
-		margin: 0 10px;
+		margin: 0;
 	}
 
 	.faq-title {
@@ -99,15 +98,15 @@
 
 	.faq-questions {
 		display: grid;
-		grid-template-columns: auto auto;
+		grid-template-columns: 1fr 1fr;
 		grid-auto-rows: min-content;
-		padding-top: 1vw;
+		margin-top: 1vh;
 	}
 
 	.faq-questions-col-1,
 	.faq-questions-col-2 {
-		padding-right: 1vw;
-		padding-left: 1vw;
+		flex-grow: 1;
+		padding-left: 5vw;
 	}
 
 	h1 {
