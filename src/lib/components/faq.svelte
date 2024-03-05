@@ -66,8 +66,8 @@
 	.faq-title-container {
 		position: sticky;
 		top: 10vh;
-		height: 700px;
-		width: 154px;
+		height: 650px;
+		width: 135px;
 	}
 
 	.faq-title {
@@ -80,7 +80,7 @@
 	.left-border-faq {
 		font-family: 'Zen Dots', sans-serif;
 		font-style: normal;
-		font-size: 8rem;
+		font-size: 7rem;
 		color: var(--highlight-color);
 		text-shadow: none;
 		writing-mode: vertical-rl;
@@ -90,7 +90,7 @@
 	.left-border-faq-2 {
 		font-family: 'Zen Dots';
 		font-style: normal;
-		font-size: 8rem;
+		font-size: 7rem;
 		font-weight: normal;
 		color: var(--background-color);
 		text-shadow: none;
@@ -104,7 +104,6 @@
 		grid-template-columns: 1fr 1fr;
 		grid-auto-rows: min-content;
 		margin-top: 1vh;
-		align-content: center;
 	}
 
 	.faq-questions-col-1,
