@@ -5,7 +5,7 @@
 <div id="social-logins">
 	{#if providers.google}
 		<a href="/login/oauth?provider=google" class="social">
-			<button class="button">
+			<button>
 				<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 					<title>Google</title>
 					<path
@@ -19,7 +19,7 @@
 	{/if}
 	{#if providers.github}
 		<a href="/login/oauth?provider=github" class="social">
-			<button class="button">
+			<button>
 				<svg role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 					<title>GitHub</title>
 					<path
@@ -55,8 +55,9 @@
 	}
 
 	@media (max-width: 1000px) {
-		.button {
-			display: none;
+		.social button::after {
+			content: 'Sign in with ';
+			visibility: hidden;
 		}
 	}
 </style>
