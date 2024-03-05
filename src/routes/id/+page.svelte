@@ -53,8 +53,8 @@
 		display: flex;
 		flex-direction: row;
 		position: relative;
-		z-index: 100;
 	}
+
 	.ready-to-scan {
 		display: flex;
 		flex-direction: column;
@@ -102,7 +102,7 @@
 		background-size: contain;
 		background-repeat: no-repeat;
 		width: 30%;
-		height: 50rem;
+		height: 40rem;
 		position: absolute;
 		top: 50%;
 		left: 20%;
@@ -112,7 +112,7 @@
 
 	.overall-container {
 		display: flex;
-		margin: 0 0;
+		margin: 3rem 0;
 		padding: 3rem 0;
 		justify-content: center;
 		align-items: center;
@@ -131,6 +131,10 @@
 
 		.driver-scan-div {
 			margin-left: 15%;
+		}
+
+		.overall-container {
+			padding: 6rem 0;
 		}
 	}
 
