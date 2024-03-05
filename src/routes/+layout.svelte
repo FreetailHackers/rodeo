@@ -52,21 +52,22 @@
 		<li>
 			<a href="/" class:active={$page.url.pathname === '/' && $page.url.hash === ''}>Home</a>
 		</li>
-		<li>
-			<a href="/#Announcements" class={$page.url.hash === '#Announcements' ? 'active' : ''}
-				>Announcements</a
-			>
-		</li>
-		<li>
-			<a href="/#Schedule" class={$page.url.hash === '#Schedule' ? 'active' : ''}>Schedule</a>
-		</li>
-		<li>
-			<a href="/#FAQ" class={$page.url.hash === '#FAQ' ? 'active' : ''}>FAQ</a>
-		</li>
-		<li>
-			<a href="/#Sponsors" class={$page.url.hash === '#Sponsors' ? 'active' : ''}>Sponsors</a>
-		</li>
-
+		{#if !data.user?.roles.includes('ADMIN')}
+			<li>
+				<a href="/#Announcements" class:active={$page.url.hash === '#Announcements'}
+					>Announcements</a
+				>
+			</li>
+			<li>
+				<a href="/#Schedule" class:active={$page.url.hash === '#Schedule'}>Schedule</a>
+			</li>
+			<li>
+				<a href="/#FAQ" class:active={$page.url.hash === '#FAQ'}>FAQ</a>
+			</li>
+			<li>
+				<a href="/#Sponsors" class:active={$page.url.hash === '#Sponsors'}>Sponsors</a>
+			</li>
+		{/if}
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->
 		{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
 			<li><a href="/id" class:active={$page.url.pathname.startsWith('/id')}>My Hacker ID</a></li>
@@ -96,6 +97,17 @@
 				</li>
 			{/if}
 		{/if}
+		<li>
+			{#if data.user === undefined}
+				<a class="login" href="/login" class:active={$page.url.pathname.startsWith('/login')}
+					>Login</a
+				>
+			{:else}
+				<form method="POST" action="/logout">
+					<button class="button" type="submit">Logout</button>
+				</form>
+			{/if}
+		</li>
 	</menu>
 
 	{#if isLoading}
@@ -107,6 +119,7 @@
 
 {#if $page.url.pathname === '/'}
 	<a
+		class="banner"
 		id="mlh-trust-badge"
 		href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=red"
 		target="_blank"
@@ -174,14 +187,11 @@
 
 <style>
 	#mlh-trust-badge {
-		display: block;
-		max-width: 5.5rem;
-		min-width: 5.5rem;
 		position: absolute;
+		display: block;
 		right: 15px;
 		top: 2.25rem;
-		width: 100%;
-		z-index: 1;
+		width: 10rem;
 	}
 
 	#mlh-badge-image {
@@ -200,6 +210,10 @@
 		color: #f2ebd9;
 	}
 
+	.login {
+		color: #e1563f;
+	}
+
 	.made-with-love {
 		white-space: nowrap;
 		align-self: center;
@@ -216,13 +230,18 @@
 		font-size: 14px;
 	}
 
-	a {
-		color: #f2ebd9;
+	a,
+	button {
+		color: #e1563f;
 		text-decoration: none;
 		line-height: 1.5;
+		padding-left: 1rem;
+		padding-right: 1rem;
+		/* padding: 0.7rem 1rem; */
 	}
 
-	a:hover {
+	a:hover,
+	button:hover {
 		text-decoration-line: underline;
 		text-decoration-color: var(--primary-accent);
 		color: var(--primary-accent);
@@ -250,6 +269,13 @@
 
 	#menu-logo {
 		display: none;
+	}
+
+	button {
+		background-color: #404040;
+		text-transform: uppercase;
+		font-family: 'Geologica', sans-serif;
+		font-weight: 700;
 	}
 
 	nav {
@@ -302,8 +328,14 @@
 		text-decoration: none;
 	}
 
-	menu a:hover {
+	menu a:hover,
+	button:hover {
 		background-color: #303030;
+	}
+
+	.active {
+		font-weight: bold;
+		text-decoration: underline;
 	}
 
 	@media (max-width: 768px) {
@@ -311,8 +343,24 @@
 			display: none;
 		}
 
+		#mlh-trust-badge {
+			width: 5rem;
+		}
 		.footer-flex {
 			max-width: 60vw;
+		}
+	}
+
+	@media (max-width: 1090px) {
+		.button {
+			display: flex;
+			width: 100%;
+			padding-top: 0.3rem;
+			padding-bottom: 0.7rem;
+			padding-left: 1rem;
+			justify-content: flex-start;
+			flex-wrap: nowrap;
+			flex-direction: row;
 		}
 	}
 
@@ -342,7 +390,8 @@
 			align-items: center;
 		}
 
-		menu a:hover {
+		menu a:hover,
+		button:hover {
 			border-radius: 5px;
 		}
 
@@ -370,10 +419,5 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-	}
-
-	.active {
-		font-weight: bold;
-		text-decoration: underline;
 	}
 </style>
