@@ -95,9 +95,6 @@
 			{/if}
 		{/if}
 		<li>
-			<a href="/feedback" class:active={$page.url.pathname.startsWith('/feedback')}>Feedback</a>
-		</li>
-		<li>
 			{#if data.user === undefined}
 				<a href="/login" class:active={$page.url.pathname.startsWith('/login')}>Login</a>
 			{:else}
@@ -117,6 +114,7 @@
 
 {#if $page.url.pathname === '/'}
 	<a
+		class="banner"
 		id="mlh-trust-badge"
 		href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=red"
 		target="_blank"
@@ -184,14 +182,11 @@
 
 <style>
 	#mlh-trust-badge {
-		display: block;
-		max-width: 5.5rem;
-		min-width: 5.5rem;
 		position: absolute;
+		display: block;
 		right: 15px;
 		top: 2.25rem;
-		width: 100%;
-		z-index: 1;
+		width: 10rem;
 	}
 
 	#mlh-badge-image {
@@ -326,9 +321,18 @@
 		background-color: #303030;
 	}
 
+	.active {
+		font-weight: bold;
+		text-decoration: underline;
+	}
+
 	@media (max-width: 768px) {
 		.flex-column {
 			display: none;
+		}
+
+		#mlh-trust-badge {
+			width: 5rem;
 		}
 
 		.footer-flex {
@@ -390,10 +394,5 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-	}
-
-	.active {
-		font-weight: bold;
-		text-decoration: underline;
 	}
 </style>
