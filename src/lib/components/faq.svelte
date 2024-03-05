@@ -64,7 +64,7 @@
 
 	.faq-title-container {
 		position: sticky;
-		top: 5vh;
+		top: 10vh;
 		height: 700px;
 		width: 154px;
 	}
