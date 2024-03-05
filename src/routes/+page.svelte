@@ -25,7 +25,7 @@
 	<div class="red-image">
 		<!-- svelte-ignore a11y-img-redundant-alt -->
 		<img src="/Landing.svg" alt="svg" class="home-svg" />
-		<div class="paragraph">
+		<div class="homepage-text">
 			<SvelteMarkdown source={data.settings.homepageText} />
 		</div>
 	</div>
@@ -78,7 +78,7 @@
 		z-index: -10;
 	}
 
-	.paragraph {
+	.homepage-text {
 		position: absolute;
 		top: 82.5%;
 		left: 3%;
@@ -87,177 +87,18 @@
 		font-size: 32px;
 		max-width: 80%;
 	}
-
-	@media (max-width: 5000px) {
-		.paragraph {
-			position: absolute;
-			top: 83%;
-			left: 3%;
-			font-family: 'Geologica';
-			font-size: 775%;
-			max-width: 80%;
-		}
-	}
-
-	@media (max-width: 3000px) {
-		.paragraph {
-			position: absolute;
-			top: 83%;
-			left: 3%;
-			font-family: 'Geologica';
-			font-size: 470%;
-			max-width: 80%;
-		}
-	}
-
-	@media (max-width: 2250px) {
-		.paragraph {
-			position: absolute;
-			top: 83%;
-			left: 3%;
-			font-family: 'Geologica';
-			font-size: 345%;
-			max-width: 80%;
-		}
-	}
-
-	@media (max-width: 1900px) {
-		.paragraph {
-			position: absolute;
-			top: 82.5%;
-			left: 3%;
-			font-family: 'Geologica';
-			font-size: 290%;
-			max-width: 80%;
-		}
-	}
-
-	@media (max-width: 1700px) {
-		.paragraph {
-			position: absolute;
-			top: 82.5%;
-			left: 3%;
-			font-family: 'Geologica';
-			font-size: 250%;
-			max-width: 80%;
-		}
-	}
-
-	@media (max-width: 1500px) {
-		.paragraph {
-			position: absolute;
-			top: 82.5%;
-			left: 3%;
-			font-family: 'Geologica';
-			font-size: 225%;
-		}
-	}
-
-	@media (max-width: 1350px) {
-		.paragraph {
-			position: absolute;
-			top: 82.5%;
-			left: 3%;
-			font-family: 'Geologica';
-			font-size: 205%;
-		}
-	}
-
-	@media (max-width: 1225px) {
-		.paragraph {
-			position: absolute;
-			top: 82.5%;
-			left: 3%;
-			font-family: 'Geologica';
-			font-size: 190%;
-		}
-	}
-
-	@media (max-width: 1150px) {
-		.paragraph {
-			position: absolute;
-			top: 82.5%;
-			left: 3%;
-			font-family: 'Geologica';
-			font-size: 175%;
-		}
-	}
-
-	@media (max-width: 1000px) {
-		.paragraph {
-			position: absolute;
-			top: 82.5%;
-			left: 3%;
-			font-family: 'Geologica';
-			font-size: 150%;
-		}
-	}
-
-	@media (max-width: 900px) {
-		.paragraph {
-			position: absolute;
-			top: 82.5%;
-			left: 3%;
-			font-family: 'Geologica';
-			font-size: 135%;
-		}
-	}
-
-	@media (max-width: 800px) {
-		.paragraph {
-			position: absolute;
-			top: 82.5%;
-			left: 3%;
-			font-family: 'Geologica';
-			font-size: 112%;
-		}
-	}
-
-	@media (max-width: 600px) {
-		.paragraph {
-			position: absolute;
-			top: 82.5%;
-			left: 3%;
-			font-family: 'Geologica';
-			font-size: 90%;
-		}
-	}
-
-	@media (max-width: 500px) {
-		.paragraph {
-			position: absolute;
-			top: 82.5%;
-			left: 3%;
-			font-family: 'Geologica';
-			font-size: 75%;
-		}
-	}
-
-	@media (max-width: 400px) {
-		.paragraph {
-			position: absolute;
-			top: 82.5%;
-			left: 3%;
-			font-family: 'Geologica';
-			font-size: 60%;
-		}
-	}
-
-	@media (max-width: 300px) {
-		.paragraph {
-			position: absolute;
-			top: 82.5%;
-			left: 3%;
-			font-family: 'Geologica';
-			font-size: 45%;
-		}
-	}
 	section {
 		scroll-margin-top: 5vh;
 	}
 
-	@media (max-aspect-ratio: 4/4) {
-		.paragraph {
+	@media (max-width: 768px) {
+		.homepage-text {
+			font-size: 16px;
+		}
+	}
+
+	@media (max-aspect-ratio: 1) {
+		.homepage-text {
 			font-size: 16px;
 		}
 	}
