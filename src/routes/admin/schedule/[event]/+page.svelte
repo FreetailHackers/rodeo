@@ -84,6 +84,10 @@
 		align-items: center;
 	}
 
+	textarea {
+		width: 100%;
+	}
+
 	select,
 	input,
 	form,

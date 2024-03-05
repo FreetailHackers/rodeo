@@ -29,39 +29,47 @@
 </script>
 
 <div class="checkered-background">
-	<h1 class="desktop">
-		<span class="bordered-text" data-text="Challenges">Challenges</span> Challenges
-		<span class="bordered-text" data-text="Challenges">Challenges</span>
-	</h1>
-	<h1 class="mobile">Challenges</h1>
+	<div class="challenges-container">
+		<h1 class="desktop">
+			<span class="bordered-text" data-text="Challenges">Challenges</span> Challenges
+			<span class="bordered-text" data-text="Challenges">Challenges</span>
+		</h1>
+		<h1 class="mobile">Challenges</h1>
 
-	<div class="container">
-		{#each challenges as challenge}
-			<div class="category-wrapper" on:mouseleave={() => handleMouseLeave()}>
-				<div
-					class="category-box {flippedCard === challenge.title ? 'flipped' : ''}"
-					on:click={() => handleClick(challenge.title)}
-					on:keydown={(event) => handleKeyDown(event, challenge.title)}
-				>
-					<div class={flippedCard === challenge.title ? 'description-text' : 'content'}>
-						{flippedCard === challenge.title ? challenge.response : challenge.title}
+		<div class="container">
+			{#each challenges as challenge}
+				<div class="category-wrapper" on:mouseleave={() => handleMouseLeave()}>
+					<div
+						class="category-box {flippedCard === challenge.title ? 'flipped' : ''}"
+						on:click={() => handleClick(challenge.title)}
+						on:keydown={(event) => handleKeyDown(event, challenge.title)}
+					>
+						<div class={flippedCard === challenge.title ? 'description-text' : 'content'}>
+							{flippedCard === challenge.title ? challenge.response : challenge.title}
+						</div>
 					</div>
+					{#if user?.roles.includes('ADMIN')}
+						<div class="edit">
+							<a href="/admin/challenges/{challenge.id}">Edit</a>
+						</div>
+					{/if}
 				</div>
-				{#if user?.roles.includes('ADMIN')}
-					<div class="edit">
-						<a href="/admin/challenges/{challenge.id}">Edit</a>
-					</div>
-				{/if}
-			</div>
-		{/each}
+			{/each}
+		</div>
 	</div>
 </div>
 
 <style>
+	.challenges-container {
+		flex-wrap: wrap;
+		max-width: 75rem;
+		margin: auto;
+	}
+
 	.checkered-background {
 		background-color: #303030;
 		background-image: url('/Checkered Background.svg');
-		background-size: cover; /* Ensure the background covers the entire container */
+		background-size: cover;
 	}
 
 	.bordered-text {
