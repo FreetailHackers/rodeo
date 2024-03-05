@@ -79,6 +79,10 @@
 
 <Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
 <FAQ user={data.user} questions={data.faqs} />
+<section id="FAQ">
+	<FAQ user={data.user} questions={data.faqs} />
+</section>
+
 <section id="Sponsors">
 	<Sponsors
 		sponsors={['Roblox', 'Capital One', 'Mercury Financial', 'Red Bull', 'Stand Out Stickers']}
