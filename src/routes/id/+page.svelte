@@ -44,11 +44,16 @@
 		padding: 0.5rem 1.2rem 1.5rem;
 		box-shadow: 4px 4px 16px 0px #00000040;
 		border-radius: 10px;
+		position: relative;
+		z-index: inherit;
+		background-color: white;
 	}
 
 	.driver-scan-div {
 		display: flex;
 		flex-direction: row;
+		position: relative;
+		z-index: 100;
 	}
 	.ready-to-scan {
 		display: flex;
@@ -85,6 +90,7 @@
 		font-family: 'Fugaz One';
 		text-align: left;
 		font-size: 2.3rem;
+		position: relative;
 	}
 
 	.driver-div-text:last-of-type {
@@ -101,16 +107,17 @@
 		top: 50%;
 		left: 20%;
 		transform: translate(-50%, -50%);
+		z-index: 0;
 	}
 
 	.overall-container {
 		display: flex;
 		margin: 0 0;
-		padding: 4rem 0;
-		/* gap: 40px; */
+		padding: 3rem 0;
 		justify-content: center;
 		align-items: center;
-		flex-direction: column;
+		flex-direction: row;
+		position: relative;
 	}
 
 	@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
@@ -118,19 +125,17 @@
 		.vertical-text {
 			width: 25% !important;
 			height: 50rem;
-			top: 30%;
-			left: 20%;
+			top: 50%;
+			left: 15%;
 		}
 
 		.driver-scan-div {
-			display: flex;
-			flex-direction: row;
-			margin-left: 30%;
+			margin-left: 15%;
 		}
 	}
 
 	/* CSS for devices with a maximum width of 768 pixels (tablets and smartphones) */
-	@media only screen and (max-width: 768px) {
+	@media only screen and (max-width: 767px) {
 		canvas {
 			width: 150px !important;
 			height: 150px !important;
@@ -143,7 +148,7 @@
 		}
 
 		.driver-scan-div {
-			margin-left: 20%;
+			margin-left: 15%;
 		}
 
 		.driver-div-text {
@@ -161,7 +166,7 @@
 		.vertical-text {
 			width: 22%;
 			height: 70%;
-			top: 50%;
+			top: 35%;
 			left: 15%;
 		}
 	}
