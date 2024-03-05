@@ -7,7 +7,7 @@
 -- AlterEnum
 BEGIN;
 CREATE TYPE "CategoryType_new" AS ENUM ('FAQ', 'CHALLENGE');
-ALTER TABLE "OtherCategories" ALTER COLUMN "category" TYPE "CategoryType_new" USING ("category"::text::"CategoryType_new");
+ALTER TABLE "InfoBox" ALTER COLUMN "category" TYPE "CategoryType_new" USING ("category"::text::"CategoryType_new");
 ALTER TYPE "CategoryType" RENAME TO "CategoryType_old";
 ALTER TYPE "CategoryType_new" RENAME TO "CategoryType";
 DROP TYPE "CategoryType_old";
