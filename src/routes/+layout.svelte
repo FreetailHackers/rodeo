@@ -61,6 +61,9 @@
 			<a href="/#Schedule" class={$page.url.hash === '#Schedule' ? 'active' : ''}>Schedule</a>
 		</li>
 		<li>
+			<a href="/#FAQ" class={$page.url.hash === '#FAQ' ? 'active' : ''}>FAQ</a>
+		</li>
+		<li>
 			<a href="/#Sponsors" class={$page.url.hash === '#Sponsors' ? 'active' : ''}>Sponsors</a>
 		</li>
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->

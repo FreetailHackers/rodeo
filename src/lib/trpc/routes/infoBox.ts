@@ -1,10 +1,10 @@
-import { CategoryType, type OtherCategories } from '@prisma/client';
+import { CategoryType, type InfoBox } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 
-const otherCategoriesSchema = z
+const infoBoxSchema = z
 	.object({
 		title: z.string(),
 		response: z.string(),
@@ -12,23 +12,24 @@ const otherCategoriesSchema = z
 	})
 	.strict();
 
-export const otherCategoriesRouter = t.router({
+export const infoBoxRouter = t.router({
 	/**
 	 * Gets all the records in the table by category
 	 */
 	getAllOfCategory: t.procedure
 		.input(z.nativeEnum(CategoryType))
-		.query(async (req): Promise<OtherCategories[]> => {
-			return await prisma.otherCategories.findMany({
+		.query(async (req): Promise<InfoBox[]> => {
+			return await prisma.infoBox.findMany({
 				orderBy: { id: 'asc' },
 				where: { category: req.input },
 			});
 		}),
+
 	/**
 	 * Gets a record by ID.
 	 */
-	get: t.procedure.input(z.number()).query(async (req): Promise<OtherCategories | null> => {
-		return await prisma.otherCategories.findUnique({ where: { id: req.input } });
+	get: t.procedure.input(z.number()).query(async (req): Promise<InfoBox | null> => {
+		return await prisma.infoBox.findUnique({ where: { id: req.input } });
 	}),
 
 	/**
@@ -37,9 +38,9 @@ export const otherCategoriesRouter = t.router({
 	 */
 	create: t.procedure
 		.use(authenticate(['ADMIN']))
-		.input(otherCategoriesSchema)
+		.input(infoBoxSchema)
 		.mutation(async (req): Promise<void> => {
-			await prisma.otherCategories.create({ data: { ...req.input } });
+			await prisma.infoBox.create({ data: { ...req.input } });
 		}),
 
 	/**
@@ -47,9 +48,9 @@ export const otherCategoriesRouter = t.router({
 	 */
 	update: t.procedure
 		.use(authenticate(['ADMIN']))
-		.input(otherCategoriesSchema.merge(z.object({ id: z.number() })))
+		.input(infoBoxSchema.merge(z.object({ id: z.number() })))
 		.mutation(async (req): Promise<void> => {
-			await prisma.otherCategories.update({
+			await prisma.infoBox.update({
 				where: { id: req.input.id },
 				data: { ...req.input },
 			});
@@ -62,16 +63,16 @@ export const otherCategoriesRouter = t.router({
 		.use(authenticate(['ADMIN']))
 		.input(z.number())
 		.mutation(async (req): Promise<void> => {
-			await prisma.otherCategories.delete({ where: { id: req.input } });
+			await prisma.infoBox.delete({ where: { id: req.input } });
 		}),
 
 	/**
-	 * Deletes all prizes from the page by category. User must be an admin.
+	 * Deletes all InfoBox from the page by category. User must be an admin.
 	 */
 	deleteAllOfCategory: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(z.nativeEnum(CategoryType))
 		.mutation(async (req): Promise<void> => {
-			await prisma.otherCategories.deleteMany({ where: { category: req.input } });
+			await prisma.infoBox.deleteMany({ where: { category: req.input } });
 		}),
 });

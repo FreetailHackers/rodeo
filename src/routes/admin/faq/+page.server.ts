@@ -10,15 +10,15 @@ export const actions = {
 		const formData = await request.formData();
 
 		await trpc(locals.auth).infoBox.create({
-			title: formData.get('category') as string,
-			response: formData.get('challenge') as string,
-			category: 'CHALLENGE',
+			title: formData.get('question') as string,
+			response: formData.get('answer') as string,
+			category: 'FAQ',
 		});
-		return 'Created challenge!';
+		return 'Created FAQ!';
 	},
 
 	deleteAll: async ({ locals }) => {
-		await trpc(locals.auth).infoBox.deleteAllOfCategory('CHALLENGE');
-		return 'Deleted all challenges!';
+		await trpc(locals.auth).infoBox.deleteAllOfCategory('FAQ');
+		return 'Deleted all FAQ!';
 	},
 };

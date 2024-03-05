@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { OtherCategories, AuthUser } from '@prisma/client';
+	import type { InfoBox, AuthUser } from '@prisma/client';
 
 	export let user: AuthUser;
-	export let challenges: OtherCategories[];
+	export let challenges: InfoBox[];
 
 	let flippedCard: string | null = null;
 
@@ -38,22 +38,24 @@
 
 		<div class="container">
 			{#each challenges as challenge}
-				<div class="category-wrapper" on:mouseleave={() => handleMouseLeave()}>
-					<div
-						class="category-box {flippedCard === challenge.title ? 'flipped' : ''}"
-						on:click={() => handleClick(challenge.title)}
-						on:keydown={(event) => handleKeyDown(event, challenge.title)}
-					>
-						<div class={flippedCard === challenge.title ? 'description-text' : 'content'}>
-							{flippedCard === challenge.title ? challenge.response : challenge.title}
+				{#if challenge.category === 'CHALLENGE'}
+					<div class="category-wrapper" on:mouseleave={() => handleMouseLeave()}>
+						<div
+							class="category-box {flippedCard === challenge.title ? 'flipped' : ''}"
+							on:click={() => handleClick(challenge.title)}
+							on:keydown={(event) => handleKeyDown(event, challenge.title)}
+						>
+							<div class={flippedCard === challenge.title ? 'description-text' : 'content'}>
+								{flippedCard === challenge.title ? challenge.response : challenge.title}
+							</div>
 						</div>
+						{#if user?.roles.includes('ADMIN')}
+							<div class="edit">
+								<a href="/admin/challenges/{challenge.id}">Edit</a>
+							</div>
+						{/if}
 					</div>
-					{#if user?.roles.includes('ADMIN')}
-						<div class="edit">
-							<a href="/admin/challenges/{challenge.id}">Edit</a>
-						</div>
-					{/if}
-				</div>
+				{/if}
 			{/each}
 		</div>
 	</div>
