@@ -73,7 +73,8 @@
 		display: flex;
 		flex-wrap: wrap;
 		text-align: center;
-		justify-content: space-between;
+		align-items: center;
+		justify-content: space-around;
 		width: 40%;
 		padding: 0.5em 1em;
 		margin-top: 1em;
@@ -162,7 +163,7 @@
 		}
 
 		button {
-			margin-top: 2vw;
+			margin-top: 0.5vw;
 			margin-bottom: 0.5vw;
 		}
 	}

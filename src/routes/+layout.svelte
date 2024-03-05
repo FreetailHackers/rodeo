@@ -367,7 +367,8 @@
 			align-items: center;
 		}
 
-		menu a:hover {
+		menu a:hover,
+		button:hover {
 			border-radius: 5px;
 		}
 
