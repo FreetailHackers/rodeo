@@ -24,22 +24,24 @@
 <div class="topographic-background">
 	<div class="red-image">
 		<!-- svelte-ignore a11y-img-redundant-alt -->
-		<img src="/Homepage Red Background.svg" alt="Red-stripe picture" />
+		<img src="/Landing.svg" alt="Red-stripe picture" />
 		<div class="paragraph">
 			<SvelteMarkdown source={data.settings.homepageText} />
 		</div>
 	</div>
 </div>
-{#if data.user !== undefined}
-	<!-- Admin announcements panel -->
-	<section id="Announcements">
-		<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
-	</section>
-{:else}
-	<section id="Announcements">
-		<Announcements announcements={data.announcements} admin={false} />
-	</section>
-{/if}
+<div>
+	{#if data.user !== undefined}
+		<!-- Admin announcements panel -->
+		<section id="Announcements">
+			<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
+		</section>
+	{:else}
+		<section id="Announcements">
+			<Announcements announcements={data.announcements} admin={false} />
+		</section>
+	{/if}
+</div>
 
 <section id="Schedule">
 	<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
@@ -52,30 +54,37 @@
 </section>
 
 <style>
+	.home-svg {
+		width: 100vw;
+		height: auto;
+		margin-top: calc(2rem - 0.5vw);
+	}
+
 	.topographic-background {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		background-color: #303030;
-		background-image: url('/Topographic Background.svg');
+		background: linear-gradient(
+				to bottom,
+				#1c1c1c 0%,
+				transparent 30%,
+				transparent 50%,
+				#1c1c1c 100%
+			),
+			url('/Topographic Background.svg');
 		background-size: 110%;
 		position: relative;
 		z-index: -10;
-	}
-
-	.red-image {
-		position: relative;
-		width: 100%;
-		z-index: -1;
 	}
 
 	.paragraph {
 		position: absolute;
 		top: 82.5%;
 		left: 3%;
-		color: #ffffff;
+		color: #f2ebd9;
 		font-family: 'Geologica';
-		font-size: 250%;
+		font-size: 32px;
 		max-width: 80%;
 	}
 
@@ -245,5 +254,11 @@
 	}
 	section {
 		scroll-margin-top: 5vh;
+	}
+
+	@media (max-aspect-ratio: 4/4) {
+		.paragraph {
+			font-size: 16px;
+		}
 	}
 </style>

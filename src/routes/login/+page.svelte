@@ -57,13 +57,40 @@
 			/>
 			<button>Continue</button>
 		</form>
-		<p>
-			Don't have an account yet? <a href="/register">Register here!</a>
-		</p>
+	</div>
+	<div class="register">
+		<p>Don't have an account yet?</p>
+		<!-- svelte-ignore a11y-missing-content -->
+		<a href="/register">
+			<button class="register-button">Register Here!</button>
+		</a>
 	</div>
 </div>
 
 <style>
+	.register {
+		background: #f2ebd9;
+		display: flex;
+		flex-wrap: wrap;
+		text-align: center;
+		justify-content: space-between;
+		width: 40%;
+		padding: 0.5em 1em;
+		margin-top: 1em;
+	}
+
+	.register-button {
+		min-width: 15em;
+		flex-grow: 1;
+	}
+
+	p {
+		margin: 0;
+		margin-bottom: 0.5em;
+		padding-top: 0.5em;
+		flex-grow: 1;
+	}
+
 	.topographic-background {
 		display: flex;
 		flex-direction: column;
@@ -71,39 +98,35 @@
 		background-color: #303030;
 		background-image: url('/Topographic Background.svg');
 		background-size: 110%;
+		min-height: 100vh;
 	}
 
 	.header {
 		color: #f2ebd9;
-		margin-top: 4vw;
+		margin-top: 4rem;
 		width: 40%;
 		text-align: left;
 		font-size: 180%;
 	}
 
 	label {
-		display: block;
 		color: #1c1c1c;
-		margin-top: 1vw;
-		margin-bottom: 0.1vw;
+		padding-top: 0.5em;
 	}
 
 	input {
 		display: block;
 		border-width: 1px;
+		margin-bottom: 0.5em;
 	}
 
 	button {
-		margin-top: 2vw;
-		margin-bottom: 0.5vw;
 		box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 	}
 
 	.form {
 		width: 40%;
-		padding-left: 0.5vw;
-		padding-right: 0.5vw;
-		margin-bottom: 10vw;
+		padding: 0em 1em 1em 1em;
 		background-color: #f2ebd9;
 	}
 
@@ -112,15 +135,12 @@
 		color: #404040;
 	}
 
-	p {
-		font-size: 90%;
-	}
-
 	@media (max-width: 768px) {
 		.form,
 		.socials,
-		.header {
-			width: 60%;
+		.header,
+		.register {
+			width: 80%;
 		}
 		.header {
 			font-size: 4vw;
@@ -129,12 +149,12 @@
 		input,
 		label,
 		button {
-			font-size: 3vw;
+			height: 2em;
+			font-size: 20px;
 		}
 
 		.form {
-			padding-left: 0.5vw;
-			padding-right: 0.5vw;
+			padding: 0 1em 1em 1em;
 		}
 
 		label {
@@ -144,10 +164,6 @@
 		button {
 			margin-top: 2vw;
 			margin-bottom: 0.5vw;
-		}
-
-		p {
-			font-size: 2vw;
 		}
 	}
 
