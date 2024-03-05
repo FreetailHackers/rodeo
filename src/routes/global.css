@@ -2,9 +2,16 @@
 @import url('https://fonts.googleapis.com/css2?family=Fugaz+One&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Geologica&display=swap');
 
+html {
+	scroll-behavior: smooth;
+}
+
 :root {
 	--font-family: 'Geologica', 'Helvetica Neue', 'Arial', sans-serif;
 	--font-size: 16px;
+	--highlight-color: #f2ebd9;
+	--secondary-color: #4e656d;
+	--background-color: #1c1c1c;
 	--primary-accent: #e1563f;
 }
 
@@ -210,10 +217,8 @@ img {
 }
 
 footer {
-	padding: 0 1rem;
-	left: 0;
-	bottom: 0;
-	max-width: 50rem;
-	text-align: center;
-	margin: 0 auto;
+	background-color: #303030;
+	color: #f2ebd9;
+	text-align: left;
+	padding: 1em 1em;
 }
