@@ -120,7 +120,7 @@
 
 	.category-box.flipped {
 		background-color: #e1563f;
-		border-color: transparent; /* Change border color to transparent */
+		border-color: transparent;
 	}
 
 	.category-box.flipped .content {
@@ -137,6 +137,7 @@
 		top: 50%;
 		left: 50%;
 		transform: translate(-50%, -50%);
+		font-size: 1.5em;
 	}
 
 	.category-wrapper {
@@ -177,6 +178,7 @@
 		transform: translate(-50%, -50%);
 		transition: top 0.3s ease;
 		user-select: none;
+		font-size: 1em;
 	}
 
 	.category-box:hover {
@@ -210,6 +212,12 @@
 		}
 		.category-wrapper {
 			width: 100%;
+		}
+		.category-box .content {
+			font-size: min(4vw, 36px);
+		}
+		.category-box .description-text {
+			font-size: min(2vw, 24px);
 		}
 	}
 </style>

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
 	import Announcements from '$lib/components/announcements.svelte';
 	import FAQ from '$lib/components/faq.svelte';
 	import Schedule from '$lib/components/schedule.svelte';
@@ -9,7 +8,6 @@
 	import { toasts } from '$lib/stores';
 	export let data;
 	import { onMount } from 'svelte';
-	import SocialLogin from '$lib/components/social-login.svelte';
 
 	// Some helpful error messages triggered in /src/lib/authenticate.ts
 	onMount(() => {
@@ -24,48 +22,23 @@
 <svelte:head>
 	<title>Rodeo | Home</title>
 </svelte:head>
-<div class="pad">
+
+<div class="topographic-background">
+	<div>
+		<!-- svelte-ignore a11y-img-redundant-alt -->
+		<img src="/Landing.svg" alt="svg" class="home-svg" />
+		<div class="homepage-text">
+			<SvelteMarkdown source={data.settings.homepageText} />
+		</div>
+	</div>
+</div>
+<div>
 	{#if data.user !== undefined}
-		<SvelteMarkdown source={data.settings.homepageText} />
-		<form method="POST" action="?/logout" use:enhance>
-			<button type="submit" id="logout">Logout</button>
-		</form>
 		<!-- Admin announcements panel -->
 		<section id="Announcements">
 			<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
 		</section>
 	{:else}
-		<!-- Signup page -->
-		{#if !data.canApply}
-			<p>
-				<b>
-					NOTE: Applications are closed. If you would like to be notified of future events, you may
-					enter your email below to subscribe to our mailing list.
-				</b>
-			</p>
-		{/if}
-		<h1>Login</h1>
-		<SocialLogin providers={data.providers} />
-
-		<form
-			method="POST"
-			action="?/login"
-			use:enhance={() => {
-				return async ({ update }) => {
-					update({ reset: false });
-				};
-			}}
-		>
-			<label for="email">Email</label>
-			<input id="email" name="email" required autocomplete="username" />
-			<label for="password">Password (<a href="/login/reset-password">forgot?</a>)</label>
-			<!-- HACK: Not required so we can easily log into test accounts lol -->
-			<input type="password" id="password" name="password" autocomplete="current-password" />
-			<button>Continue</button>
-		</form>
-		<p>
-			Don't have an account yet? <a href="/register">Register here!</a>
-		</p>
 		<section id="Announcements">
 			<Announcements announcements={data.announcements} admin={false} />
 		</section>
@@ -91,21 +64,46 @@
 </section>
 
 <style>
-	.pad {
-		padding-top: 5vh;
+	.home-svg {
+		width: 100vw;
+		height: auto;
+		margin-top: calc(2rem - 0.5vw);
 	}
 
+	.topographic-background {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		background-color: #303030;
+		background: linear-gradient(
+				to bottom,
+				#1c1c1c 0%,
+				transparent 30%,
+				transparent 50%,
+				#1c1c1c 100%
+			),
+			url('/Topographic Background.svg');
+		background-size: 110%;
+		position: relative;
+		z-index: -10;
+	}
+
+	.homepage-text {
+		position: absolute;
+		top: 82.5%;
+		left: 3%;
+		color: #f2ebd9;
+		font-family: 'Geologica';
+		font-size: 32px;
+		max-width: 80%;
+	}
 	section {
 		scroll-margin-top: 5vh;
 	}
 
-	label {
-		display: block;
-		margin-bottom: 0.5rem;
-	}
-
-	input {
-		display: block;
-		margin-bottom: 1rem;
+	@media (max-width: 768px), (max-aspect-ratio: 1) {
+		.homepage-text {
+			font-size: 16px;
+		}
 	}
 </style>
