@@ -54,6 +54,7 @@
 		background-color: var(--background-color);
 		display: flex;
 		justify-content: center;
+		padding-top: 4vh;
 	}
 
 	.faq-container {
