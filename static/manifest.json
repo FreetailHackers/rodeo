@@ -2,7 +2,7 @@
 	"name": "Rodeo",
 	"icons": [
 		{
-			"src": "favicon512.png",
+			"src": "favicon.png",
 			"type": "image/png",
 			"sizes": "512x512"
 		}
