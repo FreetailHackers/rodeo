@@ -109,7 +109,6 @@
 <style>
 	form {
 		padding-top: 10px;
-		padding-bottom: 30px;
 	}
 
 	button {
