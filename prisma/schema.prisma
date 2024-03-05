@@ -133,6 +133,13 @@ model Event {
   type        String
 }
 
+model InfoBox {
+  id          Int     @id @default(autoincrement())
+  title       String
+  response    String
+  category    CategoryType
+}
+
 model StatusChange {
   id        Int      @id @default(autoincrement())
   newStatus Status
@@ -176,6 +183,11 @@ enum QuestionType {
   CHECKBOX
   RADIO
   FILE
+}
+
+enum CategoryType {
+  FAQ
+  PRIZE
 }
 
 // This section lists the names of manually created triggers, and the

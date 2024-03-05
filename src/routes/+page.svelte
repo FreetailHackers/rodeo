@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import Announcements from '$lib/components/announcements.svelte';
+	import FAQ from '$lib/components/faq.svelte';
 	import Schedule from '$lib/components/schedule.svelte';
 	import Sponsors from '$lib/components/sponsors.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
@@ -72,6 +73,10 @@
 
 <section id="Schedule">
 	<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
+</section>
+
+<section id="FAQ">
+	<FAQ user={data.user} questions={data.faqs} />
 </section>
 
 <section id="Sponsors">
