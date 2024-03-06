@@ -95,7 +95,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		justify-content: center;
-		margin: 20px auto;
+		margin: 0px auto;
 		max-width: 90%;
 	}
 
@@ -134,8 +134,6 @@
 		font-size: 24px;
 		transition: top 0.3s ease;
 		position: absolute;
-		top: 50%;
-		left: 50%;
 		transform: translate(-50%, -50%);
 		font-size: 1.5em;
 	}
@@ -170,11 +168,9 @@
 		font-family: 'Geologica';
 		font-style: normal;
 		font-size: 14px;
-		position: absolute;
 		top: 50%;
 		left: 50%;
 		width: 87.5%;
-		transform: translate(-50%, -50%);
 		transition: top 0.3s ease;
 		user-select: none;
 		font-size: 0.8em;
