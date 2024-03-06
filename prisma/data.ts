@@ -409,25 +409,25 @@ export const faq: Prisma.InfoBoxCreateInput[] = [
 	{
 		title: 'Sustainability Challenge',
 		response:
-			'Lorem ipsum dolor sit amet, consectetur  adipiscing elit, sed do eiusmod tempor  incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate',
+			'Explore ways to promote sustainable practices and reduce environmental impact through innovative solutions. Address issues such as waste management, renewable energy, and conservation efforts to create a more sustainable future.',
 		category: 'CHALLENGE',
 	},
 	{
 		title: 'Health & Safety Challenge',
 		response:
-			'Lorem ipsum dolor sit amet, consectetur  adipiscing elit, sed do eiusmod tempor  incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate',
+			'Focus on improving health and safety standards in various environments, including workplaces, communities, and public spaces. Develop strategies to prevent accidents, mitigate risks, and enhance overall well-being for individuals and society.',
 		category: 'CHALLENGE',
 	},
 	{
 		title: 'Blockchain & Security Challenge',
 		response:
-			'Lorem ipsum dolor sit amet, consectetur  adipiscing elit, sed do eiusmod tempor  incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate',
+			'Dive into the world of blockchain technology and cybersecurity to tackle emerging threats and vulnerabilities. Explore encryption methods, decentralized systems, and secure data storage to ensure the integrity and confidentiality of digital transactions and information.',
 		category: 'CHALLENGE',
 	},
 	{
 		title: 'Human Computer Interaction Challenge',
 		response:
-			'Lorem ipsum dolor sit amet, consectetur  adipiscing elit, sed do eiusmod tempor  incididunt ut labore et dolore magna aliqua.  Ut enim ad minim veniam, quis nostrud exercitation  ullamco laboris nisi ut aliquip ex ea commodo consequat.  Duis aute irure dolor in reprehenderit in voluptate',
+			'Enhance user experiences and interactions with technology by designing intuitive interfaces and user-friendly applications. Explore human-centered design principles to create engaging and accessible digital experiences for diverse audiences.',
 		category: 'CHALLENGE',
 	},
 	{
