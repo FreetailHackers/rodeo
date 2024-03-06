@@ -65,6 +65,9 @@
 				<a href="/#FAQ" class:active={$page.url.hash === '#FAQ'}>FAQ</a>
 			</li>
 			<li>
+				<a href="/#Challenges" class:active={$page.url.hash === '#Challenges'}>Challenges</a>
+			</li>
+			<li>
 				<a href="/#Sponsors" class:active={$page.url.hash === '#Sponsors'}>Sponsors</a>
 			</li>
 		{/if}

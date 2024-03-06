@@ -6,8 +6,8 @@
 
 	let flippedCard: string | null = null;
 
-	function toggleFlip(category: string | null) {
-		flippedCard = flippedCard === category ? null : category;
+	function toggleFlip(challenge: string | null) {
+		flippedCard = flippedCard === challenge ? null : challenge;
 	}
 
 	function handleMouseLeave() {
@@ -17,13 +17,9 @@
 		flippedCard = null;
 	}
 
-	function handleClick(category: string | null) {
-		flippedCard = flippedCard === category ? null : category;
-	}
-
-	function handleKeyDown(event: KeyboardEvent, category: string | null) {
+	function handleKeyDown(event: KeyboardEvent, challenge: string | null) {
 		if (event.key === 'Enter') {
-			toggleFlip(category);
+			toggleFlip(challenge);
 		}
 	}
 </script>
@@ -39,10 +35,11 @@
 		<div class="container">
 			{#each challenges as challenge}
 				{#if challenge.category === 'CHALLENGE'}
-					<div class="category-wrapper" on:mouseleave={() => handleMouseLeave()}>
+					<div class="challenge-wrapper" on:mouseleave={handleMouseLeave}>
 						<div
-							class="category-box {flippedCard === challenge.title ? 'flipped' : ''}"
-							on:click={() => handleClick(challenge.title)}
+							class="challenge-box"
+							class:flipped={flippedCard === challenge.title}
+							on:click={() => toggleFlip(challenge.title)}
 							on:keydown={(event) => handleKeyDown(event, challenge.title)}
 						>
 							<div class={flippedCard === challenge.title ? 'description-text' : 'content'}>
@@ -99,7 +96,7 @@
 		max-width: 90%;
 	}
 
-	.category-box {
+	.challenge-box {
 		word-wrap: break-word;
 		position: relative;
 		width: 100%;
@@ -118,16 +115,16 @@
 		margin-bottom: 10px;
 	}
 
-	.category-box.flipped {
+	.challenge-box.flipped {
 		background-color: #e1563f;
 		border-color: transparent;
 	}
 
-	.category-box.flipped .content {
+	.challenge-box.flipped .content {
 		color: #f2ebd9; /* Change text color when flipped */
 	}
 
-	.category-box .content {
+	.challenge-box .content {
 		text-align: center;
 		font-family: 'Zen Dots';
 		font-style: normal;
@@ -138,7 +135,7 @@
 		font-size: 1.5em;
 	}
 
-	.category-wrapper {
+	.challenge-wrapper {
 		width: 50%;
 		padding: 10px;
 		box-sizing: border-box;
@@ -148,7 +145,7 @@
 		align-items: center;
 	}
 
-	.category-wrapper:hover .content {
+	.challenge-wrapper:hover .content {
 		top: 30%;
 	}
 
@@ -176,12 +173,12 @@
 		font-size: 0.8em;
 	}
 
-	.category-box:hover {
+	.challenge-box:hover {
 		background-color: #e1563f;
 		color: #f2ebd9;
 	}
 
-	.category-box:hover .content {
+	.challenge-box:hover .content {
 		top: 40%;
 	}
 
@@ -205,13 +202,13 @@
 		.mobile {
 			display: block;
 		}
-		.category-wrapper {
+		.challenge-wrapper {
 			width: 100%;
 		}
-		.category-box .content {
+		.challenge-box .content {
 			font-size: min(4vw, 36px);
 		}
-		.category-box .description-text {
+		.challenge-box .description-text {
 			font-size: min(2.5vw, 24px);
 		}
 	}
