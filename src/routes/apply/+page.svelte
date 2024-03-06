@@ -270,6 +270,7 @@
 		align-items: center;
 		margin: 0;
 		background-color: #1c1c1c;
+		min-height: inherit;
 	}
 
 	.race-car {
