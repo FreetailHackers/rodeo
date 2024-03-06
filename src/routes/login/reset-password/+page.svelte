@@ -65,6 +65,7 @@
 		background-color: #303030;
 		background-image: url('/Topographic Background.svg');
 		background-size: 110%;
+		min-height: calc(100vh - 159px);
 	}
 
 	.header {
@@ -106,5 +107,11 @@
 	input {
 		display: block;
 		margin-bottom: 1rem;
+	}
+
+	@media (max-width: 768px) {
+		.topographic-background {
+			min-height: calc(100vh - 56px);
+		}
 	}
 </style>

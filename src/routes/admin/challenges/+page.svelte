@@ -4,28 +4,28 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Admin - FAQ</title>
+	<title>Rodeo | Admin - Challenge</title>
 </svelte:head>
 
-<h2>Create New FAQ</h2>
+<h2>Create New Challenge</h2>
 <form method="POST" action="?/create" use:enhance>
 	<input type="hidden" name="id" />
 
-	<label for="question">Question</label>
-	<input type="text" id="question" name="question" required />
+	<label for="category">Category</label>
+	<input type="text" id="category" name="category" required />
 
-	<label for="answer">Answer</label>
-	<textarea id="answer" name="answer" required />
+	<label for="challenge">Challenge</label>
+	<textarea id="challenge" name="challenge" required />
 
-	<button class="submit" type="submit">Save</button>
+	<button type="submit">Save</button>
 </form>
 
-<h2>Delete All FAQs</h2>
+<h2>Delete All Challenges</h2>
 
 <form method="POST" action="?/deleteAll" use:enhance>
 	<button
 		use:confirmationDialog={{
-			text: 'Are you sure you want to delete all FAQ?',
+			text: 'Are you sure you want to delete all challenges?',
 			cancel: 'Cancel',
 			ok: 'Delete',
 		}}>Delete</button
