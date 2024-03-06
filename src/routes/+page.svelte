@@ -53,14 +53,14 @@
 	<FAQ user={data.user} questions={data.faqs} />
 </section>
 
+<section id="Challenges">
+	<Challenges user={data.user} challenges={data.challenges} />
+</section>
+
 <section id="Sponsors">
 	<Sponsors
 		sponsors={['Roblox', 'Capital One', 'Mercury Financial', 'Red Bull', 'Stand Out Stickers']}
 	/>
-</section>
-
-<section id="Challenges">
-	<Challenges user={data.user} challenges={data.challenges} />
 </section>
 
 <style>

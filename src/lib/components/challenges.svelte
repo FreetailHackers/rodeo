@@ -159,7 +159,6 @@
 		font-family: 'Zen Dots';
 		font-style: normal;
 		font-size: 24px;
-		position: absolute;
 		top: 50%;
 		left: 50%;
 		width: 75%;
@@ -178,7 +177,7 @@
 		transform: translate(-50%, -50%);
 		transition: top 0.3s ease;
 		user-select: none;
-		font-size: 1em;
+		font-size: 0.8em;
 	}
 
 	.category-box:hover {
@@ -217,7 +216,7 @@
 			font-size: min(4vw, 36px);
 		}
 		.category-box .description-text {
-			font-size: min(2vw, 24px);
+			font-size: min(2.5vw, 24px);
 		}
 	}
 </style>
