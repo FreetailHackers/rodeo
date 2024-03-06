@@ -266,6 +266,7 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+		margin: 0;
 		background-color: #1c1c1c;
 	}
 
