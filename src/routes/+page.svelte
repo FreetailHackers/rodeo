@@ -86,15 +86,16 @@
 		background-size: 110%;
 		position: relative;
 		z-index: -10;
+		height: 130vw;
 	}
 
 	.homepage-text {
 		position: absolute;
-		top: 82.5%;
+		top: 68.5%;
 		left: 3%;
 		color: #f2ebd9;
 		font-family: 'Geologica';
-		font-size: 32px;
+		font-size: clamp(0.65rem, 2vw, 2rem);
 		max-width: 80%;
 	}
 	section {
@@ -102,8 +103,12 @@
 	}
 
 	@media (max-width: 768px), (max-aspect-ratio: 1) {
+		.topographic-background {
+			height: 140vw;
+		}
+
 		.homepage-text {
-			font-size: 16px;
+			top: 66%;
 		}
 	}
 </style>
