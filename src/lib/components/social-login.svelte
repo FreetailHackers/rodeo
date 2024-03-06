@@ -54,12 +54,9 @@
 		padding-right: 0.25rem;
 	}
 
-	@media (max-width: 1024px) {
+	@media (max-width: 1064px) {
 		.btn-text {
 			display: none;
 		}
-	}
-
-	@media (max-width: 768px) {
 	}
 </style>
