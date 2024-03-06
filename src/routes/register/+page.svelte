@@ -96,16 +96,7 @@
 		background-color: #303030;
 		background-image: url('/Topographic Background.svg');
 		background-size: 110%;
-	}
-
-	.topographic-background {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		background-color: #303030;
-		background-image: url('/Topographic Background.svg');
-		background-size: 110%;
-		min-height: 100vh;
+		min-height: calc(100vh - 159px);
 	}
 
 	.header {
