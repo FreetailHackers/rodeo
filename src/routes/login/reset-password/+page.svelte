@@ -107,4 +107,10 @@
 		display: block;
 		margin-bottom: 1rem;
 	}
+
+	@media (max-width: 768px) {
+		.topographic-background {
+			min-height: calc(100vh - 56px);
+		}
+	}
 </style>

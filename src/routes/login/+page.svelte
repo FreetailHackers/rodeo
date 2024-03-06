@@ -170,5 +170,9 @@
 			margin-top: 0.5vw;
 			margin-bottom: 0.5vw;
 		}
+
+		.topographic-background {
+			min-height: calc(100vh - 56px);
+		}
 	}
 </style>
