@@ -37,8 +37,4 @@
 	textarea {
 		margin-bottom: 1rem;
 	}
-
-	.submit {
-		margin-bottom: 20px;
-	}
 </style>

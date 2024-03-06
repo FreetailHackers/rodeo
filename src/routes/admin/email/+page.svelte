@@ -88,8 +88,8 @@
 <style>
 	button {
 		margin-top: 20px;
-		margin-bottom: 20px;
 	}
+
 	label {
 		display: block;
 	}

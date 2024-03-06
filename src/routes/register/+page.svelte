@@ -96,16 +96,7 @@
 		background-color: #303030;
 		background-image: url('/Topographic Background.svg');
 		background-size: 110%;
-	}
-
-	.topographic-background {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		background-color: #303030;
-		background-image: url('/Topographic Background.svg');
-		background-size: 110%;
-		min-height: 100vh;
+		min-height: calc(100vh - 159px);
 	}
 
 	.header {
@@ -142,6 +133,10 @@
 		color: #404040;
 	}
 
+	.socials {
+		width: 40%;
+	}
+
 	@media (max-width: 768px) {
 		.form,
 		.socials,
@@ -172,9 +167,8 @@
 			margin-top: 0.5vw;
 			margin-bottom: 0.5vw;
 		}
-	}
-
-	.socials {
-		width: 40%;
+		.topographic-background {
+			min-height: calc(100vh - 56px);
+		}
 	}
 </style>

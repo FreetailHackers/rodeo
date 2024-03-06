@@ -99,7 +99,7 @@
 		background-color: #303030;
 		background-image: url('/Topographic Background.svg');
 		background-size: 110%;
-		min-height: 100vh;
+		min-height: calc(100vh - 159px);
 	}
 
 	.header {
@@ -169,6 +169,10 @@
 		button {
 			margin-top: 0.5vw;
 			margin-bottom: 0.5vw;
+		}
+
+		.topographic-background {
+			min-height: calc(100vh - 56px);
 		}
 	}
 </style>
