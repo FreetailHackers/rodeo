@@ -125,7 +125,7 @@
 		.vertical-text {
 			width: 25% !important;
 			height: 50rem;
-			top: 50%;
+			top: 47%;
 			left: 15%;
 		}
 
