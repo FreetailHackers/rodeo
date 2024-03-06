@@ -287,7 +287,8 @@
 	}
 
 	@media (max-width: 768px) {
-		.topographic-background {
+		.topographic-background,
+		.card {
 			user-select: none;
 		}
 

@@ -230,14 +230,18 @@
 		font-size: 14px;
 	}
 
-	a,
+	a {
+		color: #f2ebd9;
+		text-decoration: none;
+		line-height: 1.5;
+	}
+
 	button {
 		color: #e1563f;
 		text-decoration: none;
 		line-height: 1.5;
 		padding-left: 1rem;
 		padding-right: 1rem;
-		/* padding: 0.7rem 1rem; */
 	}
 
 	a:hover,
