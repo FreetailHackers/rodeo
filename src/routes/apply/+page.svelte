@@ -20,12 +20,12 @@
 </svelte:head>
 <!-- Application status dialog -->
 <div class="main-content main-content-{userStatus}">
-	{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'REJECTED' || data.user.authUser.status === 'APPLIED'}
+	{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'REJECTED' || data.user.authUser.status === 'APPLIED' || data.user.authUser.status === 'CONFIRMED' || data.user.authUser.status === 'DECLINED'}
 		<div class="race-car {userStatus}" />
 	{/if}
 
 	<div class="status status-{userStatus}">
-		{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'REJECTED' || data.user.authUser.status === 'APPLIED'}
+		{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'REJECTED' || data.user.authUser.status === 'APPLIED' || data.user.authUser.status === 'CONFIRMED' || data.user.authUser.status === 'DECLINED'}
 			<div class="admission-top" />
 			<h2>Application Status</h2>
 		{/if}
@@ -258,7 +258,9 @@
 <style>
 	.main-content-ACCEPTED,
 	.main-content-REJECTED,
-	.main-content-APPLIED {
+	.main-content-APPLIED,
+	.main-content-CONFIRMED,
+	.main-content-DECLINED {
 		max-width: 100%;
 		padding: 5rem 2rem 0;
 		position: relative;
@@ -295,7 +297,9 @@
 
 	.status-ACCEPTED,
 	.status-REJECTED,
-	.status-APPLIED {
+	.status-APPLIED,
+	.status-CONFIRMED,
+	.status-DECLINED {
 		color: white;
 		display: flex;
 		align-items: center;
@@ -336,19 +340,23 @@
 		background: linear-gradient(180deg, #5a6068 66%, rgba(255, 255, 255, 0) 100%);
 	}
 
-	.status-ACCEPTED {
+	.status-ACCEPTED,
+	.status-CONFIRMED {
 		background: linear-gradient(180deg, rgba(92, 227, 177, 0.9) 66%, rgba(255, 255, 255, 0) 100%);
 	}
 
-	.status-ACCEPTED h1 {
+	.status-ACCEPTED h1,
+	.status-CONFIRMED h1 {
 		color: #008b58;
 	}
 
-	.status-REJECTED {
+	.status-REJECTED,
+	.status-DECLINED {
 		background: linear-gradient(180deg, rgba(255, 69, 69, 0.9) 69%, rgba(255, 255, 255, 0) 100%);
 	}
 
-	.status-REJECTED h1 {
+	.status-REJECTED h1,
+	.status-DECLINED h1 {
 		color: #810606;
 	}
 
@@ -357,10 +365,6 @@
 		background-color: transparent;
 		border: 1px solid var(--primary-accent);
 		color: var(--primary-accent);
-	}
-
-	.status button:hover {
-		transform: translateY(-5px);
 	}
 
 	#rsvp {
