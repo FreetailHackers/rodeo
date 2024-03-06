@@ -106,4 +106,8 @@
 	.flex-container {
 		display: flex;
 	}
+
+	button {
+		margin-bottom: 1rem;
+	}
 </style>

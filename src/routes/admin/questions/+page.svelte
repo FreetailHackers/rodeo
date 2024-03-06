@@ -255,4 +255,8 @@
 		justify-content: end;
 		gap: 0.5rem;
 	}
+
+	button {
+		margin-bottom: 1rem;
+	}
 </style>
