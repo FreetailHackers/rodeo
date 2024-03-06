@@ -109,12 +109,12 @@
 <style>
 	form {
 		padding-top: 10px;
-		padding-bottom: 30px;
 	}
 
 	button {
 		margin-top: 30px;
 		width: 100%;
+		margin-bottom: 1rem;
 	}
 
 	#release {

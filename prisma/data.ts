@@ -406,4 +406,40 @@ export const faq: Prisma.InfoBoxCreateInput[] = [
 			"If you have further questions for us, don't hesitate to reach out to hello@freetailhackers.com",
 		category: 'FAQ',
 	},
+	{
+		title: 'Sustainability Challenge',
+		response:
+			'Explore ways to promote sustainable practices and reduce environmental impact through innovative solutions. Address issues such as waste management, renewable energy, and conservation efforts to create a more sustainable future.',
+		category: 'CHALLENGE',
+	},
+	{
+		title: 'Health & Safety Challenge',
+		response:
+			'Focus on improving health and safety standards in various environments, including workplaces, communities, and public spaces. Develop strategies to prevent accidents, mitigate risks, and enhance overall well-being for individuals and society.',
+		category: 'CHALLENGE',
+	},
+	{
+		title: 'Blockchain & Security Challenge',
+		response:
+			'Dive into the world of blockchain technology and cybersecurity to tackle emerging threats and vulnerabilities. Explore encryption methods, decentralized systems, and secure data storage to ensure the integrity and confidentiality of digital transactions and information.',
+		category: 'CHALLENGE',
+	},
+	{
+		title: 'Human Computer Interaction Challenge',
+		response:
+			'Enhance user experiences and interactions with technology by designing intuitive interfaces and user-friendly applications. Explore human-centered design principles to create engaging and accessible digital experiences for diverse audiences.',
+		category: 'CHALLENGE',
+	},
+	{
+		title: 'Efficiency Challenge',
+		response:
+			"#Efficiency fuels progress in our fast-paced world. If you're a problem solver with a passion for streamlining processes and maximizing productivity, then the Efficiency Boosters Hackathon is the perfect platform for you. Join forces with like-minded individuals to develop innovative solutions that optimize workflows, enhance resource management, and boost overall efficiency across various domains. Your ingenuity could revolutionize industries, so let's hack for a more efficient future!",
+		category: 'CHALLENGE',
+	},
+	{
+		title: 'Earth & Space Challenge',
+		response:
+			"Embark on a journey beyond our planet and explore the vastness of both Earth and Space in this hackathon track. From addressing environmental challenges on our home planet to pioneering new frontiers in space exploration, this track welcomes visionaries and problem solvers who are eager to make a significant impact on our world, both near and far. Whether you're interested in climate solutions, space technology, or protecting our planet, this hackathon is your launchpad to innovation.",
+		category: 'CHALLENGE',
+	},
 ];

@@ -3,6 +3,7 @@
 	import FAQ from '$lib/components/faq.svelte';
 	import Schedule from '$lib/components/schedule.svelte';
 	import Sponsors from '$lib/components/sponsors.svelte';
+	import Challenges from '$lib/components/challenges.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
 	import { toasts } from '$lib/stores';
 	export let data;
@@ -50,6 +51,10 @@
 
 <section id="FAQ">
 	<FAQ user={data.user} questions={data.faqs} />
+</section>
+
+<section id="Challenges">
+	<Challenges user={data.user} challenges={data.challenges} />
 </section>
 
 <section id="Sponsors">

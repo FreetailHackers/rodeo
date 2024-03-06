@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.9.0
+
+[ADDED]
+
+- Brand new Rodeo UI
+- Rodeo is single page application
+
 ## v0.8.6
 
 [ADDED]

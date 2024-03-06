@@ -65,6 +65,9 @@
 				<a href="/#FAQ" class:active={$page.url.hash === '#FAQ'}>FAQ</a>
 			</li>
 			<li>
+				<a href="/#Challenges" class:active={$page.url.hash === '#Challenges'}>Challenges</a>
+			</li>
+			<li>
 				<a href="/#Sponsors" class:active={$page.url.hash === '#Sponsors'}>Sponsors</a>
 			</li>
 		{/if}
@@ -190,8 +193,8 @@
 		position: absolute;
 		display: block;
 		right: 15px;
-		top: 2.25rem;
-		width: 10rem;
+		top: 56px;
+		width: calc(5vw + 3rem);
 	}
 
 	#mlh-badge-image {
@@ -230,14 +233,18 @@
 		font-size: 14px;
 	}
 
-	a,
+	a {
+		color: #f2ebd9;
+		text-decoration: none;
+		line-height: 1.5;
+	}
+
 	button {
 		color: #e1563f;
 		text-decoration: none;
 		line-height: 1.5;
 		padding-left: 1rem;
 		padding-right: 1rem;
-		/* padding: 0.7rem 1rem; */
 	}
 
 	a:hover,
@@ -343,9 +350,6 @@
 			display: none;
 		}
 
-		#mlh-trust-badge {
-			width: 5rem;
-		}
 		.footer-flex {
 			max-width: 60vw;
 		}
@@ -361,6 +365,10 @@
 			justify-content: flex-start;
 			flex-wrap: nowrap;
 			flex-direction: row;
+		}
+
+		#mlh-trust-badge {
+			top: 42.2px;
 		}
 	}
 
@@ -399,12 +407,6 @@
 			display: inline;
 			width: initial;
 			text-decoration: none;
-		}
-
-		#mlh-trust-badge {
-			max-width: 6rem;
-			min-width: 5rem;
-			top: 3.25rem;
 		}
 	}
 
