@@ -24,26 +24,28 @@
 			</div>
 		</div>
 		<div class="faq-questions">
-			{#if questionsSplit.length > 0}
-				{#each { length: 2 } as _i, idx}
-					<div class="faq-questions-col-{2 - (idx % 2)}">
-						{#each questionsSplit[idx] as question}
-							<Accordion>
-								<span slot="head" class="question-title">{question.title}</span>
-								<div slot="details" class="question-answer">
-									<p>{question.response}</p>
-									{#if user?.roles.includes('ADMIN')}
-										<p class="edit">
-											<a href="/admin/faq/{question.id}">Edit</a>
-										</p>
-									{/if}
-								</div>
-							</Accordion>
-						{/each}
-					</div>
-				{/each}
+			{#if questions.length > 0}
+				<div class="faq-questions-container">
+					{#each { length: 2 } as _i, idx}
+						<div class="faq-questions-col-{2 - (idx % 2)}">
+							{#each questionsSplit[idx] as question}
+								<Accordion>
+									<span slot="head" class="question-title">{question.title}</span>
+									<div slot="details" class="question-answer">
+										<p>{question.response}</p>
+										{#if user?.roles.includes('ADMIN')}
+											<p class="edit">
+												<a href="/admin/faq/{question.id}">Edit</a>
+											</p>
+										{/if}
+									</div>
+								</Accordion>
+							{/each}
+						</div>
+					{/each}
+				</div>
 			{:else}
-				<h2>Check back for the FAQ!</h2>
+				<h2 class="no-faq-message">Check back for the FAQ!</h2>
 			{/if}
 		</div>
 	</div>
@@ -56,9 +58,15 @@
 		justify-content: center;
 	}
 
+	.faq-questions {
+		display: flex;
+		justify-content: center;
+		width: 100%;
+	}
+
 	.faq-container {
 		display: flex;
-		max-width: 75rem;
+		width: 75rem;
 		margin: auto;
 		padding-top: 9vh;
 	}
@@ -99,7 +107,7 @@
 		text-orientation: mixed;
 	}
 
-	.faq-questions {
+	.faq-questions-container {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		grid-auto-rows: min-content;
@@ -150,7 +158,7 @@
 			display: none;
 		}
 
-		.faq-questions {
+		.faq-questions-container {
 			grid-template-columns: auto;
 			padding-left: 0;
 			gap: 0;
@@ -163,5 +171,9 @@
 
 	.question-answer {
 		padding-bottom: 0px;
+	}
+
+	.no-faq-message {
+		color: var(--highlight-color);
 	}
 </style>
