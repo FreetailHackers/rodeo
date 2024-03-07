@@ -26,7 +26,7 @@
 <div class="topographic-background">
 	<div>
 		<!-- svelte-ignore a11y-img-redundant-alt -->
-		<img src="/Landing.svg" alt="svg" class="home-svg" />
+		<img src="/Group 40.svg" alt="svg" class="home-svg" />
 		<div class="homepage-text">
 			<SvelteMarkdown source={data.settings.homepageText} />
 		</div>
@@ -66,7 +66,6 @@
 <style>
 	.home-svg {
 		width: 100vw;
-		height: auto;
 		margin-top: calc(2rem - 0.5vw);
 	}
 
@@ -74,7 +73,6 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		background-color: #303030;
 		background: linear-gradient(
 				to bottom,
 				#1c1c1c 0%,
@@ -85,18 +83,16 @@
 			url('/Topographic Background.svg');
 		background-size: 110%;
 		position: relative;
-		z-index: -10;
-		height: 120vw;
 	}
 
 	.homepage-text {
 		position: absolute;
-		top: 72.5%;
-		left: 3%;
+		top: 73%;
+		left: 18%;
 		color: #f2ebd9;
 		font-family: 'Geologica';
 		font-size: clamp(0.65rem, 2vw, 2rem);
-		max-width: 80%;
+		max-width: 50rem;
 	}
 	section {
 		scroll-margin-top: 5vh;
