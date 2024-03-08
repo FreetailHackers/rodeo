@@ -119,6 +119,7 @@
 		transition: background-color 0.3s ease, border 0.3s ease;
 		cursor: pointer;
 		margin-bottom: 10px;
+		user-select: none;
 	}
 
 	.challenge-box.flipped {

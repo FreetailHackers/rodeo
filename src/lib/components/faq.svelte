@@ -59,51 +59,44 @@
 	.faq-container {
 		display: flex;
 		max-width: 75rem;
-		margin: auto;
-		padding-top: 9vh;
+		padding: 3em 0;
+		padding-right: 2em;
 	}
 
 	.faq-title-container {
 		position: sticky;
 		top: 10vh;
 		height: 650px;
-		width: 135px;
+		width: 7rem;
+		flex-shrink: 0;
 	}
 
 	.faq-title {
 		display: flex;
 		flex-direction: column;
-		flex-grow: 1;
-		align-items: flex-start;
+		flex-shrink: 0;
 	}
 
-	.left-border-faq {
+	.left-border-faq,
+	.left-border-faq-2 {
 		font-family: 'Zen Dots', sans-serif;
-		font-style: normal;
 		font-size: 7rem;
 		color: var(--highlight-color);
-		text-shadow: none;
 		writing-mode: vertical-rl;
-		text-orientation: mixed;
 	}
 
 	.left-border-faq-2 {
-		font-family: 'Zen Dots';
-		font-style: normal;
-		font-size: 7rem;
-		font-weight: normal;
-		color: var(--background-color);
-		text-shadow: none;
+		color: transparent;
 		-webkit-text-stroke: 0.1rem var(--highlight-color);
-		writing-mode: vertical-rl;
-		text-orientation: mixed;
 	}
 
 	.faq-questions {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		grid-auto-rows: min-content;
-		margin-top: 1vh;
+		margin-top: 1em;
+		cursor: default;
+		user-select: none;
 	}
 
 	.faq-questions-col-1,
@@ -163,5 +156,6 @@
 
 	.question-answer {
 		padding-bottom: 0px;
+		user-select: text;
 	}
 </style>
