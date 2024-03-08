@@ -64,22 +64,22 @@
 </section>
 
 <style>
+	section {
+		scroll-margin-top: 5vh;
+	}
+
 	.home-svg {
 		width: 100vw;
 		margin-top: calc(2rem - 0.5vw);
+		user-select: none;
+		pointer-events: none;
 	}
 
 	.topographic-background {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		background: linear-gradient(
-				to bottom,
-				#1c1c1c 0%,
-				transparent 30%,
-				transparent 50%,
-				#1c1c1c 100%
-			),
+		background: linear-gradient(to bottom, transparent 0%, #1c1c1c 100%),
 			url('/Topographic Background.svg');
 		background-size: 110%;
 		position: relative;
@@ -88,23 +88,11 @@
 	.homepage-text {
 		position: absolute;
 		top: 73%;
-		left: 18%;
+		left: 15%;
 		color: #f2ebd9;
-		font-family: 'Geologica';
-		font-size: clamp(0.65rem, 2vw, 2rem);
+		font-size: clamp(0.75rem, 2vw, 2rem);
 		max-width: 50rem;
-	}
-	section {
-		scroll-margin-top: 5vh;
-	}
-
-	@media (max-width: 768px), (max-aspect-ratio: 1) {
-		.topographic-background {
-			height: 130vw;
-		}
-
-		.homepage-text {
-			top: 72.5%;
-		}
+		margin-right: 4rem;
+		pointer-events: none;
 	}
 </style>

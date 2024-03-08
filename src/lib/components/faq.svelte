@@ -95,6 +95,8 @@
 		grid-template-columns: 1fr 1fr;
 		grid-auto-rows: min-content;
 		margin-top: 1em;
+		cursor: default;
+		user-select: none;
 	}
 
 	.faq-questions-col-1,
@@ -154,5 +156,6 @@
 
 	.question-answer {
 		padding-bottom: 0px;
+		user-select: text;
 	}
 </style>
