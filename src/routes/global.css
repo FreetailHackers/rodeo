@@ -26,11 +26,11 @@ h6 {
 	font-weight: 700;
 	font-style: normal;
 	text-transform: uppercase;
-	pointer-events: none;
+	cursor: default;
 }
 
 p {
-	pointer-events: none;
+	cursor: default;
 }
 
 html {
