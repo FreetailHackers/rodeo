@@ -86,7 +86,7 @@
 
 	.announcementHeader {
 		text-align: center;
-		font-size: calc(2vw + 1.5rem);
+		font-size: clamp(1rem, 6vw, 5rem);
 		font-weight: 400;
 		text-shadow: 0 4px 12px black;
 		margin: 0 auto;
