@@ -64,46 +64,35 @@
 </section>
 
 <style>
+	section {
+		scroll-margin-top: 5vh;
+	}
+
 	.home-svg {
 		width: 100vw;
-		height: auto;
 		margin-top: calc(2rem - 0.5vw);
+		user-select: none;
+		pointer-events: none;
 	}
 
 	.topographic-background {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		background-color: #303030;
-		background: linear-gradient(
-				to bottom,
-				#1c1c1c 0%,
-				transparent 30%,
-				transparent 50%,
-				#1c1c1c 100%
-			),
+		background: linear-gradient(to bottom, transparent 0%, #1c1c1c 100%),
 			url('/Topographic Background.svg');
 		background-size: 110%;
 		position: relative;
-		z-index: -10;
 	}
 
 	.homepage-text {
 		position: absolute;
-		top: 82.5%;
-		left: 3%;
+		top: 73%;
+		left: 15%;
 		color: #f2ebd9;
-		font-family: 'Geologica';
-		font-size: 32px;
-		max-width: 80%;
-	}
-	section {
-		scroll-margin-top: 5vh;
-	}
-
-	@media (max-width: 768px), (max-aspect-ratio: 1) {
-		.homepage-text {
-			font-size: 16px;
-		}
+		font-size: clamp(0.75rem, 2vw, 2rem);
+		max-width: 50rem;
+		margin-right: 4rem;
+		pointer-events: none;
 	}
 </style>
