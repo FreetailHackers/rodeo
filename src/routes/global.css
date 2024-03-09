@@ -26,6 +26,11 @@ h6 {
 	font-weight: 700;
 	font-style: normal;
 	text-transform: uppercase;
+	cursor: default;
+}
+
+p {
+	cursor: default;
 }
 
 html {

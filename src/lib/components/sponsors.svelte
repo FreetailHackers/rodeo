@@ -12,7 +12,11 @@
 		</p>
 
 		<!-- This code assumes that the sponsor logo is saved under /static/Sponsors/ as a PNG with the same name as the company. -->
-		<button><a href="mailto:corporate@freetailhackers.com">Become a sponsor</a></button>
+		<button
+			><a href="mailto:corporate@freetailhackers.com" target="_blank" rel="noopener noreferrer"
+				>Become a sponsor</a
+			></button
+		>
 		<div class="sponsor-container">
 			{#each sponsors as sponsor}
 				<div class="sponsor-card">

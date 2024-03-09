@@ -11,9 +11,7 @@
 
 <div class="bg-img">
 	<div class="announcement-container">
-		<div class="header-container">
-			<h1 class="announcementHeader">ANNOUNCEMENTS</h1>
-		</div>
+		<h1 class="announcementHeader">ANNOUNCEMENTS</h1>
 		{#if admin}
 			<form class="pad" method="POST" action="?/announce" use:enhance>
 				<MarkdownEditor
@@ -55,7 +53,11 @@
 							<SvelteMarkdown source={announcement.body} />
 						</div>
 						<!-- Corner piece -->
-						<div class="bottom-right-image" />
+						<div class="bottom-right-image">
+							<svg id="triangle" viewBox="0 0 100 100">
+								<polygon points="101 30, 101 101, 0 101" fill="#1c1c1c" />
+							</svg>
+						</div>
 					</li>
 				{/each}
 			</ul>
@@ -71,65 +73,26 @@
 	}
 
 	.announcement-container {
-		padding: 0 20px;
-		flex-wrap: wrap;
+		padding: 20px;
 		max-width: 75rem;
 		margin: auto;
-		font-weight: 500;
 		font-family: 'Fugaz One';
 		color: #e1563f;
-		flex-direction: column;
-		justify-content: center;
-		padding-bottom: 20px;
 	}
+
 	.bg-img {
 		background-color: #1c1c1c;
-		background-size: 110%;
-		padding-top: 1px;
-		padding-bottom: 1px;
 	}
+
 	.announcementHeader {
 		text-align: center;
-		font-family: 'Zen Dots';
-		font-size: 64px;
+		font-size: clamp(1rem, 6vw, 5rem);
 		font-weight: 400;
 		text-shadow: 0 4px 12px black;
-		width: 100%;
-		padding-top: 48px;
-		white-space: nowrap;
 		margin: 0 auto;
-		margin-top: 20px;
 	}
 
-	.header-container {
-		display: flex;
-		align-items: center;
-	}
-
-	@media screen and (max-width: 1024px) {
-		.announcementHeader {
-			margin-top: 0px;
-			font-size: 50px;
-			line-height: 100px;
-			margin-bottom: -20px;
-		}
-		@media screen and (max-width: 740px) {
-			.announcementHeader {
-				font-size: 35px;
-				line-height: 100px;
-				margin-bottom: -30px;
-			}
-			@media screen and (max-width: 480px) {
-				.announcementHeader {
-					font-size: 25px;
-					line-height: 70px;
-					margin-bottom: -30px;
-				}
-			}
-		}
-	}
 	.bottom-right-image {
-		background-image: url('/announcement-corner.png');
 		background-size: contain;
 		background-position: center bottom;
 		background-repeat: no-repeat;
