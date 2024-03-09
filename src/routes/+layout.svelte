@@ -190,11 +190,12 @@
 
 <style>
 	#mlh-trust-badge {
+		z-index: 2;
 		position: absolute;
 		display: block;
 		right: 15px;
 		top: 56px;
-		width: calc(5vw + 3rem);
+		width: calc(4vw + 3rem);
 	}
 
 	#mlh-badge-image {
