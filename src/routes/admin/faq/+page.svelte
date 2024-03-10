@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { confirmationDialog } from '$lib/actions.js';
+	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
 </script>
 
 <svelte:head>
@@ -15,7 +16,7 @@
 	<input type="text" id="question" name="question" required />
 
 	<label for="answer">Answer</label>
-	<textarea id="answer" name="answer" required />
+	<MarkdownEditor id="answer" name="answer" required />
 
 	<button class="submit" type="submit">Save</button>
 </form>
@@ -34,7 +35,6 @@
 
 <style>
 	input,
-	textarea,
 	button {
 		margin-bottom: 1rem;
 	}
