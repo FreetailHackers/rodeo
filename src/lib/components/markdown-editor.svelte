@@ -26,13 +26,13 @@
 
 <div>
 	<button
-		class={useAnnouncementFont ? 'announcement-font' : ''}
+		class:announcement-font={useAnnouncementFont}
 		type="button"
 		class:selected={!previewing}
 		on:click={() => (previewing = false)}>Write</button
 	>
 	<button
-		class={useAnnouncementFont ? 'announcement-font' : ''}
+		class:announcement-font={useAnnouncementFont}
 		type="button"
 		class:selected={previewing}
 		on:click={() => (previewing = true)}>Preview</button
@@ -41,15 +41,15 @@
 {#if previewing}
 	<div class="border white-preview-background">
 		{#if value === ''}
-			<p class="empty-preview announcement-font">Nothing to preview.</p>
+			<p class:announcement-font={useAnnouncementFont} class="empty-preview">Nothing to preview.</p>
 		{:else}
-			<div class="announcement-font">
+			<div class:announcement-font={useAnnouncementFont}>
 				<SvelteMarkdown source={value} />
 			</div>
 		{/if}
 	</div>
 	<textarea
-		class={useAnnouncementFont ? 'announcement-font' : ''}
+		class:announcement-font={useAnnouncementFont}
 		style="display: none;"
 		{id}
 		{name}
@@ -58,7 +58,7 @@
 	/>
 {:else}
 	<textarea
-		class={useAnnouncementFont ? 'announcement-font' : ''}
+		class:announcement-font={useAnnouncementFont}
 		{id}
 		{name}
 		{placeholder}
