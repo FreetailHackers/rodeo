@@ -6,6 +6,17 @@
 
 	let canvas: HTMLCanvasElement;
 
+	let userName = ['Driver', 'Name'];
+	if (data.questions[0]['label'] !== null) {
+		userName = [];
+		data.questions[0]['label'].split(' ').forEach((element) => {
+			userName.push(element);
+		});
+		if (userName.length < 2) {
+			userName.push('');
+		}
+	}
+
 	onMount(() => {
 		QRCode.toCanvas(canvas, data.user.id, {
 			width: 300,
@@ -25,8 +36,8 @@
 
 	<div class="driver-scan-div">
 		<div class="driver-div">
-			<h1 class="driver-div-text black">Driver</h1>
-			<h1 class="driver-div-text red ">Name</h1>
+			<h1 class="driver-div-text black">{userName[0]}</h1>
+			<h1 class="driver-div-text red ">{userName[1]}</h1>
 			<div class="canvas">
 				<canvas bind:this={canvas} id="qrcode" />
 			</div>
