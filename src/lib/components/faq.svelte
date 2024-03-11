@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { InfoBox, AuthUser } from '@prisma/client';
 	import Accordion from './accordion.svelte';
+	import SvelteMarkdown from 'svelte-markdown';
 
 	export let user: AuthUser;
 	export let questions: InfoBox[];
@@ -31,7 +32,7 @@
 							<Accordion>
 								<span slot="head" class="question-title">{question.title}</span>
 								<div slot="details" class="question-answer">
-									<p>{question.response}</p>
+									<SvelteMarkdown source={question.response} />
 									{#if user?.roles.includes('ADMIN')}
 										<p class="edit">
 											<a href="/admin/faq/{question.id}">Edit</a>

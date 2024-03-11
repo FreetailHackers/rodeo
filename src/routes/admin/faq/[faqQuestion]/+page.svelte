@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { confirmationDialog } from '$lib/actions.js';
+	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
 
 	export let data;
 </script>
@@ -35,11 +36,11 @@
 	>
 		<input type="hidden" name="id" value={data.question.id} />
 
-		<label for="title">Title</label>
+		<label for="title">Question</label>
 		<input type="text" id="title" name="title" required value={data.question.title} />
 
-		<label for="response">Response</label>
-		<textarea id="response" name="response" required value={data.question.response} />
+		<label for="response">Answer</label>
+		<MarkdownEditor id="response" name="response" required value={data.question.response} />
 
 		<button class="submit" type="submit">Save</button>
 	</form>
@@ -50,10 +51,6 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-	}
-
-	textarea {
-		width: 100%;
 	}
 
 	input,
