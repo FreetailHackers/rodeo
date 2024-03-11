@@ -104,7 +104,7 @@
 		/* background-image: url('/hackerid/hackerid.svg'); */
 		writing-mode: vertical-rl;
 		position: absolute;
-		top: 50%;
+		top: 60%;
 		left: 13%;
 		transform: translate(-50%, -50%);
 		z-index: 0;
@@ -165,11 +165,14 @@
 	@media only screen and (max-width: 767px) {
 		.overall-container {
 			padding: 5rem 3rem 5rem;
-			background: url('/Topographic Background.svg');
 		}
 
 		.vertical-text {
 			display: none;
+		}
+
+		.vertical-text h1 {
+			font-size: 60px;
 		}
 
 		canvas {
@@ -199,7 +202,6 @@
 		}
 		.ready-to-scan-text-ready {
 			font-size: 15px;
-			color: white;
 			margin: 0;
 		}
 
