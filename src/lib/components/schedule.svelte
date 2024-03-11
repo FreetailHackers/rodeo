@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '../../routes/global.css';
 	import { onMount } from 'svelte';
 	import { generateIcsContent } from '$lib/ics';
 	import type { Event, AuthUser } from '@prisma/client';
@@ -79,10 +80,8 @@
 						{#each events as event}
 							{#if selected === null || event.type === selected}
 								<div
-									class="card card-text {currentDateTime >= event.start &&
-									currentDateTime < event.end
-										? 'currentEvent'
-										: ''}"
+									class="card card-text"
+									class:currentEvent={currentDateTime >= event.start && currentDateTime < event.end}
 								>
 									<div class="flex-row">
 										<div>
@@ -148,7 +147,7 @@
 
 	.sidebar {
 		width: 16rem;
-		margin: 0 10px;
+		margin: 0 5px;
 	}
 
 	.empty-schedule {
@@ -157,7 +156,7 @@
 	}
 
 	h1 {
-		color: #f2ebd9;
+		color: var(--highlight-color);
 		font-size: 64px;
 		font-weight: 400;
 		margin: 0;
@@ -167,14 +166,14 @@
 	}
 
 	h2 {
-		color: #f2ebd9;
+		color: var(--highlight-color);
 		font-family: 'Fugaz One';
 		font-size: 36px;
 		text-shadow: 0 4px 8px rgb(0, 0, 0);
 	}
 
 	button {
-		background-color: #f2ebd9;
+		background-color: var(--highlight-color);
 		color: #303030;
 		height: 2rem;
 		font-family: 'Geologica', sans-serif;
@@ -191,7 +190,7 @@
 
 	.active {
 		background-color: #303030;
-		color: #f2ebd9;
+		color: var(--highlight-color);
 	}
 
 	p {
@@ -245,12 +244,12 @@
 	}
 
 	.currentEvent {
-		border: solid #e1563f 4px;
+		border: solid var(--primary-accent) 4px;
 		padding-bottom: calc(1rem - 4px);
 	}
 
 	.card:hover {
-		background-color: #f2ebd9;
+		background-color: var(--highlight-color);
 	}
 
 	.card:hover .description,
@@ -262,8 +261,9 @@
 		display: none;
 	}
 
-	.card-text {
-		color: #f2ebd9;
+	.card-text,
+	.empty-events {
+		color: var(--highlight-color);
 	}
 
 	.card-text:hover {
@@ -280,10 +280,6 @@
 	.column {
 		flex: 1;
 		margin: 0px 5px;
-	}
-
-	.empty-events {
-		color: #f2ebd9;
 	}
 
 	@media (max-width: 768px) {
