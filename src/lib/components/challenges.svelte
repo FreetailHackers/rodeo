@@ -24,15 +24,15 @@
 	}
 </script>
 
-<div class="checkered-background">
-	<div class="challenges-container">
-		<h1 class="desktop">
-			<span class="bordered-text" data-text="Challenges">Challenges</span> Challenges
-			<span class="bordered-text" data-text="Challenges">Challenges</span>
-		</h1>
-		<h1 class="mobile">Challenges</h1>
+{#if challenges.length > 0}
+	<div class="checkered-background">
+		<div class="challenges-container">
+			<h1 class="desktop">
+				<span class="bordered-text" data-text="Challenges">Challenges</span> Challenges
+				<span class="bordered-text" data-text="Challenges">Challenges</span>
+			</h1>
+			<h1 class="mobile">Challenges</h1>
 
-		{#if challenges.length > 0}
 			<div class="container">
 				{#each challenges as challenge}
 					{#if challenge.category === 'CHALLENGE'}
@@ -56,13 +56,9 @@
 					{/if}
 				{/each}
 			</div>
-		{:else}
-			<div class="container">
-				<p class="empty-events empty-challenges">There are no challenges at this time.</p>
-			</div>
-		{/if}
+		</div>
 	</div>
-</div>
+{/if}
 
 <style>
 	.challenges-container {
@@ -200,10 +196,6 @@
 
 	.mobile {
 		display: none;
-	}
-
-	.empty-events {
-		color: #f2ebd9;
 	}
 
 	@media (max-width: 768px) {
