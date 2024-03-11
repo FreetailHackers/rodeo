@@ -218,6 +218,7 @@ export const questions: (Prisma.QuestionCreateInput & { generate: () => unknown 
 		label: 'Shirt size',
 		type: 'RADIO',
 		required: true,
+		hideAdmission: true,
 		options: ['XS', 'S', 'M', 'L', 'XL', 'XXL'],
 		generate: () => randomElement(['XS', 'S', 'M', 'L', 'XL', 'XXL']),
 	},
