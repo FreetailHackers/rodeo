@@ -181,7 +181,9 @@ blockquote {
 dialog {
 	min-width: 20rem;
 	max-width: 40rem;
+	border-radius: 12px;
 	padding: 0 1rem;
+	background-color: var(--highlight-color);
 	box-shadow: 0.5rem 0.5rem 1rem rgba(0, 0, 0, 1);
 }
 

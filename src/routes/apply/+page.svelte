@@ -20,8 +20,8 @@
 </svelte:head>
 <!-- Application status dialog -->
 <div class="main-content main-content-{userStatus}">
-	{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'REJECTED' || data.user.authUser.status === 'APPLIED' || data.user.authUser.status === 'CONFIRMED' || data.user.authUser.status === 'DECLINED'}
-		<div class="race-car {userStatus}" />
+	{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'REJECTED' || data.user.authUser.status === 'APPLIED' || data.user.authUser.status === 'CONFIRMED' || data.user.authUser.status === 'DECLINED' || data.user.authUser.status === 'WAITLISTED'}
+		<img id="racecar" src="/admission/admission-car.svg" alt="racecar" />
 	{/if}
 
 	<div class="status status-{userStatus}">
@@ -259,30 +259,22 @@
 	.main-content-ACCEPTED,
 	.main-content-REJECTED,
 	.main-content-APPLIED,
+	.main-content-WAITLISTED,
 	.main-content-CONFIRMED,
 	.main-content-DECLINED {
 		max-width: 100%;
-		padding: 5rem 2rem 0;
+		padding: 10rem 2rem 0;
 		position: relative;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
 		margin: 0;
 		background-color: #1c1c1c;
-		min-height: inherit;
+		height: calc(100vh - 159px);
 	}
 
-	.race-car {
-		background-image: url(/admission/admission-car.svg);
-		background-repeat: no-repeat;
-		width: 100%;
-		height: 100%;
+	#racecar {
 		position: absolute;
-		z-index: 1;
 		bottom: 0;
-		background-size: contain;
 		left: 0;
+		height: 75vh;
 	}
 
 	.status {
@@ -292,13 +284,21 @@
 		margin-bottom: 1rem;
 	}
 
+	.status h2,
+	h1 {
+		font-size: clamp(16px, 3vw, 24px);
+	}
+
 	.status button {
 		margin-bottom: 1rem;
+		padding: 0 10px;
+		box-shadow: 0px 4px 4px 0px #00000040;
 	}
 
 	.status-ACCEPTED,
 	.status-REJECTED,
 	.status-APPLIED,
+	.status-WAITLISTED,
 	.status-CONFIRMED,
 	.status-DECLINED {
 		color: white;
@@ -337,7 +337,8 @@
 		margin-bottom: 40px;
 		font-family: 'Fugaz One';
 	}
-	.status-APPLIED {
+	.status-APPLIED,
+	.status-WAITLISTED {
 		background: linear-gradient(180deg, #5a6068 66%, rgba(255, 255, 255, 0) 100%);
 	}
 
@@ -363,15 +364,15 @@
 
 	.status .accept-btn {
 		box-shadow: 0px 4px 4px 0px #00000040;
-		background-color: transparent;
-		border: 1px solid var(--primary-accent);
+		background-color: var(--highlight-color);
+		/* border: 1px solid var(--primary-accent); */
 		color: var(--primary-accent);
 	}
 
 	#rsvp {
 		flex-direction: column;
 		gap: 1rem;
-		min-width: 50%;
+		min-width: 75%;
 	}
 	form {
 		display: flex;
@@ -431,21 +432,13 @@
 
 	/* Styles for viewport widths up to 768 pixels (typical for mobile devices) */
 	@media screen and (max-width: 768px) {
-		.status {
-			padding: 30px 30px 50px;
-		}
-
-		.race-car {
-			width: 100%;
-			height: 60%;
-		}
-
-		.status h2 {
-			font-size: 15px;
-		}
-
-		.status h1 {
-			font-size: 20px;
+		.main-content-ACCEPTED,
+		.main-content-REJECTED,
+		.main-content-APPLIED,
+		.main-content-WAITLISTED,
+		.main-content-CONFIRMED,
+		.main-content-DECLINED {
+			height: calc(100vh - 56px);
 		}
 
 		.admission-top {
