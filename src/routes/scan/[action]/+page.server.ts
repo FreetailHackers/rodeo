@@ -3,8 +3,10 @@ import { trpc } from '$lib/trpc/router';
 
 export const load = async ({ locals, params, url }) => {
 	await authenticate(locals.auth, ['ORGANIZER', 'ADMIN']);
+	const questions = await trpc(locals.auth).questions.get();
+	const scanRelevantQuestions = questions.filter((question) => !question.hideScan);
 	return {
-		questions: await trpc(locals.auth).questions.get(),
+		questions: scanRelevantQuestions,
 		settings: await trpc(locals.auth).settings.getPublic(),
 		scans: url.searchParams.has('stats')
 			? await trpc(locals.auth).users.getScanLog(params.action)
