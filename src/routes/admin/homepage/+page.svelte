@@ -29,7 +29,7 @@
 		value={data.homepageText}
 	/>
 
-	<button id="save-templates" type="submit">Save</button>
+	<button id="save-homepage-text" type="submit">Save</button>
 </form>
 
 <form method="POST" action="?/createEvent" use:enhance>
@@ -115,7 +115,7 @@
 		display: block;
 	}
 
-	#save-templates {
+	#save-homepage-text {
 		margin-top: 20px;
 	}
 

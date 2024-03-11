@@ -16,8 +16,7 @@ export const load = async ({ locals }) => {
 
 export const actions = {
 	settings: async ({ locals, request }) => {
-		const formData = await request.formData();
-		const homepageText = formData.get('homepageText') as string;
+		const homepageText = (await request.formData()).get('homepageText') as string;
 		await trpc(locals.auth).settings.update({
 			homepageText,
 		});
