@@ -6,17 +6,6 @@
 
 	let canvas: HTMLCanvasElement;
 
-	let userName = ['Driver', 'Name'];
-	if (data.questions[0]['label'] !== null) {
-		userName = [];
-		data.questions[0]['label'].split(' ').forEach((element) => {
-			userName.push(element);
-		});
-		if (userName.length < 2) {
-			userName.push('');
-		}
-	}
-
 	onMount(() => {
 		QRCode.toCanvas(canvas, data.user.id, {
 			width: 300,
@@ -29,15 +18,16 @@
 </svelte:head>
 
 <div class="overall-container">
-	<div
-		class="vertical-text"
-		aria-label="Decorative element featuring three textual elements labeled 'Hacker ID"
-	/>
+	<div class="vertical-text">
+		<h1 class="vertical-text-first">HACKER ID</h1>
+		<h1 class="vertical-text-second">HACKER ID</h1>
+		<h1 class="vertical-text-third">HACKER ID</h1>
+	</div>
 
 	<div class="driver-scan-div">
 		<div class="driver-div">
-			<h1 class="driver-div-text black">{userName[0]}</h1>
-			<h1 class="driver-div-text red ">{userName[1]}</h1>
+			<h1 class="driver-div-text black">Driver</h1>
+			<h1 class="driver-div-text red ">License</h1>
 			<div class="canvas">
 				<canvas bind:this={canvas} id="qrcode" />
 			</div>
@@ -111,16 +101,36 @@
 	}
 
 	.vertical-text {
-		background-image: url('/hackerid/hackerid.svg');
-		background-size: contain;
-		background-repeat: no-repeat;
-		width: 30%;
-		height: 40rem;
+		/* background-image: url('/hackerid/hackerid.svg'); */
+		writing-mode: vertical-rl;
 		position: absolute;
 		top: 50%;
-		left: 20%;
+		left: 13%;
 		transform: translate(-50%, -50%);
 		z-index: 0;
+		width: 30vw;
+		height: 100vh;
+	}
+
+	.vertical-text h1 {
+		font-size: 70px;
+	}
+
+	.vertical-text-first {
+		color: #f2ebd9bf;
+		margin-top: 12%;
+	}
+	.vertical-text-second {
+		color: transparent;
+		-webkit-text-stroke: 1px #ffc75b;
+		margin-top: 5%;
+		margin-right: -12%;
+	}
+
+	.vertical-text-third {
+		color: #e1563fbf;
+		margin-top: 3%;
+		margin-right: -7%;
 	}
 
 	.overall-container {
@@ -138,8 +148,8 @@
 		.vertical-text {
 			width: 25% !important;
 			height: 50rem;
-			top: 47%;
-			left: 15%;
+			top: 60%;
+			left: 19%;
 		}
 
 		.driver-scan-div {
