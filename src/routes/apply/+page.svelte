@@ -25,7 +25,7 @@
 	{/if}
 
 	<div class="status status-{userStatus}">
-		{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'REJECTED' || data.user.authUser.status === 'APPLIED' || data.user.authUser.status === 'CONFIRMED' || data.user.authUser.status === 'DECLINED'}
+		{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'REJECTED' || data.user.authUser.status === 'APPLIED' || data.user.authUser.status === 'CONFIRMED' || data.user.authUser.status === 'DECLINED' || data.user.authUser.status === 'WAITLISTED'}
 			<div class="admission-top" />
 			<h2>Application Status</h2>
 		{/if}
@@ -275,6 +275,7 @@
 		bottom: 0;
 		left: 0;
 		height: 75vh;
+		max-width: 80vw;
 	}
 
 	.status {
