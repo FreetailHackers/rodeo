@@ -41,9 +41,11 @@
 {#if previewing}
 	<div class="border white-preview-background">
 		{#if value === ''}
-			<p class="empty-preview announcement-font">Nothing to preview.</p>
+			<p class={useAnnouncementFont ? 'empty-preview announcement-font' : 'empty-preview'}>
+				Nothing to preview.
+			</p>
 		{:else}
-			<div class="announcement-font">
+			<div class={useAnnouncementFont ? 'announcement-font' : ''}>
 				<SvelteMarkdown source={value} />
 			</div>
 		{/if}
