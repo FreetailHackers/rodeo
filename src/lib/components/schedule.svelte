@@ -49,9 +49,9 @@
 	});
 </script>
 
-<div class="topographic-background">
-	<h1>Schedule</h1>
-	{#if schedule.length > 0}
+{#if schedule.length > 0}
+	<div class="topographic-background">
+		<h1>Schedule</h1>
 		<div class="container">
 			<div class="sidebar">
 				<h2>Filters</h2>
@@ -89,7 +89,7 @@
 											<p class="location">{event.location}</p>
 											{#if user?.roles.includes('ADMIN')}
 												<p>
-													<a class="edit" href="/admin/schedule/{event.id}">Edit</a>
+													<a class="edit" href="/admin/homepage/schedule/{event.id}">Edit</a>
 												</p>
 											{/if}
 										</div>
@@ -126,10 +126,8 @@
 				</div>
 			{/each}
 		</div>
-	{:else}
-		<p class="empty-events empty-schedule">There are no events at this time.</p>
-	{/if}
-</div>
+	</div>
+{/if}
 
 <style>
 	.topographic-background {
@@ -148,11 +146,6 @@
 	.sidebar {
 		width: 16rem;
 		margin: 0 5px;
-	}
-
-	.empty-schedule {
-		padding-top: 1rem;
-		text-align: center;
 	}
 
 	h1 {

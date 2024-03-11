@@ -16,17 +16,7 @@
 			>
 		</li>
 		<li>
-			<a href="/admin/schedule" class:active={$page.url.pathname === '/admin/schedule'}>Schedule</a>
-		</li>
-		<li>
-			<a href="/admin/challenges" class:active={$page.url.pathname === '/admin/challenges'}
-				>Challenges</a
-			>
-		</li>
-		<li>
-			<a href="/admin/faq" class:active={$page.url.pathname === '/admin/faq'}
-				>Frequently Asked Questions</a
-			>
+			<a href="/admin/homepage" class:active={$page.url.pathname === '/admin/homepage'}>Homepage</a>
 		</li>
 	</ul>
 

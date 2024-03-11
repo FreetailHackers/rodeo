@@ -49,7 +49,7 @@
 							</div>
 							{#if user?.roles.includes('ADMIN')}
 								<div class="edit">
-									<a href="/admin/challenges/{challenge.id}">Edit</a>
+									<a href="/admin/homepage/challenges/{challenge.id}">Edit</a>
 								</div>
 							{/if}
 						</div>

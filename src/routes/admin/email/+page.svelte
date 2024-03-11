@@ -19,7 +19,7 @@
 		};
 	}}
 >
-	<label for="homepageText"><h2>Group Email to Specific Status</h2></label>
+	<label for="groupEmail"><h2>Group Email to Specific Status</h2></label>
 
 	<div class="flex-container">
 		<input class="textbox-margin" name="subject" placeholder="Type email subject here" required />
