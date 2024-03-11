@@ -41,12 +41,18 @@
 
 <style>
 	.driver-div {
-		padding: 0.5rem 1.2rem 1.5rem;
+		padding: 1rem 1rem 2rem;
 		box-shadow: 4px 4px 16px 0px #00000040;
 		border-radius: 10px;
 		position: relative;
 		z-index: inherit;
 		background-color: white;
+		min-height: 400px;
+		justify-content: start;
+		align-items: start;
+		display: flex;
+		flex-direction: column;
+		max-width: 90vw;
 	}
 
 	.driver-scan-div {
@@ -62,6 +68,7 @@
 		align-items: end;
 		justify-content: end;
 		font-family: 'Geologica', sans-serif;
+		writing-mode: vertical-rl;
 	}
 	.ready-to-scan-text-ready {
 		margin-left: -20px;
@@ -72,11 +79,6 @@
 	.ready-to-scan-text-scan {
 		font-weight: bold;
 		font-family: 'Fugaz One', sans-serif;
-	}
-
-	.transform-vertical {
-		writing-mode: vertical-rl;
-		transform: rotate(360deg);
 	}
 
 	.black {
@@ -112,8 +114,8 @@
 
 	.overall-container {
 		display: flex;
-		margin: 3rem 0;
-		padding: 3rem 0;
+		margin: 0;
+		padding: 7rem 0;
 		justify-content: center;
 		align-items: center;
 		flex-direction: row;
@@ -140,38 +142,49 @@
 
 	/* CSS for devices with a maximum width of 768 pixels (tablets and smartphones) */
 	@media only screen and (max-width: 767px) {
-		canvas {
-			width: 150px !important;
-			height: 150px !important;
-		}
-
-		.driver-div {
-			padding: 0.7rem 1.2rem 1.7rem;
-			box-shadow: 4px 4px 16px 0px #00000040;
-			border-radius: 10px;
-		}
-
-		.driver-scan-div {
-			margin-left: 15%;
-		}
-
-		.driver-div-text {
-			font-size: 20px;
-		}
-		.ready-to-scan-text-ready {
-			font-size: 10px;
-			margin-left: -15px;
-		}
-
-		.ready-to-scan-text-scan {
-			font-size: 15px;
+		.overall-container {
+			padding: 5rem 3rem 5rem;
+			background: url('/Topographic Background.svg');
 		}
 
 		.vertical-text {
-			width: 22%;
-			height: 70%;
-			top: 35%;
-			left: 15%;
+			display: none;
+		}
+
+		canvas {
+			width: 100% !important;
+			height: 250% !important;
+		}
+
+		.canvas {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+
+		.ready-to-scan {
+			writing-mode: horizontal-tb;
+			justify-content: start;
+			align-items: start;
+			gap: 0;
+		}
+
+		.driver-scan-div {
+			flex-direction: column-reverse;
+		}
+
+		.driver-div-text {
+			font-size: 25px;
+		}
+		.ready-to-scan-text-ready {
+			font-size: 15px;
+			color: white;
+			margin: 0;
+		}
+
+		.ready-to-scan-text-scan {
+			font-size: 20px;
+			margin-top: 6px;
 		}
 	}
 </style>
