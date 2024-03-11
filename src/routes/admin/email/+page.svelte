@@ -86,6 +86,10 @@
 </form>
 
 <style>
+	button {
+		margin-top: 20px;
+	}
+
 	label {
 		display: block;
 	}
@@ -101,5 +105,9 @@
 
 	.flex-container {
 		display: flex;
+	}
+
+	button {
+		margin-bottom: 1rem;
 	}
 </style>

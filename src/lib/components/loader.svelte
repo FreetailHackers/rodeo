@@ -31,7 +31,7 @@
 		width: var(--loader-size, 8rem);
 		height: var(--loader-size, 8rem);
 		border-radius: 50%;
-		border: 0.75rem solid var(--loader-color, #bf5700);
+		border: 0.75rem solid var(--loader-color, #f69d9d);
 		border-top-color: transparent;
 		animation: loader-spin 0.8s linear infinite;
 	}

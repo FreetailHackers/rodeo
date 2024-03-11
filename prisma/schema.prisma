@@ -88,7 +88,6 @@ model Settings {
   // PUBLIC SETTINGS (all users must be able to see these)
   applicationOpen     Boolean   @default(true)
   daysToRSVP          Int?
-  info                String    @default("Put everything anybody may need to know about your hackathon here.")
   homepageText        String    @default("This text can be edited from the admin panel. You can put deadlines, logistics, or other important information here.")
   scanActions         String[]
   timezone            String    @default("America/Chicago")
@@ -136,6 +135,13 @@ model Event {
   type        String
 }
 
+model InfoBox {
+  id          Int     @id @default(autoincrement())
+  title       String
+  response    String
+  category    CategoryType
+}
+
 model StatusChange {
   id        Int      @id @default(autoincrement())
   newStatus Status
@@ -179,6 +185,11 @@ enum QuestionType {
   CHECKBOX
   RADIO
   FILE
+}
+
+enum CategoryType {
+  FAQ
+  CHALLENGE
 }
 
 // This section lists the names of manually created triggers, and the

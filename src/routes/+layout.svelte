@@ -4,7 +4,7 @@
 	import { toasts } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import './global.css';
-	import { fly } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import Loader from '$lib/components/loader.svelte';
 	import { beforeNavigate, afterNavigate } from '$app/navigation';
@@ -34,7 +34,12 @@
 
 <nav>
 	<label for="hamburgerCheckbox" id="hamburger"
-		><img src="/favicon.png" alt="Freetail logo" id="hamburger-logo" /><b>MENU</b></label
+		><img
+			src="/burger_Menu.png"
+			alt="Freetail logo"
+			id="hamburger-logo"
+			style="width:50px; height:20px"
+		/><b>MENU</b></label
 	>
 	<input
 		type="checkbox"
@@ -43,14 +48,29 @@
 		style="display: none"
 	/>
 	<menu id="menu" bind:this={menu}>
-		<img src="/favicon.png" id="menu-logo" alt="Freetail logo" />
+		<img src="/Freetail_bat.png" id="menu-logo" alt="Freetail logo" />
 		<li>
-			<a href="/" class:active={$page.url.pathname === '/'}>Home</a>
+			<a href="/" class:active={$page.url.pathname === '/' && $page.url.hash === ''}>Home</a>
 		</li>
-		<li>
-			<a href="/schedule" class:active={$page.url.pathname.startsWith('/schedule')}>Schedule</a>
-		</li>
-		<li><a href="/info" class:active={$page.url.pathname.startsWith('/info')}>Info</a></li>
+		{#if !data.user?.roles.includes('ADMIN')}
+			<li>
+				<a href="/#Announcements" class:active={$page.url.hash === '#Announcements'}
+					>Announcements</a
+				>
+			</li>
+			<li>
+				<a href="/#Schedule" class:active={$page.url.hash === '#Schedule'}>Schedule</a>
+			</li>
+			<li>
+				<a href="/#FAQ" class:active={$page.url.hash === '#FAQ'}>FAQ</a>
+			</li>
+			<li>
+				<a href="/#Challenges" class:active={$page.url.hash === '#Challenges'}>Challenges</a>
+			</li>
+			<li>
+				<a href="/#Sponsors" class:active={$page.url.hash === '#Sponsors'}>Sponsors</a>
+			</li>
+		{/if}
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->
 		{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
 			<li><a href="/id" class:active={$page.url.pathname.startsWith('/id')}>My Hacker ID</a></li>
@@ -81,37 +101,15 @@
 			{/if}
 		{/if}
 		<li>
-			<a href="/feedback" class:active={$page.url.pathname.startsWith('/feedback')}>Feedback</a>
-		</li>
-		<li>
-			<!-- MLH banner for high resolution devices -->
-			<div class="show-large">
-				<a
-					id="mlh-trust-badge-large"
-					href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=white"
-					target="_blank"
-					rel="noreferrer"
-					><img
-						src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-white.svg"
-						alt="Major League Hacking 2024 Hackathon Season"
-						id="mlh-badge-image"
-					/></a
+			{#if data.user === undefined}
+				<a class="login" href="/login" class:active={$page.url.pathname.startsWith('/login')}
+					>Login</a
 				>
-			</div>
-			<!-- MLH banner for low resolution devices -->
-			<div class="show-small">
-				<a
-					id="mlh-trust-badge-small"
-					href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=white"
-					target="_blank"
-					rel="noreferrer"
-					><img
-						src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-white.svg"
-						alt="Major League Hacking 2024 Hackathon Season"
-						id="mlh-badge-image"
-					/></a
-				>
-			</div>
+			{:else}
+				<form method="POST" action="/logout">
+					<button class="button" type="submit">Logout</button>
+				</form>
+			{/if}
 		</li>
 	</menu>
 
@@ -122,33 +120,152 @@
 	{/if}
 </nav>
 
-<div class="main-content">
-	{#key $page.url.pathname}
-		<div in:fly={{ easing: cubicOut, y: 10, duration: 300 }}>
-			<slot />
-		</div>
-	{/key}
-</div>
+{#if $page.url.pathname === '/'}
+	<a
+		class="banner"
+		id="mlh-trust-badge"
+		href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=red"
+		target="_blank"
+		rel="noreferrer"
+		><img
+			src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-red.svg"
+			alt="Major League Hacking 2024 Hackathon Season"
+			id="mlh-badge-image"
+		/></a
+	>
+{/if}
+
+{#key $page.url.pathname}
+	<div in:fade={{ easing: cubicOut, duration: 300 }}>
+		<slot />
+	</div>
+{/key}
 
 <Toasts />
 
 <footer>
-	<hr />
-	<p>
-		Made with ❤️ by <a target="_blank" rel="noopener noreferrer" href="https://freetailhackers.com">
-			Freetail Hackers
-		</a>
-	</p>
+	<div class="footer-flex">
+		<div class="made-with-love">
+			Made with ❤️ by <a
+				class="freetail-link"
+				target="_blank"
+				rel="noopener noreferrer"
+				href="https://freetailhackers.com">Freetail Hackers</a
+			>
+		</div>
+		<div class="flex-column">
+			<div class="row category">Links</div>
+			<a
+				target="_blank"
+				rel="noopener noreferrer"
+				href="https://www.instagram.com/freetailhackers?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+				>Instagram</a
+			>
+			<a
+				target="_blank"
+				rel="noopener noreferrer"
+				href="https://www.linkedin.com/company/freetail-hackers">LinkedIn</a
+			>
+			<a target="_blank" rel="noopener noreferrer" href="https://freetailhackers.com/discord"
+				>Discord</a
+			>
+			<a
+				target="_blank"
+				rel="noopener noreferrer"
+				href="https://docs.google.com/forms/d/e/1FAIpQLSdQld-vgVLXOuIXIcUNpTFMwii_7Cu9Vqj7CVxXs3ScFsCIrg/viewform?usp=sf_link"
+				>Feedback</a
+			>
+			<a href="mailto:admin@freetailhackers.com">Contact Us</a>
+		</div>
+		<div class="flex-column">
+			<div class="row category">Other Hackathons</div>
+			<a target="_blank" rel="noopener noreferrer" href="https://rowdyhacks.org/"> RowdyHacks</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://tamuhack.org/"> TAMUhack</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://hackutd.co/"> HackUTD</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://www.unthackathon.com/">HackUNT</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://hackuta.org"> HackUTA</a>
+		</div>
+	</div>
 </footer>
 
 <style>
+	#mlh-trust-badge {
+		z-index: 2;
+		position: absolute;
+		display: block;
+		right: 15px;
+		top: 56px;
+		width: calc(4vw + 3rem);
+	}
+
+	#mlh-badge-image {
+		width: 100%;
+	}
+
+	footer {
+		background-color: #404040;
+	}
+
+	.footer-flex {
+		display: flex;
+		justify-content: space-around;
+		margin: auto;
+		max-width: 75em;
+		color: #f2ebd9;
+	}
+
+	.login {
+		color: #e1563f;
+	}
+
+	.made-with-love {
+		white-space: nowrap;
+		align-self: center;
+	}
+
+	.freetail-link {
+		color: #e1563f;
+		text-decoration: underline;
+	}
+
+	.flex-column {
+		display: flex;
+		flex-direction: column;
+		font-size: 14px;
+	}
+
+	a {
+		color: #f2ebd9;
+		text-decoration: none;
+		line-height: 1.5;
+	}
+
+	button {
+		color: #e1563f;
+		text-decoration: none;
+		line-height: 1.5;
+		padding-left: 1rem;
+		padding-right: 1rem;
+	}
+
+	a:hover,
+	button:hover {
+		text-decoration-line: underline;
+		text-decoration-color: var(--primary-accent);
+		color: var(--primary-accent);
+	}
+
+	.category {
+		font-size: 17px;
+	}
+
 	label {
 		display: flex;
-		font-family: 'ruddy', sans-serif;
+		font-family: 'Geologica', sans-serif;
 		font-weight: 700;
 		font-style: normal;
 		text-transform: uppercase;
-		color: white;
+		color: #f2ebd9;
 	}
 
 	#hamburger-logo {
@@ -162,17 +279,19 @@
 		display: none;
 	}
 
-	.main-content {
-		max-width: 50rem;
-		margin: 0 auto;
-		padding: 0 1rem;
+	button {
+		background-color: #404040;
+		text-transform: uppercase;
+		font-family: 'Geologica', sans-serif;
+		font-weight: 700;
 	}
 
 	nav {
-		position: sticky;
-		margin-top: 0;
-		margin-bottom: 3rem;
-		background-color: var(--primary-accent);
+		position: fixed;
+		top: 0;
+		margin: 0;
+		width: 100vw;
+		background-color: #404040;
 		z-index: 99;
 	}
 
@@ -181,11 +300,12 @@
 		margin: 0;
 		padding: 0;
 		transition: all 0.5s ease-out;
-		background-color: var(--primary-accent);
+		background-color: #404040;
 		max-height: 0;
 		overflow: hidden;
 		width: 100%;
-		font-family: 'ruddy', sans-serif;
+		font-family: 'Geologica', sans-serif;
+		font-size: 15px;
 		font-weight: 700;
 		font-style: normal;
 		text-transform: uppercase;
@@ -212,20 +332,45 @@
 		display: block;
 		width: 100%;
 		padding: 0.7rem 1rem;
-		color: white;
+		color: #f2ebd9;
 		text-decoration: none;
 	}
 
-	menu a:hover {
-		background-color: #502340;
+	menu a:hover,
+	button:hover {
+		background-color: #303030;
 	}
 
-	.show-small {
-		display: contents;
+	.active {
+		font-weight: bold;
+		text-decoration: underline;
 	}
 
-	.show-large {
-		display: none;
+	@media (max-width: 768px) {
+		.flex-column {
+			display: none;
+		}
+
+		.footer-flex {
+			max-width: 60vw;
+		}
+	}
+
+	@media (max-width: 1090px) {
+		.button {
+			display: flex;
+			width: 100%;
+			padding-top: 0.3rem;
+			padding-bottom: 0.7rem;
+			padding-left: 1rem;
+			justify-content: flex-start;
+			flex-wrap: nowrap;
+			flex-direction: row;
+		}
+
+		#mlh-trust-badge {
+			top: 42.2px;
+		}
 	}
 
 	@media (min-width: 1090px) {
@@ -244,10 +389,6 @@
 			display: none;
 		}
 
-		nav {
-			margin-bottom: 0.5rem;
-		}
-
 		menu {
 			margin: 0;
 			padding-top: 0.5rem;
@@ -258,7 +399,8 @@
 			align-items: center;
 		}
 
-		menu a:hover {
+		menu a:hover,
+		button:hover {
 			border-radius: 5px;
 		}
 
@@ -266,14 +408,6 @@
 			display: inline;
 			width: initial;
 			text-decoration: none;
-		}
-
-		.show-small {
-			display: none;
-		}
-
-		.show-large {
-			display: contents;
 		}
 	}
 
@@ -288,41 +422,5 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-	}
-
-	.active {
-		font-weight: bold;
-		text-decoration: underline;
-	}
-
-	#mlh-trust-badge-large {
-		display: block;
-		max-width: 7rem;
-		min-width: 6rem;
-		position: fixed;
-		right: 15px;
-		top: -0.75rem;
-		width: 100%;
-		z-index: 10000;
-	}
-
-	#mlh-trust-badge-small {
-		display: block;
-		max-width: 5.5rem;
-		min-width: 5.5rem;
-		position: fixed;
-		right: 0;
-		top: -0.75rem;
-		width: 100%;
-		z-index: 10000;
-	}
-
-	#mlh-badge-image {
-		width: 100%;
-	}
-
-	#mlh-trust-badge-large:hover,
-	#mlh-trust-badge-small:hover {
-		background-color: transparent;
 	}
 </style>

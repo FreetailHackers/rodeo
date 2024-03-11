@@ -114,6 +114,7 @@
 	button {
 		margin-top: 30px;
 		width: 100%;
+		margin-bottom: 1rem;
 	}
 
 	#release {

@@ -32,6 +32,8 @@
 		justify-content: center;
 		margin: 0 auto;
 		padding: 0 1rem;
+		padding-top: 60px;
+		padding-bottom: 60px;
 	}
 
 	.text {

@@ -1,7 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fugaz+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geologica&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geo&display=swap');
+
+html {
+	scroll-behavior: smooth;
+}
+
 :root {
-	--font-family: 'Helvetica Neue', 'Arial', sans-serif;
+	--font-family: 'Geologica', 'Helvetica Neue', 'Arial', sans-serif;
 	--font-size: 16px;
-	--primary-accent: #954479;
+	--highlight-color: #f2ebd9;
+	--secondary-color: #4e656d;
+	--background-color: #1c1c1c;
+	--primary-accent: #e1563f;
 }
 
 h1,
@@ -10,16 +22,22 @@ h3,
 h4,
 h5,
 h6 {
-	font-family: 'ruddy', sans-serif;
+	font-family: 'Zen Dots', 'ruddy', sans-serif;
 	font-weight: 700;
 	font-style: normal;
 	text-transform: uppercase;
+	cursor: default;
+}
+
+p {
+	cursor: default;
 }
 
 html {
 	box-sizing: border-box;
 	overflow-y: scroll; /* prevent scrollbar from shifting layout */
 }
+
 *,
 *:before,
 *:after {
@@ -38,6 +56,7 @@ nav {
 }
 
 button {
+	font-family: var(--font-family);
 	height: 2.5rem;
 	font-size: var(--font-size);
 	color: white;
@@ -177,6 +196,14 @@ dialog button {
 	margin-bottom: 1rem;
 }
 
+.main-content {
+	min-height: calc(100vh - (159px + 60px));
+	max-width: 50rem;
+	margin: 0 auto;
+	margin-top: 60px;
+	padding: 0 1rem;
+}
+
 @media (max-width: 450px) {
 	dialog {
 		margin-block-end: 0;
@@ -198,10 +225,8 @@ img {
 }
 
 footer {
-	padding: 0 1rem;
-	left: 0;
-	bottom: 0;
-	max-width: 50rem;
-	text-align: center;
-	margin: 0 auto;
+	background-color: #303030;
+	color: #f2ebd9;
+	text-align: left;
+	padding: 1em 1em;
 }
