@@ -164,15 +164,30 @@
 	/* CSS for devices with a maximum width of 768 pixels (tablets and smartphones) */
 	@media only screen and (max-width: 767px) {
 		.overall-container {
-			padding: 5rem 3rem 5rem;
+			padding: 1rem 3rem 5rem;
+			flex-direction: column;
 		}
 
 		.vertical-text {
-			display: none;
+			writing-mode: horizontal-tb;
+			width: auto;
+			height: auto;
+			top: 2%;
+			left: 1%;
+			transform: none;
+			position: relative;
+		}
+
+		.vertical-text-second {
+			margin-top: -20%;
+		}
+
+		.vertical-text-third {
+			margin-top: -20%;
 		}
 
 		.vertical-text h1 {
-			font-size: 60px;
+			font-size: 38px;
 		}
 
 		canvas {
@@ -191,10 +206,11 @@
 			justify-content: start;
 			align-items: start;
 			gap: 0;
+			margin-top: 30px;
 		}
 
 		.driver-scan-div {
-			flex-direction: column-reverse;
+			flex-direction: column;
 		}
 
 		.driver-div-text {
