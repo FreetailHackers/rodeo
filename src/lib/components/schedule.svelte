@@ -15,7 +15,7 @@
 	export let schedule: Event[];
 	export let settings_timezone: string;
 
-	let currentDateTime = new Date();
+	let currentTime = new Date();
 	let groupByDateArray: { day: string; events: Event[] }[] = [];
 
 	// Assumes there are no events occurring on the same day of the week but in different weeks.
@@ -46,6 +46,14 @@
 
 	onMount(() => {
 		url = generateIcsContent(schedule);
+
+		const interval = setInterval(() => {
+			currentTime = new Date();
+		}, 1000);
+
+		return () => {
+			clearInterval(interval);
+		};
 	});
 </script>
 
@@ -81,7 +89,7 @@
 							{#if selected === null || event.type === selected}
 								<div
 									class="card card-text"
-									class:currentEvent={currentDateTime >= event.start && currentDateTime < event.end}
+									class:currentEvent={currentTime >= event.start && currentTime < event.end}
 								>
 									<div class="flex-row">
 										<div>
