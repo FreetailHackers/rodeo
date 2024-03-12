@@ -63,18 +63,19 @@ export const actions = {
 	},
 
 	deleteAll: async ({ locals, request }) => {
-		switch ((await request.formData()).get('deleteAll') as string) {
-			case 'events':
-				await trpc(locals.auth).events.deleteAll();
-				return 'Deleted all Events!';
-			case 'FAQs':
-				await trpc(locals.auth).infoBox.deleteAllOfCategory('FAQ');
-				return 'Deleted all FAQ!';
-			case 'challenges':
-				await trpc(locals.auth).infoBox.deleteAllOfCategory('CHALLENGE');
-				return 'Deleted all challenges!';
-			default:
-				return 'Invalid element to delete';
+		const deleteAllValue = (await request.formData()).get('deleteAll') as string;
+
+		if (deleteAllValue === 'events') {
+			await trpc(locals.auth).events.deleteAll();
+			return 'Deleted all Events!';
+		} else if (deleteAllValue === 'FAQs') {
+			await trpc(locals.auth).infoBox.deleteAllOfCategory('FAQ');
+			return 'Deleted all FAQ!';
+		} else if (deleteAllValue === 'challenges') {
+			await trpc(locals.auth).infoBox.deleteAllOfCategory('CHALLENGE');
+			return 'Deleted all challenges!';
+		} else {
+			return 'Invalid element to delete';
 		}
 	},
 };
