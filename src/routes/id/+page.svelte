@@ -14,7 +14,7 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Hacker ID</title>
+	<title>Formula Hacks | Hacker ID</title>
 </svelte:head>
 
 <div class="overall-container">
