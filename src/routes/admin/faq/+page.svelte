@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Admin - FAQ</title>
+	<title>Formula Hacks | Admin - FAQ</title>
 </svelte:head>
 
 <h2>Create New FAQ</h2>

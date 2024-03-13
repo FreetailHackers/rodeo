@@ -64,7 +64,7 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Scan - {$page.params.action}</title>
+	<title>Formula Hacks | Scan - {$page.params.action}</title>
 </svelte:head>
 
 <a href="/scan" on:click={() => html5QrCode.stop()}><button>Back</button></a>

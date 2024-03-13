@@ -4,7 +4,7 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Admin - Challenge</title>
+	<title>Formula Hacks | Admin - Challenge</title>
 </svelte:head>
 
 <h2>Create New Challenge</h2>

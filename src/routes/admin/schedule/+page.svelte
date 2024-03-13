@@ -4,7 +4,7 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Admin - Schedule</title>
+	<title>Formula Hacks | Admin - Schedule</title>
 </svelte:head>
 
 <h2>Create New Event</h2>

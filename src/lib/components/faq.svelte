@@ -13,7 +13,7 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | FAQ</title>
+	<title>Formula Hacks | FAQ</title>
 </svelte:head>
 
 <div class="background">

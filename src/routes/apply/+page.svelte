@@ -17,7 +17,7 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Apply</title>
+	<title>Formula Hacks | Apply</title>
 </svelte:head>
 
 <!-- Application status dialog -->
