@@ -34,7 +34,6 @@
 
 <form method="POST" action="?/createEvent" use:enhance>
 	<label for="createNewEvent"><h2>Create New Event</h2></label>
-	<input type="hidden" name="id" />
 	<label for="name">Name</label>
 	<input type="text" id="name" name="name" required />
 
@@ -64,7 +63,6 @@
 
 <form method="POST" action="?/createFAQ" use:enhance>
 	<label for="createNewFAQ"><h2>Create New FAQ</h2></label>
-	<input type="hidden" name="id" />
 
 	<label for="question">Question</label>
 	<input type="text" id="question" name="question" required />
@@ -77,7 +75,6 @@
 
 <form method="POST" action="?/createChallenge" use:enhance>
 	<label for="createNewChallenge"><h2>Create New Challenge</h2></label>
-	<input type="hidden" name="id" />
 
 	<label for="category">Category</label>
 	<input type="text" id="category" name="category" required />
@@ -96,14 +93,7 @@
 		<option value="FAQs"> FAQs </option>
 		<option value="challenges"> Challenges </option>
 	</select>
-	<button
-		disabled={selected === ''}
-		use:confirmationDialog={{
-			text: `Are you sure you want to delete all?`,
-			cancel: 'Cancel',
-			ok: 'Delete',
-		}}>Delete</button
-	>
+	<button disabled={selected === ''} use:confirmationDialog>Delete</button>
 </form>
 
 <style>

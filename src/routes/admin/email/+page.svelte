@@ -43,15 +43,6 @@
 		};
 	}}
 >
-	<label for="homepageText"><h2>Homepage Text</h2></label>
-	<MarkdownEditor
-		placeholder="Modify the homepage text here (Markdown is supported)."
-		name="homepageText"
-		id="homepageText"
-		rows={25}
-		value={data.settings.homepageText}
-	/>
-
 	<label for="submitTemplate"><h2>Submit Application Email Template</h2></label>
 	<MarkdownEditor value={data.settings.submitTemplate} name="submitTemplate" />
 
