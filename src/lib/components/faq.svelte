@@ -35,7 +35,7 @@
 									<SvelteMarkdown source={question.response} />
 									{#if user?.roles.includes('ADMIN')}
 										<p class="edit">
-											<a href="/admin/faq/{question.id}">Edit</a>
+											<a href="/admin/homepage/faq/{question.id}">Edit</a>
 										</p>
 									{/if}
 								</div>

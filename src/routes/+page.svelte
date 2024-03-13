@@ -93,6 +93,5 @@
 		font-size: clamp(0.75rem, 2vw, 2rem);
 		max-width: 50rem;
 		margin-right: 4rem;
-		pointer-events: none;
 	}
 </style>

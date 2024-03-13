@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '../../routes/global.css';
 	import { onMount } from 'svelte';
 	import { generateIcsContent } from '$lib/ics';
 	import type { Event, AuthUser } from '@prisma/client';
@@ -14,7 +15,7 @@
 	export let schedule: Event[];
 	export let settings_timezone: string;
 
-	let currentDateTime = new Date();
+	let currentTime = new Date();
 	let groupByDateArray: { day: string; events: Event[] }[] = [];
 
 	// Assumes there are no events occurring on the same day of the week but in different weeks.
@@ -45,12 +46,20 @@
 
 	onMount(() => {
 		url = generateIcsContent(schedule);
+
+		const interval = setInterval(() => {
+			currentTime = new Date();
+		}, 1000);
+
+		return () => {
+			clearInterval(interval);
+		};
 	});
 </script>
 
-<div class="topographic-background">
-	<h1>Schedule</h1>
-	{#if schedule.length > 0}
+{#if schedule.length > 0}
+	<div class="topographic-background">
+		<h1>Schedule</h1>
 		<div class="container">
 			<div class="sidebar">
 				<h2>Filters</h2>
@@ -79,10 +88,8 @@
 						{#each events as event}
 							{#if selected === null || event.type === selected}
 								<div
-									class="card card-text {currentDateTime >= event.start &&
-									currentDateTime < event.end
-										? 'currentEvent'
-										: ''}"
+									class="card card-text"
+									class:currentEvent={currentTime >= event.start && currentTime < event.end}
 								>
 									<div class="flex-row">
 										<div>
@@ -90,7 +97,7 @@
 											<p class="location">{event.location}</p>
 											{#if user?.roles.includes('ADMIN')}
 												<p>
-													<a class="edit" href="/admin/schedule/{event.id}">Edit</a>
+													<a class="edit" href="/admin/homepage/schedule/{event.id}">Edit</a>
 												</p>
 											{/if}
 										</div>
@@ -127,10 +134,8 @@
 				</div>
 			{/each}
 		</div>
-	{:else}
-		<p class="empty-events empty-schedule">There are no events at this time.</p>
-	{/if}
-</div>
+	</div>
+{/if}
 
 <style>
 	.topographic-background {
@@ -148,16 +153,11 @@
 
 	.sidebar {
 		width: 16rem;
-		margin: 0 10px;
-	}
-
-	.empty-schedule {
-		padding-top: 1rem;
-		text-align: center;
+		margin: 0 5px;
 	}
 
 	h1 {
-		color: #f2ebd9;
+		color: var(--highlight-color);
 		font-size: 64px;
 		font-weight: 400;
 		margin: 0;
@@ -167,14 +167,14 @@
 	}
 
 	h2 {
-		color: #f2ebd9;
+		color: var(--highlight-color);
 		font-family: 'Fugaz One';
 		font-size: 36px;
 		text-shadow: 0 4px 8px rgb(0, 0, 0);
 	}
 
 	button {
-		background-color: #f2ebd9;
+		background-color: var(--highlight-color);
 		color: #303030;
 		height: 2rem;
 		font-family: 'Geologica', sans-serif;
@@ -191,7 +191,7 @@
 
 	.active {
 		background-color: #303030;
-		color: #f2ebd9;
+		color: var(--highlight-color);
 	}
 
 	p {
@@ -245,12 +245,12 @@
 	}
 
 	.currentEvent {
-		border: solid #e1563f 4px;
+		border: solid var(--primary-accent) 4px;
 		padding-bottom: calc(1rem - 4px);
 	}
 
 	.card:hover {
-		background-color: #f2ebd9;
+		background-color: var(--highlight-color);
 	}
 
 	.card:hover .description,
@@ -262,8 +262,9 @@
 		display: none;
 	}
 
-	.card-text {
-		color: #f2ebd9;
+	.card-text,
+	.empty-events {
+		color: var(--highlight-color);
 	}
 
 	.card-text:hover {
@@ -280,10 +281,6 @@
 	.column {
 		flex: 1;
 		margin: 0px 5px;
-	}
-
-	.empty-events {
-		color: #f2ebd9;
 	}
 
 	@media (max-width: 768px) {
