@@ -60,6 +60,7 @@
 		display: flex;
 		flex-direction: row;
 		position: relative;
+		padding-left: 121.133px;
 	}
 
 	.ready-to-scan {
@@ -155,6 +156,7 @@
 
 		.driver-scan-div {
 			margin-left: 15%;
+			padding-left: 0;
 		}
 
 		.overall-container {
@@ -213,6 +215,7 @@
 
 		.driver-scan-div {
 			flex-direction: column;
+			padding-left: 0;
 		}
 
 		.driver-div-text {
