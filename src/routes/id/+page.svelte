@@ -105,9 +105,8 @@
 		/* background-image: url('/hackerid/hackerid.svg'); */
 		writing-mode: vertical-rl;
 		position: absolute;
-		top: 60%;
-		left: 13%;
-		transform: translate(-50%, -50%);
+		top: 10%;
+		left: 0;
 		z-index: 0;
 		width: 30vw;
 		height: 100vh;
@@ -150,8 +149,8 @@
 		.vertical-text {
 			width: 25% !important;
 			height: 50rem;
-			top: 60%;
-			left: 19%;
+			top: 10%;
+			left: 5%;
 		}
 
 		.driver-scan-div {
