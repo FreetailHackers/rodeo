@@ -142,7 +142,7 @@
 		align-items: center;
 		flex-direction: row;
 		position: relative;
-		height: calc(100vh - 159px);
+		min-height: calc(100vh - 159px);
 	}
 
 	@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
@@ -169,7 +169,7 @@
 		.overall-container {
 			padding: 1rem 3rem 5rem;
 			flex-direction: column;
-			height: calc(100vh - 56px);
+			min-height: calc(100vh - 56px);
 		}
 
 		.vertical-text {
