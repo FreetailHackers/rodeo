@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Admissions</title>
+	<title>Formula Hacks | Admissions</title>
 </svelte:head>
 <div class="main-content">
 	{#if data.user === null}

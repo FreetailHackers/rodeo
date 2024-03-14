@@ -20,7 +20,7 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Home</title>
+	<title>Formula Hacks | Home</title>
 </svelte:head>
 
 <div class="topographic-background">
@@ -93,6 +93,5 @@
 		font-size: clamp(0.75rem, 2vw, 2rem);
 		max-width: 50rem;
 		margin-right: 4rem;
-		pointer-events: none;
 	}
 </style>

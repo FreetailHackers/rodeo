@@ -7,7 +7,7 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Admin - Email Templates</title>
+	<title>Formula Hacks | Admin - Email Templates</title>
 </svelte:head>
 
 <form
@@ -19,7 +19,7 @@
 		};
 	}}
 >
-	<label for="homepageText"><h2>Group Email to Specific Status</h2></label>
+	<label for="groupEmail"><h2>Group Email to Specific Status</h2></label>
 
 	<div class="flex-container">
 		<input class="textbox-margin" name="subject" placeholder="Type email subject here" required />
@@ -43,15 +43,6 @@
 		};
 	}}
 >
-	<label for="homepageText"><h2>Homepage Text</h2></label>
-	<MarkdownEditor
-		placeholder="Modify the homepage text here (Markdown is supported)."
-		name="homepageText"
-		id="homepageText"
-		rows={25}
-		value={data.settings.homepageText}
-	/>
-
 	<label for="submitTemplate"><h2>Submit Application Email Template</h2></label>
 	<MarkdownEditor value={data.settings.submitTemplate} name="submitTemplate" />
 

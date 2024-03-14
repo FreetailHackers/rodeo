@@ -26,7 +26,6 @@ export const actions = {
 
 	settings: async ({ locals, request }) => {
 		const formData = await request.formData();
-		const homepageText = formData.get('homepageText') as string;
 		const submitTemplate = formData.get('submitTemplate') as string;
 		const acceptTemplate = formData.get('acceptTemplate') as string;
 		const rejectTemplate = formData.get('rejectTemplate') as string;
@@ -34,7 +33,6 @@ export const actions = {
 		const confirmTemplate = formData.get('confirmTemplate') as string;
 		const declineTemplate = formData.get('declineTemplate') as string;
 		await trpc(locals.auth).settings.update({
-			homepageText,
 			submitTemplate,
 			acceptTemplate,
 			rejectTemplate,

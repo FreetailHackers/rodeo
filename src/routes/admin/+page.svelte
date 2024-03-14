@@ -9,7 +9,7 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Admin - Admissions</title>
+	<title>Formula Hacks | Admin - Admissions</title>
 </svelte:head>
 
 <form
