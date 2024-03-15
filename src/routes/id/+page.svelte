@@ -136,12 +136,12 @@
 	.overall-container {
 		display: flex;
 		margin: 0;
-		padding: 7rem 0;
+		padding: 10rem 2rem;
 		justify-content: center;
 		align-items: center;
 		flex-direction: row;
 		position: relative;
-		min-height: calc(100vh - 159px);
+		height: 100vh;
 	}
 
 	@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
@@ -159,7 +159,7 @@
 		}
 
 		.overall-container {
-			padding: 6rem 0;
+			padding: 6rem 4rem;
 		}
 	}
 
