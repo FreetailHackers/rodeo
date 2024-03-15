@@ -8,7 +8,7 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Register</title>
+	<title>Formula Hacks | Register</title>
 </svelte:head>
 
 <div class="topographic-background">

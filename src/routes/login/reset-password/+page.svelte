@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Reset Password</title>
+	<title>Formula Hacks | Reset Password</title>
 </svelte:head>
 
 <div class="topographic-background">

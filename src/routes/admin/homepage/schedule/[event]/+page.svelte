@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Admin - Schedule - {data.event.name}</title>
+	<title>Formula Hacks | Admin - Schedule - {data.event.name}</title>
 </svelte:head>
 
 <div class="container">
