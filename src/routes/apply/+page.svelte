@@ -261,7 +261,7 @@
 	.main-content-CONFIRMED,
 	.main-content-DECLINED {
 		max-width: 100%;
-		padding: 10rem 2rem 0;
+		padding-top: 56px;
 		position: relative;
 		margin: 0;
 		background-color: #1c1c1c;
@@ -313,7 +313,7 @@
 		border-radius: 24px;
 		position: relative;
 		height: fit-content;
-		margin: 0 auto;
+		margin: 2rem auto;
 		text-align: center;
 		max-width: 600px;
 		border: none;
