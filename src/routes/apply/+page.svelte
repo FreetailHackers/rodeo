@@ -11,20 +11,18 @@
 	let applicationForm: HTMLFormElement;
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 	let saveButton: HTMLButtonElement;
-
-	let userStatus = data.user.authUser.status;
 </script>
 
 <svelte:head>
 	<title>Formula Hacks | Apply</title>
 </svelte:head>
 <!-- Application status dialog -->
-<div class="main-content main-content-{userStatus}">
+<div class="main-content main-content-{data.user.authUser.status}">
 	{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'REJECTED' || data.user.authUser.status === 'APPLIED' || data.user.authUser.status === 'CONFIRMED' || data.user.authUser.status === 'DECLINED' || data.user.authUser.status === 'WAITLISTED'}
 		<img id="racecar" src="/admission/admission-car.svg" alt="racecar" />
 	{/if}
 
-	<div class="status status-{userStatus}">
+	<div class="status status-{data.user.authUser.status}">
 		{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'REJECTED' || data.user.authUser.status === 'APPLIED' || data.user.authUser.status === 'CONFIRMED' || data.user.authUser.status === 'DECLINED' || data.user.authUser.status === 'WAITLISTED'}
 			<div class="admission-top" />
 			<h2>Application Status</h2>
@@ -268,6 +266,9 @@
 		margin: 0;
 		background-color: #1c1c1c;
 		height: calc(100vh - 159px);
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	#racecar {
