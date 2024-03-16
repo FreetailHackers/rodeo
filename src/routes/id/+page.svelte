@@ -105,11 +105,14 @@
 		/* background-image: url('/hackerid/hackerid.svg'); */
 		writing-mode: vertical-rl;
 		position: absolute;
-		top: calc(50% - 159px - 90px);
 		left: 0;
 		z-index: 0;
 		min-width: 30vw;
 		min-height: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.vertical-text h1 {
@@ -176,10 +179,12 @@
 
 		.vertical-text-second {
 			margin-top: -20%;
+			margin-right: 0;
 		}
 
 		.vertical-text-third {
 			margin-top: -20%;
+			margin-right: 0;
 		}
 
 		.vertical-text h1 {
