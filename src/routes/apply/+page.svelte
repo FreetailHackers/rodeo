@@ -265,7 +265,6 @@
 		position: relative;
 		margin: 0;
 		background-color: #1c1c1c;
-		height: auto;
 		min-height: calc(100vh - 159px);
 		display: flex;
 		justify-content: center;
@@ -441,7 +440,7 @@
 		.main-content-WAITLISTED,
 		.main-content-CONFIRMED,
 		.main-content-DECLINED {
-			height: calc(100vh - 56px);
+			min-height: calc(100vh - 56px);
 		}
 
 		.admission-top {
