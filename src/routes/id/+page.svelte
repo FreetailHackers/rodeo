@@ -26,8 +26,11 @@
 		</div>
 
 		<div class="driver-div">
-			<h1 class="driver-div-text black">Driver</h1>
-			<h1 class="driver-div-text red ">License</h1>
+			<div>
+				<h1 class="driver-div-text black">Driver</h1>
+				<h1 class="driver-div-text red ">License</h1>
+			</div>
+
 			<div class="canvas">
 				<canvas bind:this={canvas} id="qrcode" />
 			</div>
@@ -42,18 +45,17 @@
 
 <style>
 	.driver-div {
-		padding: 1rem 1rem 2rem;
+		padding: 1rem 2rem 1rem;
+		margin: 5% 0 5%;
 		box-shadow: 4px 4px 16px 0px #00000040;
 		border-radius: 10px;
 		position: relative;
 		z-index: inherit;
 		background-color: white;
-		min-height: 400px;
-		justify-content: start;
+		justify-content: space-evenly;
 		align-items: start;
 		display: flex;
 		flex-direction: column;
-		max-width: 90vw;
 	}
 
 	.driver-scan-div {
@@ -71,6 +73,7 @@
 		justify-content: end;
 		font-family: 'Geologica', sans-serif;
 		writing-mode: vertical-rl;
+		margin: 5% 0 10%;
 	}
 	.ready-to-scan-text-ready {
 		margin-left: -20px;
@@ -143,9 +146,24 @@
 		min-height: calc(100vh - 159px);
 	}
 
+	canvas {
+		max-height: 22vw;
+		max-width: 22vw;
+		min-width: 150px;
+		min-height: 150px;
+	}
+
+	.canvas {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		margin: 0 auto;
+	}
+
 	@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
 		.overall-container {
 			padding: 6rem 4rem;
+			min-height: calc(100vh - 56px);
 		}
 	}
 
@@ -158,7 +176,7 @@
 		}
 
 		.driver-div {
-			padding: 1rem 1.5rem 2rem;
+			padding: 1rem 1.5rem 1.5rem;
 		}
 
 		.vertical-text {
@@ -182,18 +200,7 @@
 		}
 
 		.vertical-text h1 {
-			font-size: 38px;
-		}
-
-		canvas {
-			width: 200px !important;
-			height: 200px !important;
-		}
-
-		.canvas {
-			display: flex;
-			justify-content: center;
-			align-items: center;
+			font-size: 30px;
 		}
 
 		.ready-to-scan {
@@ -207,6 +214,7 @@
 		.driver-scan-div {
 			flex-direction: column;
 			padding-left: 0;
+			margin-right: 0;
 		}
 
 		.driver-div-text {
