@@ -265,7 +265,8 @@
 		position: relative;
 		margin: 0;
 		background-color: #1c1c1c;
-		height: calc(100vh - 159px);
+		height: auto;
+		min-height: calc(100vh - 159px);
 		display: flex;
 		justify-content: center;
 		align-items: center;
