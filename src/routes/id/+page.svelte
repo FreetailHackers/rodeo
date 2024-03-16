@@ -18,13 +18,13 @@
 </svelte:head>
 
 <div class="overall-container">
-	<div class="vertical-text">
-		<h1 class="vertical-text-first">HACKER ID</h1>
-		<h1 class="vertical-text-second">HACKER ID</h1>
-		<h1 class="vertical-text-third">HACKER ID</h1>
-	</div>
-
 	<div class="driver-scan-div">
+		<div class="vertical-text">
+			<h1 class="vertical-text-first">HACKER ID</h1>
+			<h1 class="vertical-text-second">HACKER ID</h1>
+			<h1 class="vertical-text-third">HACKER ID</h1>
+		</div>
+
 		<div class="driver-div">
 			<h1 class="driver-div-text black">Driver</h1>
 			<h1 class="driver-div-text red ">License</h1>
@@ -60,7 +60,7 @@
 		display: flex;
 		flex-direction: row;
 		position: relative;
-		padding-left: 121.133px;
+		margin-right: 10%;
 	}
 
 	.ready-to-scan {
@@ -104,15 +104,13 @@
 	.vertical-text {
 		/* background-image: url('/hackerid/hackerid.svg'); */
 		writing-mode: vertical-rl;
-		position: absolute;
-		left: 0;
+		position: relative;
 		z-index: 0;
-		min-width: 30vw;
-		min-height: 100%;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
+		height: max-content;
 	}
 
 	.vertical-text h1 {
@@ -146,11 +144,6 @@
 	}
 
 	@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
-		.driver-scan-div {
-			margin-left: 15%;
-			padding-left: 0;
-		}
-
 		.overall-container {
 			padding: 6rem 4rem;
 		}
@@ -161,6 +154,7 @@
 		.overall-container {
 			flex-direction: column;
 			min-height: calc(100vh - 56px);
+			padding: 1rem;
 		}
 
 		.driver-div {
