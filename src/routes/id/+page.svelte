@@ -105,11 +105,11 @@
 		/* background-image: url('/hackerid/hackerid.svg'); */
 		writing-mode: vertical-rl;
 		position: absolute;
-		top: 10%;
+		top: calc(50% - 159px - 90px);
 		left: 0;
 		z-index: 0;
-		width: 30vw;
-		height: 100vh;
+		min-width: 30vw;
+		min-height: 100%;
 	}
 
 	.vertical-text h1 {
@@ -118,19 +118,17 @@
 
 	.vertical-text-first {
 		color: #f2ebd9bf;
-		margin-top: 12%;
+		margin-top: 30px;
 	}
 	.vertical-text-second {
 		color: transparent;
 		-webkit-text-stroke: 1px #ffc75b;
-		margin-top: 5%;
-		margin-right: -12%;
+		margin-right: -100px;
 	}
 
 	.vertical-text-third {
 		color: #e1563fbf;
-		margin-top: 3%;
-		margin-right: -7%;
+		margin-right: -20px;
 	}
 
 	.overall-container {
@@ -141,18 +139,10 @@
 		align-items: center;
 		flex-direction: row;
 		position: relative;
-		height: 100vh;
+		min-height: calc(100vh - 159px);
 	}
 
 	@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
-		/* CSS rules specific to iPads: The banner text should be smaller here.*/
-		.vertical-text {
-			width: 25% !important;
-			height: 50rem;
-			top: 10%;
-			left: 5%;
-		}
-
 		.driver-scan-div {
 			margin-left: 15%;
 			padding-left: 0;
@@ -166,9 +156,12 @@
 	/* CSS for devices with a maximum width of 768 pixels (tablets and smartphones) */
 	@media only screen and (max-width: 767px) {
 		.overall-container {
-			padding: 1rem 3rem 5rem;
 			flex-direction: column;
 			min-height: calc(100vh - 56px);
+		}
+
+		.driver-div {
+			padding: 1rem 1.5rem 2rem;
 		}
 
 		.vertical-text {
@@ -194,8 +187,8 @@
 		}
 
 		canvas {
-			width: 100% !important;
-			height: 250% !important;
+			width: 200px !important;
+			height: 200px !important;
 		}
 
 		.canvas {
