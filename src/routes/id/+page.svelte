@@ -146,13 +146,6 @@
 		min-height: calc(100vh - 159px);
 	}
 
-	canvas {
-		max-height: 22vw;
-		max-width: 22vw;
-		min-width: 150px;
-		min-height: 150px;
-	}
-
 	.canvas {
 		display: flex;
 		justify-content: center;
@@ -228,6 +221,11 @@
 		.ready-to-scan-text-scan {
 			font-size: 20px;
 			margin-top: 6px;
+		}
+
+		canvas {
+			width: 150px !important;
+			height: 150px !important;
 		}
 	}
 </style>
