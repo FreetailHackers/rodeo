@@ -28,7 +28,7 @@
 			Already changed password? <a href="/login">Login here!</a>
 		</p>
 	{:else if $page.url.search.startsWith('?token')}
-		<div class="form">
+		<div class="new-pw-form">
 			<form method="POST" action="?/reset" use:enhance>
 				<label for="password">
 					<!-- svelte-ignore a11y-invalid-attribute -->
@@ -86,7 +86,21 @@
 		background-color: #f2ebd9;
 	}
 
+	.new-pw-form {
+		position: fixed;
+		top: 55px;
+		width: 40%;
+		padding-left: 0.5vw;
+		padding-right: 0.5vw;
+		padding-top: 0.5vw;
+		padding-bottom: 0.5vw;
+		margin-bottom: 10vw;
+		background-color: #f2ebd9;
+	}
+
 	.verify {
+		position: fixed;
+		top: 35px;
 		width: 40%;
 		padding-left: 0.5vw;
 		padding-right: 0.5vw;
@@ -112,6 +126,14 @@
 	@media (max-width: 768px) {
 		.topographic-background {
 			min-height: calc(100vh - 56px);
+		}
+
+		.new-pw-form {
+			top: 40px;
+		}
+
+		.verify {
+			top: 25px;
 		}
 	}
 </style>
