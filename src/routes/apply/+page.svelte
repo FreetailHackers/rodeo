@@ -275,8 +275,10 @@
 		position: absolute;
 		bottom: 0;
 		left: 0;
-		height: 75vh;
+		min-height: auto;
 		max-width: 80vw;
+		max-height: 80%;
+		min-width: auto;
 	}
 
 	.status {
@@ -446,6 +448,10 @@
 		.admission-top {
 			left: -80px;
 			top: -70px;
+		}
+
+		#racecar {
+			max-width: 100vw;
 		}
 	}
 </style>
