@@ -15,6 +15,9 @@ import natural from 'natural';
 const { WordTokenizer } = natural;
 import { removeStopwords } from 'stopword';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
