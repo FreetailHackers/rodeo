@@ -12,13 +12,11 @@
 </svelte:head>
 
 <div class="topographic-background">
-	<div class="header">
+	<div class="main-content">
 		<h1>Register</h1>
-	</div>
-	<div class="socials">
-		<SocialLogin providers={data.providers} />
-	</div>
-	<div class="form">
+		<div class="socials">
+			<SocialLogin providers={data.providers} />
+		</div>
 		<form
 			method="POST"
 			use:enhance={() => {
@@ -54,41 +52,17 @@
 			/>
 			<button>Continue</button>
 		</form>
-	</div>
-	<div class="login">
-		<p>Already have an account?</p>
-		<!-- svelte-ignore a11y-missing-content -->
-		<a href="/login">
-			<button class="login-button">Login Here!</button>
-		</a>
+		<div class="login">
+			<p>Already have an account?</p>
+			<!-- svelte-ignore a11y-missing-content -->
+			<a href="/login">
+				<button class="login-button">Login Here!</button>
+			</a>
+		</div>
 	</div>
 </div>
 
 <style>
-	.login {
-		background: #f2ebd9;
-		display: flex;
-		flex-wrap: wrap;
-		text-align: center;
-		align-items: center;
-		justify-content: space-around;
-		width: 40%;
-		padding: 0.5em 1em;
-		margin-top: 1em;
-	}
-
-	.login-button {
-		min-width: 15em;
-		flex-grow: 1;
-	}
-
-	p {
-		margin: 0;
-		margin-bottom: 0.5em;
-		padding-top: 0.5em;
-		flex-grow: 1;
-	}
-
 	.topographic-background {
 		display: flex;
 		flex-direction: column;
@@ -99,76 +73,71 @@
 		min-height: calc(100vh - 159px);
 	}
 
-	.header {
-		color: #f2ebd9;
-		margin-top: 4rem;
-		width: 40%;
-		text-align: left;
-		font-size: 180%;
+	h1 {
+		color: var(--highlight-color);
+		text-align: center;
+		white-space: nowrap;
+		font-size: min(12vw, 3.5em);
+		margin: 15px 0px;
+	}
+
+	p {
+		margin: 4px 0;
+	}
+
+	.login {
+		background: var(--highlight-color);
+		display: flex;
+		flex-wrap: wrap;
+		text-align: center;
+		align-items: center;
+		justify-content: space-around;
+		padding: 0.5em 1em;
+		margin: 1em 0 15px 0;
+	}
+
+	.login-button {
+		margin: 0;
+		margin-left: 10px;
+		padding: 0px 15px;
 	}
 
 	label {
-		color: #1c1c1c;
+		color: var(--background-color);
 		padding-top: 0.5em;
 	}
 
 	input {
 		display: block;
 		border-width: 1px;
-		margin-bottom: 0.5em;
 	}
 
 	button {
-		box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+		margin-top: 0.5em;
+		box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
+		-moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
+		-webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
 	}
 
-	.form {
-		width: 40%;
+	form {
 		padding: 0em 1em 1em 1em;
-		background-color: #f2ebd9;
+		background-color: var(--highlight-color);
 	}
 
 	.inputValues {
-		background-color: #f2ebd9;
+		background-color: var(--highlight-color);
 		color: #404040;
 	}
 
-	.socials {
-		width: 40%;
-	}
-
 	@media (max-width: 768px) {
-		.form,
-		.socials,
-		.header,
-		.login {
-			width: 80%;
-		}
-		.header {
-			font-size: 4vw;
-		}
-
-		input,
-		label,
-		button {
-			height: 2em;
-			font-size: 20px;
-		}
-
-		.form {
-			padding: 0 1em 1em 1em;
-		}
-
-		label {
-			margin-top: 0.5vw;
-		}
-
-		button {
-			margin-top: 0.5vw;
-			margin-bottom: 0.5vw;
-		}
 		.topographic-background {
 			min-height: calc(100vh - 56px);
+		}
+	}
+
+	@media (max-width: 1090px) {
+		h1 {
+			margin-top: 0px;
 		}
 	}
 </style>
