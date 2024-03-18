@@ -59,7 +59,8 @@
 				{/if}
 			</form>
 		{:else if data.user.authUser.status === 'REJECTED'}
-			<h1>REJECTED</h1>
+			<h1>{data.user.authUser.status}</h1>
+			<p>Unfortunately, we do not have the space to offer you admission this year.</p>
 		{:else if data.user.authUser.status === 'WAITLISTED'}
 			<h1>WAITLISTED</h1>
 			<p>
@@ -67,7 +68,11 @@
 				you should this situation change.
 			</p>
 		{:else if data.user.authUser.status === 'ACCEPTED'}
-			<h1>APPROVED</h1>
+			<h1>{data.user.authUser.status}</h1>
+			<p>
+				Congratulations! We were impressed by your application and would like to invite you to
+				attend.
+			</p>
 
 			{#if data.rsvpDeadline === null || new Date() < data.rsvpDeadline}
 				{#if data.rsvpDeadline}
