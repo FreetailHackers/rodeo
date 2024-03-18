@@ -224,8 +224,8 @@
 		}
 
 		canvas {
-			width: 150px !important;
-			height: 150px !important;
+			width: 200px !important;
+			height: 200px !important;
 		}
 	}
 </style>
