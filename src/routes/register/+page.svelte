@@ -91,7 +91,7 @@
 		flex-wrap: wrap;
 		text-align: center;
 		align-items: center;
-		justify-content: space-around;
+		justify-content: space-between;
 		padding: 0.5em 1em;
 		margin: 1em 0 15px 0;
 	}
@@ -122,6 +122,8 @@
 	form {
 		padding: 0em 1em 1em 1em;
 		background-color: var(--highlight-color);
+		min-width: 25rem;
+		width: 30vw;
 	}
 
 	.inputValues {
