@@ -12,15 +12,34 @@
 	let search: Status;
 	let subject: string;
 	let emailBody: string;
-	// let splitEmailAddress: string[][];
+	let splitEmailAddress: string[] = [];
 
 	let key = $page.url.searchParams.get('key') ?? 'status';
 	let searchFilter = $page.url.searchParams.get('searchFilter') ?? '';
 
 	async function sendEmailsByStatus() {
+		// async function sendEmailsByStatusHelper(emails: string[], subject: string, emailBody: string) {
+		// 	return trpc().users.sendEmailHelper.mutate({ emails, subject, emailBody });
+		// }
 		const allEmails = await trpc().users.getEmailsAddresses.query({ key, search, searchFilter });
-		console.log(allEmails);
+
+		// let completed = 0;
+		// const toast = toasts.notify(`Sending 0/${allEmails.length} emails`);
+
+		allEmails.forEach((email) => {
+			splitEmailAddress.push(`'${email}'`);
+		});
+		console.log(splitEmailAddress);
+		for (let i = 0; i < allEmails.length; i++) {
+			// let emailStatus = Promise.allSettled(
+			// 	splitEmailAddress.map((emailAddresses) =>
+			// 		sendEmailsByStatusHelper([emailAddresses], subject, emailBody)
+			// 	)
+			// );
+			// console.log(emailStatus);
+		}
 	}
+
 	// async function sendEmailsByStatus() {
 	// 	async function sendEmailsByStatusHelper(emails: string[], subject: string, emailBody: string) {
 	// 		let status = trpc().users.sendEmailHelper.mutate({emails, subject, emailBody});

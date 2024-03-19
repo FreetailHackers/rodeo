@@ -59,6 +59,7 @@ export const sendEmails = async (
 		const failedRecipients = emailResults
 			.filter((result) => result.status === 'rejected')
 			.map((result, index) => recipients[index]);
+		// return failedRecipients;
 		if (failedRecipients.length > 0) {
 			return (
 				failedRecipients.length +
