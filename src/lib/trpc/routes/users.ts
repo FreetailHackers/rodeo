@@ -11,6 +11,15 @@ import type { Session } from 'lucia';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { canApply } from './admissions';
+// import natural from 'natural';
+// const { WordTokenizer } = natural;
+// import { removeStopwords } from 'stopword';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
