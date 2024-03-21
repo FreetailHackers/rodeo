@@ -1,5 +1,7 @@
 <script lang="ts">
-	export let sponsors: string[];
+	import type { InfoBox, AuthUser } from '@prisma/client';
+	export let user: AuthUser;
+	export let sponsors: InfoBox[];
 </script>
 
 <div class="main-container">
@@ -19,18 +21,16 @@
 		>
 		<div class="sponsor-container">
 			{#each sponsors as sponsor}
-				<div class="sponsor-card">
-					{#if sponsor === 'Stand Out Stickers'}
-						<a
-							href="http://hackp.ac/mlh-StandOutStickers-hackathons"
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							<img alt={sponsor} src={`/Sponsors/${sponsor}.png`} />
+				<div class="format-edit-and-sponsor">
+					<div class="sponsor-card">
+						<a href={sponsor.response} target="_blank" rel="noopener noreferrer">
+							<img alt="" src={`Sponsors/${sponsor.title}`} />
 						</a>
-					{:else}
-						<div>
-							<img alt={sponsor} src={`/Sponsors/${sponsor}.png`} />
+					</div>
+					<!---->
+					{#if user?.roles.includes('ADMIN')}
+						<div class="edit">
+							<a href="/admin/homepage/sponsors/{sponsor.id}">Edit</a>
 						</div>
 					{/if}
 				</div>
@@ -40,6 +40,11 @@
 </div>
 
 <style>
+	.format-edit-and-sponsor {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 	.main-container {
 		position: relative;
 		background-color: #1c1c1c;
@@ -130,7 +135,7 @@
 	.sponsor-card img {
 		max-width: 100%;
 		height: auto;
-		display: block;
+		display: flexbox;
 		margin: 0 auto;
 	}
 

@@ -4,6 +4,8 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
+import { writeFile, unlink } from 'node:fs/promises';
+
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -62,6 +64,29 @@ export const actions = {
 		return 'Created challenge!';
 	},
 
+	createSponsor: async ({ locals, request }) => {
+		const formData = await request.formData();
+
+		const sponsorLogo = formData.get('sponsorLogo') as File;
+		const sponsorLink = formData.get('sponsorLink') as string;
+
+		const imageUrl = `static/Sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
+		//const filePath = `Sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
+		const fileName = sponsorLogo.name.replace(/[^\w.-]+/g, '');
+
+		await writeFile(imageUrl, Buffer.from(await sponsorLogo?.arrayBuffer()));
+
+		//const imageUrl = await uploadImage(sponsorLogo); // Asynchronously upload the image
+
+		await trpc(locals.auth).infoBox.create({
+			title: fileName,
+			response: sponsorLink,
+			category: 'SPONSOR',
+		});
+
+		return 'Created sponsor!';
+	},
+
 	deleteAll: async ({ locals, request }) => {
 		const deleteAllValue = (await request.formData()).get('deleteAll') as string;
 
@@ -74,6 +99,15 @@ export const actions = {
 		} else if (deleteAllValue === 'challenges') {
 			await trpc(locals.auth).infoBox.deleteAllOfCategory('CHALLENGE');
 			return 'Deleted all challenges!';
+		} else if (deleteAllValue === 'sponsors') {
+			const sponsors = await trpc(locals.auth).infoBox.getAllOfCategory('SPONSOR');
+
+			for (const sponsor of sponsors) {
+				await unlink(`static/Sponsors/${sponsor.title}`);
+			}
+
+			await trpc(locals.auth).infoBox.deleteAllOfCategory('SPONSOR');
+			return 'Deleted all sponsors!';
 		} else {
 			return 'Invalid element to delete';
 		}

@@ -58,9 +58,7 @@
 </section>
 
 <section id="Sponsors">
-	<Sponsors
-		sponsors={['Roblox', 'Capital One', 'Mercury Financial', 'Red Bull', 'Stand Out Stickers']}
-	/>
+	<Sponsors user={data.user} sponsors={data.sponsors} />
 </section>
 
 <style>
