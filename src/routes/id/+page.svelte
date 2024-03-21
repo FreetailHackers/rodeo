@@ -53,6 +53,7 @@
 		padding: 1rem 2rem;
 		box-shadow: 4px 4px 16px 0px #00000040;
 		border-radius: 10px;
+		margin: 5rem 0;
 	}
 
 	.driver-div-text {
@@ -101,6 +102,10 @@
 			text-align: center;
 			-webkit-text-stroke: 0px transparent;
 			text-shadow: -0.03em -0.03em #e96954, 0.1em 0.1em var(--highlight-color);
+		}
+
+		.driver-div {
+			margin: 0;
 		}
 
 		.driver-div-text {
