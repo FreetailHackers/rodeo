@@ -133,6 +133,7 @@
 	}
 
 	.sponsor-card img {
+		max-height: 150px;
 		max-width: 100%;
 		height: auto;
 		display: flexbox;
