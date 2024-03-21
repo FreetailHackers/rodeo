@@ -18,191 +18,101 @@
 </svelte:head>
 
 <div class="overall-container">
-	<div class="driver-scan-div">
-		<div class="vertical-text">
-			<h1 class="vertical-text-first">HACKER ID</h1>
-			<h1 class="vertical-text-second">HACKER ID</h1>
-			<h1 class="vertical-text-third">HACKER ID</h1>
-		</div>
+	<h1 class="vertical-text">HACKER ID</h1>
 
-		<div class="driver-div">
-			<div>
-				<h1 class="driver-div-text black">Driver</h1>
-				<h1 class="driver-div-text red ">License</h1>
-			</div>
+	<div class="driver-div">
+		<h1 class="driver-div-text">Driver</h1>
+		<h1 class="driver-div-text red ">License</h1>
+		<canvas bind:this={canvas} id="qrcode" />
+	</div>
 
-			<div class="canvas">
-				<canvas bind:this={canvas} id="qrcode" />
-			</div>
-		</div>
-
-		<div class="ready-to-scan transform-vertical">
-			<h4 class="ready-to-scan-text-ready black ">Are you ready?</h4>
-			<h2 class="ready-to-scan-text-scan red">Show to Scan</h2>
-		</div>
+	<div class="ready-to-scan">
+		<h4 class="ready-to-scan-text-ready">Are you ready?</h4>
+		<h2 class="ready-to-scan-text-scan red">Show to Scan</h2>
 	</div>
 </div>
 
 <style>
+	.overall-container {
+		display: flex;
+		padding-top: 56px;
+		justify-content: center;
+		align-items: center;
+		min-height: calc(100vh - 159px);
+	}
+
+	.vertical-text {
+		writing-mode: vertical-rl;
+		font-size: 70px;
+		color: transparent;
+		-webkit-text-stroke: 1px #ffc75b;
+		text-shadow: 0.35em 1em var(--highlight-color), -1em -0.5em #e96954;
+	}
+
 	.driver-div {
-		padding: 1rem 2rem 1rem;
-		margin: 5% 0 5%;
+		padding: 1rem 2rem;
 		box-shadow: 4px 4px 16px 0px #00000040;
 		border-radius: 10px;
-		position: relative;
-		z-index: inherit;
-		background-color: white;
-		justify-content: space-evenly;
-		align-items: start;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.driver-scan-div {
-		display: flex;
-		flex-direction: row;
-		position: relative;
-		margin-right: 10%;
-	}
-
-	.ready-to-scan {
-		display: flex;
-		flex-direction: column;
-		gap: 5px;
-		align-items: end;
-		justify-content: end;
-		font-family: 'Geologica', sans-serif;
-		writing-mode: vertical-rl;
-		margin: 5% 0 10%;
-	}
-	.ready-to-scan-text-ready {
-		margin-left: -20px;
-		font-weight: normal;
-		margin-bottom: 30%;
-		font-family: 'Geologica', sans-serif;
-	}
-	.ready-to-scan-text-scan {
-		font-weight: bold;
-		font-family: 'Fugaz One', sans-serif;
-	}
-
-	.black {
-		color: black;
-	}
-	.red {
-		color: var(--primary-accent);
 	}
 
 	.driver-div-text {
 		font-family: 'Fugaz One';
-		text-align: left;
 		font-size: 2.3rem;
-		position: relative;
+	}
+
+	.ready-to-scan {
+		writing-mode: vertical-rl;
+		height: 25rem;
+		margin: 30px;
+		text-align: right;
+	}
+
+	.ready-to-scan-text-ready {
+		margin: 0;
+		font-weight: normal;
+		margin-bottom: 30%;
+		font-family: 'Geologica', sans-serif;
+	}
+
+	.ready-to-scan-text-scan {
+		margin: 0;
+		font-weight: bold;
+		font-family: 'Fugaz One', sans-serif;
 	}
 
 	.driver-div-text:last-of-type {
 		margin-top: -20px;
 	}
 
-	.vertical-text {
-		/* background-image: url('/hackerid/hackerid.svg'); */
-		writing-mode: vertical-rl;
-		position: relative;
-		z-index: 0;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		height: max-content;
+	.red {
+		color: var(--primary-accent);
 	}
 
-	.vertical-text h1 {
-		font-size: 70px;
-	}
-
-	.vertical-text-first {
-		color: #f2ebd9bf;
-		margin-top: 30px;
-	}
-	.vertical-text-second {
-		color: transparent;
-		-webkit-text-stroke: 1px #ffc75b;
-		margin-right: -100px;
-	}
-
-	.vertical-text-third {
-		color: #e1563fbf;
-		margin-right: -20px;
-	}
-
-	.overall-container {
-		display: flex;
-		margin: 0;
-		padding-top: 4rem;
-		justify-content: center;
-		align-items: center;
-		position: relative;
-		min-height: calc(100vh - 159px);
-	}
-
-	.canvas {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		margin: 0 auto;
-	}
-
-	/* CSS for devices with a maximum width of 768 pixels (tablets and smartphones) */
+	/* Mobile Devices */
 	@media only screen and (max-width: 767px) {
 		.overall-container {
+			flex-direction: column;
 			min-height: calc(100vh - 56px);
-		}
-
-		.driver-div {
-			padding: 1rem 1.5rem 1.5rem;
 		}
 
 		.vertical-text {
 			writing-mode: horizontal-tb;
-			width: auto;
-			height: auto;
-			top: 2%;
-			left: 1%;
-			transform: none;
-			position: relative;
-		}
-
-		.vertical-text-second {
-			margin-top: -20%;
-			margin-right: 0;
-		}
-
-		.vertical-text-third {
-			margin-top: -20%;
-			margin-right: 0;
-		}
-
-		.vertical-text h1 {
-			font-size: 30px;
-		}
-
-		.ready-to-scan {
-			writing-mode: horizontal-tb;
-			justify-content: start;
-			align-items: start;
-			gap: 0;
-			margin-top: 30px;
-		}
-
-		.driver-scan-div {
-			flex-direction: column;
-			padding-left: 0;
-			margin-right: 0;
+			font-size: 40px;
+			text-align: center;
+			-webkit-text-stroke: 0px transparent;
+			text-shadow: -0.03em -0.03em #e96954, 0.1em 0.1em var(--highlight-color);
 		}
 
 		.driver-div-text {
 			font-size: 25px;
 		}
+
+		.ready-to-scan {
+			writing-mode: horizontal-tb;
+			height: auto;
+			width: 23rem;
+		}
+
 		.ready-to-scan-text-ready {
 			font-size: 15px;
 			margin: 0;
@@ -211,11 +121,6 @@
 		.ready-to-scan-text-scan {
 			font-size: 20px;
 			margin-top: 6px;
-		}
-
-		canvas {
-			width: 200px !important;
-			height: 200px !important;
 		}
 	}
 </style>
