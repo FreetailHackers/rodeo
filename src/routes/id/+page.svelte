@@ -138,10 +138,9 @@
 	.overall-container {
 		display: flex;
 		margin: 0;
-		padding: 10rem 2rem;
+		padding-top: 4rem;
 		justify-content: center;
 		align-items: center;
-		flex-direction: row;
 		position: relative;
 		min-height: calc(100vh - 159px);
 	}
@@ -153,19 +152,10 @@
 		margin: 0 auto;
 	}
 
-	@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
-		.overall-container {
-			padding: 6rem 4rem;
-			min-height: calc(100vh - 56px);
-		}
-	}
-
 	/* CSS for devices with a maximum width of 768 pixels (tablets and smartphones) */
 	@media only screen and (max-width: 767px) {
 		.overall-container {
-			flex-direction: column;
 			min-height: calc(100vh - 56px);
-			padding: 1rem;
 		}
 
 		.driver-div {
