@@ -75,6 +75,7 @@
 		writing-mode: vertical-rl;
 		margin: 5% 0 10%;
 	}
+
 	.ready-to-scan-text-ready {
 		margin-left: -20px;
 		font-weight: normal;
@@ -89,6 +90,7 @@
 	.black {
 		color: black;
 	}
+
 	.red {
 		color: var(--primary-accent);
 	}
@@ -105,7 +107,6 @@
 	}
 
 	.vertical-text {
-		/* background-image: url('/hackerid/hackerid.svg'); */
 		writing-mode: vertical-rl;
 		position: relative;
 		z-index: 0;
@@ -124,6 +125,7 @@
 		color: #f2ebd9bf;
 		margin-top: 30px;
 	}
+
 	.vertical-text-second {
 		color: transparent;
 		-webkit-text-stroke: 1px #ffc75b;
@@ -152,7 +154,6 @@
 		margin: 0 auto;
 	}
 
-	/* CSS for devices with a maximum width of 768 pixels (tablets and smartphones) */
 	@media only screen and (max-width: 767px) {
 		.overall-container {
 			min-height: calc(100vh - 56px);
