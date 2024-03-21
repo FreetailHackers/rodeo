@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let sponsors: string[];
+	export let sponsors: string[][];
 </script>
 
 <div class="main-container">
@@ -20,19 +20,14 @@
 		<div class="sponsor-container">
 			{#each sponsors as sponsor}
 				<div class="sponsor-card">
-					{#if sponsor === 'Stand Out Stickers'}
-						<a
-							href="http://hackp.ac/mlh-StandOutStickers-hackathons"
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							<img alt={sponsor} src={`/Sponsors/${sponsor}.png`} />
-						</a>
-					{:else}
-						<div>
-							<img alt={sponsor} src={`/Sponsors/${sponsor}.png`} />
-						</div>
-					{/if}
+					<a
+						href={sponsor[1]}
+						class:nohover={sponsor[1] === '#'}
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						<img alt={sponsor[0]} src={`/Sponsors/${sponsor[0]}.png`} />
+					</a>
 				</div>
 			{/each}
 		</div>
@@ -40,6 +35,10 @@
 </div>
 
 <style>
+	.nohover {
+		pointer-events: none;
+	}
+
 	.main-container {
 		position: relative;
 		background-color: #1c1c1c;
@@ -128,6 +127,7 @@
 	}
 
 	.sponsor-card img {
+		max-height: 150px;
 		max-width: 100%;
 		height: auto;
 		display: block;

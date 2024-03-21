@@ -59,7 +59,14 @@
 
 <section id="Sponsors">
 	<Sponsors
-		sponsors={['Roblox', 'Capital One', 'Mercury Financial', 'Red Bull', 'Stand Out Stickers']}
+		sponsors={[
+			['Roblox', 'https://create.roblox.com/landing'],
+			['Capital One', 'http://api.nessieisreal.com/'],
+			['Mercury Financial', '#'],
+			['CodeCrafters', 'https://codecrafters.io/event/freetailhackers'],
+			['Red Bull', '#'],
+			['Stand Out Stickers', 'http://hackp.ac/mlh-StandOutStickers-hackathons'],
+		]}
 	/>
 </section>
 
