@@ -42,11 +42,11 @@
 	}
 
 	.vertical-text {
-		writing-mode: vertical-rl;
 		font-size: 70px;
 		color: transparent;
-		-webkit-text-stroke: 1px #ffc75b;
-		text-shadow: 0.35em 1em var(--highlight-color), -1em -0.5em #e96954;
+		-webkit-text-stroke: 0.5px #ffc75b;
+		text-shadow: 0.8em -0.35em var(--highlight-color), -0.4em 1em #e96954;
+		writing-mode: vertical-rl;
 	}
 
 	.driver-div {
@@ -106,6 +106,7 @@
 
 		.driver-div {
 			margin: 0;
+			padding: 0 1rem;
 		}
 
 		.driver-div-text {
