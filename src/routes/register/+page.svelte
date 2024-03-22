@@ -88,12 +88,13 @@
 	.login {
 		background: var(--highlight-color);
 		display: flex;
-		flex-wrap: wrap;
 		text-align: center;
 		align-items: center;
 		justify-content: space-between;
 		padding: 0.5em 1em;
 		margin: 1em 0 15px 0;
+		min-width: 25rem;
+		width: 30vw;
 	}
 
 	.login-button {
@@ -134,6 +135,12 @@
 	@media (max-width: 768px) {
 		.topographic-background {
 			min-height: calc(100vh - 56px);
+		}
+
+		form,
+		.login {
+			min-width: 20rem;
+			width: 15vw;
 		}
 	}
 
