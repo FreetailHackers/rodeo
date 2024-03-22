@@ -117,27 +117,17 @@
 	}
 
 	.sponsor-card {
-		flex: 0 0 calc(33.333% - 20px);
 		margin: 10px;
-		margin-bottom: 25px;
 		background-color: #fffff9;
 		padding: 10px;
-		box-sizing: border-box;
-		max-width: 300px;
-		text-align: center;
-		display: flex;
-		align-items: center;
-		justify-content: center;
 		box-shadow: 10px 10px #e1563f;
 		transition: all 0.4s ease;
 	}
 
 	.sponsor-card img {
-		max-height: 150px;
-		max-width: 100%;
-		height: auto;
-		display: flexbox;
-		margin: 0 auto;
+		width: 250px;
+		height: 150px;
+		object-fit: contain;
 	}
 
 	.sponsor-card:hover {
@@ -154,6 +144,12 @@
 		button,
 		p {
 			font-size: 16px;
+		}
+
+		.sponsor-card img {
+			width: 125px;
+			height: 100px;
+			object-fit: contain;
 		}
 	}
 </style>
