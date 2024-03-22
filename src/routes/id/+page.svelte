@@ -116,7 +116,7 @@
 		.ready-to-scan {
 			writing-mode: horizontal-tb;
 			height: auto;
-			width: 23rem;
+			width: 21rem;
 		}
 
 		.ready-to-scan-text-ready {
