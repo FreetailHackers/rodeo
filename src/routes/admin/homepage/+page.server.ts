@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
-import { writeFile, unlink } from 'node:fs/promises';
+import { writeFileSync, unlinkSync } from 'fs';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -70,10 +70,10 @@ export const actions = {
 		const sponsorLogo = formData.get('sponsorLogo') as File;
 		const sponsorLink = formData.get('sponsorLink') as string;
 
-		const imageUrl = `static/Sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
+		const imageUrl = `static/Sponsors${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
 		const fileName = sponsorLogo.name.replace(/[^\w.-]+/g, '');
 
-		await writeFile(imageUrl, Buffer.from(await sponsorLogo?.arrayBuffer()));
+		await writeFileSync(imageUrl, Buffer.from(await sponsorLogo?.arrayBuffer()));
 
 		await trpc(locals.auth).infoBox.create({
 			title: fileName,
@@ -100,7 +100,7 @@ export const actions = {
 			const sponsors = await trpc(locals.auth).infoBox.getAllOfCategory('SPONSOR');
 
 			for (const sponsor of sponsors) {
-				await unlink(`static/Sponsors/${sponsor.title}`);
+				await unlinkSync(`static/Sponsors/${sponsor.title}`);
 			}
 
 			await trpc(locals.auth).infoBox.deleteAllOfCategory('SPONSOR');
