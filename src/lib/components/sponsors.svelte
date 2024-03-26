@@ -27,7 +27,6 @@
 							<img alt="" src={`Sponsors/${sponsor.title}`} />
 						</a>
 					</div>
-					<!---->
 					{#if user?.roles.includes('ADMIN')}
 						<div class="edit">
 							<a href="/admin/homepage/sponsors/{sponsor.id}">Edit</a>

@@ -71,12 +71,9 @@ export const actions = {
 		const sponsorLink = formData.get('sponsorLink') as string;
 
 		const imageUrl = `static/Sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
-		//const filePath = `Sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
 		const fileName = sponsorLogo.name.replace(/[^\w.-]+/g, '');
 
 		await writeFile(imageUrl, Buffer.from(await sponsorLogo?.arrayBuffer()));
-
-		//const imageUrl = await uploadImage(sponsorLogo); // Asynchronously upload the image
 
 		await trpc(locals.auth).infoBox.create({
 			title: fileName,
