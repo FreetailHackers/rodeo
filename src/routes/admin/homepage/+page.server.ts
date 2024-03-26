@@ -70,7 +70,7 @@ export const actions = {
 		const sponsorLogo = formData.get('sponsorLogo') as File;
 		const sponsorLink = formData.get('sponsorLink') as string;
 
-		const imageUrl = `static/Sponsors${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
+		const imageUrl = `static/Sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
 		const fileName = sponsorLogo.name.replace(/[^\w.-]+/g, '');
 
 		await writeFileSync(imageUrl, Buffer.from(await sponsorLogo?.arrayBuffer()));
