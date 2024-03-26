@@ -85,7 +85,7 @@
 	<button type="submit">Save</button>
 </form>
 
-<form method="POST" action="?/createSponsor" use:enhance enctype="multipart/form-data">
+<form method="POST" action="?/createSponsor" use:enhance>
 	<label for="createNewSponsor"><h2>Create New Sponsor</h2></label>
 
 	<label for="sponsorLogo">Sponsor Logo</label>
