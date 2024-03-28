@@ -136,7 +136,7 @@
 {/if}
 
 {#key $page.url.pathname}
-	<div in:fade={{ easing: cubicOut, duration: 300 }}>
+	<div in:fade|global={{ easing: cubicOut, duration: 300 }}>
 		<slot />
 	</div>
 {/key}
