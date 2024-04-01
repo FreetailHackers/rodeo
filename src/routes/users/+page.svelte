@@ -38,7 +38,7 @@
 					throw new Error(message);
 				}
 
-				toasts.update(toast, `Sent ${completed}/${allEmails.length} emails`);
+				toasts.update(toast, `Sent ${completed}/${userEmails.length} emails`);
 				console.log('after toast');
 				return successfulEmailRequest;
 			}
@@ -47,18 +47,15 @@
 			console.log(promiseResults);
 		}
 
-		let allEmails: string[][] = [];
 		let rejectedEmails: string[] = [];
 
-		console.log(data.users);
-
-		data.users.forEach((user) => allEmails.push([`${user.authUser.email}`]));
+		let userEmails = await trpc().users.emails.query({ key, search, searchFilter });
 
 		let completed = 0;
-		const toast = toasts.notify(`Sent 0/${allEmails.length} emails...`);
+		const toast = toasts.notify(`Sent 0/${userEmails.length} emails...`);
 
-		for (let i = 0; i < allEmails.length; i += 100) {
-			const emails = allEmails.slice(i, i + 100);
+		for (let i = 0; i < userEmails.length; i += 100) {
+			const emails = userEmails.slice(i, i + 100);
 			await sendEmails(emails);
 		}
 

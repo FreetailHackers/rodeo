@@ -786,6 +786,36 @@ export const usersRouter = t.router({
 			}
 			return 1;
 		}),
+
+	/**
+	 * Gets emails of all the users matching the given
+	 * search criteria. User must be an admin or sponsor.
+	 */
+	emails: t.procedure
+		.use(authenticate(['ADMIN', 'SPONSOR']))
+		.input(
+			z.object({
+				key: z.string(),
+				search: z.string(),
+				searchFilter: z.string(),
+			})
+		)
+		.query(async (req): Promise<string[][]> => {
+			const userEmails: string[][] = [];
+			const where = await getWhereCondition(
+				req.input.key,
+				req.input.searchFilter,
+				req.input.search,
+				req.ctx.user.roles
+			);
+			const users = await prisma.user.findMany({ include: { authUser: true }, where });
+			// Remove questions that should not be visible to sponsors
+
+			users.forEach((user) => {
+				userEmails.push([user.authUser.email]);
+			});
+			return userEmails;
+		}),
 });
 
 async function getWhereCondition(
