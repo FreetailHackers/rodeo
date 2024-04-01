@@ -757,18 +757,18 @@ export const usersRouter = t.router({
 			});
 		}),
 
-	sendEmailByStatus: t.procedure
-		.use(authenticate(['ADMIN']))
-		.input(z.object({ status: z.nativeEnum(Status), subject: z.string(), emailBody: z.string() }))
-		.mutation(async (req): Promise<string> => {
-			const emailArray = (
-				await prisma.authUser.findMany({
-					where: { status: req.input.status },
-					select: { email: true },
-				})
-			).map((user) => user.email);
-			return sendEmails(emailArray, req.input.subject, req.input.emailBody);
-		}),
+	// sendEmailByStatus: t.procedure
+	// 	.use(authenticate(['ADMIN']))
+	// 	.input(z.object({ status: z.nativeEnum(Status), subject: z.string(), emailBody: z.string() }))
+	// 	.mutation(async (req): Promise<string> => {
+	// 		const emailArray = (
+	// 			await prisma.authUser.findMany({
+	// 				where: { status: req.input.status },
+	// 				select: { email: true },
+	// 			})
+	// 		).map((user) => user.email);
+	// 		return sendEmails(emailArray, req.input.subject, req.input.emailBody);
+	// 	}),
 
 	sendEmailHelper: t.procedure
 		.use(authenticate(['ADMIN']))
@@ -779,36 +779,12 @@ export const usersRouter = t.router({
 				emailBody: z.string(),
 			})
 		)
-		.mutation(async (req): Promise<string> => {
-			return sendEmails(req.input.emails, req.input.subject, req.input.emailBody);
-		}),
-
-	/**
-	 * Gets emails from users with a certain status
-	 */
-	getEmailsAddresses: t.procedure
-		.use(authenticate(['ADMIN', 'SPONSOR']))
-		.input(
-			z.object({
-				key: z.string(),
-				search: z.string(),
-				searchFilter: z.string(),
-			})
-		)
-		.query(async (req): Promise<string[]> => {
-			const where = await getWhereCondition(
-				req.input.key,
-				req.input.searchFilter,
-				req.input.search,
-				req.ctx.user.roles
-			);
-
-			const allEmails = [] as string[];
-			const users = await prisma.user.findMany({ include: { authUser: true }, where });
-			users.forEach((user) => {
-				allEmails.push(user.authUser.email);
-			});
-			return allEmails;
+		.mutation(async (req): Promise<number> => {
+			const response = sendEmails(req.input.emails, req.input.subject, req.input.emailBody);
+			if ((await response).includes('unsuccessfully') || (await response).includes('error')) {
+				return 0;
+			}
+			return 1;
 		}),
 });
 

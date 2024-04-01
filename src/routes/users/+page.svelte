@@ -8,14 +8,64 @@
 	import { trpc } from '$lib/trpc/client';
 	import { toasts } from '$lib/stores';
 	import Dropdown from '$lib/components/dropdown.svelte';
+	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
 
 	export let data;
 
 	$: query = Object.fromEntries($page.url.searchParams);
 	let key = $page.url.searchParams.get('key') ?? 'email';
 	let search = $page.url.searchParams.get('search') ?? '';
-	let limit = $page.url.searchParams.get('limit') ?? '10';
+	let limit: string = $page.url.searchParams.get('limit') ?? '10';
 	let searchFilter = $page.url.searchParams.get('searchFilter') ?? '';
+	let emailBody: string;
+	let subject: string;
+
+	async function sendEmailsByStatus() {
+		async function sendEmails(emails: string[][]) {
+			async function sendEmail(email: string[]) {
+				const successfulEmailRequest = await trpc().users.sendEmailHelper.mutate({
+					emails: email,
+					subject,
+					emailBody,
+				});
+
+				completed += successfulEmailRequest;
+
+				if (!successfulEmailRequest) {
+					rejectedEmails.push(email[0]);
+					const message = `Could not send email to ${email[0]}`;
+					toasts.notify(message);
+					throw new Error(message);
+				}
+
+				toasts.update(toast, `Sent ${completed}/${allEmails.length} emails`);
+				console.log('after toast');
+				return successfulEmailRequest;
+			}
+			// const promiseResults = await Promise.allSettled(emails.map(sendEmail));
+			const promiseResults = emails.map(sendEmail);
+			console.log(promiseResults);
+		}
+
+		let allEmails: string[][] = [];
+		let rejectedEmails: string[] = [];
+
+		console.log(data.users);
+
+		data.users.forEach((user) => allEmails.push([`${user.authUser.email}`]));
+
+		let completed = 0;
+		const toast = toasts.notify(`Sent 0/${allEmails.length} emails...`);
+
+		for (let i = 0; i < allEmails.length; i += 100) {
+			const emails = allEmails.slice(i, i + 100);
+			await sendEmails(emails);
+		}
+
+		if (rejectedEmails.length > 0) {
+			toasts.notify(`Could not send email(s) to ${rejectedEmails.join(', ')}`);
+		}
+	}
 
 	// Download all files of current search filter
 	async function downloadAllFiles() {
@@ -294,6 +344,28 @@
 	{#if data.users.length === 0}
 		<p>No results found.</p>
 	{:else}
+		<div class="send-emails">
+			<label for="groupEmail"><h2>Group Email to Specific Status</h2></label>
+
+			<div class="flex-container">
+				<input
+					bind:value={subject}
+					class="textbox-margin"
+					name="subject"
+					placeholder="Type email subject here"
+					required
+				/>
+			</div>
+			<MarkdownEditor
+				placeholder="Type email body here"
+				name="emailBody"
+				bind:value={emailBody}
+				required
+			/>
+
+			<button class="email-by-status" on:click={sendEmailsByStatus}>Send</button>
+		</div>
+
 		<Statistics questions={data.questions} count={data.count} />
 		<!-- User table -->
 		<div class="filter">
@@ -417,6 +489,21 @@
 	}
 
 	.download-button {
+		width: 100%;
+		text-align: center;
+		margin-bottom: 10px;
+	}
+
+	.textbox-margin {
+		margin-bottom: 1%;
+		flex: 1;
+	}
+
+	.flex-container {
+		display: flex;
+	}
+
+	.email-by-status {
 		width: 100%;
 		text-align: center;
 		margin-bottom: 10px;
