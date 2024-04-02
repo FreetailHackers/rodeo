@@ -33,18 +33,26 @@
 
 				if (!successfulEmailRequest) {
 					rejectedEmails.push(email[0]);
-					const message = `Could not send email to ${email[0]}`;
-					toasts.notify(message);
-					throw new Error(message);
+					// const message = `Could not send email to ${email[0]}`;
+					// toasts.notify(message);
+					// throw new Error(message);
 				}
 
 				toasts.update(toast, `Sent ${completed}/${userEmails.length} emails`);
-				console.log('after toast');
+				// console.log('after toast');
 				return successfulEmailRequest;
 			}
 			// const promiseResults = await Promise.allSettled(emails.map(sendEmail));
 			const promiseResults = emails.map(sendEmail);
 			console.log(promiseResults);
+		}
+
+		// check if subject and email body is not empty since the "required"
+		// keyword isn't working
+
+		if (subject.length === 0 || emailBody.length === 0) {
+			toasts.notify('Subject or email body is empty');
+			throw new Error('Subject or email body is empty');
 		}
 
 		let rejectedEmails: string[] = [];
