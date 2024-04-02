@@ -85,16 +85,23 @@
 		margin: 4px 0;
 	}
 
+	form,
 	.login {
-		background: var(--highlight-color);
+		background-color: var(--highlight-color);
+		width: clamp(25rem, 30vw, 50rem);
+	}
+
+	form {
+		padding: 0em 1em 1em 1em;
+	}
+
+	.login {
 		display: flex;
 		text-align: center;
 		align-items: center;
 		justify-content: space-between;
 		padding: 0.5em 1em;
 		margin: 1em 0 15px 0;
-		min-width: 25rem;
-		width: 30vw;
 	}
 
 	.login-button {
@@ -120,13 +127,6 @@
 		-webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
 	}
 
-	form {
-		padding: 0em 1em 1em 1em;
-		background-color: var(--highlight-color);
-		min-width: 25rem;
-		width: 30vw;
-	}
-
 	.inputValues {
 		background-color: var(--highlight-color);
 		color: #404040;
@@ -135,12 +135,6 @@
 	@media (max-width: 768px) {
 		.topographic-background {
 			min-height: calc(100vh - 56px);
-		}
-
-		form,
-		.login {
-			min-width: 20rem;
-			width: 15vw;
 		}
 	}
 

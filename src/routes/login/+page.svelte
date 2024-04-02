@@ -88,16 +88,23 @@
 		margin: 4px 0;
 	}
 
+	form,
 	.register {
-		background: var(--highlight-color);
+		background-color: var(--highlight-color);
+		width: clamp(25rem, 30vw, 50rem);
+	}
+
+	form {
+		padding: 0em 1em 1em 1em;
+	}
+
+	.register {
 		display: flex;
 		text-align: center;
 		align-items: center;
 		justify-content: space-between;
 		padding: 0.5em 1em;
 		margin: 1em 0 15px 0;
-		min-width: 25rem;
-		width: 30vw;
 	}
 
 	.register-button {
@@ -121,13 +128,6 @@
 		box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
 		-moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
 		-webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
-	}
-
-	form {
-		padding: 0em 1em 1em 1em;
-		background-color: var(--highlight-color);
-		min-width: 25rem;
-		width: 30vw;
 	}
 
 	.inputValues {
