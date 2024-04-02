@@ -23,7 +23,6 @@ export const actions = {
 		try {
 			locals.auth.setSession(await trpc(locals.auth).users.login({ email, password }));
 		} catch (error) {
-			console.log('Invalid email or password.');
 			return 'Invalid email or password.';
 		}
 	},
