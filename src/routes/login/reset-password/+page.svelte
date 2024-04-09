@@ -10,25 +10,23 @@
 </svelte:head>
 
 <div class="topographic-background">
-	{#if $page.url.search === ''}
-		<div class="header"><h1>Reset Password</h1></div>
-		<div class="form">
+	<div class="main-content">
+		{#if $page.url.search === ''}
+			<h1>Reset Password</h1>
 			<form method="POST" action="?/email" use:enhance>
 				<label for="email">Enter the email you used to register:</label>
 				<input id="email" name="email" type="email" required autocomplete="username" />
 				<button>Continue</button>
 			</form>
-		</div>
-	{:else if $page.url.search === '?submitted'}
-		<p class="verify">
-			If there is an account at the address you entered, an email has been sent with a single-use
-			link to reset your password. It will expire in 10 minutes. Make sure to check your spam
-			folder. If you do not receive an email, it may be because you signed up with a different
-			address. <br /><br />
-			Already changed password? <a href="/login">Login here!</a>
-		</p>
-	{:else if $page.url.search.startsWith('?token')}
-		<div class="form">
+		{:else if $page.url.search === '?submitted'}
+			<p class="verify">
+				If there is an account at the address you entered, an email has been sent with a single-use
+				link to reset your password. It will expire in 10 minutes. Make sure to check your spam
+				folder. If you do not receive an email, it may be because you signed up with a different
+				address. <br /><br />
+				Already changed password? <a href="/login">Login here!</a>
+			</p>
+		{:else if $page.url.search.startsWith('?token')}
 			<form method="POST" action="?/reset" use:enhance>
 				<label for="password">
 					<!-- svelte-ignore a11y-invalid-attribute -->
@@ -47,14 +45,14 @@
 				<input type="hidden" name="token" value={$page.url.searchParams.get('token')} />
 				<button type="submit">Reset</button>
 			</form>
-		</div>
-	{:else if $page.url.search === '?invalid'}
-		<p class="verify">
-			This password reset token either never existed or expired. You can <a
-				href="/login/reset-password">request a new one</a
-			>.
-		</p>
-	{/if}
+		{:else if $page.url.search === '?invalid'}
+			<p class="verify">
+				This password reset token either never existed or expired. You can <a
+					href="/login/reset-password">request a new one</a
+				>.
+			</p>
+		{/if}
+	</div>
 </div>
 
 <style>
@@ -68,45 +66,36 @@
 		min-height: calc(100vh - 159px);
 	}
 
-	.header {
-		color: #f2ebd9;
-		margin-top: 4vw;
-		width: 40%;
-		text-align: left;
-		font-size: 2vw;
+	h1 {
+		color: var(--highlight-color);
+		text-align: center;
+		font-size: min(9.5vw, 3.5em);
+		margin: 15px 0px;
 	}
 
-	.form {
-		width: 40%;
-		padding-left: 0.5vw;
-		padding-right: 0.5vw;
-		padding-top: 0.5vw;
-		padding-bottom: 0.5vw;
-		margin-bottom: 10vw;
-		background-color: #f2ebd9;
+	form {
+		padding: 1em 1em 0 1em;
+		background-color: var(--highlight-color);
 	}
 
 	.verify {
-		width: 40%;
-		padding-left: 0.5vw;
-		padding-right: 0.5vw;
-		padding-top: 0.5vw;
-		padding-bottom: 0.5vw;
-		background-color: #f2ebd9;
+		padding: 1em;
+		background-color: var(--highlight-color);
 	}
 
 	button {
-		margin-bottom: 0.5vw;
+		margin: 1em 0;
 	}
 
 	label {
 		display: block;
-		margin-bottom: 0.5rem;
 	}
 
 	input {
+		background-color: var(--highlight-color);
+		color: #404040;
 		display: block;
-		margin-bottom: 1rem;
+		margin-top: 1em;
 	}
 
 	@media (max-width: 768px) {
