@@ -136,6 +136,12 @@
 		.topographic-background {
 			min-height: calc(100vh - 56px);
 		}
+
+		form,
+		.login {
+			min-width: 20rem;
+			width: 15vw;
+		}
 	}
 
 	@media (max-width: 1090px) {
