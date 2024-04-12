@@ -73,6 +73,9 @@
 		id="declineTemplate"
 	/>
 
+	<label for="withdrawalWarningTemplate"><h2>Withdrawal Warning Email Template</h2></label>
+	<MarkdownEditor value={data.settings.withdrawalWarningTemplate} name="withdrawalWarningTemplate"/>
+
 	<button id="save-templates" type="submit">Save</button>
 </form>
 

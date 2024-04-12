@@ -95,13 +95,14 @@ model Settings {
 
   // PRIVATE SETTINGS (settings that non-admins do not need)
   rollingAdmissions Boolean @default(false)
-  submitTemplate    String  @default("We have received your application to our hackathon!")
-  acceptTemplate    String  @default("You have been accepted to our hackathon!")
-  rejectTemplate    String  @default("We regret to inform you that we cannot offer you a spot at our hackathon this year.")
-  waitlistTemplate  String  @default("We regret to inform you that we cannot offer you a spot at our hackathon at this time.")
-  confirmTemplate   String  @default("Thank you for confirming your attendance to our hackathon! We look forward to seeing you there!")
-  declineTemplate   String  @default("Thank you for letting us know that you will not be able to attend. We hope to see you next year!")
-  applicationLimit  Int?
+  submitTemplate            String  @default("We have received your application to our hackathon!")
+  acceptTemplate            String  @default("You have been accepted to our hackathon!")
+  rejectTemplate            String  @default("We regret to inform you that we cannot offer you a spot at our hackathon this year.")
+  waitlistTemplate          String  @default("We regret to inform you that we cannot offer you a spot at our hackathon at this time.")
+  confirmTemplate           String  @default("Thank you for confirming your attendance to our hackathon! We look forward to seeing you there!")
+  declineTemplate           String  @default("Thank you for letting us know that you will not be able to attend. We hope to see you next year!")
+  withdrawalWarningTemplate String  @default("You started editing your application but did not resubmit it so it is currently withdrawn.")
+  applicationLimit          Int?
 }
 
 model Question {
