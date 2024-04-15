@@ -2,34 +2,12 @@ import { googleAuth, githubAuth } from '$lib/lucia';
 import { trpc } from '$lib/trpc/router';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import type { InfoBox } from '@prisma/client';
+//import type { InfoBox } from '@prisma/client';
 
 export const load = async ({ locals }) => {
 	const sponsors = await trpc(locals.auth).infoBox.getAllOfCategory('SPONSOR');
-	const sponsorsLink = await fetchSponsorLinks(sponsors);
 
-	// Return data with sponsors and their links
-	return {
-		user: (await locals.auth.validate())?.user,
-		announcements: await trpc(locals.auth).announcements.getAll(),
-		schedule: await trpc(locals.auth).events.getAll(),
-		settings: await trpc(locals.auth).settings.getPublic(),
-		faqs: await trpc(locals.auth).infoBox.getAllOfCategory('FAQ'),
-		challenges: await trpc(locals.auth).infoBox.getAllOfCategory('CHALLENGE'),
-		sponsors: sponsors,
-		providers: {
-			google: googleAuth !== null,
-			github: githubAuth !== null,
-		},
-		canApply: await trpc(locals.auth).admissions.canApply(),
-		sponsorsLink: sponsorsLink,
-	};
-};
-
-// Function to fetch pre-signed URLs for sponsor logos
-export async function fetchSponsorLinks(sponsors: InfoBox[]): Promise<Record<string, string>> {
 	const s3Client = new S3Client({ region: process.env.AWS_REGION });
-
 	const sponsorLinks: Record<string, string> = {};
 
 	await Promise.all(
@@ -50,8 +28,51 @@ export async function fetchSponsorLinks(sponsors: InfoBox[]): Promise<Record<str
 		})
 	);
 
-	return sponsorLinks;
-}
+	// Return data with sponsors and their links
+	return {
+		user: (await locals.auth.validate())?.user,
+		announcements: await trpc(locals.auth).announcements.getAll(),
+		schedule: await trpc(locals.auth).events.getAll(),
+		settings: await trpc(locals.auth).settings.getPublic(),
+		faqs: await trpc(locals.auth).infoBox.getAllOfCategory('FAQ'),
+		challenges: await trpc(locals.auth).infoBox.getAllOfCategory('CHALLENGE'),
+		sponsors: sponsors,
+		providers: {
+			google: googleAuth !== null,
+			github: githubAuth !== null,
+		},
+		canApply: await trpc(locals.auth).admissions.canApply(),
+		sponsorsLink: sponsorLinks,
+	};
+};
+
+// Function to fetch pre-signed URLs for sponsor logos
+// I CANNOT USE THIS FUNCTION, perhaps there is a better way to store and access this?
+// export async function fetchSponsorLinks(sponsors: InfoBox[]): Promise<Record<string, string>> {
+// 	const s3Client = new S3Client({ region: process.env.AWS_REGION });
+
+// 	const sponsorLinks: Record<string, string> = {};
+
+// 	await Promise.all(
+// 		sponsors.map(async (sponsor) => {
+// 			try {
+// 				const url = await getSignedUrl(
+// 					s3Client,
+// 					new GetObjectCommand({
+// 						Bucket: process.env.S3_BUCKET,
+// 						Key: `${sponsor.response}`,
+// 					})
+// 				);
+
+// 				sponsorLinks[sponsor.response] = url;
+// 			} catch (error) {
+// 				console.error(`Error fetching signed URL for ${sponsor.response}:`, error);
+// 			}
+// 		})
+// 	);
+
+// 	return sponsorLinks;
+// }
 
 export const actions = {
 	announce: async ({ locals, request }) => {
