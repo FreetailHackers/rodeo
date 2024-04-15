@@ -4,10 +4,12 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
-import { writeFileSync, unlinkSync } from 'fs';
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
+const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
 export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['ADMIN']);
@@ -68,20 +70,38 @@ export const actions = {
 		const formData = await request.formData();
 
 		const sponsorLogo = formData.get('sponsorLogo') as File;
-		const sponsorLink = formData.get('sponsorLink') as string;
+		const sponsorName = formData.get('sponsorName') as string;
 
-		const imageUrl = `static/Sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
-		const fileName = sponsorLogo.name.replace(/[^\w.-]+/g, '');
+		if (
+			sponsorLogo instanceof File &&
+			sponsorLogo.size !== 0 &&
+			sponsorLogo.size <= 5 * 1024 * 1024
+		) {
+			//Remove any duplicate key image names if any
+			const key = `${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
+			const deleteObjectCommand = new DeleteObjectCommand({
+				Bucket: process.env.S3_BUCKET,
+				Key: key,
+			});
+			await s3Client.send(deleteObjectCommand);
 
-		await writeFileSync(imageUrl, Buffer.from(await sponsorLogo?.arrayBuffer()));
+			const putObjectCommand = new PutObjectCommand({
+				Bucket: process.env.S3_BUCKET,
+				Key: key,
+				Body: Buffer.from(await sponsorLogo.arrayBuffer()),
+				ContentType: sponsorLogo.type,
+			});
+			await s3Client.send(putObjectCommand);
 
-		await trpc(locals.auth).infoBox.create({
-			title: fileName,
-			response: sponsorLink,
-			category: 'SPONSOR',
-		});
-
-		return 'Created sponsor!';
+			await trpc(locals.auth).infoBox.create({
+				title: sponsorName,
+				response: key,
+				category: 'SPONSOR',
+			});
+			return 'Created sponsor!';
+		} else {
+			return 'Error in creating sponsor! Please check file input!';
+		}
 	},
 
 	deleteAll: async ({ locals, request }) => {
@@ -100,7 +120,11 @@ export const actions = {
 			const sponsors = await trpc(locals.auth).infoBox.getAllOfCategory('SPONSOR');
 
 			for (const sponsor of sponsors) {
-				await unlinkSync(`static/Sponsors/${sponsor.title}`);
+				const deleteObjectCommand = new DeleteObjectCommand({
+					Bucket: process.env.S3_BUCKET,
+					Key: sponsor.response,
+				});
+				await s3Client.send(deleteObjectCommand);
 			}
 
 			await trpc(locals.auth).infoBox.deleteAllOfCategory('SPONSOR');

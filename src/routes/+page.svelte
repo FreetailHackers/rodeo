@@ -58,7 +58,7 @@
 </section>
 
 <section id="Sponsors">
-	<Sponsors user={data.user} sponsors={data.sponsors} />
+	<Sponsors user={data.user} sponsors={data.sponsors} sponsorLinks={data.sponsorsLink} />
 </section>
 
 <style>

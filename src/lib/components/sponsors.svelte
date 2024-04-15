@@ -2,6 +2,7 @@
 	import type { InfoBox, AuthUser } from '@prisma/client';
 	export let user: AuthUser;
 	export let sponsors: InfoBox[];
+	export let sponsorLinks: Record<string, string>;
 </script>
 
 <div class="main-container">
@@ -23,8 +24,8 @@
 			{#each sponsors as sponsor}
 				<div class="format-edit-and-sponsor">
 					<div class="sponsor-card">
-						<a href={sponsor.response} target="_blank" rel="noopener noreferrer">
-							<img alt="" src={`Sponsors/${sponsor.title}`} />
+						<a href={sponsor.title} target="_blank" rel="noopener noreferrer">
+							<img alt="" src={`${sponsorLinks[sponsor.response]}`} />
 						</a>
 					</div>
 					{#if user?.roles.includes('ADMIN')}
