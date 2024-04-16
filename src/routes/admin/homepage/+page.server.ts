@@ -70,7 +70,7 @@ export const actions = {
 		const formData = await request.formData();
 
 		const sponsorLogo = formData.get('sponsorLogo') as File;
-		const sponsorName = formData.get('sponsorName') as string;
+		const sponsorLink = formData.get('sponsorLink') as string;
 
 		if (
 			sponsorLogo instanceof File &&
@@ -94,7 +94,7 @@ export const actions = {
 			await s3Client.send(putObjectCommand);
 
 			await trpc(locals.auth).infoBox.create({
-				title: sponsorName,
+				title: sponsorLink,
 				response: key,
 				category: 'SPONSOR',
 			});

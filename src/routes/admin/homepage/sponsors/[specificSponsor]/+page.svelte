@@ -38,8 +38,8 @@
 		<label for="sponsorLogo">Sponsor Logo</label>
 		<input type="file" id="sponsorLogo" name="sponsorLogo" accept=".jpg, .jpeg, .png, .webp" />
 
-		<label for="sponsorName">Sponsor Name</label>
-		<input type="text" id="sponsorName" name="sponsorName" value={data.sponsor.title} />
+		<label for="sponsorLink">Sponsor Link</label>
+		<input type="text" id="sponsorLink" name="sponsorLink" value={data.sponsor.title} />
 
 		<button type="submit" style="margin-top: 1rem;">Save</button>
 	</form>

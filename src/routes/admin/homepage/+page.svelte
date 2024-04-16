@@ -97,8 +97,8 @@
 		required
 	/>
 
-	<label for="sponsorName">Sponsor Name</label>
-	<input type="text" id="sponsorName" name="sponsorName" />
+	<label for="sponsorLink">Sponsor Link</label>
+	<input type="text" id="sponsorLink" name="sponsorLink" />
 
 	<button type="submit">Save</button>
 </form>

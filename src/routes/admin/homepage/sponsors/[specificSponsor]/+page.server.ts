@@ -24,36 +24,40 @@ export const actions = {
 	edit: async ({ locals, request }) => {
 		const formData = await request.formData();
 
-		const sponsorLogo: File | null | undefined = formData.get('sponsorLogo') as
-			| File
-			| null
-			| undefined;
-		const sponsorName: string = formData.get('sponsorName') as string;
+		const sponsorLogo: File = formData.get('sponsorLogo') as File;
+		const sponsorLink: string = formData.get('sponsorLink') as string;
 
-		if (sponsorLogo && sponsorLogo?.size !== 0 && sponsorLogo?.size <= 5 * 1024 * 1024) {
-			const key = sponsorLogo.name.replace(/[^\w.-]+/g, '');
+		if (sponsorLogo && sponsorLogo?.size <= 5 * 1024 * 1024) {
+			let key: string = '';
 
 			const existingSponsor = await trpc(locals.auth).infoBox.get(
 				Number(formData.get('id') as string)
 			);
 
-			const deleteObjectCommand = new DeleteObjectCommand({
-				Bucket: process.env.S3_BUCKET,
-				Key: existingSponsor?.response,
-			});
-			await s3Client.send(deleteObjectCommand);
+			//If no file was specified, use pre existing logo
+			if (sponsorLogo?.size === 0 && existingSponsor) {
+				key = existingSponsor.response;
+			} else {
+				key = sponsorLogo.name.replace(/[^\w.-]+/g, '');
 
-			const putObjectCommand = new PutObjectCommand({
-				Bucket: process.env.S3_BUCKET,
-				Key: key,
-				Body: Buffer.from(await sponsorLogo.arrayBuffer()),
-				ContentType: sponsorLogo.type,
-			});
-			await s3Client.send(putObjectCommand);
+				const deleteObjectCommand = new DeleteObjectCommand({
+					Bucket: process.env.S3_BUCKET,
+					Key: existingSponsor?.response,
+				});
+				await s3Client.send(deleteObjectCommand);
+
+				const putObjectCommand = new PutObjectCommand({
+					Bucket: process.env.S3_BUCKET,
+					Key: key,
+					Body: Buffer.from(await sponsorLogo.arrayBuffer()),
+					ContentType: sponsorLogo.type,
+				});
+				await s3Client.send(putObjectCommand);
+			}
 
 			await trpc(locals.auth).infoBox.update({
 				id: Number(formData.get('id') as string),
-				title: sponsorName,
+				title: sponsorLink,
 				response: key,
 				category: 'SPONSOR',
 			});
