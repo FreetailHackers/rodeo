@@ -21,6 +21,7 @@ export const actions = {
 		const formData = await request.formData();
 		const timezone = formData.get('timezone') as string;
 		let applicationDeadline: Date | null;
+		let hackathonStartDate: Date | null;
 		try {
 			applicationDeadline = dayjs
 				.tz(formData.get('applicationDeadline') as string, timezone)
@@ -36,6 +37,13 @@ export const actions = {
 		const applicationOpen = formData.get('applicationOpen') === 'on';
 		const parsedDaysToRSVP = parseInt(formData.get('daysToRSVP') as string, 10);
 		const daysToRSVP: number | null = isNaN(parsedDaysToRSVP) ? null : parsedDaysToRSVP;
+		try {
+			hackathonStartDate = dayjs
+				.tz(formData.get('hackathonStartDate') as string, timezone)
+				.toDate();
+		} catch (e) {
+			hackathonStartDate = null;
+		}
 
 		const scanActions = (formData.get('scanActions') as string)
 			.split('\r\n')
@@ -48,6 +56,7 @@ export const actions = {
 			timezone,
 			applicationDeadline,
 			applicationLimit,
+			hackathonStartDate,
 		});
 		return 'Saved settings!';
 	},

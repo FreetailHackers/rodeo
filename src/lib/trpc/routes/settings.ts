@@ -20,6 +20,7 @@ const settingsSchema = z
 		timezone: z.string().optional(),
 		applicationDeadline: z.date().nullable().optional(),
 		applicationLimit: z.number().nullable().optional(),
+		hackathonStartDate: z.date().nullable().optional(),
 	})
 	.strict();
 
@@ -39,6 +40,7 @@ export const settingsRouter = t.router({
 			scanActions: string[];
 			timezone: string;
 			applicationDeadline: Date | null;
+			hackathonStartDate: Date | null;
 		}> => {
 			const settings = await getSettings();
 			return {
@@ -48,6 +50,7 @@ export const settingsRouter = t.router({
 				scanActions: settings.scanActions,
 				timezone: settings.timezone,
 				applicationDeadline: settings.applicationDeadline,
+				hackathonStartDate: settings.hackathonStartDate,
 			};
 		}
 	),
