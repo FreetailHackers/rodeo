@@ -93,7 +93,14 @@
 		<option value="FAQs"> FAQs </option>
 		<option value="challenges"> Challenges </option>
 	</select>
-	<button disabled={selected === ''} use:confirmationDialog>Delete</button>
+	<button
+		disabled={selected === ''}
+		use:confirmationDialog={{
+			text: 'Are you sure you want to delete the selected items?',
+			cancel: 'Cancel',
+			ok: 'Delete',
+		}}>Delete</button
+	>
 </form>
 
 <style>

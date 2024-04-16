@@ -11,16 +11,28 @@
 	}
 </script>
 
-<div class="accordion">
-	<div class="header" on:click={handleClick} on:keydown={handleKeyDown}>
+<div class="accordion" role="region" aria-labelledby="accordion-heading">
+	<div
+		class="header"
+		role="button"
+		tabindex="0"
+		aria-expanded={open ? 'true' : 'false'}
+		on:click={handleClick}
+		on:keydown={handleKeyDown}
+	>
 		<span class="sign">{open ? '-' : '+'}</span>
-		<span class="text">
+		<span class="text" id="accordion-heading">
 			<slot name="head" />
 		</span>
 	</div>
 
 	{#if open}
-		<div class="details" transition:slide|global>
+		<div
+			class="details"
+			role="region"
+			aria-hidden={open ? 'false' : 'true'}
+			transition:slide|global
+		>
 			<slot name="details" />
 		</div>
 	{/if}

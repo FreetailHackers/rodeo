@@ -33,15 +33,18 @@
 			</h1>
 			<h1 class="mobile">Challenges</h1>
 
-			<div class="container">
+			<div class="container" role="list">
 				{#each challenges as challenge}
 					{#if challenge.category === 'CHALLENGE'}
-						<div class="challenge-wrapper" on:mouseleave={handleMouseLeave}>
+						<div class="challenge-wrapper" role="listitem" on:mouseleave={handleMouseLeave}>
 							<div
 								class="challenge-box"
 								class:flipped={flippedCard === challenge.title}
 								on:click={() => toggleFlip(challenge.title)}
 								on:keydown={(event) => handleKeyDown(event, challenge.title)}
+								role="button"
+								tabindex="0"
+								aria-label="Toggle Description"
 							>
 								<div class={flippedCard === challenge.title ? 'description-text' : 'content'}>
 									{flippedCard === challenge.title ? challenge.response : challenge.title}

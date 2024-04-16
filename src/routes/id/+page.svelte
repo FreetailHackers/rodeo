@@ -22,7 +22,7 @@
 
 	<div class="driver-div">
 		<h1 class="driver-div-text">Driver</h1>
-		<h1 class="driver-div-text red ">License</h1>
+		<h1 class="driver-div-text red">License</h1>
 		<canvas bind:this={canvas} id="qrcode" />
 	</div>
 
