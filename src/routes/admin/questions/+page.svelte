@@ -188,6 +188,11 @@
 					label="Hide Question From Scan Page"
 					checked={question.hideScan}
 				/>
+				<Toggle
+					name={question.id + '_hideStat'}
+					label="Hide Question From Statistics"
+					checked={question.hideStat}
+				/>
 			</div>
 			<Toggle
 				name={question.id + '_sponsorView'}

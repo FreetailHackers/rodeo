@@ -75,6 +75,7 @@ export const actions = {
 			questions[id].sponsorView = questions[id].sponsorView === 'on';
 			questions[id].hideAdmission = questions[id].hideAdmission === 'on';
 			questions[id].hideScan = questions[id].hideScan === 'on';
+			questions[id].hideStat = questions[id].hideStat === 'on';
 			if (questions[id].type === 'NUMBER') {
 				const min = Number(questions[id].min);
 				const max = Number(questions[id].max);

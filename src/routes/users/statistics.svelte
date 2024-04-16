@@ -76,7 +76,7 @@
 		<p>No statistics available.</p>
 	{/if}
 	{#each questions as question}
-		{#if stats[question.id] !== undefined}
+		{#if stats[question.id] !== undefined && !question.hideStat}
 			<details>
 				<summary class="question-label">{question.label}</summary>
 				{#if question.type === 'NUMBER'}

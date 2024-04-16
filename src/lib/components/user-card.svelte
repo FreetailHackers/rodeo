@@ -13,7 +13,7 @@
 <p><b>Verified Email</b> {user.authUser?.verifiedEmail}</p>
 <p><b>Role</b> {user.authUser?.roles.join(', ')}</p>
 <p>
-	<b>Status</b>
+	<b>Status</b>b
 	{user.authUser?.status}
 	{#if user.decision}(Pending {user.decision.status}){/if}
 </p>

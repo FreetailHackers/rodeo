@@ -123,6 +123,7 @@ model Question {
   sponsorView   Boolean      @default(false) // For all questions
   hideAdmission Boolean      @default(false)
   hideScan      Boolean      @default(false)
+  hideStat    Boolean      @default(false)
 }
 
 model Event {
