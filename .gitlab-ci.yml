@@ -107,7 +107,7 @@ deploy-preview-job:
     # Deploy to Vercel with branch-specific database
     - npx vercel deploy --token=$VERCEL_TOKEN --env DATABASE_URL=$DATABASE_URL > domain.txt
     # Switch to the correct Vercel project
-    - npx vercel switch freetailhackers-projects --token=$VERCEL_TOKEN
+    - npx vercel switch freetailhackers-projects --scope=$VERCEL_SCOPE
     # If this is the master branch, alias it to our permanent staging URL
     - export DOMAIN_NAME=$(cat domain.txt)
     - if [ "$CI_COMMIT_BRANCH" == "master" ]; then npx vercel alias --token=$VERCEL_TOKEN set $DOMAIN_NAME $STAGING_URL; fi
