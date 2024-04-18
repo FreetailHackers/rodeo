@@ -19,7 +19,6 @@ export const load = async ({ locals }) => {
 						Key: `${sponsor.response}`,
 					})
 				);
-
 				sponsorLinks[sponsor.response] = url;
 			} catch (error) {
 				console.error(`Error fetching signed URL for ${sponsor.response}:`, error);
