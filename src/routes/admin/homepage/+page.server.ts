@@ -1,10 +1,11 @@
 import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
+import { s3UploadHandler } from '$lib/s3UploadHandler';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -72,26 +73,10 @@ export const actions = {
 		const sponsorLogo = formData.get('sponsorLogo') as File;
 		const sponsorLink = formData.get('sponsorLink') as string;
 
-		if (
-			sponsorLogo instanceof File &&
-			sponsorLogo.size !== 0 &&
-			sponsorLogo.size <= 5 * 1024 * 1024
-		) {
-			//Remove any duplicate key image names if any
-			const key = `${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
-			const deleteObjectCommand = new DeleteObjectCommand({
-				Bucket: process.env.S3_BUCKET,
-				Key: key,
-			});
-			await s3Client.send(deleteObjectCommand);
+		if (sponsorLogo instanceof File && sponsorLogo.size !== 0 && sponsorLogo.size <= 1024 * 1024) {
+			const key = `sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
 
-			const putObjectCommand = new PutObjectCommand({
-				Bucket: process.env.S3_BUCKET,
-				Key: key,
-				Body: Buffer.from(await sponsorLogo.arrayBuffer()),
-				ContentType: sponsorLogo.type,
-			});
-			await s3Client.send(putObjectCommand);
+			s3UploadHandler(key, sponsorLogo);
 
 			await trpc(locals.auth).infoBox.create({
 				title: sponsorLink,

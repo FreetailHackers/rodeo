@@ -39,7 +39,7 @@
 		<input type="file" id="sponsorLogo" name="sponsorLogo" accept=".jpg, .jpeg, .png, .webp" />
 
 		<label for="sponsorLink">Sponsor Link</label>
-		<input type="text" id="sponsorLink" name="sponsorLink" value={data.sponsor.title} />
+		<input type="url" id="sponsorLink" name="sponsorLink" value={data.sponsor.title} />
 
 		<button type="submit" style="margin-top: 1rem;">Save</button>
 	</form>
@@ -54,6 +54,6 @@
 
 	input,
 	form {
-		margin-bottom: 2rem;
+		margin-bottom: 0.5rem;
 	}
 </style>

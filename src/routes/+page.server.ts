@@ -3,10 +3,10 @@ import { trpc } from '$lib/trpc/router';
 import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
+const s3Client = new S3Client({ region: process.env.AWS_REGION });
+
 export const load = async ({ locals }) => {
 	const sponsors = await trpc(locals.auth).infoBox.getAllOfCategory('SPONSOR');
-
-	const s3Client = new S3Client({ region: process.env.AWS_REGION });
 	const sponsorLinks: Record<string, string> = {};
 
 	await Promise.all(

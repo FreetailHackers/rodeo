@@ -1,8 +1,8 @@
 import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import { error, redirect } from '@sveltejs/kit';
-
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { s3UploadHandler } from '$lib/s3UploadHandler';
+import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
@@ -24,10 +24,10 @@ export const actions = {
 	edit: async ({ locals, request }) => {
 		const formData = await request.formData();
 
-		const sponsorLogo: File = formData.get('sponsorLogo') as File;
-		const sponsorLink: string = formData.get('sponsorLink') as string;
+		const sponsorLogo = formData.get('sponsorLogo') as File;
+		const sponsorLink = formData.get('sponsorLink') as string;
 
-		if (sponsorLogo && sponsorLogo?.size <= 5 * 1024 * 1024) {
+		if (sponsorLogo && sponsorLogo?.size <= 1024 * 1024) {
 			let key: string = '';
 
 			const existingSponsor = await trpc(locals.auth).infoBox.get(
@@ -38,21 +38,15 @@ export const actions = {
 			if (sponsorLogo?.size === 0 && existingSponsor) {
 				key = existingSponsor.response;
 			} else {
-				key = sponsorLogo.name.replace(/[^\w.-]+/g, '');
-
+				//Deleting previous logo
 				const deleteObjectCommand = new DeleteObjectCommand({
 					Bucket: process.env.S3_BUCKET,
 					Key: existingSponsor?.response,
 				});
 				await s3Client.send(deleteObjectCommand);
-
-				const putObjectCommand = new PutObjectCommand({
-					Bucket: process.env.S3_BUCKET,
-					Key: key,
-					Body: Buffer.from(await sponsorLogo.arrayBuffer()),
-					ContentType: sponsorLogo.type,
-				});
-				await s3Client.send(putObjectCommand);
+				//uploading new logo
+				key = `sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
+				s3UploadHandler(key, sponsorLogo);
 			}
 
 			await trpc(locals.auth).infoBox.update({

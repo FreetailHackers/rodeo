@@ -98,7 +98,7 @@
 	/>
 
 	<label for="sponsorLink">Sponsor Link</label>
-	<input type="text" id="sponsorLink" name="sponsorLink" />
+	<input type="url" id="sponsorLink" name="sponsorLink" required />
 
 	<button type="submit">Save</button>
 </form>
