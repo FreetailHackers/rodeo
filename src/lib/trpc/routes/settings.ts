@@ -16,7 +16,6 @@ const settingsSchema = z
 		waitlistTemplate: z.string().optional(),
 		confirmTemplate: z.string().optional(),
 		declineTemplate: z.string().optional(),
-		withdrawalWarningTemplate: z.string().optional(),
 		scanActions: z.string().array().optional(),
 		timezone: z.string().optional(),
 		applicationDeadline: z.date().nullable().optional(),
