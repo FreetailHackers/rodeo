@@ -33,7 +33,7 @@
 	</div>
 </div>
 <div>
-	{#if !data.settings.showAnnouncements}
+	{#if data.settings.showAnnouncements}
 		{#if data.user !== undefined}
 			<!-- Admin announcements panel -->
 			<section id="Announcements">
@@ -50,7 +50,7 @@
 	{/if}
 </div>
 
-{#if !data.settings.showSchedule}
+{#if data.settings.showSchedule}
 	<section id="Schedule">
 		<Schedule
 			user={data.user}
@@ -60,19 +60,19 @@
 	</section>
 {/if}
 
-{#if !data.settings.showFAQ}
+{#if data.settings.showFAQ}
 	<section id="FAQ">
 		<FAQ user={data.user} questions={data.faqs} />
 	</section>
 {/if}
 
-{#if !data.settings.showChallenges}
+{#if data.settings.showChallenges}
 	<section id="Challenges">
 		<Challenges user={data.user} challenges={data.challenges} />
 	</section>
 {/if}
 
-{#if !data.settings.showSponsors}
+{#if data.settings.showSponsors}
 	<section id="Sponsors">
 		<Sponsors
 			sponsors={[

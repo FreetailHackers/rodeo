@@ -33,7 +33,17 @@
 	<button id="save-homepage-text" type="submit">Save</button>
 </form>
 
-<form method="POST" action="?/showSections" use:enhance>
+<!-- <form method="POST" action="?/showSections" use:enhance> -->
+
+<form
+	method="POST"
+	action="?/showSections"
+	use:enhance={() => {
+		return async ({ update }) => {
+			update({ reset: false });
+		};
+	}}
+>
 	<label for="showSections"><h2>Show Homepage Sections</h2></label>
 	<label for="showAnnouncements"><h4>Show Announcements</h4></label>
 	<Toggle

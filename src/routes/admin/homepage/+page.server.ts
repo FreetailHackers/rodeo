@@ -35,6 +35,7 @@ export const actions = {
 		const showFAQ = formData.get('showFAQ') === 'true';
 		const showChallenges = formData.get('showChallenges') === 'true';
 		const showSponsors = formData.get('showSponsors') === 'true';
+		console.log(showAnnouncements);
 		await trpc(locals.auth).settings.update({
 			showAnnouncements,
 			showSchedule,
