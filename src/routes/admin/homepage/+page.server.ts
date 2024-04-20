@@ -11,6 +11,11 @@ export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['ADMIN']);
 	return {
 		homepageText: (await trpc(locals.auth).settings.getAll()).homepageText,
+		showAnnouncements: (await trpc(locals.auth).settings.getAll()).showAnnouncements,
+		showSchedule: (await trpc(locals.auth).settings.getAll()).showSchedule,
+		showFAQ: (await trpc(locals.auth).settings.getAll()).showFAQ,
+		showChallenges: (await trpc(locals.auth).settings.getAll()).showChallenges,
+		showSponsors: (await trpc(locals.auth).settings.getAll()).showSponsors,
 	};
 };
 
@@ -19,6 +24,23 @@ export const actions = {
 		const homepageText = (await request.formData()).get('homepageText') as string;
 		await trpc(locals.auth).settings.update({
 			homepageText,
+		});
+		return 'Saved settings!';
+	},
+
+	showSections: async ({ locals, request }) => {
+		const formData = await request.formData();
+		const showAnnouncements = formData.get('showAnnouncements') === 'true';
+		const showSchedule = formData.get('showSchedule') === 'true';
+		const showFAQ = formData.get('showFAQ') === 'true';
+		const showChallenges = formData.get('showChallenges') === 'true';
+		const showSponsors = formData.get('showSponsors') === 'true';
+		await trpc(locals.auth).settings.update({
+			showAnnouncements,
+			showSchedule,
+			showFAQ,
+			showChallenges,
+			showSponsors,
 		});
 		return 'Saved settings!';
 	},

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { confirmationDialog } from '$lib/actions.js';
+	import Toggle from '$lib/components/toggle.svelte';
 	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
 	export let data;
 
@@ -30,6 +31,25 @@
 	/>
 
 	<button id="save-homepage-text" type="submit">Save</button>
+</form>
+
+<form method="POST" action="?/showSections" use:enhance>
+	<label for="showSections"><h2>Show Homepage Sections</h2></label>
+	<label for="showAnnouncements"><h4>Show Announcements</h4></label>
+	<Toggle
+		name="showAnnouncements"
+		label="Show Announcements"
+		bind:checked={data.showAnnouncements}
+	/>
+	<label for="showSchedule"><h4>Show Schedule</h4></label>
+	<Toggle name="showSchedule" label="Show Schedule" bind:checked={data.showSchedule} />
+	<label for="showFAQ"><h4>Show FAQ</h4></label>
+	<Toggle name="showFAQ" label="Show FAQ" bind:checked={data.showFAQ} />
+	<label for="showChallenges"><h4>Show Challenges</h4></label>
+	<Toggle name="showChallenges" label="Show Challenges" bind:checked={data.showChallenges} />
+	<label for="showSponsors"><h4>Show Sponsors</h4></label>
+	<Toggle name="showSponsors" label="Show Sponsors" bind:checked={data.showSponsors} />
+	<button id="save-show-sections" type="submit">Save</button>
 </form>
 
 <form method="POST" action="?/createEvent" use:enhance>

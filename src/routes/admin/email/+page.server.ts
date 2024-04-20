@@ -32,7 +32,6 @@ export const actions = {
 		const waitlistTemplate = formData.get('waitlistTemplate') as string;
 		const confirmTemplate = formData.get('confirmTemplate') as string;
 		const declineTemplate = formData.get('declineTemplate') as string;
-		const withdrawalWarningTemplate = formData.get('withdrawalWarningTemplate') as string;
 		await trpc(locals.auth).settings.update({
 			submitTemplate,
 			acceptTemplate,
@@ -40,7 +39,6 @@ export const actions = {
 			waitlistTemplate,
 			confirmTemplate,
 			declineTemplate,
-			withdrawalWarningTemplate,
 		});
 		return 'Saved settings!';
 	},
