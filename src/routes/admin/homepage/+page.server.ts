@@ -30,11 +30,11 @@ export const actions = {
 
 	showSections: async ({ locals, request }) => {
 		const formData = await request.formData();
-		const showAnnouncements = formData.get('showAnnouncements') === 'true';
-		const showSchedule = formData.get('showSchedule') === 'true';
-		const showFAQ = formData.get('showFAQ') === 'true';
-		const showChallenges = formData.get('showChallenges') === 'true';
-		const showSponsors = formData.get('showSponsors') === 'true';
+		const showAnnouncements = formData.get('showAnnouncements') === 'on';
+		const showSchedule = formData.get('showSchedule') === 'on';
+		const showFAQ = formData.get('showFAQ') === 'on';
+		const showChallenges = formData.get('showChallenges') === 'on';
+		const showSponsors = formData.get('showSponsors') === 'on';
 		console.log(showAnnouncements);
 		await trpc(locals.auth).settings.update({
 			showAnnouncements,
