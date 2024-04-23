@@ -11,13 +11,6 @@ export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['ADMIN']);
 	return {
 		settings: await trpc(locals.auth).settings.getPublic(),
-		// homepageText: (await trpc(locals.auth).settings.getAll()).homepageText,
-		// showSectionToggles: await trpc(locals.auth).settings.getAll(),
-		// showAnnouncements: (await trpc(locals.auth).settings.getAll()).showAnnouncements,
-		// showSchedule: (await trpc(locals.auth).settings.getAll()).showSchedule,
-		// showFAQ: (await trpc(locals.auth).settings.getAll()).showFAQ,
-		// showChallenges: (await trpc(locals.auth).settings.getAll()).showChallenges,
-		// showSponsors: (await trpc(locals.auth).settings.getAll()).showSponsors,
 	};
 };
 
