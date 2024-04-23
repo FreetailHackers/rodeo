@@ -20,7 +20,7 @@ export const actions = {
 		await trpc(locals.auth).settings.update({
 			homepageText,
 		});
-		return 'Saved settings!';
+		return 'Saved homepage text!';
 	},
 
 	showSections: async ({ locals, request }) => {
@@ -37,7 +37,7 @@ export const actions = {
 			showChallenges,
 			showSponsors,
 		});
-		return 'Saved settings!';
+		return 'Saved displayed sections!';
 	},
 
 	createEvent: async ({ locals, request }) => {
