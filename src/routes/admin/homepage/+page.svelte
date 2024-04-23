@@ -27,7 +27,7 @@
 		name="homepageText"
 		id="homepageText"
 		rows={25}
-		value={data.homepageText}
+		value={data.settings.homepageText}
 	/>
 
 	<button id="save-homepage-text" type="submit">Save</button>
@@ -47,20 +47,24 @@
 		<Toggle
 			name="showAnnouncements"
 			label="Show Announcements"
-			bind:checked={data.showAnnouncements}
+			bind:checked={data.settings.showAnnouncements}
 		/>
 	</div>
 	<div class="toggle-container">
-		<Toggle name="showSchedule" label="Show Schedule" bind:checked={data.showSchedule} />
+		<Toggle name="showSchedule" label="Show Schedule" bind:checked={data.settings.showSchedule} />
 	</div>
 	<div class="toggle-container">
-		<Toggle name="showFAQ" label="Show FAQ" bind:checked={data.showFAQ} />
+		<Toggle name="showFAQ" label="Show FAQ" bind:checked={data.settings.showFAQ} />
 	</div>
 	<div class="toggle-container">
-		<Toggle name="showChallenges" label="Show Challenges" bind:checked={data.showChallenges} />
+		<Toggle
+			name="showChallenges"
+			label="Show Challenges"
+			bind:checked={data.settings.showChallenges}
+		/>
 	</div>
 	<div class="toggle-container">
-		<Toggle name="showSponsors" label="Show Sponsors" bind:checked={data.showSponsors} />
+		<Toggle name="showSponsors" label="Show Sponsors" bind:checked={data.settings.showSponsors} />
 	</div>
 	<button id="save-show-sections" type="submit">Save</button>
 </form>
