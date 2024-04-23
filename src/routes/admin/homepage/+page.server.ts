@@ -11,6 +11,7 @@ export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['ADMIN']);
 	return {
 		homepageText: (await trpc(locals.auth).settings.getAll()).homepageText,
+		showSectionToggles: await trpc(locals.auth).settings.getAll(),
 		showAnnouncements: (await trpc(locals.auth).settings.getAll()).showAnnouncements,
 		showSchedule: (await trpc(locals.auth).settings.getAll()).showSchedule,
 		showFAQ: (await trpc(locals.auth).settings.getAll()).showFAQ,
@@ -35,7 +36,6 @@ export const actions = {
 		const showFAQ = formData.get('showFAQ') === 'on';
 		const showChallenges = formData.get('showChallenges') === 'on';
 		const showSponsors = formData.get('showSponsors') === 'on';
-		console.log(showAnnouncements);
 		await trpc(locals.auth).settings.update({
 			showAnnouncements,
 			showSchedule,
