@@ -226,6 +226,14 @@ export const usersRouter = t.router({
 				where: { id: req.ctx.user.id },
 				data: { status: 'CREATED' },
 			});
+			const subject = 'Application Withdrawal Warning';
+			await sendEmails(
+				[req.ctx.user.email],
+				subject,
+				(
+					await getSettings()
+				).withdrawalWarningTemplate
+			);
 		}),
 
 	getRSVPDeadline: t.procedure
