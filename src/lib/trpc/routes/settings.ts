@@ -16,10 +16,16 @@ const settingsSchema = z
 		waitlistTemplate: z.string().optional(),
 		confirmTemplate: z.string().optional(),
 		declineTemplate: z.string().optional(),
+		withdrawalWarningTemplate: z.string().optional(),
 		scanActions: z.string().array().optional(),
 		timezone: z.string().optional(),
 		applicationDeadline: z.date().nullable().optional(),
 		applicationLimit: z.number().nullable().optional(),
+		showAnnouncements: z.boolean().optional(),
+		showSchedule: z.boolean().optional(),
+		showFAQ: z.boolean().optional(),
+		showChallenges: z.boolean().optional(),
+		showSponsors: z.boolean().optional(),
 	})
 	.strict();
 
@@ -39,6 +45,11 @@ export const settingsRouter = t.router({
 			scanActions: string[];
 			timezone: string;
 			applicationDeadline: Date | null;
+			showAnnouncements: boolean;
+			showSchedule: boolean;
+			showFAQ: boolean;
+			showChallenges: boolean;
+			showSponsors: boolean;
 		}> => {
 			const settings = await getSettings();
 			return {
@@ -48,6 +59,11 @@ export const settingsRouter = t.router({
 				scanActions: settings.scanActions,
 				timezone: settings.timezone,
 				applicationDeadline: settings.applicationDeadline,
+				showAnnouncements: settings.showAnnouncements,
+				showSchedule: settings.showSchedule,
+				showFAQ: settings.showFAQ,
+				showChallenges: settings.showChallenges,
+				showSponsors: settings.showSponsors,
 			};
 		}
 	),

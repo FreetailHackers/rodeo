@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { confirmationDialog } from '$lib/actions.js';
+	import Toggle from '$lib/components/toggle.svelte';
 	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
 	export let data;
 
@@ -26,10 +27,46 @@
 		name="homepageText"
 		id="homepageText"
 		rows={25}
-		value={data.homepageText}
+		value={data.settings.homepageText}
 	/>
 
 	<button id="save-homepage-text" type="submit">Save</button>
+</form>
+
+<form
+	method="POST"
+	action="?/showSections"
+	use:enhance={() => {
+		return async ({ update }) => {
+			update({ reset: false });
+		};
+	}}
+>
+	<label for="showSections"><h2>Show Homepage Sections</h2></label>
+	<div class="toggle-container">
+		<Toggle
+			name="showAnnouncements"
+			label="Show Announcements"
+			bind:checked={data.settings.showAnnouncements}
+		/>
+	</div>
+	<div class="toggle-container">
+		<Toggle name="showSchedule" label="Show Schedule" bind:checked={data.settings.showSchedule} />
+	</div>
+	<div class="toggle-container">
+		<Toggle name="showFAQ" label="Show FAQ" bind:checked={data.settings.showFAQ} />
+	</div>
+	<div class="toggle-container">
+		<Toggle
+			name="showChallenges"
+			label="Show Challenges"
+			bind:checked={data.settings.showChallenges}
+		/>
+	</div>
+	<div class="toggle-container">
+		<Toggle name="showSponsors" label="Show Sponsors" bind:checked={data.settings.showSponsors} />
+	</div>
+	<button id="save-show-sections" type="submit">Save</button>
 </form>
 
 <form method="POST" action="?/createEvent" use:enhance>
@@ -129,6 +166,10 @@
 	}
 
 	button {
+		margin-bottom: 1rem;
+	}
+
+	.toggle-container {
 		margin-bottom: 1rem;
 	}
 </style>

@@ -34,17 +34,17 @@ export const actions = {
 				Number(formData.get('id') as string)
 			);
 
-			//If no file was specified, use pre existing logo
+			// If no file was specified, use pre existing logo
 			if (sponsorLogo?.size === 0 && existingSponsor) {
 				key = existingSponsor.response;
 			} else {
-				//Deleting previous logo
+				// Deleting previous logo
 				const deleteObjectCommand = new DeleteObjectCommand({
 					Bucket: process.env.S3_BUCKET,
 					Key: existingSponsor?.response,
 				});
 				await s3Client.send(deleteObjectCommand);
-				//uploading new logo
+				// Uploading new logo
 				key = `sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
 				s3UploadHandler(key, sponsorLogo);
 			}
@@ -68,7 +68,7 @@ export const actions = {
 			Number(formData.get('id') as string)
 		);
 
-		//Deleting uploaded image
+		// Deleting uploaded image
 		const deleteObjectCommand = new DeleteObjectCommand({
 			Bucket: process.env.S3_BUCKET,
 			Key: existingSponsor?.response,

@@ -15,7 +15,7 @@ const s3Client = new S3Client({ region: process.env.AWS_REGION });
 export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['ADMIN']);
 	return {
-		homepageText: (await trpc(locals.auth).settings.getAll()).homepageText,
+		settings: await trpc(locals.auth).settings.getPublic(),
 	};
 };
 
@@ -25,7 +25,24 @@ export const actions = {
 		await trpc(locals.auth).settings.update({
 			homepageText,
 		});
-		return 'Saved settings!';
+		return 'Saved homepage text!';
+	},
+
+	showSections: async ({ locals, request }) => {
+		const formData = await request.formData();
+		const showAnnouncements = formData.get('showAnnouncements') === 'on';
+		const showSchedule = formData.get('showSchedule') === 'on';
+		const showFAQ = formData.get('showFAQ') === 'on';
+		const showChallenges = formData.get('showChallenges') === 'on';
+		const showSponsors = formData.get('showSponsors') === 'on';
+		await trpc(locals.auth).settings.update({
+			showAnnouncements,
+			showSchedule,
+			showFAQ,
+			showChallenges,
+			showSponsors,
+		});
+		return 'Saved displayed sections!';
 	},
 
 	createEvent: async ({ locals, request }) => {

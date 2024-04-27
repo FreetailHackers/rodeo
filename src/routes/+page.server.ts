@@ -9,6 +9,7 @@ export const load = async ({ locals }) => {
 	const sponsors = await trpc(locals.auth).infoBox.getAllOfCategory('SPONSOR');
 	const sponsorLinks: Record<string, string> = {};
 
+	// Get links of all the sponsor images
 	await Promise.all(
 		sponsors.map(async (sponsor) => {
 			try {
@@ -34,6 +35,9 @@ export const load = async ({ locals }) => {
 		faqs: await trpc(locals.auth).infoBox.getAllOfCategory('FAQ'),
 		challenges: await trpc(locals.auth).infoBox.getAllOfCategory('CHALLENGE'),
 		sponsors: sponsors,
+
+		// Check whether various OAuth providers are set up in
+		// environment variables so we can show/hide buttons.
 		providers: {
 			google: googleAuth !== null,
 			github: githubAuth !== null,

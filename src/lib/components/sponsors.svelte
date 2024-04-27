@@ -108,6 +108,11 @@
 		text-decoration: none;
 	}
 
+	.edit a {
+		color: #e1563f;
+		text-decoration: underline;
+	}
+
 	.sponsor-container {
 		display: flex;
 		justify-content: space-evenly;
