@@ -92,7 +92,7 @@ export const usersRouter = t.router({
 						req.input[question.id].size > 0 &&
 						req.input[question.id].size <= question.maxSizeMB * 1024 * 1024
 					) {
-						const key = `${req.ctx.user.id}/${question.id}`;
+						const key = `files/${req.ctx.user.id}/${question.id}`;
 						const deleteObjectCommand = new DeleteObjectCommand({
 							Bucket: process.env.S3_BUCKET,
 							Key: key,
