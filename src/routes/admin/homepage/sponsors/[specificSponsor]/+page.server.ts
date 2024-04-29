@@ -27,7 +27,7 @@ export const actions = {
 		const sponsorLogo = formData.get('sponsorLogo') as File;
 		const sponsorLink = formData.get('sponsorLink') as string;
 
-		if (sponsorLogo && sponsorLogo?.size <= 1024 * 1024) {
+		if (sponsorLogo && sponsorLogo.size <= 1024 * 1024) {
 			let key: string = '';
 
 			const existingSponsor = await trpc(locals.auth).infoBox.get(
@@ -63,10 +63,9 @@ export const actions = {
 
 	delete: async ({ locals, request }) => {
 		const formData = await request.formData();
+		const id = Number(formData.get('id') as string);
 
-		const existingSponsor = await trpc(locals.auth).infoBox.get(
-			Number(formData.get('id') as string)
-		);
+		const existingSponsor = await trpc(locals.auth).infoBox.get(id);
 
 		// Deleting uploaded image
 		const deleteObjectCommand = new DeleteObjectCommand({
@@ -75,7 +74,7 @@ export const actions = {
 		});
 		await s3Client.send(deleteObjectCommand);
 
-		await trpc(locals.auth).infoBox.delete(Number(formData.get('id') as string));
+		await trpc(locals.auth).infoBox.delete(id);
 		throw redirect(303, '/');
 	},
 };
