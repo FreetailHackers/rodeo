@@ -25,7 +25,7 @@
 				<div class="format-edit-and-sponsor">
 					<div class="sponsor-card">
 						<a href={sponsor.title} target="_blank" rel="noopener noreferrer">
-							<img alt="Sponsor_Image" src={`${sponsorLinks[sponsor.response]}`} />
+							<img alt="SponsorImage" src={`${sponsorLinks[sponsor.response]}`} />
 						</a>
 					</div>
 					{#if user?.roles.includes('ADMIN')}
