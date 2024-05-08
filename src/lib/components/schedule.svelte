@@ -96,7 +96,7 @@
 										<p class="location">{event.location}</p>
 										{#if user?.roles.includes('ADMIN')}
 											<p>
-												<a class="edit" href="/admin/homepage/schedule/{event.id}">Edit</a>
+												<a href="/admin/homepage/schedule/{event.id}">Edit</a>
 											</p>
 										{/if}
 									</div>
@@ -188,7 +188,8 @@
 		display: none;
 	}
 
-	.calendar-export {
+	.calendar-export,
+	button {
 		text-decoration: none;
 		color: var(--background-color);
 	}
@@ -223,6 +224,10 @@
 
 	.card:hover .date {
 		display: none;
+	}
+
+	.card:hover a {
+		color: var(--background-color);
 	}
 
 	.card-text,

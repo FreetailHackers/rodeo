@@ -34,14 +34,12 @@
 
 	#padding {
 		height: 1rem;
-		background: linear-gradient(transparent, white);
 	}
 
 	form {
 		flex-direction: row;
 		justify-content: space-between;
 		gap: 1rem;
-		background: white;
 		padding-bottom: 1rem;
 	}
 

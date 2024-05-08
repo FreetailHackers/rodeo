@@ -7,14 +7,13 @@ html {
 :root {
 	--font-family: 'Inter', 'Roboto', sans-serif;
 	--font-size: 16px;
-	--highlight-color: #f2ebd9;
-	--secondary-color: #4e656d;
-	--background-color: #fffefb;
-	--primary-accent: #6262d8;
-}
-
-.homepage-content > h1 {
-	text-align: center;
+	/* --highlight-color: #f2ebd9;
+	--secondary-color: #4e656d; */
+	/* --background-color: #fffefb;
+	--primary-accent: #6262d8; */
+	--background-color: #face4c;
+	--primary-accent: #007a33;
+	background-color: var(--background-color);
 }
 
 h1,
@@ -28,6 +27,17 @@ h6 {
 	font-style: normal;
 	text-transform: uppercase;
 	cursor: default;
+}
+
+.homepage-content > h1 {
+	text-align: center;
+	text-transform: none;
+	color: var(--primary-accent);
+}
+
+.homepage-content h2 {
+	color: var(--primary-accent);
+	text-transform: none;
 }
 
 p {

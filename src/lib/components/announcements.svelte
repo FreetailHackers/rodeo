@@ -13,12 +13,7 @@
 	<h1>Announcements</h1>
 	{#if admin}
 		<form class="pad" method="POST" action="?/announce" use:enhance>
-			<MarkdownEditor
-				name="announcement"
-				placeholder="Make an announcement here..."
-				required
-				useAnnouncementFont={true}
-			/>
+			<MarkdownEditor name="announcement" placeholder="Make an announcement here..." required />
 			<button class="button-label">Announce</button>
 		</form>
 	{/if}
@@ -99,11 +94,10 @@
 	}
 
 	.text {
-		font-family: 'Fugaz One';
-		color: #1d1d1c;
+		color: var(--background-color);
 		font-weight: 400;
-		margin-top: -10px;
 	}
+
 	ul {
 		list-style: none;
 		padding-left: 0;
@@ -127,7 +121,6 @@
 	.deleteButton {
 		display: inline;
 		height: initial;
-		background-color: transparent;
-		color: gray;
+		color: var(--background-color);
 	}
 </style>
