@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Verify Email</title>
+	<title>Rodeo | Verify Email</title>
 </svelte:head>
 
 <div class="topographic-background">
@@ -18,13 +18,13 @@
 
 <style>
 	.topographic-background {
-		display: flex;
+		/* display: flex;
 		flex-direction: column;
 		align-items: center;
 		background-color: #303030;
 		background-image: url('/Topographic Background.svg');
 		background-size: 110%;
-		min-height: calc(100vh - 159px);
+		min-height: calc(100vh - 159px); */
 	}
 
 	.top-margin {

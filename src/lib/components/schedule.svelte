@@ -57,131 +57,99 @@
 	});
 </script>
 
-{#if schedule.length > 0}
-	<div class="topographic-background">
-		<h1>Schedule</h1>
-		<div class="container">
-			<div class="sidebar">
-				<h2>Filters</h2>
-				<div class="button-container">
-					{#each filters as filter}
-						<button
-							class:active={selected === filter}
-							data-name={filter}
-							on:click={() => (selected = selected === filter ? null : filter)}
-						>
-							{filter}
-						</button>
-					{/each}
+<div class="homepage-content">
+	<h1>Schedule</h1>
+	<div class="container">
+		<div class="sidebar">
+			<h2>Filters</h2>
+			<div class="button-container">
+				{#each filters as filter}
+					<button
+						class:active={selected === filter}
+						data-name={filter}
+						on:click={() => (selected = selected === filter ? null : filter)}
+					>
+						{filter}
+					</button>
+				{/each}
 
-					{#if url && schedule.length > 0}
-						<button
-							><a class="calendar-export" href={url} download="events.ics">Download Schedule</a
-							></button
-						>{/if}
-				</div>
+				{#if url && schedule.length > 0}
+					<button
+						><a class="calendar-export" href={url} download="events.ics">Download Schedule</a
+						></button
+					>{/if}
 			</div>
-			{#each groupByDateArray as { day, events }}
-				<div class="column">
-					<h2>{day}</h2>
-					{#if selected === null || events.some((event) => event.type === selected)}
-						{#each events as event}
-							{#if selected === null || event.type === selected}
-								<div
-									class="card card-text"
-									class:currentEvent={currentTime >= event.start && currentTime < event.end}
-								>
-									<div class="flex-row">
-										<div>
-											<p class="name">{event.name}</p>
-											<p class="location">{event.location}</p>
-											{#if user?.roles.includes('ADMIN')}
-												<p>
-													<a class="edit" href="/admin/homepage/schedule/{event.id}">Edit</a>
-												</p>
-											{/if}
-										</div>
-										<p class="date">
-											{event.start.toLocaleString('en-US', {
-												timeZone: settings_timezone,
-												hour: 'numeric',
-												minute: 'numeric',
-												hour12: true,
-											})}
-										</p>
-										<p class="date-hover">
-											from {event.start.toLocaleString('en-US', {
-												timeZone: settings_timezone,
-												hour: 'numeric',
-												minute: 'numeric',
-												hour12: true,
-											})} <br /> to {event.end.toLocaleString('en-US', {
-												timeZone: settings_timezone,
-												hour: 'numeric',
-												minute: 'numeric',
-												hour12: true,
-											})}
-										</p>
-									</div>
-
-									<p class="description">{event.description}</p>
-								</div>
-							{/if}
-						{/each}
-					{:else}
-						<p class="empty-events">There are no events that fall under this category.</p>
-					{/if}
-				</div>
-			{/each}
 		</div>
+		{#each groupByDateArray as { day, events }}
+			<div class="column">
+				<h2>{day}</h2>
+				{#if selected === null || events.some((event) => event.type === selected)}
+					{#each events as event}
+						{#if selected === null || event.type === selected}
+							<div
+								class="card card-text"
+								class:currentEvent={currentTime >= event.start && currentTime < event.end}
+							>
+								<div class="flex-row">
+									<div>
+										<p class="name">{event.name}</p>
+										<p class="location">{event.location}</p>
+										{#if user?.roles.includes('ADMIN')}
+											<p>
+												<a class="edit" href="/admin/homepage/schedule/{event.id}">Edit</a>
+											</p>
+										{/if}
+									</div>
+									<p class="date">
+										{event.start.toLocaleString('en-US', {
+											timeZone: settings_timezone,
+											hour: 'numeric',
+											minute: 'numeric',
+											hour12: true,
+										})}
+									</p>
+									<p class="date-hover">
+										from {event.start.toLocaleString('en-US', {
+											timeZone: settings_timezone,
+											hour: 'numeric',
+											minute: 'numeric',
+											hour12: true,
+										})} <br />
+										to {event.end.toLocaleString('en-US', {
+											timeZone: settings_timezone,
+											hour: 'numeric',
+											minute: 'numeric',
+											hour12: true,
+										})}
+									</p>
+								</div>
+
+								<p class="description">{event.description}</p>
+							</div>
+						{/if}
+					{/each}
+				{:else}
+					<p class="empty-events">There are no events that fall under this category.</p>
+				{/if}
+			</div>
+		{/each}
 	</div>
-{/if}
+</div>
 
 <style>
-	.topographic-background {
-		padding-bottom: 5rem;
-		background: linear-gradient(
-				to bottom,
-				#1c1c1cff 0%,
-				transparent 30%,
-				transparent 60%,
-				#1c1c1cff 100%
-			),
-			url('/Topographic Background.svg');
-		background-size: 110%;
+	.container {
+		display: flex;
+		flex-wrap: wrap;
 	}
 
 	.sidebar {
-		width: 16rem;
-		margin: 0 5px;
-	}
-
-	h1 {
-		color: var(--highlight-color);
-		font-size: 64px;
-		font-weight: 400;
-		margin: 0;
-		text-align: center;
-		text-shadow: 0 4px 12px black;
-		padding-top: 48px;
-	}
-
-	h2 {
-		color: var(--highlight-color);
-		font-family: 'Fugaz One';
-		font-size: 36px;
-		text-shadow: 0 4px 8px rgb(0, 0, 0);
+		width: 15rem;
+		padding-right: 5px;
 	}
 
 	button {
-		background-color: var(--highlight-color);
-		color: #303030;
-		height: 2rem;
-		font-family: 'Geologica', sans-serif;
-		border-radius: 4px;
 		margin: 2px 2px;
 		flex-grow: 1;
-		justify-content: center;
 	}
 
 	.button-container {
@@ -189,9 +157,10 @@
 		flex-wrap: wrap;
 	}
 
+	/* Refactor this */
 	.active {
-		background-color: #303030;
-		color: var(--highlight-color);
+		background-color: #ff00ff3d;
+		color: var(--primary-accent);
 	}
 
 	p {
@@ -212,11 +181,6 @@
 	.date-hover,
 	.date {
 		text-align: right;
-		flex-shrink: 0;
-	}
-
-	.description {
-		padding-top: 3px;
 	}
 
 	.description,
@@ -226,7 +190,7 @@
 
 	.calendar-export {
 		text-decoration: none;
-		color: #303030;
+		color: var(--background-color);
 	}
 
 	.flex-row {
@@ -235,8 +199,7 @@
 	}
 
 	.card {
-		box-shadow: 0 4px 8px rgb(0, 0, 0);
-		background-color: #303030;
+		border: 2px solid var(--primary-accent);
 		border-radius: 10px;
 		display: flex;
 		flex-direction: column;
@@ -250,7 +213,7 @@
 	}
 
 	.card:hover {
-		background-color: var(--highlight-color);
+		background-color: var(--primary-accent);
 	}
 
 	.card:hover .description,
@@ -264,18 +227,11 @@
 
 	.card-text,
 	.empty-events {
-		color: var(--highlight-color);
+		color: var(--primary-accent);
 	}
 
 	.card-text:hover {
-		color: #303030;
-	}
-
-	.container {
-		display: flex;
-		flex-wrap: wrap;
-		max-width: 75rem;
-		margin: auto;
+		color: var(--background-color);
 	}
 
 	.column {
@@ -284,26 +240,21 @@
 	}
 
 	@media (max-width: 768px) {
-		.topographic-background,
+		.container {
+			flex-direction: column;
+		}
+
 		.card {
 			user-select: none;
 		}
 
-		h1 {
-			font-size: 9.5vw;
-		}
-
-		h2 {
-			font-size: 6vw;
-		}
-
 		.sidebar {
 			width: unset;
+			padding-right: unset;
 		}
 
-		.container {
-			flex-direction: column;
-			margin: 0 10px 0 10px;
+		.column {
+			margin: unset;
 		}
 	}
 </style>

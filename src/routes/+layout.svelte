@@ -23,24 +23,52 @@
 	afterNavigate(() => (isLoading = false));
 
 	onMount(() => {
-		for (const link of menu.childNodes) {
+		const profileLogo = document.getElementById('profile-logo');
+		profileLogo?.addEventListener('click', redirectToProfile);
+
+		const links = document.querySelectorAll('nav menu a');
+		links.forEach((link) => {
 			link.addEventListener('click', () => {
 				// Close the menu when a link is clicked on mobile
 				hamburgerCheckbox.checked = false;
 			});
-		}
+		});
 	});
+
+	function redirectToProfile() {
+		let destinationURL;
+		if (data.user !== undefined) {
+			destinationURL = '/id';
+		} else {
+			destinationURL = '/login';
+		}
+		window.location.href = destinationURL;
+	}
+
+	function handleKeyPress(event: KeyboardEvent): void {
+		if (event.key === 'Enter' || event.key === 'Space') {
+			redirectToProfile();
+		}
+	}
 </script>
 
 <nav>
 	<label for="hamburgerCheckbox" id="hamburger"
 		><img
-			src="/burger_Menu.png"
+			src="navbar\Hamburger.svg"
 			alt="Freetail logo"
 			id="hamburger-logo"
 			style="width:50px; height:20px"
-		/><b>MENU</b></label
-	>
+		/><b>MENU</b>
+		<img
+			src="navbar\Profile.svg"
+			alt="Profile logo"
+			id="profile-logo"
+			style="width:50px; height:20px"
+			on:click={redirectToProfile}
+			on:keypress={handleKeyPress}
+		/>
+	</label>
 	<input
 		type="checkbox"
 		id="hamburgerCheckbox"
@@ -50,7 +78,9 @@
 	<menu id="menu" bind:this={menu}>
 		<img src="/Freetail_bat.png" id="menu-logo" alt="Freetail logo" />
 		<li>
-			<a href="/" class:active={$page.url.pathname === '/' && $page.url.hash === ''}>Home</a>
+			<a href="/" class:active={$page.url.pathname === '/' && $page.url.hash === ''}
+				><img src="navbar\Home.svg" alt="Home icon" class="menu-icon" />Home</a
+			>
 		</li>
 		{#if !data.user?.roles.includes('ADMIN')}
 			<li>
@@ -59,7 +89,9 @@
 				>
 			</li>
 			<li>
-				<a href="/#Schedule" class:active={$page.url.hash === '#Schedule'}>Schedule</a>
+				<a href="/#Schedule" class:active={$page.url.hash === '#Schedule'}
+					><img src="navbar\Schedule.svg" alt="Schedule icon" class="menu-icon" />Schedule</a
+				>
 			</li>
 			<li>
 				<a href="/#FAQ" class:active={$page.url.hash === '#FAQ'}>FAQ</a>
@@ -72,9 +104,9 @@
 			</li>
 		{/if}
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->
-		{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
+		<!-- {#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
 			<li><a href="/id" class:active={$page.url.pathname.startsWith('/id')}>My Hacker ID</a></li>
-		{/if}
+		{/if} -->
 		{#if data.user?.roles.includes('ORGANIZER') || data.user?.roles.includes('ADMIN')}
 			<li><a href="/scan" class:active={$page.url.pathname.startsWith('/scan')}>Scan</a></li>
 		{/if}
@@ -100,16 +132,16 @@
 				</li>
 			{/if}
 		{/if}
-		<li>
-			{#if data.user === undefined}
-				<a class="login" href="/login" class:active={$page.url.pathname.startsWith('/login')}
-					>Login</a
-				>
-			{:else}
-				<form method="POST" action="/logout">
-					<button class="button" type="submit">Logout</button>
-				</form>
-			{/if}
+
+		<li id="profile-link">
+			<img
+				src="navbar\Profile.svg"
+				alt="Profile logo"
+				id="profile-logo"
+				style="width:50px; height:20px"
+				on:click={redirectToProfile}
+				on:keypress={handleKeyPress}
+			/>
 		</li>
 	</menu>
 
@@ -128,7 +160,7 @@
 		target="_blank"
 		rel="noreferrer"
 		><img
-			src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-red.svg"
+			src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-white.svg"
 			alt="Major League Hacking 2024 Hackathon Season"
 			id="mlh-badge-image"
 		/></a
@@ -146,7 +178,7 @@
 <footer>
 	<div class="footer-flex">
 		<div class="made-with-love">
-			Made with ❤️ by <a
+			Made with 🤍 by <a
 				class="freetail-link"
 				target="_blank"
 				rel="noopener noreferrer"
@@ -203,7 +235,7 @@
 	}
 
 	footer {
-		background-color: #404040;
+		background-color: var(--primary-accent);
 	}
 
 	.footer-flex {
@@ -214,17 +246,13 @@
 		color: #f2ebd9;
 	}
 
-	.login {
-		color: #e1563f;
-	}
-
 	.made-with-love {
 		white-space: nowrap;
 		align-self: center;
 	}
 
 	.freetail-link {
-		color: #e1563f;
+		color: var(--background-color);
 		text-decoration: underline;
 	}
 
@@ -240,16 +268,7 @@
 		line-height: 1.5;
 	}
 
-	button {
-		color: #e1563f;
-		text-decoration: none;
-		line-height: 1.5;
-		padding-left: 1rem;
-		padding-right: 1rem;
-	}
-
-	a:hover,
-	button:hover {
+	a:hover {
 		text-decoration-line: underline;
 		text-decoration-color: var(--primary-accent);
 		color: var(--primary-accent);
@@ -268,22 +287,30 @@
 		color: #f2ebd9;
 	}
 
-	#hamburger-logo {
+	.menu-icon {
+		height: 20px;
+		padding-right: 10px;
+	}
+
+	#hamburger-logo,
+	#profile-logo {
 		display: block;
 		height: 2rem;
 		padding-right: 1rem;
 		padding-left: 1rem;
 	}
 
-	#menu-logo {
+	#profile-logo {
+		margin-left: auto;
+		margin-right: 1rem;
+	}
+
+	#profile-link {
 		display: none;
 	}
 
-	button {
-		background-color: #404040;
-		text-transform: uppercase;
-		font-family: 'Geologica', sans-serif;
-		font-weight: 700;
+	#menu-logo {
+		display: none;
 	}
 
 	nav {
@@ -291,7 +318,7 @@
 		top: 0;
 		margin: 0;
 		width: 100vw;
-		background-color: #404040;
+		background-color: var(--primary-accent);
 		z-index: 99;
 	}
 
@@ -300,7 +327,7 @@
 		margin: 0;
 		padding: 0;
 		transition: all 0.5s ease-out;
-		background-color: #404040;
+		background-color: var(--primary-accent);
 		max-height: 0;
 		overflow: hidden;
 		width: 100%;
@@ -336,8 +363,7 @@
 		text-decoration: none;
 	}
 
-	menu a:hover,
-	button:hover {
+	menu a:hover {
 		background-color: #303030;
 	}
 
@@ -357,17 +383,6 @@
 	}
 
 	@media (max-width: 1090px) {
-		.button {
-			display: flex;
-			width: 100%;
-			padding-top: 0.3rem;
-			padding-bottom: 0.7rem;
-			padding-left: 1rem;
-			justify-content: flex-start;
-			flex-wrap: nowrap;
-			flex-direction: row;
-		}
-
 		#mlh-trust-badge {
 			top: 42.2px;
 		}
@@ -380,6 +395,11 @@
 			display: none;
 		}
 
+		#profile-logo {
+			margin-left: auto;
+			margin-right: 1rem;
+		}
+
 		#menu-logo {
 			display: block;
 			height: 40px;
@@ -387,6 +407,10 @@
 
 		#hamburger {
 			display: none;
+		}
+
+		#profile-link {
+			display: block;
 		}
 
 		menu {
@@ -399,8 +423,7 @@
 			align-items: center;
 		}
 
-		menu a:hover,
-		button:hover {
+		menu a:hover {
 			border-radius: 5px;
 		}
 

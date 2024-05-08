@@ -20,18 +20,13 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Home</title>
+	<title>Rodeo | Home</title>
 </svelte:head>
 
-<div class="topographic-background">
-	<div>
-		<!-- svelte-ignore a11y-img-redundant-alt -->
-		<img src="/Landing.svg" alt="svg" class="home-svg" />
-		<div class="homepage-text">
-			<SvelteMarkdown source={data.settings.homepageText} />
-		</div>
-	</div>
+<div class="homepage-content">
+	<SvelteMarkdown source={data.settings.homepageText} />
 </div>
+
 <div>
 	{#if data.settings.showAnnouncements}
 		{#if data.user !== undefined}
@@ -74,47 +69,6 @@
 
 {#if data.settings.showSponsors}
 	<section id="Sponsors">
-		<Sponsors
-			sponsors={[
-				['Roblox', 'https://create.roblox.com/landing'],
-				['Capital One', 'http://api.nessieisreal.com/'],
-				['CodeCrafters', 'https://codecrafters.io/event/freetailhackers'],
-				['Red Bull', '#'],
-				['Stand Out Stickers', 'http://hackp.ac/mlh-StandOutStickers-hackathons'],
-			]}
-		/>
+		<Sponsors sponsors={[]} />
 	</section>
 {/if}
-
-<style>
-	section {
-		scroll-margin-top: 5vh;
-	}
-
-	.home-svg {
-		width: 100vw;
-		margin-top: calc(2rem - 0.5vw);
-		user-select: none;
-		pointer-events: none;
-	}
-
-	.topographic-background {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		background: linear-gradient(to bottom, transparent 0%, #1c1c1c 100%),
-			url('/Topographic Background.svg');
-		background-size: 110%;
-		position: relative;
-	}
-
-	.homepage-text {
-		position: absolute;
-		top: 73%;
-		left: 15%;
-		color: #f2ebd9;
-		font-size: clamp(0.75rem, 2vw, 2rem);
-		max-width: 50rem;
-		margin-right: 4rem;
-	}
-</style>

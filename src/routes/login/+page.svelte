@@ -16,106 +16,70 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Login</title>
+	<title>Rodeo | Login</title>
 </svelte:head>
 
-<div class="topographic-background">
-	<div class="main-content">
-		<h1>Login</h1>
-		<div class="socials">
-			<SocialLogin providers={data.providers} />
-		</div>
-		<form
-			method="POST"
-			action="?/login"
-			use:enhance={() => {
-				return async ({ update }) => {
-					update({ reset: false });
-				};
-			}}
-		>
-			<label for="email">Email</label>
-			<input
-				class="inputValues"
-				placeholder="Email"
-				id="email"
-				name="email"
-				required
-				autocomplete="username"
-			/>
-			<label for="password">Password (<a href="/login/reset-password">forgot?</a>)</label>
-			<!-- HACK: Not required so we can easily log into test accounts lol -->
-			<input
-				class="inputValues"
-				type="password"
-				placeholder="Password"
-				id="password"
-				name="password"
-				autocomplete="current-password"
-			/>
-			<button>Continue</button>
-		</form>
-		<div class="register">
-			<p>Don't have an account yet?</p>
-			<!-- svelte-ignore a11y-missing-content -->
-			<a href="/register">
-				<button class="register-button">Register Here!</button>
-			</a>
-		</div>
+<div class="main-content">
+	<h1>Login</h1>
+	<div class="socials">
+		<SocialLogin providers={data.providers} />
+	</div>
+	<hr />
+	<form
+		method="POST"
+		action="?/login"
+		use:enhance={() => {
+			return async ({ update }) => {
+				update({ reset: false });
+			};
+		}}
+	>
+		<label for="email">Email</label>
+		<input
+			class="inputValues"
+			placeholder="Enter your email address"
+			id="email"
+			name="email"
+			required
+			autocomplete="username"
+		/>
+		<label for="password">Password (<a href="/login/reset-password">forgot?</a>)</label>
+		<!-- HACK: Not required so we can easily log into test accounts lol -->
+		<input
+			class="inputValues"
+			type="password"
+			placeholder="Enter your password"
+			id="password"
+			name="password"
+			autocomplete="current-password"
+		/>
+		<button>Sign in with Email</button>
+	</form>
+	<div class="register">
+		<p>Don't have an account yet?</p>
+		<!-- svelte-ignore a11y-missing-content -->
+		<a href="/register">
+			<button class="register-button">Register Here!</button>
+		</a>
 	</div>
 </div>
 
 <style>
-	.topographic-background {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		background-color: #303030;
-		background-image: url('/Topographic Background.svg');
-		background-size: 110%;
-		min-height: calc(100vh - 159px);
-	}
-
-	h1 {
-		color: var(--highlight-color);
-		text-align: center;
-		white-space: nowrap;
-		font-size: min(12vw, 3.5em);
-		margin: 15px 0px;
-	}
-
-	p {
-		margin: 4px 0;
-	}
-
-	form,
+	label,
 	.register {
-		background-color: var(--highlight-color);
-		width: clamp(25rem, 30vw, 50rem);
-	}
-
-	form {
-		padding: 0em 1em 1em 1em;
+		padding-top: 15px;
 	}
 
 	.register {
 		display: flex;
 		text-align: center;
 		align-items: center;
-		justify-content: space-between;
-		padding: 0.5em 1em;
-		margin: 1em 0 15px 0;
 	}
 
 	.register-button {
 		margin: 0;
-		margin-left: 10px;
+		margin-left: 15px;
 		padding: 0px 15px;
-	}
-
-	label {
-		color: var(--background-color);
-		padding-top: 0.5em;
 	}
 
 	input {
@@ -124,32 +88,13 @@
 	}
 
 	button {
-		margin-top: 0.5em;
+		margin-top: 15px;
 		box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
 		-moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
 		-webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
 	}
 
 	.inputValues {
-		background-color: var(--highlight-color);
-		color: #404040;
-	}
-
-	@media (max-width: 768px) {
-		.topographic-background {
-			min-height: calc(100vh - 56px);
-		}
-
-		form,
-		.register {
-			min-width: 20rem;
-			width: 15vw;
-		}
-	}
-
-	@media (max-width: 1090px) {
-		h1 {
-			margin-top: 0px;
-		}
+		background-color: var(--background-color);
 	}
 </style>

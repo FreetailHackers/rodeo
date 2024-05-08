@@ -60,7 +60,7 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Users</title>
+	<title>Rodeo | Users</title>
 </svelte:head>
 
 <div class="main-content">

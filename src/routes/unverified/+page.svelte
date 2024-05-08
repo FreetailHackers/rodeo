@@ -3,33 +3,21 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Unverified Email</title>
+	<title>Rodeo | Unverified Email</title>
 </svelte:head>
 
-<div class="topographic-background">
-	<div class="top-margin">
-		<p>
-			You must verify your email before accessing this page. Please check your inbox for a
-			verification link. If you did not get one (remember to check spam), you can request a new one
-			below.
-		</p>
-		<form method="POST" use:enhance>
-			<button type="submit">Resend Verification Email</button>
-		</form>
-	</div>
+<div class="top-margin">
+	<p>
+		You must verify your email before accessing this page. Please check your inbox for a
+		verification link. If you did not get one (remember to check spam), you can request a new one
+		below.
+	</p>
+	<form method="POST" use:enhance>
+		<button type="submit">Resend Verification Email</button>
+	</form>
 </div>
 
 <style>
-	.topographic-background {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		background-color: #303030;
-		background-image: url('/Topographic Background.svg');
-		background-size: 110%;
-		min-height: calc(100vh - 159px);
-	}
-
 	.top-margin {
 		width: 75%;
 		align-items: center;
