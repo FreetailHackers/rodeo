@@ -78,8 +78,6 @@
 			}
 		}
 
-		console.log('SEARCH PARAMS TO STRING', searchParams.toString());
-
 		// Add 'limit' parameter
 		searchParams.set('limit', '10');
 

@@ -55,9 +55,9 @@ export const load = async ({ locals, url }) => {
 
 	// Convert the Map to a list (array of objects)
 	const params = Array.from(searchList.entries()).map(([keyObj, valueObj]) => ({
-		key: keyObj.keyParam,
-		search: valueObj.searchParam,
-		searchFilter: valueObj.searchFilterParam !== undefined ? valueObj.searchFilterParam : '', // Set default value if searchFilterParam is undefined
+		key: keyObj['key'],
+		search: valueObj['search'],
+		searchFilter: valueObj['searchFilter'] !== undefined ? valueObj['searchFilter'] : '', // Set default value if searchFilterParam is undefined
 	}));
 
 	const results = await trpc(locals.auth).users.search({
