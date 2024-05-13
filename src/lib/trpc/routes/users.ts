@@ -477,9 +477,13 @@ export const usersRouter = t.router({
 		.use(authenticate(['ADMIN', 'SPONSOR']))
 		.input(
 			z.object({
-				key: z.string(),
-				search: z.string(),
-				searchFilter: z.string(),
+				params: z.array(
+					z.object({
+						key: z.string(), // Assuming key is a string
+						searchFilter: z.string(), // Assuming searchFilter is a string
+						search: z.string(), // Assuming search is a string
+					})
+				),
 				limit: z.number().transform((limit) => (limit === 0 ? Number.MAX_SAFE_INTEGER : limit)),
 				page: z.number().transform((page) => page - 1),
 			})
@@ -494,12 +498,24 @@ export const usersRouter = t.router({
 				users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
 			}> => {
 				let questions = await getQuestions();
-				const where = await getWhereCondition(
-					req.input.key,
-					req.input.searchFilter,
-					req.input.search,
-					req.ctx.user.roles
-				);
+				// Define parameters
+				const params = req.input.params;
+				// Define roles
+				const roles: Role = req.ctx.user.roles;
+				const where = await searchWhereCondition(params, roles);
+
+				// // where = { authUser: { status: 'ACCEPTED' }, { roles: { has: 'HACKER' } }  }
+				// where = {
+				// 	authUser: {
+				// 		AND: [
+				// 			{ status: 'ACCEPTED' },
+				// 			{ roles: { has: 'HACKER' } }
+				// 		]
+				// 	}
+				// };
+				console.log('Params: ', params);
+				console.log('WHERE: ', where);
+
 				const count = await prisma.user.count({ where });
 				const users = await prisma.user.findMany({
 					include: { authUser: true, decision: true },
@@ -770,6 +786,199 @@ export const usersRouter = t.router({
 			return sendEmails(emailArray, req.input.subject, req.input.emailBody);
 		}),
 });
+
+async function searchWhereCondition(
+	params: {
+		key: string;
+		searchFilter: string;
+		search: string;
+	}[],
+	roles: Role
+): Promise<Prisma.UserWhereInput> {
+	if (!roles.includes('ADMIN')) {
+		// If user role doesn't include ADMIN, combine roles condition and helper function result with AND
+		return {
+			AND: [
+				{ authUser: { roles: { has: 'HACKER' } } },
+				await searchWhereConditionHelper(params, roles),
+			],
+		};
+	}
+	// If user role includes ADMIN, directly return the result of the helper function
+	return await searchWhereConditionHelper(params, roles);
+}
+
+//  NEED TO IMPLEMENT MORE FOR QUESTION AND PUSH TO ANY LOGIC OF WHERE
+async function searchWhereConditionHelper(
+	params: {
+		key: string;
+		searchFilter: string;
+		search: string;
+	}[],
+	roles: Role
+): Promise<Prisma.UserWhereInput> {
+	const whereConditions: Prisma.UserWhereInput = {
+		authUser: {
+			AND: [],
+		},
+	};
+	// Iterate over each parameter in the params array
+
+	for (const param of params) {
+		// Destructure the properties from the current parameter
+		const { key, search, searchFilter } = param;
+
+		// Retrieve questions asynchronously
+		const questions = await getQuestions();
+
+		// Retrieve scanActions asynchronously
+		const scanActions = (await getSettings()).scanActions;
+
+		// Check different conditions based on the key
+		if (key === 'email') {
+			// If the key is 'email', update whereConditions for authUser.email
+			(whereConditions.authUser?.AND as object[]).push({
+				email: { contains: search, mode: 'insensitive' },
+			});
+		} else if (key === 'status' && roles.includes('ADMIN')) {
+			// If the key is 'status' and user role includes 'ADMIN', update whereConditions for authUser.status
+			(whereConditions.authUser?.AND as object[]).push({ status: search as Status });
+		} else if (key === 'role' && roles.includes('ADMIN')) {
+			// If the key is 'role' and user role includes 'ADMIN', update whereConditions for authUser.roles
+			(whereConditions.authUser?.AND as object[]).push({ roles: { has: search as Role } });
+		} else if (key === 'decision' && roles.includes('ADMIN')) {
+			// If the key is 'decision' and user role includes 'ADMIN', update whereConditions for decision.status
+			(whereConditions.authUser?.AND as object[]).push({
+				status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED',
+			});
+		} else if (scanActions.includes(key) && roles.includes('ADMIN')) {
+			// If the key is included in scanActions and user role includes 'ADMIN', handle specific scanActions
+			if (searchFilter === 'greater') {
+				// Update whereConditions for scanCount greater than search value
+				whereConditions.scanCount = { path: [key], gt: Number(search) };
+			} else if (searchFilter === 'greater_equal') {
+				// Update whereConditions for scanCount greater than or equal to search value
+				// Handle different cases based on search value being 0 or not
+				if (Number(search) === 0) {
+					// If search value is 0, handle additional condition for equality with Prisma.DbNull
+					whereConditions.OR = [
+						{ scanCount: { path: [key], gte: Number(search) } },
+						{ scanCount: { path: [key], equals: Prisma.DbNull } },
+					];
+				} else {
+					// If search value is not 0, update whereConditions normally
+					whereConditions.scanCount = { path: [key], gte: Number(search) };
+				}
+			}
+			// Add more conditions based on scanActions if needed
+		} else {
+			// If none of the above conditions match, handle based on questions
+			for (const question of questions) {
+				// Iterate through questions to find a match with the key
+				if (key === question.id) {
+					// Handle different question types
+					if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
+						// Handle conditions for text-based questions
+						// Update whereConditions based on searchFilter
+						// Add more conditions for other searchFilter values if needed
+					} else if (question.type === 'NUMBER') {
+						// Handle conditions for number-based questions
+						// Update whereConditions based on searchFilter
+						// Add more conditions for other searchFilter values if needed
+					}
+					// Add more conditions for other question types if needed
+				}
+			}
+		}
+	}
+
+	return whereConditions;
+}
+
+// // Converts key to Prisma where filter
+// async function searchWhereConditionHelper(
+// 	params: {
+// 		key: string;
+// 		searchFilter: string;
+// 		search: string;
+// 	  }[],
+// 	roles: Role
+// ): Promise<Prisma.UserWhereInput> {
+// 	const whereConditions: Prisma.UserWhereInput = {
+// 		authUser: {}
+// 	};
+// 	// Iterate over each parameter in the params array
+
+// 	params.forEach(async (param) => {
+// 		// Destructure the properties from the current parameter
+// 		const { key, search, searchFilter } = param;
+
+// 		// Retrieve questions asynchronously
+// 		const questions = await getQuestions();
+
+// 		// Retrieve scanActions asynchronously
+// 		const scanActions = (await getSettings()).scanActions;
+
+// 		// Check different conditions based on the key
+// 		if (key === 'email') {
+// 			// If the key is 'email', update whereConditions for authUser.email
+// 			whereConditions.authUser = { email: { contains: search, mode: 'insensitive' } };
+// 		} else if (key === 'status' && roles.includes('ADMIN')) {
+// 			// If the key is 'status' and user role includes 'ADMIN', update whereConditions for authUser.status
+// 			console.log("Before", whereConditions)
+// 			whereConditions.authUser = { status: search as Status };
+// 			const x = { authUser: { status: search as Status } };
+// 			console.log("X: ", x)
+// 			console.log("After", whereConditions)
+// 		} else if (key === 'role' && roles.includes('ADMIN')) {
+// 			// If the key is 'role' and user role includes 'ADMIN', update whereConditions for authUser.roles
+// 			whereConditions.authUser = { roles: { has: search as Role } };
+// 		} else if (key === 'decision' && roles.includes('ADMIN')) {
+// 			// If the key is 'decision' and user role includes 'ADMIN', update whereConditions for decision.status
+// 			whereConditions.decision = { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' };
+// 		} else if (scanActions.includes(key) && roles.includes('ADMIN')) {
+// 			// If the key is included in scanActions and user role includes 'ADMIN', handle specific scanActions
+// 			if (searchFilter === 'greater') {
+// 				// Update whereConditions for scanCount greater than search value
+// 				whereConditions.scanCount = { path: [key], gt: Number(search) };
+// 			} else if (searchFilter === 'greater_equal') {
+// 				// Update whereConditions for scanCount greater than or equal to search value
+// 				// Handle different cases based on search value being 0 or not
+// 				if (Number(search) === 0) {
+// 					// If search value is 0, handle additional condition for equality with Prisma.DbNull
+// 					whereConditions.OR = [
+// 						{ scanCount: { path: [key], gte: Number(search) } },
+// 						{ scanCount: { path: [key], equals: Prisma.DbNull } },
+// 					];
+// 				} else {
+// 					// If search value is not 0, update whereConditions normally
+// 					whereConditions.scanCount = { path: [key], gte: Number(search) };
+// 				}
+// 			}
+// 			// Add more conditions based on scanActions if needed
+// 		} else {
+// 			// If none of the above conditions match, handle based on questions
+// 			for (const question of questions) {
+// 				// Iterate through questions to find a match with the key
+// 				if (key === question.id) {
+// 					// Handle different question types
+// 					if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
+// 						// Handle conditions for text-based questions
+// 						// Update whereConditions based on searchFilter
+// 						// Add more conditions for other searchFilter values if needed
+// 					} else if (question.type === 'NUMBER') {
+// 						// Handle conditions for number-based questions
+// 						// Update whereConditions based on searchFilter
+// 						// Add more conditions for other searchFilter values if needed
+// 					}
+// 					// Add more conditions for other question types if needed
+// 				}
+// 			}
+// 		}
+// 	});
+
+// 	return whereConditions;
+// }
 
 async function getWhereCondition(
 	key: string,

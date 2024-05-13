@@ -17,6 +17,81 @@
 	let limit = $page.url.searchParams.get('limit') ?? '10';
 	let searchFilter = $page.url.searchParams.get('searchFilter') ?? '';
 
+	// let role_options = ['HACKER', 'ADMIN', 'ORGANIZER', 'JUDGE', 'VOLUNTEER', 'SPONSOR'];
+	// let status_options = [
+	// 	'CREATED',
+	// 	'APPLIED',
+	// 	'ACCEPTED',
+	// 	'REJECTED',
+	// 	'WAITLISTED',
+	// 	'CONFIRMED',
+	// 	'DECLINED',
+	// ];
+	// let decision_options = ['ACCEPTED', 'REJECTED', 'WAITLISTED'];
+
+	const searchValues = {
+		email: {
+			search: '',
+			searchFilter: '',
+		},
+		role: {
+			search: '',
+			searchFilter: '',
+		},
+		status: {
+			search: '',
+			searchFilter: '',
+		},
+		decision: {
+			search: '',
+			searchFilter: '',
+		},
+	};
+
+	function capitalizeFirstLetter(str: string) {
+		return str.charAt(0).toUpperCase() + str.slice(1);
+	}
+
+	// function getKeyNamesLowercase(str: string) {
+	// 	return str.split('key')[1].toLowerCase();
+	// }
+
+	// upon loading the page, assign values to search values
+
+	// Function to update URL parameters
+	function updateUrlParams() {
+		let searchParams = new URLSearchParams($page.url.searchParams);
+
+		// Update or add search criteria to the URL search parameters
+
+		for (const [key, value] of Object.entries(searchValues)) {
+			const newKey = capitalizeFirstLetter(key);
+			if (value.search) {
+				searchParams.set(`key${newKey}`, key);
+				if (value.searchFilter) {
+					searchParams.set(`searchFilter${newKey}`, value.searchFilter);
+				}
+
+				searchParams.set(`search${newKey}`, value.search);
+			} else {
+				searchParams.delete(key);
+			}
+		}
+
+		console.log('SEARCH PARAMS TO STRING', searchParams.toString());
+
+		// Add 'limit' parameter
+		searchParams.set('limit', '10');
+
+		// Reconstruct the URL with the updated search parameters
+		let newUrl = `${$page.url.pathname}?${searchParams.toString()}`;
+
+		// Update the URL
+		window.history.replaceState({}, '', newUrl);
+
+		window.location.href = newUrl;
+	}
+
 	// Download all files of current search filter
 	async function downloadAllFiles() {
 		async function fetchFiles(urls: string[]) {
@@ -77,6 +152,58 @@
 	>
 
 	<!-- Search filters -->
+	<form data-sveltekit-keepfocus>
+		<fieldset class="filter">
+			<!-- Display the admin type of questions including email, role, .. -->
+			<!-- enums -->
+
+			<fieldset class="filter">
+				<label for="email">Email</label>
+				<input
+					type="text"
+					id="email"
+					name="email"
+					placeholder="Search email"
+					autocomplete="off"
+					bind:value={searchValues.email.search}
+					class="search"
+				/>
+
+				<label for="role">Role</label>
+				<select name="search" bind:value={searchValues.role.search} class="search">
+					<option value="HACKER">HACKER</option>
+					<option value="ADMIN">ADMIN</option>
+					<option value="ORGANIZER">ORGANIZER</option>
+					<option value="JUDGE">JUDGE</option>
+					<option value="VOLUNTEER">VOLUNTEER</option>
+					<option value="SPONSOR">SPONSOR</option>
+				</select>
+
+				<label for="status">Status</label>
+				<select name="search" bind:value={searchValues.status.search} class="search">
+					<option value="CREATED">CREATED</option>
+					<option value="APPLIED">APPLIED</option>
+					<option value="ACCEPTED">ACCEPTED</option>
+					<option value="REJECTED">REJECTED</option>
+					<option value="WAITLISTED">WAITLISTED</option>
+					<option value="CONFIRMED">CONFIRMED</option>
+					<option value="DECLINED">DECLINED</option>
+				</select>
+
+				<label for="decision">Decision</label>
+				<select name="search" bind:value={searchValues.decision.search} class="search">
+					<option value="ACCEPTED">ACCEPTED</option>
+					<option value="WAITLISTED">WAITLISTED</option>
+					<option value="REJECTED">REJECTED</option>
+				</select>
+
+				<input type="hidden" name="limit" value={limit} />
+				<!-- <button>Search</button> -->
+				<button type="button" on:click={updateUrlParams}>Search</button>
+			</fieldset>
+		</fieldset>
+	</form>
+
 	<form data-sveltekit-keepfocus>
 		<fieldset class="filter">
 			<select
@@ -368,9 +495,9 @@
 <style>
 	.filter {
 		display: flex;
-		flex-direction: row;
+		flex-direction: column;
 		justify-content: space-between;
-		align-items: center;
+		align-items: self-start;
 		gap: 0.3rem;
 		width: 100%;
 		min-width: 0;
