@@ -26,7 +26,7 @@
 		placeholder="Modify the homepage text here (Markdown is supported)."
 		name="homepageText"
 		id="homepageText"
-		isHTML={false} 
+		isHTML={false}
 		rows={25}
 		value={data.settings.homepageText}
 	/>

@@ -97,6 +97,14 @@ model Settings {
   showFAQ             Boolean @default(true)
   showChallenges      Boolean @default(true)
   showSponsors        Boolean @default(true)
+  submitIsHTML        Boolean @default(false)
+  acceptIsHTML        Boolean @default(false)
+  rejectIsHTML        Boolean @default(false)
+  waitlistIsHTML      Boolean @default(false)
+  confirmIsHTML       Boolean @default(false)
+  declineIsHTML       Boolean @default(false)
+  withdrawIsHTML      Boolean @default(false)
+  byStatusIsHTML      Boolean @default(false)
 
   // PRIVATE SETTINGS (settings that non-admins do not need)
   rollingAdmissions Boolean @default(false)
@@ -107,14 +115,6 @@ model Settings {
   confirmTemplate           String  @default("Thank you for confirming your attendance to our hackathon! We look forward to seeing you there!")
   declineTemplate           String  @default("Thank you for letting us know that you will not be able to attend. We hope to see you next year!")
   withdrawalWarningTemplate String  @default("We've noticed that your application has been withdrawn from our hackathon. If you're still intending to submit, please ensure that you complete your edits and click 'submit'.")
-  submitIsHTML              Boolean @default(false)
-  acceptIsHTML              Boolean @default(false)
-  rejectIsHTML              Boolean @default(false)
-  waitlistIsHTML            Boolean @default(false)
-  confirmIsHTML             Boolean @default(false)
-  declineIsHTML             Boolean @default(false)
-  withdrawIsHTML            Boolean @default(false)
-  byStatusIsHTML            Boolean @default(false)
   applicationLimit          Int?
 }
 

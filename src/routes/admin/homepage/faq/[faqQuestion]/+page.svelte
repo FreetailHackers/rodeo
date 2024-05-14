@@ -40,7 +40,13 @@
 		<input type="text" id="title" name="title" required value={data.question.title} />
 
 		<label for="response">Answer</label>
-		<MarkdownEditor id="response" name="response" isHTML={false} required value={data.question.response} />
+		<MarkdownEditor
+			id="response"
+			name="response"
+			isHTML={false}
+			required
+			value={data.question.response}
+		/>
 
 		<button class="submit" type="submit">Save</button>
 	</form>

@@ -21,7 +21,7 @@ export const actions = {
 		const status = formData.get('status') as Status;
 		const subject = formData.get('subject') as string;
 		const emailBody = formData.get('emailBody') as string;
-		const byStatusIsHTML = formData.get('byStatusIsHTML') === 'on';
+		const byStatusIsHTML = formData.get('byStatusFormType') === 'on';
 		await trpc(locals.auth).settings.update({
 			byStatusIsHTML,
 		});
@@ -38,13 +38,13 @@ export const actions = {
 		const confirmTemplate = formData.get('confirmTemplate') as string;
 		const declineTemplate = formData.get('declineTemplate') as string;
 		const withdrawalWarningTemplate = formData.get('withdrawalWarningTemplate') as string;
-		const submitIsHTML = formData.get('submitIsHTML') === 'on';
-		const acceptIsHTML = formData.get('acceptIsHTML') === 'on';
-		const rejectIsHTML = formData.get('rejectIsHTML') === 'on';
-		const waitlistIsHTML = formData.get('waitlistIsHTML') === 'on';
-		const confirmIsHTML = formData.get('confirmIsHTML') === 'on';
-		const declineIsHTML = formData.get('declineIsHTML') === 'on';
-		const withdrawIsHTML = formData.get('withdrawIsHTML') === 'on';
+		const submitIsHTML = formData.get('submitFormType') === 'on';
+		const acceptIsHTML = formData.get('acceptFormType') === 'on';
+		const rejectIsHTML = formData.get('rejectFormType') === 'on';
+		const waitlistIsHTML = formData.get('waitlistFormType') === 'on';
+		const confirmIsHTML = formData.get('confirmFormType') === 'on';
+		const declineIsHTML = formData.get('declineFormType') === 'on';
+		const withdrawIsHTML = formData.get('withdrawFormType') === 'on';
 		await trpc(locals.auth).settings.update({
 			submitTemplate,
 			acceptTemplate,
