@@ -26,6 +26,7 @@
 		placeholder="Modify the homepage text here (Markdown is supported)."
 		name="homepageText"
 		id="homepageText"
+		isHTML={false} 
 		rows={25}
 		value={data.settings.homepageText}
 	/>
@@ -105,7 +106,7 @@
 	<input type="text" id="question" name="question" required />
 
 	<label for="answer">Answer</label>
-	<MarkdownEditor id="answer" name="answer" required />
+	<MarkdownEditor id="answer" name="answer" isHTML={false} required />
 
 	<button class="submit" type="submit">Save</button>
 </form>

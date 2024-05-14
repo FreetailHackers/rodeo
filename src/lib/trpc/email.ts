@@ -16,11 +16,12 @@ const transporter = nodemailer.createTransport({
 export const sendEmails = async (
 	recipients: string[],
 	subject: string,
-	message: string
+	message: string,
+	isHTML: boolean
 ): Promise<string> => {
 	// Preface with warning if not in production
 	let warning = '';
-	message = marked.parse(message);
+	message = isHTML ? message : marked.parse(message);
 	if (process.env.VERCEL_ENV !== 'production') {
 		// Only allow emails to YOPmail on staging
 		if (process.env.VERCEL_ENV === 'preview') {

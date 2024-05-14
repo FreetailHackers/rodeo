@@ -17,6 +17,7 @@
 				<MarkdownEditor
 					name="announcement"
 					placeholder="Make an announcement here..."
+					isHTML={false}
 					required
 					useAnnouncementFont={true}
 				/>
