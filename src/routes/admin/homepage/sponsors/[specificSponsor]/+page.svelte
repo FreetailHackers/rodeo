@@ -1,8 +1,20 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { confirmationDialog } from '$lib/actions.js';
+	import { toasts } from '$lib/stores';
 
 	export let data;
+
+	function handleFileChange(event: Event) {
+		const input = event.target as HTMLInputElement;
+		if (input.files && input.files.length > 0) {
+			const file = input.files[0];
+			const fileSize = file.size;
+			if (fileSize > 1024 * 1024) {
+				toasts.notify('Cannot upload! This file is greater than 1kb!');
+			}
+		}
+	}
 </script>
 
 <svelte:head>
@@ -36,7 +48,13 @@
 		<input type="hidden" name="id" value={data.sponsor.id} />
 
 		<label for="sponsorLogo">Sponsor Logo</label>
-		<input type="file" id="sponsorLogo" name="sponsorLogo" accept=".jpg, .jpeg, .png, .webp" />
+		<input
+			type="file"
+			id="sponsorLogo"
+			name="sponsorLogo"
+			accept=".jpg, .jpeg, .png, .webp"
+			on:change={handleFileChange}
+		/>
 
 		<label for="sponsorLink">Sponsor Link</label>
 		<input type="url" id="sponsorLink" name="sponsorLink" value={data.sponsor.title} />

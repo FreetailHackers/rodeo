@@ -102,13 +102,6 @@ export const actions = {
 			});
 			return 'Created sponsor!';
 		} else {
-			if (!(sponsorLogo instanceof File)) {
-				return 'Error! Image is not a file!';
-			} else if (sponsorLogo instanceof File && sponsorLogo.size === 0) {
-				return 'Error! No image was specified!';
-			} else if (sponsorLogo instanceof File && sponsorLogo.size > 1024 * 1024) {
-				return 'Error! Image size is greater than 1kb!';
-			}
 			return 'Error in creating sponsor! Please check file input!';
 		}
 	},
