@@ -4,6 +4,7 @@ import { s3UploadHandler } from '$lib/s3UploadHandler';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import { toasts } from '$lib/stores';
 
 import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
@@ -107,6 +108,7 @@ export const actions = {
 			} else if (sponsorLogo instanceof File && sponsorLogo.size === 0) {
 				return 'Error! No image was specified!';
 			} else if (sponsorLogo instanceof File && sponsorLogo.size > 1024 * 1024) {
+				toasts.notify('Error! Image size is greater than 1kb!');
 				return 'Error! Image size is greater than 1kb!';
 			}
 			return 'Error in creating sponsor! Please check file input!';
