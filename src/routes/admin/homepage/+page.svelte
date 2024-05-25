@@ -9,11 +9,14 @@
 	let selected: string;
 
 	function handleFileChange(event: Event) {
+		console.log('File change detected');
 		const input = event.target as HTMLInputElement;
 		if (input.files && input.files.length > 0) {
 			const file = input.files[0];
 			const fileSize = file.size;
+			console.log(`File size: ${fileSize}`);
 			if (fileSize > 1024 * 1024) {
+				console.log('File size exceeds 1KB, displaying toast notification');
 				toasts.notify('Cannot upload! This file is greater than 1kb!');
 			}
 		}
