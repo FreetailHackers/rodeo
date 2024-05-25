@@ -11,7 +11,7 @@
 			const file = input.files[0];
 			const fileSize = file.size;
 			if (fileSize > 1024 * 1024) {
-				toasts.notify('Cannot upload! This file is greater than 1kb!');
+				toasts.notify('Cannot upload! This file is greater than 1 mb!');
 			}
 		}
 	}
