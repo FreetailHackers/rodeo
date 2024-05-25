@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import type { Announcement } from '@prisma/client';
 	import SvelteMarkdown from 'svelte-markdown';
-	import MarkdownEditor from './markdown-editor.svelte';
+	import TextEditor from '$lib/components/text-editor.svelte';
 
 	export let admin: boolean;
 
@@ -14,7 +14,7 @@
 		<h1 class="announcementHeader">ANNOUNCEMENTS</h1>
 		{#if admin}
 			<form class="pad" method="POST" action="?/announce" use:enhance>
-				<MarkdownEditor
+				<TextEditor
 					name="announcement"
 					placeholder="Make an announcement here..."
 					isHTML={false}

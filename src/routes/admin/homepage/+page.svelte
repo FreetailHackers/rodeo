@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { confirmationDialog } from '$lib/actions.js';
 	import Toggle from '$lib/components/toggle.svelte';
-	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
+	import TextEditor from '$lib/components/text-editor.svelte';
 	export let data;
 
 	let selected: string;
@@ -22,7 +22,7 @@
 	}}
 >
 	<label for="homepageText"><h2>Homepage Text</h2></label>
-	<MarkdownEditor
+	<TextEditor
 		placeholder="Modify the homepage text here (Markdown is supported)."
 		name="homepageText"
 		id="homepageText"
@@ -106,7 +106,7 @@
 	<input type="text" id="question" name="question" required />
 
 	<label for="answer">Answer</label>
-	<MarkdownEditor id="answer" name="answer" isHTML={false} required />
+	<TextEditor id="answer" name="answer" isHTML={false} required />
 
 	<button class="submit" type="submit">Save</button>
 </form>

@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { Status } from '@prisma/client';
 	import Toggle from '$lib/components/toggle.svelte';
-	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
+	import TextEditor from '$lib/components/text-editor.svelte';
 	const statuses: Status[] = Object.keys(Status) as Status[];
 	export let data;
 </script>
@@ -38,7 +38,7 @@
 			{/each}
 		</select>
 	</div>
-	<MarkdownEditor
+	<TextEditor
 		placeholder="Type email body here"
 		name="emailBody"
 		isHTML={data.settings.byStatusIsHTML}
@@ -65,7 +65,7 @@
 			bind:checked={data.settings.submitIsHTML}
 		/>
 	</div>
-	<MarkdownEditor
+	<TextEditor
 		value={data.settings.submitTemplate}
 		name="submitTemplate"
 		isHTML={data.settings.submitIsHTML}
@@ -79,7 +79,7 @@
 			bind:checked={data.settings.acceptIsHTML}
 		/>
 	</div>
-	<MarkdownEditor
+	<TextEditor
 		value={data.settings.acceptTemplate}
 		name="acceptTemplate"
 		isHTML={data.settings.acceptIsHTML}
@@ -93,7 +93,7 @@
 			bind:checked={data.settings.rejectIsHTML}
 		/>
 	</div>
-	<MarkdownEditor
+	<TextEditor
 		value={data.settings.rejectTemplate}
 		name="rejectTemplate"
 		isHTML={data.settings.rejectIsHTML}
@@ -107,7 +107,7 @@
 			bind:checked={data.settings.waitlistIsHTML}
 		/>
 	</div>
-	<MarkdownEditor
+	<TextEditor
 		value={data.settings.waitlistTemplate}
 		name="waitlistTemplate"
 		isHTML={data.settings.waitlistIsHTML}
@@ -122,7 +122,7 @@
 			bind:checked={data.settings.confirmIsHTML}
 		/>
 	</div>
-	<MarkdownEditor
+	<TextEditor
 		value={data.settings.confirmTemplate}
 		name="confirmTemplate"
 		isHTML={data.settings.confirmIsHTML}
@@ -137,7 +137,7 @@
 			bind:checked={data.settings.declineIsHTML}
 		/>
 	</div>
-	<MarkdownEditor
+	<TextEditor
 		value={data.settings.declineTemplate}
 		name="declineTemplate"
 		isHTML={data.settings.declineIsHTML}
@@ -152,7 +152,7 @@
 			bind:checked={data.settings.withdrawIsHTML}
 		/>
 	</div>
-	<MarkdownEditor
+	<TextEditor
 		value={data.settings.withdrawalWarningTemplate}
 		name="withdrawalWarningTemplate"
 		isHTML={data.settings.withdrawIsHTML}
