@@ -46,7 +46,7 @@
 		{:else}
 			<div class:announcement-font={useAnnouncementFont}>
 				{#if isHTML}
-					{value}
+					{@html value}
 				{:else}
 					<SvelteMarkdown source={value} />
 				{/if}
