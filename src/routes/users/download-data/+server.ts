@@ -63,11 +63,8 @@ export const GET = async ({ locals, url }) => {
 
 	const results = await trpc(locals.auth).users.search({
 		page: 1,
-		// key: url.searchParams.get('key') ?? '',
-		// search: url.searchParams.get('search') ?? '',
 		params: params,
 		limit: 0,
-		// searchFilter: url.searchParams.get('searchFilter') ?? '',
 	});
 	const questions = await trpc(locals.auth).questions.get();
 	const parser = new Parser();

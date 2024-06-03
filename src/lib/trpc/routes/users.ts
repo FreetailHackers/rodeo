@@ -860,21 +860,107 @@ async function searchWhereConditionHelper(
 			}
 			// Add more conditions based on scanActions if needed
 		} else {
-			// If none of the above conditions match, handle based on questions
 			for (const question of questions) {
-				// Iterate through questions to find a match with the key
-				if (key === question.id) {
-					// Handle different question types
-					if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
-						// Handle conditions for text-based questions
-						// Update whereConditions based on searchFilter
-						// Add more conditions for other searchFilter values if needed
-					} else if (question.type === 'NUMBER') {
-						// Handle conditions for number-based questions
-						// Update whereConditions based on searchFilter
-						// Add more conditions for other searchFilter values if needed
+				if (key === question.label) {
+					if (!roles.includes('ADMIN') && !question.sponsorView) {
+						return {};
 					}
-					// Add more conditions for other question types if needed
+					if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
+						if (searchFilter === 'exact') {
+							return { application: { path: [question.id], equals: search } };
+						} else if (searchFilter === 'contains') {
+							return { application: { path: [question.id], string_contains: search } };
+						} else if (searchFilter === 'unanswered') {
+							return {
+								OR: [
+									{
+										application: { path: [question.id], equals: '' },
+									},
+									{
+										application: { path: [question.id], equals: Prisma.DbNull },
+									},
+								],
+							};
+						}
+					} else if (question.type === 'NUMBER') {
+						if (searchFilter === 'greater') {
+							return { application: { path: [key], gt: Number(search) } };
+						} else if (searchFilter === 'greater_equal') {
+							return { application: { path: [key], gte: Number(search) } };
+						} else if (searchFilter === 'less') {
+							return { application: { path: [key], lt: Number(search) } };
+						} else if (searchFilter === 'less_equal') {
+							return { application: { path: [key], lte: Number(search) } };
+						} else if (searchFilter === 'equal') {
+							return { application: { path: [key], equals: Number(search) } };
+						} else if (searchFilter === 'not_equal') {
+							return { application: { path: [key], not: Number(search) } };
+						}
+					} else if (question.type === 'DROPDOWN') {
+						// look to see if searchFilter is unanswered
+						if (searchFilter !== 'unanswered') {
+							try {
+								const parsed = JSON.parse(search);
+								// Special case: if the user is searching for an empty array, treat that as "return all"
+								// (since all responses vacuously contain the empty array)
+								if (parsed === '') {
+									return {};
+								}
+
+								// check if question allows multiple responses
+								if (question.multiple) {
+									if (searchFilter === 'contains') {
+										return { application: { path: [question.id], array_contains: parsed } };
+									} else if (searchFilter === 'exactly') {
+										return { application: { path: [question.id], equals: parsed } };
+									}
+								} else {
+									// searchDictArray is a string
+									if (searchFilter === 'is') {
+										return { application: { path: [question.id], equals: parsed } };
+									} else if (searchFilter === 'is_not') {
+										return { application: { path: [question.id], not: parsed } };
+									} else if (searchFilter === 'unanswered') {
+										return { application: { path: [question.id], equals: Prisma.DbNull } };
+									}
+								}
+							} catch (e) {
+								// In case of malformed JSON, just return all users
+								return {};
+							}
+						} else {
+							return { application: { path: [question.id], equals: Prisma.DbNull } };
+						}
+					} else if (question.type === 'CHECKBOX') {
+						if (searchFilter === 'true') {
+							return { application: { path: [question.id], equals: true } };
+						} else if (searchFilter === 'false') {
+							return {
+								OR: [
+									{
+										application: { path: [question.id], equals: false },
+									},
+									{
+										application: { path: [question.id], equals: Prisma.DbNull },
+									},
+								],
+							};
+						}
+					} else if (question.type === 'RADIO') {
+						if (searchFilter === 'is') {
+							return { application: { path: [question.id], equals: search } };
+						} else if (searchFilter === 'is_not') {
+							return { application: { path: [question.id], not: search } };
+						} else if (searchFilter === 'unanswered') {
+							return { application: { path: [question.id], equals: Prisma.DbNull } };
+						}
+					} else if (question.type === 'FILE') {
+						if (searchFilter === 'uploaded') {
+							return { application: { path: [question.id], not: Prisma.DbNull } };
+						} else if (searchFilter === 'not_uploaded') {
+							return { application: { path: [question.id], equals: Prisma.DbNull } };
+						}
+					}
 				}
 			}
 		}
