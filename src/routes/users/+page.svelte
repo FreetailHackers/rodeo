@@ -115,13 +115,9 @@
 		let searchParams = new URLSearchParams($page.url.searchParams);
 
 		// Update or add search criteria to the URL search parameters
-
-		// console.log(searchParams.toString())
-
 		let searchList = returnParams(searchParams);
 		searchList.forEach((value, key) => {
 			if (value.searchFilter !== undefined) {
-				console.log('INSIDE SEARCH FILTER');
 				searchValues[key.key].search = value.search;
 				searchValues[key.key].searchFilter = value.searchFilter;
 			} else {
