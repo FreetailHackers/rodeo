@@ -207,7 +207,16 @@ export const usersRouter = t.router({
 				});
 				// notify user through their email on successful application submission
 				const subject = 'Thanks for submitting!';
-				await sendEmails([req.ctx.user.email], subject, (await getSettings()).submitTemplate);
+				await sendEmails(
+					[req.ctx.user.email],
+					subject,
+					(
+						await getSettings()
+					).submitTemplate,
+					(
+						await getSettings()
+					).submitIsHTML
+				);
 			}
 			return errors;
 		}),
@@ -232,7 +241,10 @@ export const usersRouter = t.router({
 				subject,
 				(
 					await getSettings()
-				).withdrawalWarningTemplate
+				).withdrawalWarningTemplate,
+				(
+					await getSettings()
+				).withdrawIsHTML
 			);
 		}),
 
@@ -262,7 +274,10 @@ export const usersRouter = t.router({
 						'Thanks for your RSVP!',
 						(
 							await getSettings()
-						).confirmTemplate
+						).confirmTemplate,
+						(
+							await getSettings()
+						).confirmIsHTML
 					);
 				}
 			} else {
@@ -277,7 +292,10 @@ export const usersRouter = t.router({
 						'Thanks for your RSVP!',
 						(
 							await getSettings()
-						).declineTemplate
+						).declineTemplate,
+						(
+							await getSettings()
+						).declineIsHTML
 					);
 				}
 			}
@@ -341,7 +359,12 @@ export const usersRouter = t.router({
 			'Click on the following link to verify your email address:<br><br>' +
 			link +
 			'<br><br>If you did not request this email, please ignore it.';
-		await sendEmails([req.ctx.user.email], 'Email Verification', body);
+		await sendEmails(
+			[req.ctx.user.email],
+			'Email Verification',
+			body,
+			false // The raw HTML should not be sent
+		);
 	}),
 
 	/**
@@ -361,7 +384,7 @@ export const usersRouter = t.router({
 				const body =
 					'Click on the following link to reset your password (valid for 10 minutes):<br><br>' +
 					link;
-				await sendEmails([user.email], 'Password Reset', body);
+				await sendEmails([user.email], 'Password Reset', body, false);
 			}
 		}),
 
@@ -775,7 +798,12 @@ export const usersRouter = t.router({
 					select: { email: true },
 				})
 			).map((user) => user.email);
-			return sendEmails(emailArray, req.input.subject, req.input.emailBody);
+			return sendEmails(
+				emailArray,
+				req.input.subject,
+				req.input.emailBody,
+				(await getSettings()).byStatusIsHTML
+			);
 		}),
 });
 
