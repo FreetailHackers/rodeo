@@ -55,10 +55,19 @@ async function releaseDecisions(ids?: string[]): Promise<void> {
 		} else if (decision === 'WAITLISTED') {
 			template = (await getSettings()).waitlistTemplate;
 		}
+		let isHTML: boolean = false;
+		if (decision === 'ACCEPTED') {
+			isHTML = (await getSettings()).acceptIsHTML;
+		} else if (decision === 'REJECTED') {
+			isHTML = (await getSettings()).rejectIsHTML;
+		} else if (decision === 'WAITLISTED') {
+			isHTML = (await getSettings()).waitlistIsHTML;
+		}
 		await sendEmails(
 			decisions.map((hacker) => hacker.authUser.email),
 			'Freetail Hackers status update',
-			template
+			template,
+			isHTML
 		);
 	}
 }
