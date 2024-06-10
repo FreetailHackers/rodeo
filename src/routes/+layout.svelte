@@ -58,13 +58,13 @@
 			src="navbar\Hamburger.svg"
 			alt="Freetail logo"
 			id="hamburger-logo"
-			style="width:50px; height:20px"
-		/><b>MENU</b>
+			style="width:40px; height:40px; margin: 0 8px 0 28px"
+		/>
 		<img
 			src="navbar\Profile.svg"
 			alt="Profile logo"
 			id="profile-logo"
-			style="width:50px; height:20px"
+			style="width:48x; height:48px; margin-right: 28px"
 			on:click={redirectToProfile}
 			on:keypress={handleKeyPress}
 		/>
@@ -85,7 +85,11 @@
 		{#if !data.user?.roles.includes('ADMIN')}
 			<li>
 				<a href="/#Announcements" class:active={$page.url.hash === '#Announcements'}
-					>Announcements</a
+					><img
+						src="navbar\Announcements.svg"
+						alt="Announcements Icon"
+						class="menu-icon"
+					/>Announcements</a
 				>
 			</li>
 			<li>
@@ -94,13 +98,19 @@
 				>
 			</li>
 			<li>
-				<a href="/#FAQ" class:active={$page.url.hash === '#FAQ'}>FAQ</a>
+				<a href="/#FAQ" class:active={$page.url.hash === '#FAQ'}
+					><img src="navbar\FAQ.svg" alt="FAQ icon" class="menu-icon" />FAQ</a
+				>
 			</li>
 			<li>
-				<a href="/#Challenges" class:active={$page.url.hash === '#Challenges'}>Challenges</a>
+				<a href="/#Challenges" class:active={$page.url.hash === '#Challenges'}
+					><img src="navbar\Challenges.svg" alt="Challenges icon" class="menu-icon" />Challenges</a
+				>
 			</li>
 			<li>
-				<a href="/#Sponsors" class:active={$page.url.hash === '#Sponsors'}>Sponsors</a>
+				<a href="/#Sponsors" class:active={$page.url.hash === '#Sponsors'}
+					><img src="navbar\Sponsors.svg" alt="Sponsors icon" class="menu-icon" />Sponsors</a
+				>
 			</li>
 		{/if}
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->
@@ -138,7 +148,7 @@
 				src="navbar\Profile.svg"
 				alt="Profile logo"
 				id="profile-logo"
-				style="width:50px; height:20px"
+				style="width:40px; height:40px; cursor: pointer;"
 				on:click={redirectToProfile}
 				on:keypress={handleKeyPress}
 			/>
@@ -259,21 +269,19 @@
 	}
 
 	.menu-icon {
-		height: 20px;
-		padding-right: 10px;
+		height: 26px;
+		width: 26px;
+		margin-right: 16px;
+		display: inline;
 	}
 
 	#hamburger-logo,
 	#profile-logo {
 		display: block;
-		height: 2rem;
-		padding-right: 1rem;
-		padding-left: 1rem;
 	}
 
 	#profile-logo {
 		margin-left: auto;
-		margin-right: 1rem;
 	}
 
 	#profile-link {
@@ -326,7 +334,8 @@
 	}
 
 	menu a {
-		display: block;
+		display: flex;
+		align-items: center;
 		width: 100%;
 		padding: 0.7rem 1rem;
 		color: #f2ebd9;
@@ -343,6 +352,31 @@
 	}
 
 	@media (max-width: 768px) {
+		menu li {
+			position: relative;
+			padding: 3px;
+		}
+
+		menu li:before {
+			content: '';
+			background-color: #ffffff;
+			position: absolute;
+			top: 0;
+			left: 5%;
+			height: 1px;
+			width: 90%;
+		}
+
+		menu a {
+			padding-left: 2rem;
+		}
+
+		#hamburger-logo,
+		#profile-logo {
+			display: block;
+			filter: drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.4));
+		}
+
 		.flex-column {
 			display: none;
 		}
@@ -357,11 +391,6 @@
 		/* should be updated if we change the number of tabs */
 		#hamburger-logo {
 			display: none;
-		}
-
-		#profile-logo {
-			margin-left: auto;
-			margin-right: 1rem;
 		}
 
 		#menu-logo {
@@ -379,11 +408,9 @@
 
 		menu {
 			margin: 0;
-			padding-top: 0.5rem;
-			padding-bottom: 0.5rem;
 			display: flex;
 			justify-content: space-around;
-			max-height: fit-content;
+			min-height: 60px;
 			align-items: center;
 		}
 
@@ -392,7 +419,6 @@
 		}
 
 		menu a {
-			display: inline;
 			width: initial;
 			text-decoration: none;
 		}
