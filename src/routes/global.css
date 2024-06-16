@@ -14,7 +14,7 @@ html {
 	--background-color: #ffffff;
 	--primary-text-color: #000000;
 	--secondary-text-color: #ffffff;
-	--primary-accent: #9b68f5;
+	--primary-accent: #6262D8q;
 	--secondary-accent: #f5c759;
 	--gradient: linear-gradient(0.4turn, #9b68f5, #6262d8);
 	background: var(--background-color);
@@ -212,9 +212,12 @@ dialog button {
 	margin-bottom: 1rem;
 }
 
+.main-content {
+	min-height: calc(100vh - 157px);
+}
+
 .main-content,
 .homepage-content {
-	min-height: calc(100vh - 157px);
 	margin: auto;
 	padding-top: 60px;
 }
