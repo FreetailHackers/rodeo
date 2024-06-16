@@ -216,44 +216,16 @@
 </footer>
 
 <style>
-	footer {
-		background-color: var(--primary-accent);
-	}
-
-	.footer-flex {
-		display: flex;
-		justify-content: space-around;
-		margin: auto;
-		max-width: 75em;
-		color: #f2ebd9;
-	}
-
-	.made-with-love {
-		white-space: nowrap;
-		align-self: center;
-	}
-
-	.freetail-link {
-		color: var(--background-color);
-		text-decoration: underline;
-	}
-
-	.flex-column {
-		display: flex;
-		flex-direction: column;
-		font-size: 14px;
-	}
-
 	a {
-		color: #f2ebd9;
+		color: var(--alt-text-color);
 		text-decoration: none;
 		line-height: 1.5;
 	}
 
 	a:hover {
 		text-decoration-line: underline;
-		text-decoration-color: var(--primary-accent);
-		color: var(--primary-accent);
+		/* text-decoration-color: var(--primary-accent); */
+		/* color: var(--primary-accent); */
 	}
 
 	.category {
@@ -265,7 +237,7 @@
 		font-weight: 700;
 		font-style: normal;
 		text-transform: uppercase;
-		color: #f2ebd9;
+		color: var(--secondary-text-color);
 	}
 
 	.menu-icon {
@@ -275,21 +247,14 @@
 		display: inline;
 	}
 
-	#hamburger-logo,
-	#profile-logo {
-		display: block;
-	}
-
-	#profile-logo {
-		margin-left: auto;
-	}
-
-	#profile-link {
+	#hamburger {
 		display: none;
 	}
 
 	#menu-logo {
 		display: none;
+		display: block;
+		height: 40px;
 	}
 
 	nav {
@@ -297,40 +262,33 @@
 		top: 0;
 		margin: 0;
 		width: 100vw;
-		background-color: var(--primary-accent);
+		background: var(--gradient);
+		color: var(--secondary-text-color);
 		z-index: 99;
 	}
 
 	menu {
-		list-style: none;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
+		align-items: center;
 		margin: 0;
 		padding: 0;
+
+		list-style: none;
+
 		transition: all 0.5s ease-out;
-		background-color: var(--primary-accent);
-		max-height: 0;
+		background: var(--gradient);
 		overflow: hidden;
-		width: 100%;
 		font-size: 15px;
 		font-weight: 700;
 		font-style: normal;
 		text-transform: uppercase;
 	}
 
-	#hamburger {
-		display: flex;
-		width: 100%;
-		padding-top: 0.7rem;
-		padding-bottom: 0.7rem;
-		justify-content: flex-start;
-		align-items: center;
-		flex-wrap: nowrap;
-		flex-direction: row;
-	}
-
-	#hamburgerCheckbox:checked + menu {
-		display: flex;
-		flex-direction: column;
-		max-height: 100vh;
+	menu li {
+		position: relative;
+		margin: 4px 0;
 	}
 
 	menu a {
@@ -338,12 +296,12 @@
 		align-items: center;
 		width: 100%;
 		padding: 0.7rem 1rem;
-		color: #f2ebd9;
 		text-decoration: none;
 	}
 
 	menu a:hover {
-		background-color: #303030;
+		background-color: var(--secondary-accent);
+		border-radius: 5px;
 	}
 
 	.active {
@@ -351,24 +309,60 @@
 		text-decoration: underline;
 	}
 
-	@media (max-width: 768px) {
-		menu li {
-			position: relative;
-			padding: 3px;
-		}
+	footer {
+		background: var(--gradient);
+		color: var(--secondary-text-color);
+		text-align: left;
+		padding: 1em;
+	}
 
-		menu li:before {
-			content: '';
-			background-color: #ffffff;
-			position: absolute;
-			top: 0;
-			left: 5%;
-			height: 1px;
-			width: 90%;
+	.footer-flex {
+		display: flex;
+		justify-content: space-around;
+		margin: auto;
+		max-width: 75em;
+	}
+
+	.made-with-love {
+		white-space: nowrap;
+		align-self: center;
+	}
+
+	.freetail-link {
+		color: var(--secondary-accent);
+		text-decoration: underline;
+	}
+
+	.flex-column {
+		display: flex;
+		flex-direction: column;
+		font-size: 14px;
+	}
+
+	@media (max-width: 1200px) {
+		menu {
+			flex-direction: column;
+			align-items: normal;
+			display: none;
 		}
 
 		menu a {
 			padding-left: 2rem;
+		}
+
+		#menu-logo {
+			display: none;
+		}
+
+		#hamburger {
+			display: flex;
+			width: 100%;
+			padding-top: 0.7rem;
+			padding-bottom: 0.7rem;
+			justify-content: flex-start;
+			align-items: center;
+			flex-wrap: nowrap;
+			flex-direction: row;
 		}
 
 		#hamburger-logo,
@@ -377,50 +371,35 @@
 			filter: drop-shadow(0px 3px 3px rgba(0, 0, 0, 0.4));
 		}
 
+		#profile-logo {
+			margin-left: auto;
+		}
+		#profile-link {
+			display: none;
+		}
+
+		#hamburgerCheckbox:checked + menu {
+			display: flex;
+			flex-direction: column;
+			max-height: 100vh;
+		}
+
+		menu li:before {
+			content: '';
+			background-color: var(--secondary-text-color);
+			position: absolute;
+			top: -4px;
+			left: 24px;
+			height: 1px;
+			width: calc(100% - 48px);
+		}
+
 		.flex-column {
 			display: none;
 		}
 
 		.footer-flex {
 			max-width: 60vw;
-		}
-	}
-
-	@media (min-width: 1090px) {
-		/* minimum width that can fit all navbar tabs for admin accounts (which have the most number of tabs currently) */
-		/* should be updated if we change the number of tabs */
-		#hamburger-logo {
-			display: none;
-		}
-
-		#menu-logo {
-			display: block;
-			height: 40px;
-		}
-
-		#hamburger {
-			display: none;
-		}
-
-		#profile-link {
-			display: block;
-		}
-
-		menu {
-			margin: 0;
-			display: flex;
-			justify-content: space-around;
-			min-height: 60px;
-			align-items: center;
-		}
-
-		menu a:hover {
-			border-radius: 5px;
-		}
-
-		menu a {
-			width: initial;
-			text-decoration: none;
 		}
 	}
 

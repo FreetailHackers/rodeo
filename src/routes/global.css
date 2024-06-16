@@ -11,9 +11,14 @@ html {
 	--secondary-color: #4e656d; */
 	/* --background-color: #fffefb;
 	--primary-accent: #6262d8; */
-	--background-color: #c4c121;
-	--primary-accent: #007a33;
-	background-color: var(--background-color);
+	--background-color: #ffffff;
+	--primary-text-color: #000000;
+	--secondary-text-color: #ffffff;
+	--primary-accent: #9b68f5;
+	--secondary-accent: #f5c759;
+	--gradient: linear-gradient(0.4turn, #9b68f5, #6262d8);
+	background: var(--background-color);
+	color: var(--primary-text-color);
 }
 
 h1,
@@ -209,18 +214,12 @@ dialog button {
 
 .main-content,
 .homepage-content {
-	margin: 0 auto;
-	padding: 0 1rem;
-}
-
-.main-content {
-	min-height: calc(100vh - (159px + 60px));
-	max-width: 50rem;
-	margin-top: 60px;
+	min-height: calc(100vh - 157px);
+	margin: auto;
+	padding-top: 60px;
 }
 
 .homepage-content {
-	padding-top: 60px;
 	max-width: 75rem;
 }
 
@@ -243,17 +242,16 @@ hr {
 	}
 }
 
+@media (max-width: 1200px) {
+	.main-content {
+		min-height: calc(100vh - 56px);
+	}
+}
+
 dialog::backdrop {
 	backdrop-filter: blur(1px) brightness(0.75);
 }
 
 img {
 	max-width: 100%;
-}
-
-footer {
-	background-color: #303030;
-	color: #f2ebd9;
-	text-align: left;
-	padding: 1em 1em;
 }

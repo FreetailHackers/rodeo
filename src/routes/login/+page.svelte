@@ -20,51 +20,58 @@
 </svelte:head>
 
 <div class="main-content">
-	<h1>Login</h1>
-	<div class="socials">
-		<SocialLogin providers={data.providers} />
-	</div>
-	<hr />
-	<form
-		method="POST"
-		action="?/login"
-		use:enhance={() => {
-			return async ({ update }) => {
-				update({ reset: false });
-			};
-		}}
-	>
-		<label for="email">Email</label>
-		<input
-			class="inputValues"
-			placeholder="Enter your email address"
-			id="email"
-			name="email"
-			required
-			autocomplete="username"
-		/>
-		<label for="password">Password (<a href="/login/reset-password">forgot?</a>)</label>
-		<!-- HACK: Not required so we can easily log into test accounts lol -->
-		<input
-			class="inputValues"
-			type="password"
-			placeholder="Enter your password"
-			id="password"
-			name="password"
-			autocomplete="current-password"
-		/>
-		<button>Sign in with Email</button>
-	</form>
-	<div class="register">
-		<p>Don't have an account yet?</p>
-		<!-- svelte-ignore a11y-missing-content -->
-		<a href="/register">
-			<button class="register-button">Register Here!</button>
-		</a>
+	<div class="login-form">
+		<h1>Login</h1>
+		<div class="socials">
+			<SocialLogin providers={data.providers} />
+		</div>
+		<hr />
+		<form
+			method="POST"
+			action="?/login"
+			use:enhance={() => {
+				return async ({ update }) => {
+					update({ reset: false });
+				};
+			}}
+		>
+			<label for="email">Email</label>
+			<input
+				class="inputValues"
+				placeholder="Enter your email address"
+				id="email"
+				name="email"
+				required
+				autocomplete="username"
+			/>
+			<label for="password">Password (<a href="/login/reset-password">forgot?</a>)</label>
+			<!-- HACK: Not required so we can easily log into test accounts lol -->
+			<input
+				class="inputValues"
+				type="password"
+				placeholder="Enter your password"
+				id="password"
+				name="password"
+				autocomplete="current-password"
+			/>
+			<button>Sign in with Email</button>
+		</form>
+		<div class="register">
+			<p>Don't have an account?</p>
+			<!-- svelte-ignore a11y-missing-content -->
+			<a href="/register">
+				<button class="register-button">Register</button>
+			</a>
+		</div>
 	</div>
 </div>
 
 <style>
+	.login-form {
+		width: clamp(300px, 50vw, 500px);
+		margin: auto;
+	}
+
 	label,
 	.register {
 		padding-top: 15px;
@@ -74,6 +81,7 @@
 		display: flex;
 		text-align: center;
 		align-items: center;
+		justify-content: space-between;
 	}
 
 	.register-button {
