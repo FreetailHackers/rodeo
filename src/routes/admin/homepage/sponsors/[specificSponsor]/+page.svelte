@@ -8,10 +8,8 @@
 	function handleFileChange(event: Event) {
 		const input = event.target as HTMLInputElement;
 		if (input.files && input.files.length > 0) {
-			const file = input.files[0];
-			const fileSize = file.size;
-			if (fileSize > 1024 * 1024) {
-				toasts.notify('Cannot upload! This file is greater than 1 mb!');
+			if (input.files[0].size > 1024 * 1024) {
+				toasts.notify('Error: File size must be under 1MB.');
 			}
 		}
 	}

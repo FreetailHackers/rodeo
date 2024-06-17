@@ -1,8 +1,10 @@
 <script lang="ts">
-	import type { InfoBox, AuthUser } from '@prisma/client';
+	import type { AuthUser } from '@prisma/client';
 	export let user: AuthUser;
-	export let sponsors: InfoBox[];
-	export let sponsorLinks: Record<string, string>;
+
+	// [id, title, response, sponsorLink]
+	type SponsorArray = (string | number)[];
+	export let sponsors: SponsorArray[];
 </script>
 
 <div class="main-container">
@@ -24,13 +26,13 @@
 			{#each sponsors as sponsor}
 				<div class="format-edit-and-sponsor">
 					<div class="sponsor-card">
-						<a href={sponsor.title} target="_blank" rel="noopener noreferrer">
-							<img alt="SponsorImage" src={`${sponsorLinks[sponsor.response]}`} />
+						<a href={sponsor[1]?.toString()} target="_blank" rel="noopener noreferrer">
+							<img alt="SponsorImage" src={`${sponsor[3]}`} />
 						</a>
 					</div>
 					{#if user?.roles.includes('ADMIN')}
 						<div class="edit">
-							<a href="/admin/homepage/sponsors/{sponsor.id}">Edit</a>
+							<a href="/admin/homepage/sponsors/{sponsor[0]}">Edit</a>
 						</div>
 					{/if}
 				</div>

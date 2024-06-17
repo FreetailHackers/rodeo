@@ -74,7 +74,7 @@
 
 {#if data.settings.showSponsors}
 	<section id="Sponsors">
-		<Sponsors user={data.user} sponsors={data.sponsors} sponsorLinks={data.sponsorsLink} />
+		<Sponsors user={data.user} sponsors={data.sponsors} />
 	</section>
 {/if}
 

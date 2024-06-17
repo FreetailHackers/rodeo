@@ -27,6 +27,13 @@ export const load = async ({ locals }) => {
 		})
 	);
 
+	const combinedList = sponsors.map((sponsor) => [
+		sponsor.id,
+		sponsor.title,
+		sponsor.response,
+		sponsorLinks[sponsor.response],
+	]);
+
 	return {
 		user: (await locals.auth.validate())?.user,
 		announcements: await trpc(locals.auth).announcements.getAll(),
@@ -34,7 +41,7 @@ export const load = async ({ locals }) => {
 		settings: await trpc(locals.auth).settings.getPublic(),
 		faqs: await trpc(locals.auth).infoBox.getAllOfCategory('FAQ'),
 		challenges: await trpc(locals.auth).infoBox.getAllOfCategory('CHALLENGE'),
-		sponsors: sponsors,
+		sponsors: combinedList,
 
 		// Check whether various OAuth providers are set up in
 		// environment variables so we can show/hide buttons.
@@ -43,7 +50,6 @@ export const load = async ({ locals }) => {
 			github: githubAuth !== null,
 		},
 		canApply: await trpc(locals.auth).admissions.canApply(),
-		sponsorsLink: sponsorLinks,
 	};
 };
 
