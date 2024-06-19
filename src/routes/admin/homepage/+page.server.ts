@@ -1,16 +1,13 @@
 import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import { s3UploadHandler } from '$lib/s3UploadHandler';
+import { s3DeleteHandler } from '$lib/s3DeleteHandler';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 
-import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3';
-
 dayjs.extend(utc);
 dayjs.extend(timezone);
-
-const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
 export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['ADMIN']);
@@ -91,13 +88,14 @@ export const actions = {
 		const sponsorLink = formData.get('sponsorLink') as string;
 
 		if (sponsorLogo instanceof File && sponsorLogo.size !== 0 && sponsorLogo.size <= 1024 * 1024) {
+			// Replace all characters that are not alphanumeric, periods, or hyphens with an empty string
 			const key = `sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
 
 			s3UploadHandler(key, sponsorLogo);
 
 			await trpc(locals.auth).infoBox.create({
-				title: sponsorLink,
-				response: key,
+				title: key,
+				response: sponsorLink,
 				category: 'SPONSOR',
 			});
 			return 'Created sponsor!';
@@ -122,11 +120,7 @@ export const actions = {
 			const sponsors = await trpc(locals.auth).infoBox.getAllOfCategory('SPONSOR');
 
 			for (const sponsor of sponsors) {
-				const deleteObjectCommand = new DeleteObjectCommand({
-					Bucket: process.env.S3_BUCKET,
-					Key: sponsor.response,
-				});
-				await s3Client.send(deleteObjectCommand);
+				s3DeleteHandler(sponsor.title);
 			}
 
 			await trpc(locals.auth).infoBox.deleteAllOfCategory('SPONSOR');

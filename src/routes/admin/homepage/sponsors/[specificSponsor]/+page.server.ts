@@ -2,9 +2,7 @@ import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import { error, redirect } from '@sveltejs/kit';
 import { s3UploadHandler } from '$lib/s3UploadHandler';
-import { DeleteObjectCommand, S3Client } from '@aws-sdk/client-s3';
-
-const s3Client = new S3Client({ region: process.env.AWS_REGION });
+import { s3DeleteHandler } from '$lib/s3DeleteHandler';
 
 export const load = async ({ locals, params }) => {
 	await authenticate(locals.auth, ['ADMIN']);
@@ -13,9 +11,7 @@ export const load = async ({ locals, params }) => {
 	}
 	const sponsor = await trpc(locals.auth).infoBox.get(Number(params.specificSponsor));
 	if (sponsor !== null) {
-		return {
-			sponsor,
-		};
+		return sponsor;
 	}
 	throw error(404, 'Sponsor not found');
 };
@@ -36,23 +32,20 @@ export const actions = {
 
 			// If no file was specified, use pre existing logo
 			if (sponsorLogo?.size === 0 && existingSponsor) {
-				key = existingSponsor.response;
+				key = existingSponsor.title;
 			} else {
 				// Deleting previous logo
-				const deleteObjectCommand = new DeleteObjectCommand({
-					Bucket: process.env.S3_BUCKET,
-					Key: existingSponsor?.response,
-				});
-				await s3Client.send(deleteObjectCommand);
-				// Uploading new logo
+				s3DeleteHandler(existingSponsor?.title);
+				// Replace all characters that are not alphanumeric, periods, or hyphens with an empty string
 				key = `sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
+				// Uploading new logo
 				s3UploadHandler(key, sponsorLogo);
 			}
 
 			await trpc(locals.auth).infoBox.update({
 				id: Number(formData.get('id') as string),
-				title: sponsorLink,
-				response: key,
+				title: key,
+				response: sponsorLink,
 				category: 'SPONSOR',
 			});
 			return 'Saved sponsor!';
@@ -68,11 +61,7 @@ export const actions = {
 		const existingSponsor = await trpc(locals.auth).infoBox.get(id);
 
 		// Deleting uploaded image
-		const deleteObjectCommand = new DeleteObjectCommand({
-			Bucket: process.env.S3_BUCKET,
-			Key: existingSponsor?.response,
-		});
-		await s3Client.send(deleteObjectCommand);
+		s3DeleteHandler(existingSponsor?.title);
 
 		await trpc(locals.auth).infoBox.delete(id);
 		throw redirect(303, '/');

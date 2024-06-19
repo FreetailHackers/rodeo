@@ -17,21 +17,21 @@ export const load = async ({ locals }) => {
 					s3Client,
 					new GetObjectCommand({
 						Bucket: process.env.S3_BUCKET,
-						Key: `${sponsor.response}`,
+						Key: `${sponsor.title}`,
 					})
 				);
-				sponsorLinks[sponsor.response] = url;
+				sponsorLinks[sponsor.title] = url;
 			} catch (error) {
-				console.error(`Error fetching signed URL for ${sponsor.response}:`, error);
+				console.error(`Error fetching signed URL for ${sponsor.title}:`, error);
 			}
 		})
 	);
 
-	const combinedList = sponsors.map((sponsor) => [
+	const combinedSponsorList = sponsors.map((sponsor) => [
 		sponsor.id,
 		sponsor.title,
 		sponsor.response,
-		sponsorLinks[sponsor.response],
+		sponsorLinks[sponsor.title],
 	]);
 
 	return {
@@ -41,7 +41,7 @@ export const load = async ({ locals }) => {
 		settings: await trpc(locals.auth).settings.getPublic(),
 		faqs: await trpc(locals.auth).infoBox.getAllOfCategory('FAQ'),
 		challenges: await trpc(locals.auth).infoBox.getAllOfCategory('CHALLENGE'),
-		sponsors: combinedList,
+		sponsors: combinedSponsorList,
 
 		// Check whether various OAuth providers are set up in
 		// environment variables so we can show/hide buttons.

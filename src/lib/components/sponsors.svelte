@@ -2,7 +2,11 @@
 	import type { AuthUser } from '@prisma/client';
 	export let user: AuthUser;
 
-	// [id, title, response, sponsorLink]
+	// The make up of SponsorArray
+	// [id(used for editing a sponsor on rodeo),
+	// sponsorTitle(name of file used as a key on s3),
+	// response(URL to sponsor's website),
+	// sponsorLink(URL to sponsor image on s3)]
 	type SponsorArray = (string | number)[];
 	export let sponsors: SponsorArray[];
 </script>
@@ -16,7 +20,6 @@
 			more.
 		</p>
 
-		<!-- This code assumes that the sponsor logo is saved under /static/Sponsors/ as a PNG with the same name as the company. -->
 		<button
 			><a href="mailto:corporate@freetailhackers.com" target="_blank" rel="noopener noreferrer"
 				>Become a sponsor</a
@@ -26,7 +29,7 @@
 			{#each sponsors as sponsor}
 				<div class="format-edit-and-sponsor">
 					<div class="sponsor-card">
-						<a href={sponsor[1]?.toString()} target="_blank" rel="noopener noreferrer">
+						<a href={sponsor[2]?.toString()} target="_blank" rel="noopener noreferrer">
 							<img alt="SponsorImage" src={`${sponsor[3]}`} />
 						</a>
 					</div>

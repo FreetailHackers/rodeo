@@ -23,7 +23,7 @@
 	<div id="header">
 		<h1>Edit Sponsor</h1>
 		<form method="POST" action="?/delete" use:enhance>
-			<input type="hidden" name="id" value={data.sponsor.id} />
+			<input type="hidden" name="id" value={data.id} />
 			<button
 				use:confirmationDialog={{
 					text: 'Are you sure you want to delete this sponsor?',
@@ -43,7 +43,7 @@
 			};
 		}}
 	>
-		<input type="hidden" name="id" value={data.sponsor.id} />
+		<input type="hidden" name="id" value={data.id} />
 
 		<label for="sponsorLogo">Sponsor Logo</label>
 		<input
@@ -55,7 +55,7 @@
 		/>
 
 		<label for="sponsorLink">Sponsor Link</label>
-		<input type="url" id="sponsorLink" name="sponsorLink" value={data.sponsor.title} />
+		<input type="url" id="sponsorLink" name="sponsorLink" value={data.response} />
 
 		<button type="submit" style="margin-top: 1rem;">Save</button>
 	</form>
