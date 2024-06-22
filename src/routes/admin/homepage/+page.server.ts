@@ -1,7 +1,6 @@
 import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
-import { s3UploadHandler } from '$lib/s3UploadHandler';
-import { s3DeleteHandler } from '$lib/s3DeleteHandler';
+import { s3Delete, s3Upload } from '$lib/s3Handler';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -91,7 +90,7 @@ export const actions = {
 			// Removes all characters that are not alphanumeric, periods, or hyphens
 			const key = `sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
 
-			s3UploadHandler(key, sponsorLogo);
+			s3Upload(key, sponsorLogo);
 
 			await trpc(locals.auth).infoBox.create({
 				title: key,
@@ -120,7 +119,7 @@ export const actions = {
 			const sponsors = await trpc(locals.auth).infoBox.getAllOfCategory('SPONSOR');
 
 			for (const sponsor of sponsors) {
-				s3DeleteHandler(sponsor.title);
+				s3Delete(sponsor.title);
 			}
 
 			await trpc(locals.auth).infoBox.deleteAllOfCategory('SPONSOR');

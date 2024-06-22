@@ -1,8 +1,7 @@
 import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import { error, redirect } from '@sveltejs/kit';
-import { s3UploadHandler } from '$lib/s3UploadHandler';
-import { s3DeleteHandler } from '$lib/s3DeleteHandler';
+import { s3Delete, s3Upload } from '$lib/s3Handler';
 
 export const load = async ({ locals, params }) => {
 	await authenticate(locals.auth, ['ADMIN']);
@@ -35,11 +34,11 @@ export const actions = {
 				key = existingSponsor.title;
 			} else {
 				// Deleting previous logo
-				s3DeleteHandler(existingSponsor?.title);
+				s3Delete(existingSponsor?.title);
 				// Removes all characters that are not alphanumeric, periods, or hyphens
 				key = `sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
 				// Uploading new logo
-				s3UploadHandler(key, sponsorLogo);
+				s3Upload(key, sponsorLogo);
 			}
 
 			await trpc(locals.auth).infoBox.update({
@@ -61,7 +60,7 @@ export const actions = {
 		const existingSponsor = await trpc(locals.auth).infoBox.get(id);
 
 		// Deleting uploaded image
-		s3DeleteHandler(existingSponsor?.title);
+		s3Delete(existingSponsor?.title);
 
 		await trpc(locals.auth).infoBox.delete(id);
 		throw redirect(303, '/');
