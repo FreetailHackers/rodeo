@@ -2,11 +2,10 @@
 	import type { AuthUser } from '@prisma/client';
 	export let user: AuthUser;
 
-	// The make up of SponsorArray
-	// [id(used for editing a sponsor on rodeo),
-	// sponsorTitle(name of file used as a key on s3),
-	// response(URL to sponsor's website),
-	// sponsorLink(URL to sponsor image on s3)]
+	/*
+      SponsorArray structure:
+      [id, sponsorTitle (S3 key), response (website URL), sponsorLink (image URL on S3)]
+    */
 	type SponsorArray = (string | number)[];
 	export let sponsors: SponsorArray[];
 </script>

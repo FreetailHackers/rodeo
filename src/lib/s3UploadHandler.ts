@@ -1,4 +1,5 @@
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { s3DeleteHandler } from '$lib/s3DeleteHandler';
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
 /*
@@ -6,11 +7,7 @@ const s3Client = new S3Client({ region: process.env.AWS_REGION });
  */
 export async function s3UploadHandler(key: string, file: File): Promise<void> {
 	// Ensure that there is no copy
-	const deleteObjectCommand = new DeleteObjectCommand({
-		Bucket: process.env.S3_BUCKET,
-		Key: `${key}`,
-	});
-	await s3Client.send(deleteObjectCommand);
+	s3DeleteHandler(key);
 
 	const putObjectCommand = new PutObjectCommand({
 		Bucket: process.env.S3_BUCKET,

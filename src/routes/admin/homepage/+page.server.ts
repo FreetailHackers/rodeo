@@ -88,7 +88,7 @@ export const actions = {
 		const sponsorLink = formData.get('sponsorLink') as string;
 
 		if (sponsorLogo instanceof File && sponsorLogo.size !== 0 && sponsorLogo.size <= 1024 * 1024) {
-			// Replace all characters that are not alphanumeric, periods, or hyphens with an empty string
+			// Removes all characters that are not alphanumeric, periods, or hyphens
 			const key = `sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
 
 			s3UploadHandler(key, sponsorLogo);

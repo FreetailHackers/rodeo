@@ -36,7 +36,7 @@ export const actions = {
 			} else {
 				// Deleting previous logo
 				s3DeleteHandler(existingSponsor?.title);
-				// Replace all characters that are not alphanumeric, periods, or hyphens with an empty string
+				// Removes all characters that are not alphanumeric, periods, or hyphens
 				key = `sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
 				// Uploading new logo
 				s3UploadHandler(key, sponsorLogo);
