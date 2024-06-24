@@ -28,8 +28,8 @@
 			{#each sponsors as sponsor}
 				<div class="format-edit-and-sponsor">
 					<div class="sponsor-card">
-						<a href={sponsor[2].toString()} target="_blank" rel="noopener noreferrer">
-							<img alt="SponsorImage" src={sponsor[3].toString()} />
+						<a href={sponsor[2]?.toString()} target="_blank" rel="noopener noreferrer">
+							<img alt="SponsorImage" src={sponsor[3]?.toString()} />
 						</a>
 					</div>
 					{#if user?.roles.includes('ADMIN')}
