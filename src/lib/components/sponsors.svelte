@@ -1,5 +1,13 @@
 <script lang="ts">
-	export let sponsors: string[][];
+	import type { AuthUser } from '@prisma/client';
+	export let user: AuthUser;
+
+	/*
+      SponsorArray structure:
+      [id, sponsorTitle (S3 key), response (website URL), sponsorLink (image URL on S3)]
+    */
+	type SponsorArray = (string | number)[];
+	export let sponsors: SponsorArray[];
 </script>
 
 <div class="main-container">
@@ -11,7 +19,6 @@
 			more.
 		</p>
 
-		<!-- This code assumes that the sponsor logo is saved under /static/Sponsors/ as a PNG with the same name as the company. -->
 		<button
 			><a href="mailto:corporate@freetailhackers.com" target="_blank" rel="noopener noreferrer"
 				>Become a sponsor</a
@@ -19,15 +26,17 @@
 		>
 		<div class="sponsor-container">
 			{#each sponsors as sponsor}
-				<div class="sponsor-card">
-					<a
-						href={sponsor[1]}
-						class:nohover={sponsor[1] === '#'}
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						<img alt={sponsor[0]} src={`/Sponsors/${sponsor[0]}.png`} />
-					</a>
+				<div class="format-edit-and-sponsor">
+					<div class="sponsor-card">
+						<a href={sponsor[2]?.toString()} target="_blank" rel="noopener noreferrer">
+							<img alt="SponsorImage" src={`${sponsor[3]}`} />
+						</a>
+					</div>
+					{#if user?.roles.includes('ADMIN')}
+						<div class="edit">
+							<a href="/admin/homepage/sponsors/{sponsor[0]}">Edit</a>
+						</div>
+					{/if}
 				</div>
 			{/each}
 		</div>
@@ -35,10 +44,11 @@
 </div>
 
 <style>
-	.nohover {
-		pointer-events: none;
+	.format-edit-and-sponsor {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
 	}
-
 	.main-container {
 		position: relative;
 		background-color: #1c1c1c;
@@ -102,6 +112,11 @@
 		text-decoration: none;
 	}
 
+	.edit a {
+		color: #e1563f;
+		text-decoration: underline;
+	}
+
 	.sponsor-container {
 		display: flex;
 		justify-content: space-evenly;
@@ -111,27 +126,17 @@
 	}
 
 	.sponsor-card {
-		flex: 0 0 calc(33.333% - 20px);
 		margin: 10px;
-		margin-bottom: 25px;
 		background-color: #fffff9;
 		padding: 10px;
-		box-sizing: border-box;
-		max-width: 300px;
-		text-align: center;
-		display: flex;
-		align-items: center;
-		justify-content: center;
 		box-shadow: 10px 10px #e1563f;
 		transition: all 0.4s ease;
 	}
 
 	.sponsor-card img {
-		max-height: 150px;
-		max-width: 100%;
-		height: auto;
-		display: block;
-		margin: 0 auto;
+		width: 250px;
+		height: 150px;
+		object-fit: contain;
 	}
 
 	.sponsor-card:hover {
@@ -148,6 +153,11 @@
 		button,
 		p {
 			font-size: 16px;
+		}
+
+		.sponsor-card img {
+			width: 125px;
+			height: 100px;
 		}
 	}
 </style>
