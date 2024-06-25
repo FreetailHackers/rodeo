@@ -4,8 +4,18 @@
 	import Toggle from '$lib/components/toggle.svelte';
 	import TextEditor from '$lib/components/text-editor.svelte';
 	export let data;
+	import { toasts } from '$lib/stores';
 
 	let selected: string;
+
+	function handleFileChange(event: Event) {
+		const input = event.target as HTMLInputElement;
+		if (input.files && input.files.length > 0) {
+			if (input.files[0].size > 1024 * 1024) {
+				toasts.notify('Error: File size must be under 1MB.');
+			}
+		}
+	}
 </script>
 
 <svelte:head>
@@ -123,6 +133,25 @@
 	<button type="submit">Save</button>
 </form>
 
+<form method="POST" action="?/createSponsor" use:enhance enctype="multipart/form-data">
+	<label for="createNewSponsor"><h2>Create New Sponsor</h2></label>
+
+	<label for="sponsorLogo">Sponsor Logo</label>
+	<input
+		type="file"
+		id="sponsorLogo"
+		name="sponsorLogo"
+		accept=".jpg, .jpeg, .png, .webp"
+		required
+		on:change={handleFileChange}
+	/>
+
+	<label for="sponsorLink">Sponsor Link</label>
+	<input type="url" id="sponsorLink" name="sponsorLink" required />
+
+	<button type="submit">Save</button>
+</form>
+
 <form method="POST" action="?/deleteAll" use:enhance>
 	<label for="deleteAll"><h2>Delete All</h2></label>
 	<select name="deleteAll" id="deleteAll" bind:value={selected}>
@@ -130,6 +159,7 @@
 		<option value="events"> Schedule Events</option>
 		<option value="FAQs"> FAQs </option>
 		<option value="challenges"> Challenges </option>
+		<option value="sponsors"> Sponsors </option>
 	</select>
 	<button disabled={selected === ''} use:confirmationDialog>Delete</button>
 </form>

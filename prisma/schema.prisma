@@ -204,6 +204,7 @@ enum QuestionType {
 enum CategoryType {
   FAQ
   CHALLENGE
+  SPONSOR
 }
 
 // This section lists the names of manually created triggers, and the
