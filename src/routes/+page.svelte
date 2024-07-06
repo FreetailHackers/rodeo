@@ -20,7 +20,7 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Home</title>
+	<title>Rodeo | Home</title>
 </svelte:head>
 
 <div class="topographic-background">

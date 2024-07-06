@@ -7,7 +7,7 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Admin - FAQ - {data.question.title}</title>
+	<title>Rodeo | Admin - FAQ - {data.question.title}</title>
 </svelte:head>
 
 <div class="container">

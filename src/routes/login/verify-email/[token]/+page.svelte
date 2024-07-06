@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Verify Email</title>
+	<title>Rodeo | Verify Email</title>
 </svelte:head>
 
 <div class="topographic-background">

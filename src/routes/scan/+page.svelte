@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Scan</title>
+	<title>Rodeo | Scan</title>
 </svelte:head>
 
 <div class="main-content">

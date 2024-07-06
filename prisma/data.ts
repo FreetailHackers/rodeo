@@ -198,11 +198,11 @@ export const questions: (Prisma.QuestionCreateInput & { generate: () => unknown 
 	},
 	{
 		order: 5,
-		label: 'Why do you want to attend Formula Hacks?',
+		label: 'Why do you want to attend HackTX?',
 		type: 'PARAGRAPH',
 		required: true,
 		placeholder: 'I love hackathons!',
-		generate: () => 'I want to attend Formula Hacks because I love hackathons!',
+		generate: () => 'I want to attend HackTX because I love hackathons!',
 	},
 	{
 		order: 6,
@@ -230,7 +230,7 @@ export const events: Prisma.EventCreateInput[] = [
 		start: dayjs.tz('2021-09-24T09:00:00', MY_TIMEZONE).toDate(),
 		end: dayjs.tz('2021-09-24T09:30:00', MY_TIMEZONE).toDate(),
 		location: 'GDC Auditorium (2.216)',
-		description: 'Welcome to Formula Hacks 2024!',
+		description: 'Welcome to HackTX 2024!',
 		type: 'Key-Event',
 	},
 	{
@@ -319,20 +319,20 @@ export const events: Prisma.EventCreateInput[] = [
 
 export const faq: Prisma.InfoBoxCreateInput[] = [
 	{
-		title: 'What is Formula Hacks?',
+		title: 'What is HackTX?',
 		response:
-			'Formula Hacks is our beginner friendly spring hackathon only open to the University of Texas at Austin and Austin Community College students. No prior experience required and all majors welcome!',
+			'HackTX is our beginner friendly spring hackathon only open to the University of Texas at Austin and Austin Community College students. No prior experience required and all majors welcome!',
 		category: 'FAQ',
 	},
 	{
-		title: 'Where is Formula Hacks?',
+		title: 'Where is HackTX?',
 		response:
-			'Formula Hacks will take place on the University of Texas at Austin campus! Hacking, judging, mini-events, and more will occur fully in-person!',
+			'HackTX will take place on the University of Texas at Austin campus! Hacking, judging, mini-events, and more will occur fully in-person!',
 		category: 'FAQ',
 	},
 	{
-		title: 'When is Formula Hacks?',
-		response: 'Formula Hacks starts on March 22st, 2024 and ends on March 23rd, 2024.',
+		title: 'When is HackTX?',
+		response: 'HackTX starts on March 22st, 2024 and ends on March 23rd, 2024.',
 		category: 'FAQ',
 	},
 	{
