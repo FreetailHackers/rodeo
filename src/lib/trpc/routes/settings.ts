@@ -10,6 +10,7 @@ const settingsSchema = z
 		daysToRSVP: z.number().nullable().optional(),
 		homepageText: z.string().optional(),
 		rollingAdmissions: z.boolean().optional(),
+		spongebobCase: z.boolean().optional(),
 		submitTemplate: z.string().optional(),
 		acceptTemplate: z.string().optional(),
 		rejectTemplate: z.string().optional(),
@@ -66,6 +67,7 @@ export const settingsRouter = t.router({
 			declineIsHTML: boolean;
 			withdrawIsHTML: boolean;
 			byStatusIsHTML: boolean;
+			spongebobCase: boolean;
 		}> => {
 			const settings = await getSettings();
 			return {
@@ -88,6 +90,7 @@ export const settingsRouter = t.router({
 				declineIsHTML: settings.declineIsHTML,
 				withdrawIsHTML: settings.withdrawIsHTML,
 				byStatusIsHTML: settings.byStatusIsHTML,
+				spongebobCase: settings.spongebobCase,
 			};
 		}
 	),

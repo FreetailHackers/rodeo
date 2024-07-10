@@ -108,6 +108,7 @@ model Settings {
 
   // PRIVATE SETTINGS (settings that non-admins do not need)
   rollingAdmissions Boolean @default(false)
+  spongebobCase     Boolean @default(false)
   submitTemplate            String  @default("We have received your application to our hackathon!")
   acceptTemplate            String  @default("You have been accepted to our hackathon!")
   rejectTemplate            String  @default("We regret to inform you that we cannot offer you a spot at our hackathon this year.")
