@@ -16,6 +16,15 @@ export const load = async ({ locals }) => {
 };
 
 export const actions = {
+	inviteEmail: async ({ locals, request }) => {
+		const formData = await request.formData();
+		const email = formData.get('email') as string;
+		const roles: string[] = formData.getAll('roles') as string[];
+		const subject = formData.get('subject') as string;
+		const emailBody = formData.get('emailBody') as string;
+		return trpc(locals.auth).users.inviteEmail({ email, roles, subject, emailBody });
+	},
+
 	emailByStatus: async ({ locals, request }) => {
 		const formData = await request.formData();
 		const status = formData.get('status') as Status;

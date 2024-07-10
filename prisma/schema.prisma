@@ -172,6 +172,7 @@ enum Status {
   APPLIED // User has finished application
   ACCEPTED // User has been accepted but has not yet confirmed
   REJECTED // User has been rejected
+  INVITED // User has been invited by email
   WAITLISTED // User has been waitlisted
   CONFIRMED // User has confirmed their attendance
   DECLINED // User has declined their attendance

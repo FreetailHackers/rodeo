@@ -12,6 +12,37 @@
 
 <form
 	method="POST"
+	action="?/inviteEmail"
+	use:enhance={() => {
+		return async ({ update }) => {
+			update({ reset: false });
+		};
+	}}
+>
+	<label for="inviteEmail"><h2>Invite Email with Pre-Loaded Roles</h2></label>
+
+	<div class="flex-container">
+		<div class="email-subject-container">
+			<input class="textbox-margin" name="email" placeholder="Type email here" required />
+			<input class="textbox-margin" name="subject" placeholder="Type email subject here" required />
+		</div>
+		<div class="multi-select">
+			<select name="roles" required multiple>
+				<option value="HACKER">Hacker</option>
+				<option value="ORGANIZER">Organizer</option>
+				<option value="JUDGE">Judge</option>
+				<option value="VOLUNTEER">Volunteer</option>
+				<option value="SPONSOR">Sponsor</option>
+			</select>
+		</div>
+	</div>
+	<MarkdownEditor placeholder="Type email body here" name="emailBody" required />
+
+	<button id="invite-email" type="submit">Send</button>
+</form>
+
+<form
+	method="POST"
 	action="?/emailByStatus"
 	use:enhance={() => {
 		return async ({ update }) => {
@@ -92,13 +123,36 @@
 	.textbox-margin {
 		margin-bottom: 1%;
 		flex: 1;
+		box-sizing: border-box;
 	}
 
 	.flex-container {
 		display: flex;
+		flex-direction: row;
 	}
 
 	button {
 		margin-bottom: 1rem;
+	}
+
+	.email-subject-container {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+		margin-right: 1%;
+	}
+
+	.multi-select {
+		display: flex;
+		align-items: center;
+		max-width: 100%;
+		margin-bottom: 1%;
+	}
+
+	.multi-select select[multiple] {
+		height: auto;
+		overflow-y: auto;
+		width: 100%;
+		box-sizing: border-box;
 	}
 </style>

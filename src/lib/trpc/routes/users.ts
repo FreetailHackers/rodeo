@@ -769,6 +769,44 @@ export const usersRouter = t.router({
 			).map((user) => user.email);
 			return sendEmails(emailArray, req.input.subject, req.input.emailBody);
 		}),
+
+	/**
+	 * Sends an invite to the given email address and a password
+	 * is created.
+	 */
+	inviteEmail: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(
+			z.object({
+				email: z.string().trim().toLowerCase(),
+				roles: z.array(z.string()),
+				subject: z.string(),
+				emailBody: z.string(),
+			})
+		)
+		.mutation(async (req): Promise<void> => {
+			try {
+				await auth.createUser({
+					key: {
+						providerId: 'email',
+						providerUserId: req.input.email,
+						password: 'password', //  TODO: left password for time being. Possibly make random later?
+					},
+					attributes: {
+						email: req.input.email,
+						roles: req.input.roles,
+						status: 'INVITED',
+					},
+				});
+				const emailAsArray: string[] = [req.input.email];
+				await sendEmails(emailAsArray, req.input.subject, req.input.emailBody);
+			} catch (e) {
+				if (e instanceof PrismaClientKnownRequestError && e.code === 'P2002') {
+					// Email already exists
+				}
+				throw e;
+			}
+		}),
 });
 
 async function getWhereCondition(
