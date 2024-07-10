@@ -30,9 +30,9 @@
 	/>
 
 	<Toggle
-	    name="spongebobCase"
-	    label="Spongebob case activation"
-	    bind:checked={data.settings.spongebobCase}
+		name="spongebobCase"
+		label="Spongebob case activation"
+		bind:checked={data.settings.spongebobCase}
 	/>
 
 	<status-container>
