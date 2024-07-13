@@ -781,16 +781,26 @@ export const usersRouter = t.router({
 				email: z.string().trim().toLowerCase(),
 				roles: z.array(z.string()),
 				subject: z.string(),
-				emailBody: z.string(),
 			})
 		)
-		.mutation(async (req): Promise<void> => {
+		.mutation(async (req): Promise<string> => {
 			try {
+				const generatedPassword = generatePassword();
+				const emailBody =
+					'You have been Invited to Rodeo as: ' +
+					req.input.roles +
+					'.\n\n' +
+					'Please go to https://rodeo.hacktx.com/ and login with ' +
+					req.input.email +
+					' as the email. \n\nYour temporary password is ' +
+					generatedPassword +
+					'. ' +
+					'You can change your password once you successfully login.';
 				await auth.createUser({
 					key: {
 						providerId: 'email',
 						providerUserId: req.input.email,
-						password: 'password', //  TODO: left password for time being. Possibly make random later?
+						password: generatedPassword,
 					},
 					attributes: {
 						email: req.input.email,
@@ -799,7 +809,7 @@ export const usersRouter = t.router({
 					},
 				});
 				const emailAsArray: string[] = [req.input.email];
-				await sendEmails(emailAsArray, req.input.subject, req.input.emailBody);
+				return sendEmails(emailAsArray, req.input.subject, emailBody);
 			} catch (e) {
 				if (e instanceof PrismaClientKnownRequestError && e.code === 'P2002') {
 					// Email already exists
@@ -1007,6 +1017,10 @@ async function getWhereConditionHelper(
 		}
 	}
 	return {};
+}
+
+function generatePassword() {
+	return Math.random().toString(36).slice(2) + Math.random().toString(36).toUpperCase().slice(2);
 }
 
 async function getRSVPDeadline(user: User) {

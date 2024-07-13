@@ -24,7 +24,7 @@
 	<div class="flex-container">
 		<div class="email-subject-container">
 			<input class="textbox-margin" name="email" placeholder="Type email here" required />
-			<input class="textbox-margin" name="subject" placeholder="Type email subject here" required />
+			<input class="textbox-margin" name="subject" value="Invitation to Rodeo" readonly />
 		</div>
 		<div class="multi-select">
 			<select name="roles" required multiple>
@@ -36,7 +36,7 @@
 			</select>
 		</div>
 	</div>
-	<MarkdownEditor placeholder="Type email body here" name="emailBody" required />
+	<!-- <MarkdownEditor placeholder="Type email body here" name="emailBody" required /> -->
 
 	<button id="invite-email" type="submit">Send</button>
 </form>
