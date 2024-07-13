@@ -33,41 +33,50 @@
 	</div>
 </div>
 <div>
-	{#if data.user !== undefined}
-		<!-- Admin announcements panel -->
-		<section id="Announcements">
-			<Announcements announcements={data.announcements} admin={data.user.roles.includes('ADMIN')} />
-		</section>
-	{:else}
-		<section id="Announcements">
-			<Announcements announcements={data.announcements} admin={false} />
-		</section>
+	{#if data.settings.showAnnouncements}
+		{#if data.user !== undefined}
+			<!-- Admin announcements panel -->
+			<section id="Announcements">
+				<Announcements
+					announcements={data.announcements}
+					admin={data.user.roles.includes('ADMIN')}
+				/>
+			</section>
+		{:else}
+			<section id="Announcements">
+				<Announcements announcements={data.announcements} admin={false} />
+			</section>
+		{/if}
 	{/if}
 </div>
 
-<section id="Schedule">
-	<Schedule user={data.user} schedule={data.schedule} settings_timezone={data.settings.timezone} />
-</section>
+{#if data.settings.showSchedule}
+	<section id="Schedule">
+		<Schedule
+			user={data.user}
+			schedule={data.schedule}
+			settings_timezone={data.settings.timezone}
+		/>
+	</section>
+{/if}
 
-<section id="FAQ">
-	<FAQ user={data.user} questions={data.faqs} />
-</section>
+{#if data.settings.showFAQ}
+	<section id="FAQ">
+		<FAQ user={data.user} questions={data.faqs} />
+	</section>
+{/if}
 
-<section id="Challenges">
-	<Challenges user={data.user} challenges={data.challenges} />
-</section>
+{#if data.settings.showChallenges}
+	<section id="Challenges">
+		<Challenges user={data.user} challenges={data.challenges} />
+	</section>
+{/if}
 
-<section id="Sponsors">
-	<Sponsors
-		sponsors={[
-			['Roblox', 'https://create.roblox.com/landing'],
-			['Capital One', 'http://api.nessieisreal.com/'],
-			['CodeCrafters', 'https://codecrafters.io/event/freetailhackers'],
-			['Red Bull', '#'],
-			['Stand Out Stickers', 'http://hackp.ac/mlh-StandOutStickers-hackathons'],
-		]}
-	/>
-</section>
+{#if data.settings.showSponsors}
+	<section id="Sponsors">
+		<Sponsors user={data.user} sponsors={data.sponsors} />
+	</section>
+{/if}
 
 <style>
 	section {

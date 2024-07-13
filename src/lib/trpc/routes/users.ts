@@ -92,7 +92,7 @@ export const usersRouter = t.router({
 						req.input[question.id].size > 0 &&
 						req.input[question.id].size <= question.maxSizeMB * 1024 * 1024
 					) {
-						const key = `${req.ctx.user.id}/${question.id}`;
+						const key = `files/${req.ctx.user.id}/${question.id}`;
 						const deleteObjectCommand = new DeleteObjectCommand({
 							Bucket: process.env.S3_BUCKET,
 							Key: key,
@@ -207,7 +207,7 @@ export const usersRouter = t.router({
 				});
 				// notify user through their email on successful application submission
 				const subject = 'Thanks for submitting!';
-				await sendEmails(req.ctx.user.email, subject, (await getSettings()).submitTemplate);
+				await sendEmails(req.ctx.user.email, subject, (await getSettings()).submitTemplate, false);
 			}
 			return errors;
 		}),
@@ -226,6 +226,17 @@ export const usersRouter = t.router({
 				where: { id: req.ctx.user.id },
 				data: { status: 'CREATED' },
 			});
+			const subject = 'Application Withdrawal Warning';
+			await sendEmails(
+				req.ctx.user.email,
+				subject,
+				(
+					await getSettings()
+				).withdrawalWarningTemplate,
+				(
+					await getSettings()
+				).withdrawIsHTML
+			);
 		}),
 
 	getRSVPDeadline: t.procedure
@@ -254,7 +265,10 @@ export const usersRouter = t.router({
 						'Thanks for your RSVP!',
 						(
 							await getSettings()
-						).confirmTemplate
+						).confirmTemplate,
+						(
+							await getSettings()
+						).confirmIsHTML
 					);
 				}
 			} else {
@@ -269,7 +283,10 @@ export const usersRouter = t.router({
 						'Thanks for your RSVP!',
 						(
 							await getSettings()
-						).declineTemplate
+						).declineTemplate,
+						(
+							await getSettings()
+						).declineIsHTML
 					);
 				}
 			}
@@ -333,7 +350,7 @@ export const usersRouter = t.router({
 			'Click on the following link to verify your email address:<br><br>' +
 			link +
 			'<br><br>If you did not request this email, please ignore it.';
-		await sendEmails(req.ctx.user.email, 'Email Verification', body);
+		await sendEmails(req.ctx.user.email, 'Email Verification', body, false);
 	}),
 
 	/**
@@ -353,7 +370,7 @@ export const usersRouter = t.router({
 				const body =
 					'Click on the following link to reset your password (valid for 10 minutes):<br><br>' +
 					link;
-				await sendEmails(user.email, 'Password Reset', body);
+				await sendEmails(user.email, 'Password Reset', body, false);
 			}
 		}),
 
@@ -767,17 +784,13 @@ export const usersRouter = t.router({
 			})
 		)
 		.mutation(async (req): Promise<number> => {
-			const response = sendEmails(req.input.emails, req.input.subject, req.input.emailBody);
+			const response = sendEmails(req.input.emails, req.input.subject, req.input.emailBody, false);
 			if ((await response).includes('unsuccessfully') || (await response).includes('error')) {
 				return 0;
 			}
 			return 1;
 		}),
 
-	/**
-	 * Gets emails of all the users matching the given
-	 * search criteria. User must be an admin or sponsor.
-	 */
 	emails: t.procedure
 		.use(authenticate(['ADMIN', 'SPONSOR']))
 		.input(

@@ -8,7 +8,8 @@
 	import { trpc } from '$lib/trpc/client';
 	import { toasts } from '$lib/stores';
 	import Dropdown from '$lib/components/dropdown.svelte';
-	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
+	// import MarkdownEditor from '$lib/components/markdown-editor.svelte';
+	import SvelteMarkdown from 'svelte-markdown';
 
 	export let data;
 
@@ -57,7 +58,6 @@
 		let rejectedEmails: string[] = [];
 
 		let userEmails = await trpc().users.emails.query({ key, search, searchFilter });
-		console.log(typeof userEmails);
 
 		let completed = 0;
 		const toast = toasts.notify(`Sent 0/${userEmails.length} emails...`);
@@ -95,11 +95,11 @@
 		const allFiles = await trpc().users.files.query({ key, search, searchFilter });
 		let completed = 0;
 		const toast = toasts.notify(`Downloading files (0/${allFiles.length} completed)...`);
-		// Download 100 files at a time to avoid overloading the server/browser
+		// Download 10 files at a time to avoid overloading the server/browser
 		// (Chrome will start throwing ERR_INSUFFICIENT_RESOURCES if there's too many outstanding requests,
 		// and I have received errors from the database being overloaded as well)
-		for (let i = 0; i < allFiles.length; i += 100) {
-			const filesToDownload = allFiles.slice(i, i + 100);
+		for (let i = 0; i < allFiles.length; i += 10) {
+			const filesToDownload = allFiles.slice(i, i + 10);
 			const blobs = await fetchFiles(filesToDownload.map((file) => file.url));
 			for (let j = 0; j < filesToDownload.length; j++) {
 				const blob = blobs[j];
@@ -361,12 +361,7 @@
 					required
 				/>
 			</div>
-			<MarkdownEditor
-				placeholder="Type email body here"
-				name="emailBody"
-				bind:value={emailBody}
-				required
-			/>
+			<SvelteMarkdown source={emailBody} />
 
 			<button class="email-by-users" on:click={sendEmailsByUsers}>Send</button>
 		</div>

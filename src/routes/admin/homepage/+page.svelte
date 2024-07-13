@@ -1,10 +1,21 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { confirmationDialog } from '$lib/actions.js';
-	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
+	import Toggle from '$lib/components/toggle.svelte';
+	import TextEditor from '$lib/components/text-editor.svelte';
 	export let data;
+	import { toasts } from '$lib/stores';
 
 	let selected: string;
+
+	function handleFileChange(event: Event) {
+		const input = event.target as HTMLInputElement;
+		if (input.files && input.files.length > 0) {
+			if (input.files[0].size > 1024 * 1024) {
+				toasts.notify('Error: File size must be under 1MB.');
+			}
+		}
+	}
 </script>
 
 <svelte:head>
@@ -21,15 +32,52 @@
 	}}
 >
 	<label for="homepageText"><h2>Homepage Text</h2></label>
-	<MarkdownEditor
+	<TextEditor
 		placeholder="Modify the homepage text here (Markdown is supported)."
 		name="homepageText"
 		id="homepageText"
+		isHTML={false}
 		rows={25}
-		value={data.homepageText}
+		value={data.settings.homepageText}
 	/>
 
 	<button id="save-homepage-text" type="submit">Save</button>
+</form>
+
+<form
+	method="POST"
+	action="?/showSections"
+	use:enhance={() => {
+		return async ({ update }) => {
+			update({ reset: false });
+		};
+	}}
+>
+	<label for="showSections"><h2>Show Homepage Sections</h2></label>
+	<div class="toggle-container">
+		<Toggle
+			name="showAnnouncements"
+			label="Show Announcements"
+			bind:checked={data.settings.showAnnouncements}
+		/>
+	</div>
+	<div class="toggle-container">
+		<Toggle name="showSchedule" label="Show Schedule" bind:checked={data.settings.showSchedule} />
+	</div>
+	<div class="toggle-container">
+		<Toggle name="showFAQ" label="Show FAQ" bind:checked={data.settings.showFAQ} />
+	</div>
+	<div class="toggle-container">
+		<Toggle
+			name="showChallenges"
+			label="Show Challenges"
+			bind:checked={data.settings.showChallenges}
+		/>
+	</div>
+	<div class="toggle-container">
+		<Toggle name="showSponsors" label="Show Sponsors" bind:checked={data.settings.showSponsors} />
+	</div>
+	<button id="save-show-sections" type="submit">Save</button>
 </form>
 
 <form method="POST" action="?/createEvent" use:enhance>
@@ -68,7 +116,7 @@
 	<input type="text" id="question" name="question" required />
 
 	<label for="answer">Answer</label>
-	<MarkdownEditor id="answer" name="answer" required />
+	<TextEditor id="answer" name="answer" isHTML={false} required />
 
 	<button class="submit" type="submit">Save</button>
 </form>
@@ -85,6 +133,25 @@
 	<button type="submit">Save</button>
 </form>
 
+<form method="POST" action="?/createSponsor" use:enhance enctype="multipart/form-data">
+	<label for="createNewSponsor"><h2>Create New Sponsor</h2></label>
+
+	<label for="sponsorLogo">Sponsor Logo</label>
+	<input
+		type="file"
+		id="sponsorLogo"
+		name="sponsorLogo"
+		accept=".jpg, .jpeg, .png, .webp"
+		required
+		on:change={handleFileChange}
+	/>
+
+	<label for="sponsorLink">Sponsor Link</label>
+	<input type="url" id="sponsorLink" name="sponsorLink" required />
+
+	<button type="submit">Save</button>
+</form>
+
 <form method="POST" action="?/deleteAll" use:enhance>
 	<label for="deleteAll"><h2>Delete All</h2></label>
 	<select name="deleteAll" id="deleteAll" bind:value={selected}>
@@ -92,6 +159,7 @@
 		<option value="events"> Schedule Events</option>
 		<option value="FAQs"> FAQs </option>
 		<option value="challenges"> Challenges </option>
+		<option value="sponsors"> Sponsors </option>
 	</select>
 	<button disabled={selected === ''} use:confirmationDialog>Delete</button>
 </form>
@@ -110,6 +178,10 @@
 	}
 
 	button {
+		margin-bottom: 1rem;
+	}
+
+	.toggle-container {
 		margin-bottom: 1rem;
 	}
 </style>

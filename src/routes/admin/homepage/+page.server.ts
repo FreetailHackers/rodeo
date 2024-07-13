@@ -1,5 +1,6 @@
 import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
+import { s3Delete, s3Upload } from '$lib/s3Handler';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -10,7 +11,7 @@ dayjs.extend(timezone);
 export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['ADMIN']);
 	return {
-		homepageText: (await trpc(locals.auth).settings.getAll()).homepageText,
+		settings: await trpc(locals.auth).settings.getPublic(),
 	};
 };
 
@@ -20,7 +21,24 @@ export const actions = {
 		await trpc(locals.auth).settings.update({
 			homepageText,
 		});
-		return 'Saved settings!';
+		return 'Saved homepage text!';
+	},
+
+	showSections: async ({ locals, request }) => {
+		const formData = await request.formData();
+		const showAnnouncements = formData.get('showAnnouncements') === 'on';
+		const showSchedule = formData.get('showSchedule') === 'on';
+		const showFAQ = formData.get('showFAQ') === 'on';
+		const showChallenges = formData.get('showChallenges') === 'on';
+		const showSponsors = formData.get('showSponsors') === 'on';
+		await trpc(locals.auth).settings.update({
+			showAnnouncements,
+			showSchedule,
+			showFAQ,
+			showChallenges,
+			showSponsors,
+		});
+		return 'Saved displayed sections!';
 	},
 
 	createEvent: async ({ locals, request }) => {
@@ -62,6 +80,29 @@ export const actions = {
 		return 'Created challenge!';
 	},
 
+	createSponsor: async ({ locals, request }) => {
+		const formData = await request.formData();
+
+		const sponsorLogo = formData.get('sponsorLogo') as File;
+		const sponsorLink = formData.get('sponsorLink') as string;
+
+		if (sponsorLogo instanceof File && sponsorLogo.size !== 0 && sponsorLogo.size <= 1024 * 1024) {
+			// Removes all characters that are not alphanumeric, periods, or hyphens
+			const key = `sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
+
+			s3Upload(key, sponsorLogo);
+
+			await trpc(locals.auth).infoBox.create({
+				title: key,
+				response: sponsorLink,
+				category: 'SPONSOR',
+			});
+			return 'Created sponsor!';
+		} else {
+			return 'Error in creating sponsor! Please check file input!';
+		}
+	},
+
 	deleteAll: async ({ locals, request }) => {
 		const deleteAllValue = (await request.formData()).get('deleteAll') as string;
 
@@ -74,6 +115,15 @@ export const actions = {
 		} else if (deleteAllValue === 'challenges') {
 			await trpc(locals.auth).infoBox.deleteAllOfCategory('CHALLENGE');
 			return 'Deleted all challenges!';
+		} else if (deleteAllValue === 'sponsors') {
+			const sponsors = await trpc(locals.auth).infoBox.getAllOfCategory('SPONSOR');
+
+			for (const sponsor of sponsors) {
+				s3Delete(sponsor.title);
+			}
+
+			await trpc(locals.auth).infoBox.deleteAllOfCategory('SPONSOR');
+			return 'Deleted all sponsors!';
 		} else {
 			return 'Invalid element to delete';
 		}
