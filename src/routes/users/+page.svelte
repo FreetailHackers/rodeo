@@ -21,8 +21,8 @@
 	let subject: string;
 
 	async function sendEmailsByUsers() {
-		async function sendEmails(emails: string[][]) {
-			async function sendEmail(email: string[]) {
+		async function sendEmails(emails: string[]) {
+			async function sendEmail(email: string) {
 				const successfulEmailRequest = await trpc().users.sendEmailHelper.mutate({
 					emails: email,
 					subject,
@@ -32,25 +32,24 @@
 				completed += successfulEmailRequest;
 
 				if (!successfulEmailRequest) {
-					rejectedEmails.push(email[0]);
-					const message = `Could not send email to ${email[0]}`;
+					rejectedEmails.push(email);
+					const message = `Could not send email to ${email}`;
+					console.log(message);
 					toasts.notify(message);
-					// throw new Error(message);
 				}
 
 				toasts.update(toast, `Sent ${completed}/${userEmails.length} emails`);
-				// console.log('after toast');
 				return successfulEmailRequest;
 			}
-			// const promiseResults = await Promise.allSettled(emails.map(sendEmail));
 			const promiseResults = emails.map(sendEmail);
 			console.log(promiseResults);
 		}
 
 		// check if subject and email body is not empty since the "required"
 		// keyword isn't working
+		console.log(subject, emailBody, 'subject and email body');
 
-		if (subject.length === 0 || emailBody.length === 0) {
+		if (!subject || !emailBody || subject.length === 0 || emailBody.length === 0) {
 			toasts.notify('Subject or email body is empty');
 			throw new Error('Subject or email body is empty');
 		}
@@ -58,6 +57,7 @@
 		let rejectedEmails: string[] = [];
 
 		let userEmails = await trpc().users.emails.query({ key, search, searchFilter });
+		console.log(typeof userEmails);
 
 		let completed = 0;
 		const toast = toasts.notify(`Sent 0/${userEmails.length} emails...`);

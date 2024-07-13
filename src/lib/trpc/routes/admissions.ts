@@ -55,11 +55,10 @@ async function releaseDecisions(ids?: string[]): Promise<void> {
 		} else if (decision === 'WAITLISTED') {
 			template = (await getSettings()).waitlistTemplate;
 		}
-		await sendEmails(
-			decisions.map((hacker) => hacker.authUser.email),
-			'Freetail Hackers status update',
-			template
-		);
+
+		for (const hacker of decisions) {
+			await sendEmails(hacker.authUser.email, 'Freetail Hackers status update', template);
+		}
 	}
 }
 

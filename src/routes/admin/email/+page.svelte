@@ -9,30 +9,6 @@
 <svelte:head>
 	<title>Formula Hacks | Admin - Email Templates</title>
 </svelte:head>
-<!-- 
-<form
-	method="POST"
-	action="?/emailByStatus"
-	use:enhance={() => {
-		return async ({ update }) => {
-			update({ reset: false });
-		};
-	}}
->
-	<label for="groupEmail"><h2>Group Email to Specific Status</h2></label>
-
-	<div class="flex-container">
-		<input class="textbox-margin" name="subject" placeholder="Type email subject here" required />
-		<select name="status" required>
-			{#each statuses as status}
-				<option value={status}>{status}</option>
-			{/each}
-		</select>
-	</div>
-	<MarkdownEditor placeholder="Type email body here" name="emailBody" required />
-
-	<button id="email-by-status" type="submit">Send</button>
-</form> -->
 
 <form
 	method="POST"
