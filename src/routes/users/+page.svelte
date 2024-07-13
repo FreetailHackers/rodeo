@@ -8,8 +8,7 @@
 	import { trpc } from '$lib/trpc/client';
 	import { toasts } from '$lib/stores';
 	import Dropdown from '$lib/components/dropdown.svelte';
-	// import MarkdownEditor from '$lib/components/markdown-editor.svelte';
-	import SvelteMarkdown from 'svelte-markdown';
+	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
 
 	export let data;
 
@@ -361,8 +360,12 @@
 					required
 				/>
 			</div>
-			<SvelteMarkdown source={emailBody} />
-
+			<MarkdownEditor
+				placeholder="Type email body here"
+				name="emailBody"
+				bind:value={emailBody}
+				required
+			/>
 			<button class="email-by-users" on:click={sendEmailsByUsers}>Send</button>
 		</div>
 
