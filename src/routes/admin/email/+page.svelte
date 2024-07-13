@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Status } from '@prisma/client';
+	// import { Status } from '@prisma/client';
 	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
-	const statuses: Status[] = Object.keys(Status) as Status[];
+	// const statuses: Status[] = Object.keys(Status) as Status[];
 	export let data;
 </script>
 
 <svelte:head>
 	<title>Formula Hacks | Admin - Email Templates</title>
 </svelte:head>
-
+<!-- 
 <form
 	method="POST"
 	action="?/emailByStatus"
@@ -32,7 +32,7 @@
 	<MarkdownEditor placeholder="Type email body here" name="emailBody" required />
 
 	<button id="email-by-status" type="submit">Send</button>
-</form>
+</form> -->
 
 <form
 	method="POST"
@@ -89,14 +89,13 @@
 		margin-top: 20px;
 	}
 
-	.textbox-margin {
+	/* .textbox-margin {
 		margin-bottom: 1%;
 		flex: 1;
 	}
-
 	.flex-container {
 		display: flex;
-	}
+	} */
 
 	button {
 		margin-bottom: 1rem;

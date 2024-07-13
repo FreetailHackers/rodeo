@@ -20,7 +20,7 @@
 	let emailBody: string;
 	let subject: string;
 
-	async function sendEmailsByStatus() {
+	async function sendEmailsByUsers() {
 		async function sendEmails(emails: string[][]) {
 			async function sendEmail(email: string[]) {
 				const successfulEmailRequest = await trpc().users.sendEmailHelper.mutate({
@@ -33,8 +33,8 @@
 
 				if (!successfulEmailRequest) {
 					rejectedEmails.push(email[0]);
-					// const message = `Could not send email to ${email[0]}`;
-					// toasts.notify(message);
+					const message = `Could not send email to ${email[0]}`;
+					toasts.notify(message);
 					// throw new Error(message);
 				}
 
@@ -350,7 +350,7 @@
 		<p>No results found.</p>
 	{:else}
 		<div class="send-emails">
-			<label for="groupEmail"><h2>Group Email to Specific Status</h2></label>
+			<label for="groupEmail"><h2>Group Email to Users</h2></label>
 
 			<div class="flex-container">
 				<input
@@ -368,7 +368,7 @@
 				required
 			/>
 
-			<button class="email-by-status" on:click={sendEmailsByStatus}>Send</button>
+			<button class="email-by-users" on:click={sendEmailsByUsers}>Send</button>
 		</div>
 
 		<Statistics questions={data.questions} count={data.count} />
@@ -508,7 +508,7 @@
 		display: flex;
 	}
 
-	.email-by-status {
+	.email-by-users {
 		width: 100%;
 		text-align: center;
 		margin-bottom: 10px;
