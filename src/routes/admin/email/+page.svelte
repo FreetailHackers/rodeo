@@ -135,14 +135,6 @@
 		margin-top: 20px;
 	}
 
-	/* .textbox-margin {
-		margin-bottom: 1%;
-		flex: 1;
-	}
-	.flex-container {
-		display: flex;
-	} */
-
 	.toggle-container {
 		margin-bottom: 1rem;
 	}

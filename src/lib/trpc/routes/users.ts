@@ -207,7 +207,16 @@ export const usersRouter = t.router({
 				});
 				// notify user through their email on successful application submission
 				const subject = 'Thanks for submitting!';
-				await sendEmails(req.ctx.user.email, subject, (await getSettings()).submitTemplate, false);
+				await sendEmails(
+					req.ctx.user.email,
+					subject,
+					(
+						await getSettings()
+					).submitTemplate,
+					(
+						await getSettings()
+					).submitIsHTML
+				);
 			}
 			return errors;
 		}),
@@ -350,7 +359,7 @@ export const usersRouter = t.router({
 			'Click on the following link to verify your email address:<br><br>' +
 			link +
 			'<br><br>If you did not request this email, please ignore it.';
-		await sendEmails(req.ctx.user.email, 'Email Verification', body, false);
+		await sendEmails(req.ctx.user.email, 'Email Verification', body, false); // The raw HTML should not be sent
 	}),
 
 	/**
@@ -808,8 +817,10 @@ export const usersRouter = t.router({
 				req.input.search,
 				req.ctx.user.roles
 			);
-			const users = await prisma.user.findMany({ include: { authUser: true }, where });
-			// Remove questions that should not be visible to sponsors
+			const users = await prisma.user.findMany({
+				select: { authUser: { select: { email: true } } },
+				where,
+			});
 
 			users.forEach((user) => {
 				userEmails.push(user.authUser.email);
