@@ -34,6 +34,7 @@ const settingsSchema = z
 		declineIsHTML: z.boolean().optional(),
 		withdrawIsHTML: z.boolean().optional(),
 		byStatusIsHTML: z.boolean().optional(),
+		spongebobCase: z.boolean().optional(),
 	})
 	.strict();
 
@@ -66,6 +67,7 @@ export const settingsRouter = t.router({
 			declineIsHTML: boolean;
 			withdrawIsHTML: boolean;
 			byStatusIsHTML: boolean;
+			spongebobCase: boolean;
 		}> => {
 			const settings = await getSettings();
 			return {
@@ -88,6 +90,7 @@ export const settingsRouter = t.router({
 				declineIsHTML: settings.declineIsHTML,
 				withdrawIsHTML: settings.withdrawIsHTML,
 				byStatusIsHTML: settings.byStatusIsHTML,
+				spongebobCase: settings.spongebobCase,
 			};
 		}
 	),

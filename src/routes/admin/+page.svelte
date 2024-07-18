@@ -29,6 +29,12 @@
 		bind:checked={applicationOpenStatus}
 	/>
 
+	<Toggle
+		name="spongebobCase"
+		label="Display homepage text in SpongeBob Case"
+		bind:checked={data.settings.spongebobCase}
+	/>
+
 	<status-container>
 		<label for="applicationDeadline">Hackers must apply before:</label>
 		<input
