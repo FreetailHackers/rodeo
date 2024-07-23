@@ -19,7 +19,7 @@ export const GET = async ({ params, locals }) => {
 		s3Client,
 		new GetObjectCommand({
 			Bucket: process.env.S3_BUCKET,
-			Key: `${params.user}/${params.question}`,
+			Key: `files/${params.user}/${params.question}`,
 		})
 	);
 	throw redirect(302, url);
