@@ -1,7 +1,7 @@
 import type { Prisma, Status } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
-import { sendEmails } from '../email';
+import { sendEmail } from '../email';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getSettings } from './settings';
@@ -65,7 +65,7 @@ async function releaseDecisions(ids?: string[]): Promise<void> {
 		}
 		await Promise.all(
 			decisions.map((hacker) =>
-				sendEmails(hacker.authUser.email, 'Freetail Hackers status update', template, isHTML)
+				sendEmail(hacker.authUser.email, 'Freetail Hackers status update', template, isHTML)
 			)
 		);
 	}

@@ -21,36 +21,27 @@
 	let subject: string;
 
 	async function sendEmailsByUsers() {
-		async function sendEmails(emails: string[]) {
-			async function sendEmail(email: string) {
-				const successfulEmailRequest = await trpc().users.sendEmailHelper.mutate({
-					emails: email,
-					subject,
-					emailBody,
-				});
+		async function sendEmail(email: string) {
+			const successfulEmailRequest = await trpc().users.sendEmailHelper.mutate({
+				emails: email,
+				subject,
+				emailBody,
+			});
 
-				completed += successfulEmailRequest;
+			completed += successfulEmailRequest;
 
-				if (!successfulEmailRequest) {
-					rejectedEmails.push(email);
-					const message = `Could not send email to ${email}`;
-					console.log(message);
-					toasts.notify(message);
-				}
-
-				toasts.update(toast, `Sent ${completed}/${userEmails.length} emails`);
-				return successfulEmailRequest;
+			if (!successfulEmailRequest) {
+				rejectedEmails.push(email);
+				const message = `Could not send email to ${email}`;
+				console.log(message);
+				toasts.notify(message);
 			}
-			const promiseResults = emails.map(sendEmail);
-			console.log(promiseResults);
+
+			toasts.update(toast, `Sent ${completed}/${userEmails.length} emails`);
+			return successfulEmailRequest;
 		}
 
-		// check if subject and email body is not empty since the "required"
-		// keyword isn't working
-		console.log(subject, emailBody, 'subject and email body');
-
 		if (!subject || !emailBody || subject.length === 0 || emailBody.length === 0) {
-			toasts.notify('Subject or email body is empty');
 			throw new Error('Subject or email body is empty');
 		}
 
@@ -63,7 +54,7 @@
 
 		for (let i = 0; i < userEmails.length; i += 100) {
 			const emails = userEmails.slice(i, i + 100);
-			await sendEmails(emails);
+			await Promise.all(emails.map((email) => sendEmail(email)));
 		}
 
 		if (rejectedEmails.length > 0) {
@@ -350,24 +341,25 @@
 	{:else}
 		<div class="send-emails">
 			<label for="groupEmail"><h2>Group Email to Users</h2></label>
-
-			<div class="flex-container">
-				<input
-					bind:value={subject}
-					class="textbox-margin"
-					name="subject"
-					placeholder="Type email subject here"
+			<form>
+				<div class="flex-container">
+					<input
+						bind:value={subject}
+						class="textbox-margin"
+						name="subject"
+						placeholder="Type email subject here"
+						required
+					/>
+				</div>
+				<TextEditor
+					placeholder="Type email body here"
+					name="emailBody"
+					bind:value={emailBody}
+					isHTML={data.settings.submitIsHTML}
 					required
 				/>
-			</div>
-			<TextEditor
-				placeholder="Type email body here"
-				name="emailBody"
-				bind:value={emailBody}
-				isHTML={data.settings.submitIsHTML}
-				required
-			/>
-			<button class="email-by-users" on:click={sendEmailsByUsers}>Send</button>
+				<button class="email-by-users" on:click={sendEmailsByUsers}>Send</button>
+			</form>
 		</div>
 
 		<Statistics questions={data.questions} count={data.count} />

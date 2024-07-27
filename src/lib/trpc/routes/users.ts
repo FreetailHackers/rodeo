@@ -1,7 +1,7 @@
 import { Prisma, Role, Status, type StatusChange } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
-import { sendEmails } from '../email';
+import { sendEmail } from '../email';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getQuestions } from './questions';
@@ -207,7 +207,7 @@ export const usersRouter = t.router({
 				});
 				// notify user through their email on successful application submission
 				const subject = 'Thanks for submitting!';
-				await sendEmails(
+				await sendEmail(
 					req.ctx.user.email,
 					subject,
 					(
@@ -236,7 +236,7 @@ export const usersRouter = t.router({
 				data: { status: 'CREATED' },
 			});
 			const subject = 'Application Withdrawal Warning';
-			await sendEmails(
+			await sendEmail(
 				req.ctx.user.email,
 				subject,
 				(
@@ -269,7 +269,7 @@ export const usersRouter = t.router({
 						where: { id: req.ctx.user.id },
 						data: { status: 'CONFIRMED' },
 					});
-					await sendEmails(
+					await sendEmail(
 						req.ctx.user.email,
 						'Thanks for your RSVP!',
 						(
@@ -287,7 +287,7 @@ export const usersRouter = t.router({
 						where: { id: req.ctx.user.id },
 						data: { status: 'DECLINED' },
 					});
-					await sendEmails(
+					await sendEmail(
 						req.ctx.user.email,
 						'Thanks for your RSVP!',
 						(
@@ -359,7 +359,7 @@ export const usersRouter = t.router({
 			'Click on the following link to verify your email address:<br><br>' +
 			link +
 			'<br><br>If you did not request this email, please ignore it.';
-		await sendEmails(req.ctx.user.email, 'Email Verification', body, false); // The raw HTML should not be sent
+		await sendEmail(req.ctx.user.email, 'Email Verification', body, false); // The raw HTML should not be sent
 	}),
 
 	/**
@@ -379,7 +379,7 @@ export const usersRouter = t.router({
 				const body =
 					'Click on the following link to reset your password (valid for 10 minutes):<br><br>' +
 					link;
-				await sendEmails(user.email, 'Password Reset', body, false);
+				await sendEmail(user.email, 'Password Reset', body, false);
 			}
 		}),
 
@@ -793,7 +793,7 @@ export const usersRouter = t.router({
 			})
 		)
 		.mutation(async (req): Promise<number> => {
-			const response = sendEmails(req.input.emails, req.input.subject, req.input.emailBody, false);
+			const response = sendEmail(req.input.emails, req.input.subject, req.input.emailBody, false);
 			if ((await response).includes('unsuccessfully') || (await response).includes('error')) {
 				return 0;
 			}
@@ -810,21 +810,19 @@ export const usersRouter = t.router({
 			})
 		)
 		.query(async (req): Promise<string[]> => {
-			const userEmails: string[] = [];
 			const where = await getWhereCondition(
 				req.input.key,
 				req.input.searchFilter,
 				req.input.search,
 				req.ctx.user.roles
 			);
-			const users = await prisma.user.findMany({
-				select: { authUser: { select: { email: true } } },
-				where,
-			});
+			const userEmails = await prisma.user
+				.findMany({
+					select: { authUser: { select: { email: true } } },
+					where,
+				})
+				.then((users) => users.map((user) => user.authUser.email));
 
-			users.forEach((user) => {
-				userEmails.push(user.authUser.email);
-			});
 			return userEmails;
 		}),
 });
