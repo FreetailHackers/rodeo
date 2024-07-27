@@ -207,15 +207,12 @@ export const usersRouter = t.router({
 				});
 				// notify user through their email on successful application submission
 				const subject = 'Thanks for submitting!';
+				const settings = await getSettings();
 				await sendEmail(
 					req.ctx.user.email,
 					subject,
-					(
-						await getSettings()
-					).submitTemplate,
-					(
-						await getSettings()
-					).submitIsHTML
+					settings.submitTemplate,
+					settings.submitIsHTML
 				);
 			}
 			return errors;
@@ -236,15 +233,12 @@ export const usersRouter = t.router({
 				data: { status: 'CREATED' },
 			});
 			const subject = 'Application Withdrawal Warning';
+			const settings = await getSettings();
 			await sendEmail(
 				req.ctx.user.email,
 				subject,
-				(
-					await getSettings()
-				).withdrawalWarningTemplate,
-				(
-					await getSettings()
-				).withdrawIsHTML
+				settings.withdrawalWarningTemplate,
+				settings.withdrawIsHTML
 			);
 		}),
 
@@ -265,6 +259,7 @@ export const usersRouter = t.router({
 			if (req.input === 'CONFIRMED') {
 				// Hackers should only be able to confirm before deadline
 				if (req.ctx.user.status === 'ACCEPTED' && (deadline === null || new Date() < deadline)) {
+					const settings = await getSettings();
 					await prisma.authUser.update({
 						where: { id: req.ctx.user.id },
 						data: { status: 'CONFIRMED' },
@@ -272,17 +267,14 @@ export const usersRouter = t.router({
 					await sendEmail(
 						req.ctx.user.email,
 						'Thanks for your RSVP!',
-						(
-							await getSettings()
-						).confirmTemplate,
-						(
-							await getSettings()
-						).confirmIsHTML
+						settings.confirmTemplate,
+						settings.confirmIsHTML
 					);
 				}
 			} else {
 				// Hackers should be able to decline after accepting and/or the deadline
 				if (req.ctx.user.status === 'ACCEPTED' || req.ctx.user.status === 'CONFIRMED') {
+					const settings = await getSettings();
 					await prisma.authUser.update({
 						where: { id: req.ctx.user.id },
 						data: { status: 'DECLINED' },
@@ -290,12 +282,8 @@ export const usersRouter = t.router({
 					await sendEmail(
 						req.ctx.user.email,
 						'Thanks for your RSVP!',
-						(
-							await getSettings()
-						).declineTemplate,
-						(
-							await getSettings()
-						).declineIsHTML
+						settings.declineTemplate,
+						settings.declineIsHTML
 					);
 				}
 			}
