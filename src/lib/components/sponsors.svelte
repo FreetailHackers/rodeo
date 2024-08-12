@@ -12,17 +12,7 @@
 
 <div class="main-container">
 	<div class="content-container">
-		<h1>Sponsors</h1>
-		<p>
-			Our success is fueled by incredible sponsors hosting workshops, job opportunities, prizes, and
-			more.
-		</p>
-
-		<button
-			><a href="mailto:corporate@freetailhackers.com" target="_blank" rel="noopener noreferrer"
-				>Become a sponsor</a
-			></button
-		>
+		<h1>Thank you to our sponsors!</h1>
 		<div class="sponsor-container">
 			{#each sponsors as sponsor}
 				<div class="format-edit-and-sponsor">
@@ -106,17 +96,7 @@
 		object-fit: contain;
 	}
 
-	.sponsor-card:hover {
-		border-radius: 0% 0% 50% 50% / 0% 0% 5% 5%;
-		box-shadow: 10px 10px rgba(165, 0, 0, 0.781);
-	}
-
 	@media (max-width: 768px) {
-		button,
-		p {
-			font-size: 16px;
-		}
-
 		.sponsor-card img {
 			width: 125px;
 			height: 100px;

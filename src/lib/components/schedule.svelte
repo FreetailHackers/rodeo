@@ -59,27 +59,26 @@
 
 {#if schedule.length > 0}
 	<h1>Schedule</h1>
-	<div class="container">
-		<div class="sidebar">
-			<h2>Filters</h2>
-			<div class="button-container">
-				{#each filters as filter}
-					<button
-						class:active={selected === filter}
-						data-name={filter}
-						on:click={() => (selected = selected === filter ? null : filter)}
-					>
-						{filter}
-					</button>
-				{/each}
+	<div>
+		<h2>Filters</h2>
+		<div class="button-container">
+			{#each filters as filter}
+				<button
+					class:active={selected === filter}
+					data-name={filter}
+					on:click={() => (selected = selected === filter ? null : filter)}
+				>
+					{filter}
+				</button>
+			{/each}
 
-				{#if url && schedule.length > 0}
-					<button
-						><a class="calendar-export" href={url} download="events.ics">Download Schedule</a
-						></button
-					>{/if}
-			</div>
+			{#if url && schedule.length > 0}
+				<button
+					><a class="calendar-export" href={url} download="events.ics">Download Schedule</a></button
+				>{/if}
 		</div>
+	</div>
+	<div class="container">
 		{#each groupByDateArray as { day, events }}
 			<div class="column">
 				<h2>{day}</h2>
@@ -100,15 +99,8 @@
 											</p>
 										{/if}
 									</div>
+
 									<p class="date">
-										{event.start.toLocaleString('en-US', {
-											timeZone: settings_timezone,
-											hour: 'numeric',
-											minute: 'numeric',
-											hour12: true,
-										})}
-									</p>
-									<p class="date-hover">
 										from {event.start.toLocaleString('en-US', {
 											timeZone: settings_timezone,
 											hour: 'numeric',
@@ -136,11 +128,6 @@
 {/if}
 
 <style>
-	.sidebar {
-		width: 16rem;
-		margin: 0 5px;
-	}
-
 	button {
 		background-color: var(--highlight-color);
 		color: #303030;
@@ -167,7 +154,6 @@
 	}
 
 	.date,
-	.date-hover,
 	.name {
 		font-size: 18px;
 	}
@@ -177,7 +163,6 @@
 		font-size: 14px;
 	}
 
-	.date-hover,
 	.date {
 		text-align: right;
 		flex-shrink: 0;
@@ -185,11 +170,6 @@
 
 	.description {
 		padding-top: 3px;
-	}
-
-	.description,
-	.date-hover {
-		display: none;
 	}
 
 	.calendar-export {
@@ -217,26 +197,9 @@
 		padding-bottom: calc(1rem - 4px);
 	}
 
-	.card:hover {
-		background-color: var(--highlight-color);
-	}
-
-	.card:hover .description,
-	.card:hover .date-hover {
-		display: initial;
-	}
-
-	.card:hover .date {
-		display: none;
-	}
-
 	.card-text,
 	.empty-events {
 		color: var(--highlight-color);
-	}
-
-	.card-text:hover {
-		color: #303030;
 	}
 
 	.container {
@@ -254,18 +217,6 @@
 	@media (max-width: 768px) {
 		.card {
 			user-select: none;
-		}
-
-		h1 {
-			font-size: 9.5vw;
-		}
-
-		h2 {
-			font-size: 6vw;
-		}
-
-		.sidebar {
-			width: unset;
 		}
 
 		.container {
