@@ -12,7 +12,6 @@
 	let previewing = false;
 	let textarea: HTMLTextAreaElement;
 
-	export let useAnnouncementFont: boolean = false;
 	export let isHTML: boolean;
 
 	// HACK: This is a workaround for Svelte not updating input bindings a form is reset
@@ -26,25 +25,19 @@
 </script>
 
 <div>
-	<button
-		class:announcement-font={useAnnouncementFont}
-		type="button"
-		class:selected={!previewing}
-		on:click={() => (previewing = false)}>Write</button
+	<button type="button" class:selected={!previewing} on:click={() => (previewing = false)}
+		>Write</button
 	>
-	<button
-		class:announcement-font={useAnnouncementFont}
-		type="button"
-		class:selected={previewing}
-		on:click={() => (previewing = true)}>Preview</button
+	<button type="button" class:selected={previewing} on:click={() => (previewing = true)}
+		>Preview</button
 	>
 </div>
 {#if previewing}
 	<div class="border white-preview-background">
 		{#if value === ''}
-			<p class:announcement-font={useAnnouncementFont} class="empty-preview">Nothing to preview.</p>
+			<p class="empty-preview">Nothing to preview.</p>
 		{:else}
-			<div class:announcement-font={useAnnouncementFont}>
+			<div>
 				{#if isHTML}
 					{@html value}
 				{:else}
@@ -53,25 +46,9 @@
 			</div>
 		{/if}
 	</div>
-	<textarea
-		class:announcement-font={useAnnouncementFont}
-		style="display: none;"
-		{id}
-		{name}
-		{required}
-		{value}
-	/>
+	<textarea style="display: none;" {id} {name} {required} {value} />
 {:else}
-	<textarea
-		class:announcement-font={useAnnouncementFont}
-		{id}
-		{name}
-		{placeholder}
-		{required}
-		{rows}
-		bind:value
-		bind:this={textarea}
-	/>
+	<textarea {id} {name} {placeholder} {required} {rows} bind:value bind:this={textarea} />
 {/if}
 
 <style>
@@ -101,11 +78,5 @@
 	.empty-preview {
 		color: gray;
 		font-style: italic;
-	}
-
-	.announcement-font {
-		font-family: 'Fugaz One';
-		font-weight: 400;
-		color: #000000;
 	}
 </style>

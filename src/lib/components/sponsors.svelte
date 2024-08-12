@@ -43,25 +43,11 @@
 		overflow: hidden;
 	}
 
-	button {
-		font-size: 20px;
-		display: block;
-		margin: 20px auto;
-		padding: 0 2em;
-		box-shadow: 0 0.5rem 0.75rem black;
-	}
-
 	.content-container {
 		position: relative;
 		padding: 40px;
 		box-sizing: border-box;
 		z-index: 2;
-	}
-
-	p {
-		text-align: center;
-		font-size: 20px;
-		color: #f2ebd9;
 	}
 
 	a {

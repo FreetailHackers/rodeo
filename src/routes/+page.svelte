@@ -23,12 +23,10 @@
 	<title>Formula Hacks | Home</title>
 </svelte:head>
 
-<div class="topographic-background">
-	<div>
-		<!-- svelte-ignore a11y-img-redundant-alt -->
-		<div class="homepage-text">
-			<SvelteMarkdown source={data.settings.homepageText} />
-		</div>
+<div>
+	<!-- svelte-ignore a11y-img-redundant-alt -->
+	<div class="homepage-text">
+		<SvelteMarkdown source={data.settings.homepageText} />
 	</div>
 </div>
 <div>
@@ -80,16 +78,6 @@
 <style>
 	section {
 		scroll-margin-top: 5vh;
-	}
-
-	.topographic-background {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		background: linear-gradient(to bottom, transparent 0%, #1c1c1c 100%),
-			url('/Topographic Background.svg');
-		background-size: 110%;
-		position: relative;
 	}
 
 	.homepage-text {

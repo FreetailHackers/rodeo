@@ -18,7 +18,6 @@
 				placeholder="Make an announcement here..."
 				isHTML={false}
 				required
-				useAnnouncementFont={true}
 			/>
 			<button class="announcement-button-label">Announce</button>
 		</form>

@@ -19,63 +19,51 @@
 	<title>Formula Hacks | Login</title>
 </svelte:head>
 
-<div class="topographic-background">
-	<div class="main-content">
-		<h1>Login</h1>
-		<div class="socials">
-			<SocialLogin providers={data.providers} />
-		</div>
-		<form
-			method="POST"
-			action="?/login"
-			use:enhance={() => {
-				return async ({ update }) => {
-					update({ reset: false });
-				};
-			}}
-		>
-			<label for="email">Email</label>
-			<input
-				class="inputValues"
-				placeholder="Email"
-				id="email"
-				name="email"
-				required
-				autocomplete="username"
-			/>
-			<label for="password">Password (<a href="/login/reset-password">forgot?</a>)</label>
-			<!-- HACK: Not required so we can easily log into test accounts lol -->
-			<input
-				class="inputValues"
-				type="password"
-				placeholder="Password"
-				id="password"
-				name="password"
-				autocomplete="current-password"
-			/>
-			<button>Continue</button>
-		</form>
-		<div class="register">
-			<p>Don't have an account yet?</p>
-			<!-- svelte-ignore a11y-missing-content -->
-			<a href="/register">
-				<button class="register-button">Register Here!</button>
-			</a>
-		</div>
+<div class="main-content">
+	<h1>Login</h1>
+	<div class="socials">
+		<SocialLogin providers={data.providers} />
+	</div>
+	<form
+		method="POST"
+		action="?/login"
+		use:enhance={() => {
+			return async ({ update }) => {
+				update({ reset: false });
+			};
+		}}
+	>
+		<label for="email">Email</label>
+		<input
+			class="inputValues"
+			placeholder="Email"
+			id="email"
+			name="email"
+			required
+			autocomplete="username"
+		/>
+		<label for="password">Password (<a href="/login/reset-password">forgot?</a>)</label>
+		<!-- HACK: Not required so we can easily log into test accounts lol -->
+		<input
+			class="inputValues"
+			type="password"
+			placeholder="Password"
+			id="password"
+			name="password"
+			autocomplete="current-password"
+		/>
+		<button>Continue</button>
+	</form>
+	<div class="register">
+		<p>Don't have an account yet?</p>
+		<!-- svelte-ignore a11y-missing-content -->
+		<a href="/register">
+			<button class="register-button">Register Here!</button>
+		</a>
 	</div>
 </div>
 
 <style>
-	.topographic-background {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		background-color: #303030;
-		background-image: url('/Topographic Background.svg');
-		background-size: 110%;
-		min-height: calc(100vh - 159px);
-	}
-
 	h1 {
 		color: var(--highlight-color);
 		text-align: center;
@@ -136,10 +124,6 @@
 	}
 
 	@media (max-width: 768px) {
-		.topographic-background {
-			min-height: calc(100vh - 56px);
-		}
-
 		form,
 		.register {
 			min-width: 20rem;
