@@ -17,6 +17,13 @@
 			toasts.notify('You do not have permissions to do that.');
 		}
 	});
+	if (data.settings.spongeBobCase) {
+		data.settings.homepageText = data.settings.homepageText
+			.split('')
+			.map((char, i) => (i % 2 === 0 ? char.toLowerCase() : char.toUpperCase()))
+			.join('');
+	}
+	console.log('pongebobCase:', data.settings.spongeBobCase);
 </script>
 
 <svelte:head>

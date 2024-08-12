@@ -24,6 +24,13 @@
 	<label for="applicationStatus"><h2>Application Status</h2></label>
 
 	<Toggle
+		name="spongeBobCase"
+		label="spongebobly"
+		bind:checked={data.settings.spongeBobCase}
+	/>
+
+
+	<Toggle
 		name="applicationOpen"
 		label="Accept new applications"
 		bind:checked={applicationOpenStatus}
