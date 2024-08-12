@@ -11,7 +11,6 @@
 </script>
 
 <div class="main-container">
-	<img class="background-grid" src="/Grid.png" alt="Grid Background" />
 	<div class="content-container">
 		<h1>Sponsors</h1>
 		<p>
@@ -51,7 +50,6 @@
 	}
 	.main-container {
 		position: relative;
-		background-color: #1c1c1c;
 		overflow: hidden;
 	}
 
@@ -63,26 +61,6 @@
 		box-shadow: 0 0.5rem 0.75rem black;
 	}
 
-	.background-grid {
-		width: inherit;
-		height: inherit;
-		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		z-index: 1;
-		pointer-events: none;
-		opacity: 0.8;
-		object-fit: cover;
-		mask-image: linear-gradient(
-			to bottom,
-			transparent 0%,
-			rgba(0, 0, 0, 0.5) 40%,
-			rgba(0, 0, 0, 0.5) 60%,
-			transparent 100%
-		);
-	}
-
 	.content-container {
 		position: relative;
 		padding: 40px;
@@ -90,21 +68,10 @@
 		z-index: 2;
 	}
 
-	h1,
 	p {
 		text-align: center;
 		font-size: 20px;
 		color: #f2ebd9;
-	}
-
-	h1 {
-		font-size: 64px;
-		font-weight: 400;
-		margin: 0;
-		padding: 24px 0;
-		color: #e1563f;
-		text-shadow: 0 4px 12px black;
-		white-space: nowrap;
 	}
 
 	a {
@@ -145,11 +112,6 @@
 	}
 
 	@media (max-width: 768px) {
-		h1 {
-			font-size: 9.5vw;
-			padding: 16px;
-		}
-
 		button,
 		p {
 			font-size: 16px;

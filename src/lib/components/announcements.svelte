@@ -9,63 +9,55 @@
 	export let announcements: Announcement[];
 </script>
 
-<div class="bg-img">
-	<div class="announcement-container">
-		<h1 class="announcementHeader">ANNOUNCEMENTS</h1>
-		{#if admin}
-			<form class="pad" method="POST" action="?/announce" use:enhance>
-				<TextEditor
-					name="announcement"
-					placeholder="Make an announcement here..."
-					isHTML={false}
-					required
-					useAnnouncementFont={true}
-				/>
-				<button class="announcement-button-label">Announce</button>
-			</form>
-		{/if}
-		{#if announcements.length > 0}
-			<ul>
-				{#each announcements as announcement}
-					<li class="announcement-card">
-						<span>
-							<p>
-								<span class="date">
-									{announcement.published.toLocaleDateString('en-us', {
-										month: 'long',
-										day: 'numeric',
-									})}
-								</span>
-								<span class="time">
-									{announcement.published.toLocaleTimeString('en-us', {
-										hour: 'numeric',
-										minute: 'numeric',
-									})}
-								</span>
-							</p>
-							{#if admin}
-								<form method="POST" action="?/unannounce" use:enhance>
-									<input type="hidden" name="id" value={announcement.id} />
-									<button class="deleteButton">✕</button>
-								</form>
-							{/if}
-						</span>
-						<div class="announcement-text">
-							<SvelteMarkdown source={announcement.body} />
-						</div>
-						<!-- Corner piece -->
-						<div class="bottom-right-image">
-							<svg id="triangle" viewBox="0 0 100 100">
-								<polygon points="101 30, 101 101, 0 101" fill="#1c1c1c" />
-							</svg>
-						</div>
-					</li>
-				{/each}
-			</ul>
-		{:else}
-			<p class="no-announcements-message">There are no announcements at this time.</p>
-		{/if}
-	</div>
+<div class="announcement-container">
+	<h1>ANNOUNCEMENTS</h1>
+	{#if admin}
+		<form class="pad" method="POST" action="?/announce" use:enhance>
+			<TextEditor
+				name="announcement"
+				placeholder="Make an announcement here..."
+				isHTML={false}
+				required
+				useAnnouncementFont={true}
+			/>
+			<button class="announcement-button-label">Announce</button>
+		</form>
+	{/if}
+	{#if announcements.length > 0}
+		<ul>
+			{#each announcements as announcement}
+				<li class="announcement-card">
+					<span>
+						<p>
+							<span class="date">
+								{announcement.published.toLocaleDateString('en-us', {
+									month: 'long',
+									day: 'numeric',
+								})}
+							</span>
+							<span class="time">
+								{announcement.published.toLocaleTimeString('en-us', {
+									hour: 'numeric',
+									minute: 'numeric',
+								})}
+							</span>
+						</p>
+						{#if admin}
+							<form method="POST" action="?/unannounce" use:enhance>
+								<input type="hidden" name="id" value={announcement.id} />
+								<button class="deleteButton">✕</button>
+							</form>
+						{/if}
+					</span>
+					<div class="announcement-text">
+						<SvelteMarkdown source={announcement.body} />
+					</div>
+				</li>
+			{/each}
+		</ul>
+	{:else}
+		<p class="no-announcements-message">There are no announcements at this time.</p>
+	{/if}
 </div>
 
 <style>
@@ -81,28 +73,6 @@
 		color: #e1563f;
 	}
 
-	.bg-img {
-		background-color: #1c1c1c;
-	}
-
-	.announcementHeader {
-		text-align: center;
-		font-size: clamp(1rem, 6vw, 5rem);
-		font-weight: 400;
-		text-shadow: 0 4px 12px black;
-		margin: 0 auto;
-	}
-
-	.bottom-right-image {
-		background-size: contain;
-		background-position: center bottom;
-		background-repeat: no-repeat;
-		position: absolute;
-		bottom: 0;
-		right: 0;
-		width: 75px;
-		height: 75px;
-	}
 	.announcement-button-label {
 		color: #1d1d1c;
 		font-family: 'Fugaz One';

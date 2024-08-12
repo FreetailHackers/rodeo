@@ -26,7 +26,6 @@
 <div class="topographic-background">
 	<div>
 		<!-- svelte-ignore a11y-img-redundant-alt -->
-		<img src="/Landing.svg" alt="svg" class="home-svg" />
 		<div class="homepage-text">
 			<SvelteMarkdown source={data.settings.homepageText} />
 		</div>
@@ -81,13 +80,6 @@
 <style>
 	section {
 		scroll-margin-top: 5vh;
-	}
-
-	.home-svg {
-		width: 100vw;
-		margin-top: calc(2rem - 0.5vw);
-		user-select: none;
-		pointer-events: none;
 	}
 
 	.topographic-background {

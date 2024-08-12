@@ -17,13 +17,8 @@
 </svelte:head>
 
 <div class="background">
+	<h1>FAQ</h1>
 	<div class="faq-container">
-		<div class="faq-title-container">
-			<div class="faq-title">
-				<h1 class="left-border-faq">FAQ</h1>
-				<h1 class="left-border-faq-2">FAQ</h1>
-			</div>
-		</div>
 		<div class="faq-questions">
 			{#if questionsSplit.length > 0}
 				{#each { length: 2 } as _i, idx}
@@ -51,12 +46,6 @@
 </div>
 
 <style>
-	.background {
-		background-color: var(--background-color);
-		display: flex;
-		justify-content: center;
-	}
-
 	.faq-container {
 		display: flex;
 		max-width: 75rem;

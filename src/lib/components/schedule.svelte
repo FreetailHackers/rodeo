@@ -58,119 +58,87 @@
 </script>
 
 {#if schedule.length > 0}
-	<div class="topographic-background">
-		<h1>Schedule</h1>
-		<div class="container">
-			<div class="sidebar">
-				<h2>Filters</h2>
-				<div class="button-container">
-					{#each filters as filter}
-						<button
-							class:active={selected === filter}
-							data-name={filter}
-							on:click={() => (selected = selected === filter ? null : filter)}
-						>
-							{filter}
-						</button>
-					{/each}
+	<h1>Schedule</h1>
+	<div class="container">
+		<div class="sidebar">
+			<h2>Filters</h2>
+			<div class="button-container">
+				{#each filters as filter}
+					<button
+						class:active={selected === filter}
+						data-name={filter}
+						on:click={() => (selected = selected === filter ? null : filter)}
+					>
+						{filter}
+					</button>
+				{/each}
 
-					{#if url && schedule.length > 0}
-						<button
-							><a class="calendar-export" href={url} download="events.ics">Download Schedule</a
-							></button
-						>{/if}
-				</div>
+				{#if url && schedule.length > 0}
+					<button
+						><a class="calendar-export" href={url} download="events.ics">Download Schedule</a
+						></button
+					>{/if}
 			</div>
-			{#each groupByDateArray as { day, events }}
-				<div class="column">
-					<h2>{day}</h2>
-					{#if selected === null || events.some((event) => event.type === selected)}
-						{#each events as event}
-							{#if selected === null || event.type === selected}
-								<div
-									class="card card-text"
-									class:currentEvent={currentTime >= event.start && currentTime < event.end}
-								>
-									<div class="flex-row">
-										<div>
-											<p class="name">{event.name}</p>
-											<p class="location">{event.location}</p>
-											{#if user?.roles.includes('ADMIN')}
-												<p>
-													<a class="edit" href="/admin/homepage/schedule/{event.id}">Edit</a>
-												</p>
-											{/if}
-										</div>
-										<p class="date">
-											{event.start.toLocaleString('en-US', {
-												timeZone: settings_timezone,
-												hour: 'numeric',
-												minute: 'numeric',
-												hour12: true,
-											})}
-										</p>
-										<p class="date-hover">
-											from {event.start.toLocaleString('en-US', {
-												timeZone: settings_timezone,
-												hour: 'numeric',
-												minute: 'numeric',
-												hour12: true,
-											})} <br /> to {event.end.toLocaleString('en-US', {
-												timeZone: settings_timezone,
-												hour: 'numeric',
-												minute: 'numeric',
-												hour12: true,
-											})}
-										</p>
-									</div>
-
-									<p class="description">{event.description}</p>
-								</div>
-							{/if}
-						{/each}
-					{:else}
-						<p class="empty-events">There are no events that fall under this category.</p>
-					{/if}
-				</div>
-			{/each}
 		</div>
+		{#each groupByDateArray as { day, events }}
+			<div class="column">
+				<h2>{day}</h2>
+				{#if selected === null || events.some((event) => event.type === selected)}
+					{#each events as event}
+						{#if selected === null || event.type === selected}
+							<div
+								class="card card-text"
+								class:currentEvent={currentTime >= event.start && currentTime < event.end}
+							>
+								<div class="flex-row">
+									<div>
+										<p class="name">{event.name}</p>
+										<p class="location">{event.location}</p>
+										{#if user?.roles.includes('ADMIN')}
+											<p>
+												<a class="edit" href="/admin/homepage/schedule/{event.id}">Edit</a>
+											</p>
+										{/if}
+									</div>
+									<p class="date">
+										{event.start.toLocaleString('en-US', {
+											timeZone: settings_timezone,
+											hour: 'numeric',
+											minute: 'numeric',
+											hour12: true,
+										})}
+									</p>
+									<p class="date-hover">
+										from {event.start.toLocaleString('en-US', {
+											timeZone: settings_timezone,
+											hour: 'numeric',
+											minute: 'numeric',
+											hour12: true,
+										})} <br /> to {event.end.toLocaleString('en-US', {
+											timeZone: settings_timezone,
+											hour: 'numeric',
+											minute: 'numeric',
+											hour12: true,
+										})}
+									</p>
+								</div>
+
+								<p class="description">{event.description}</p>
+							</div>
+						{/if}
+					{/each}
+				{:else}
+					<p class="empty-events">There are no events that fall under this category.</p>
+				{/if}
+			</div>
+		{/each}
 	</div>
 {/if}
 
 <style>
-	.topographic-background {
-		padding-bottom: 5rem;
-		background: linear-gradient(
-				to bottom,
-				#1c1c1cff 0%,
-				transparent 30%,
-				transparent 60%,
-				#1c1c1cff 100%
-			),
-			url('/Topographic Background.svg');
-		background-size: 110%;
-	}
-
 	.sidebar {
 		width: 16rem;
 		margin: 0 5px;
-	}
-
-	h1 {
-		color: var(--highlight-color);
-		font-size: 64px;
-		font-weight: 400;
-		margin: 0;
-		text-align: center;
-		text-shadow: 0 4px 12px black;
-		padding-top: 48px;
-	}
-
-	h2 {
-		color: var(--highlight-color);
-		font-family: 'Fugaz One';
-		font-size: 36px;
-		text-shadow: 0 4px 8px rgb(0, 0, 0);
 	}
 
 	button {
@@ -284,7 +252,6 @@
 	}
 
 	@media (max-width: 768px) {
-		.topographic-background,
 		.card {
 			user-select: none;
 		}

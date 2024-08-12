@@ -25,37 +25,31 @@
 </script>
 
 {#if challenges.length > 0}
-	<div class="checkered-background">
-		<div class="challenges-container">
-			<h1 class="desktop">
-				<span class="bordered-text" data-text="Challenges">Challenges</span> Challenges
-				<span class="bordered-text" data-text="Challenges">Challenges</span>
-			</h1>
-			<h1 class="mobile">Challenges</h1>
+	<div class="challenges-container">
+		<h1>Challenges</h1>
 
-			<div class="container">
-				{#each challenges as challenge}
-					{#if challenge.category === 'CHALLENGE'}
-						<div class="challenge-wrapper" on:mouseleave={handleMouseLeave}>
-							<div
-								class="challenge-box"
-								class:flipped={flippedCard === challenge.title}
-								on:click={() => toggleFlip(challenge.title)}
-								on:keydown={(event) => handleKeyDown(event, challenge.title)}
-							>
-								<div class={flippedCard === challenge.title ? 'description-text' : 'content'}>
-									{flippedCard === challenge.title ? challenge.response : challenge.title}
-								</div>
+		<div class="container">
+			{#each challenges as challenge}
+				{#if challenge.category === 'CHALLENGE'}
+					<div class="challenge-wrapper" on:mouseleave={handleMouseLeave}>
+						<div
+							class="challenge-box"
+							class:flipped={flippedCard === challenge.title}
+							on:click={() => toggleFlip(challenge.title)}
+							on:keydown={(event) => handleKeyDown(event, challenge.title)}
+						>
+							<div class={flippedCard === challenge.title ? 'description-text' : 'content'}>
+								{flippedCard === challenge.title ? challenge.response : challenge.title}
 							</div>
-							{#if user?.roles.includes('ADMIN')}
-								<div class="edit">
-									<a href="/admin/homepage/challenges/{challenge.id}">Edit</a>
-								</div>
-							{/if}
 						</div>
-					{/if}
-				{/each}
-			</div>
+						{#if user?.roles.includes('ADMIN')}
+							<div class="edit">
+								<a href="/admin/homepage/challenges/{challenge.id}">Edit</a>
+							</div>
+						{/if}
+					</div>
+				{/if}
+			{/each}
 		</div>
 	</div>
 {/if}
@@ -65,29 +59,6 @@
 		flex-wrap: wrap;
 		max-width: 75rem;
 		margin: auto;
-	}
-
-	.checkered-background {
-		background-color: #303030;
-		background-image: url('/Checkered Background.svg');
-		background-size: cover;
-	}
-
-	.bordered-text {
-		font-family: 'Zen Dots';
-		font-style: normal;
-		color: #1d1d1c;
-		-webkit-text-stroke: 1px #f2ebd9;
-	}
-
-	h1 {
-		color: #ffffff;
-		font-size: 40px;
-		font-weight: 400;
-		margin: 0;
-		text-align: center;
-		text-shadow: 0 4px 12px black;
-		padding-top: 48px;
 	}
 
 	.container {
@@ -190,21 +161,7 @@
 		color: #f2ebd9;
 	}
 
-	.desktop {
-		display: block;
-	}
-
-	.mobile {
-		display: none;
-	}
-
 	@media (max-width: 768px) {
-		.desktop {
-			display: none;
-		}
-		.mobile {
-			display: block;
-		}
 		.challenge-wrapper {
 			width: 100%;
 		}
