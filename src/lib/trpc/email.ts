@@ -24,10 +24,8 @@ export const sendEmail = async (
 	message = isHTML ? message : marked.parse(message);
 	if (process.env.VERCEL_ENV !== 'production') {
 		// Only allow emails to YOPmail on staging
-		if (process.env.VERCEL_ENV === 'preview' && !recipient.endsWith('@yopmail.com')) {
-			if (recipient.length !== 0) {
-				return 'Only @yopmail.com addresses are allowed on staging.';
-			}
+		if (recipient.endsWith('@yopmail.com')) {
+			return 'Only @yopmail.com addresses are allowed on staging.';
 		}
 		warning = `<h1>
 			WARNING: This email was sent from a testing environment.
