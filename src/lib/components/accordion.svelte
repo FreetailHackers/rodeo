@@ -43,5 +43,6 @@
 
 	.details {
 		padding: 0.5rem;
+		margin-bottom: -2rem;
 	}
 </style>
