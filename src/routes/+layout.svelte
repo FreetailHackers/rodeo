@@ -50,61 +50,47 @@
 	<menu id="menu" bind:this={menu}>
 		<img src="/Freetail_bat.png" id="menu-logo" alt="Freetail logo" />
 		<li>
-			<a href="/" class:active={$page.url.pathname === '/' && $page.url.hash === ''}>Home</a>
+			<a href="/">About</a>
 		</li>
-		{#if !data.user?.roles.includes('ADMIN')}
-			<li>
-				<a href="/#Announcements" class:active={$page.url.hash === '#Announcements'}
-					>Announcements</a
-				>
-			</li>
-			<li>
-				<a href="/#Schedule" class:active={$page.url.hash === '#Schedule'}>Schedule</a>
-			</li>
-			<li>
-				<a href="/#FAQ" class:active={$page.url.hash === '#FAQ'}>FAQ</a>
-			</li>
-			<li>
-				<a href="/#Challenges" class:active={$page.url.hash === '#Challenges'}>Challenges</a>
-			</li>
-			<li>
-				<a href="/#Sponsors" class:active={$page.url.hash === '#Sponsors'}>Sponsors</a>
-			</li>
-		{/if}
+		<li>
+			<a href="/#Announcements">Announcements</a>
+		</li>
+		<li>
+			<a href="/#Schedule">Schedule</a>
+		</li>
+
+		<li>
+			<a href="/#Prizes">Prizes</a>
+		</li>
+		<li>
+			<a href="/#FAQ">FAQ</a>
+		</li>
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->
 		{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
-			<li><a href="/id" class:active={$page.url.pathname.startsWith('/id')}>My Hacker ID</a></li>
+			<li><a href="/id">My Hacker ID</a></li>
 		{/if}
 		{#if data.user?.roles.includes('ORGANIZER') || data.user?.roles.includes('ADMIN')}
-			<li><a href="/scan" class:active={$page.url.pathname.startsWith('/scan')}>Scan</a></li>
+			<li><a href="/scan">Scan</a></li>
 		{/if}
 		{#if data.user?.roles.includes('HACKER')}
-			<li><a href="/apply" class:active={$page.url.pathname.startsWith('/apply')}>Apply</a></li>
+			<li><a href="/apply">Apply</a></li>
 		{/if}
 		{#if data.user?.roles.includes('ADMIN') || data.user?.roles.includes('SPONSOR')}
 			<li>
 				<!-- HACK: Tell SvelteKit to force refresh on /users since
 				IDK how to reset the filters on the users page otherwise -->
-				<a
-					href="/users"
-					class:active={$page.url.pathname.startsWith('/users')}
-					data-sveltekit-reload>Users</a
-				>
+				<a href="/users" data-sveltekit-reload>Users</a>
 			</li>
 			{#if data.user?.roles.includes('ADMIN')}
-				<li><a href="/admin" class:active={$page.url.pathname.startsWith('/admin')}>Admin</a></li>
+				<li><a href="/admin">Admin</a></li>
 				<li>
-					<a href="/admissions" class:active={$page.url.pathname.startsWith('/admissions')}
-						>Admissions</a
-					>
+					<a href="/admissions">Admissions</a>
 				</li>
 			{/if}
 		{/if}
 		<li>
 			{#if data.user === undefined}
-				<a class="login" href="/login" class:active={$page.url.pathname.startsWith('/login')}
-					>Login</a
-				>
+				<a class="login" href="/login">Login</a>
 			{:else}
 				<form method="POST" action="/logout">
 					<button class="button" type="submit">Logout</button>
@@ -130,7 +116,7 @@
 
 <footer>
 	<div class="footer-flex">
-		<div class="made-with-love">
+		<div class="flex-column">
 			Made with ❤️ by <a
 				class="freetail-link"
 				target="_blank"
@@ -139,7 +125,31 @@
 			>
 		</div>
 		<div class="flex-column">
-			<div class="row category">Links</div>
+			<div class="row category">Hacker Resources</div>
+			<a
+				target="_blank"
+				rel="noopener noreferrer"
+				href="https://www.instagram.com/freetailhackers?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
+				>Instagram</a
+			>
+			<a
+				target="_blank"
+				rel="noopener noreferrer"
+				href="https://www.linkedin.com/company/freetail-hackers">LinkedIn</a
+			>
+			<a target="_blank" rel="noopener noreferrer" href="https://freetailhackers.com/discord"
+				>Discord</a
+			>
+			<a
+				target="_blank"
+				rel="noopener noreferrer"
+				href="https://docs.google.com/forms/d/e/1FAIpQLSdQld-vgVLXOuIXIcUNpTFMwii_7Cu9Vqj7CVxXs3ScFsCIrg/viewform?usp=sf_link"
+				>Feedback</a
+			>
+			<a href="mailto:admin@freetailhackers.com">Contact Us</a>
+		</div>
+		<div class="flex-column">
+			<div class="row category">Other Resources</div>
 			<a
 				target="_blank"
 				rel="noopener noreferrer"
@@ -174,10 +184,6 @@
 </footer>
 
 <style>
-	footer {
-		background-color: #404040;
-	}
-
 	.footer-flex {
 		display: flex;
 		justify-content: space-around;
@@ -187,17 +193,17 @@
 	}
 
 	.login {
-		color: #e1563f;
-	}
+		display: inline-block;
+		padding: 10px 20px;
+		font-size: 16px;
+		color: #fff;
+		background-color: #007bff;
+		border: none;
+		border-radius: 10px;
+		text-align: center;
+		text-decoration: none;
 
-	.made-with-love {
-		white-space: nowrap;
-		align-self: center;
-	}
-
-	.freetail-link {
-		color: #e1563f;
-		text-decoration: underline;
+		transition: background-color 0.3s ease;
 	}
 
 	.flex-column {
@@ -218,13 +224,6 @@
 		line-height: 1.5;
 		padding-left: 1rem;
 		padding-right: 1rem;
-	}
-
-	a:hover,
-	button:hover {
-		text-decoration-line: underline;
-		text-decoration-color: var(--primary-accent);
-		color: var(--primary-accent);
 	}
 
 	.category {
@@ -252,7 +251,7 @@
 	}
 
 	button {
-		background-color: #404040;
+		background-color: red;
 		text-transform: uppercase;
 		font-family: 'Geologica', sans-serif;
 		font-weight: 700;
@@ -263,7 +262,7 @@
 		top: 0;
 		margin: 0;
 		width: 100vw;
-		background-color: #404040;
+		background-color: var(--secondary-color);
 		z-index: 99;
 	}
 
@@ -272,15 +271,13 @@
 		margin: 0;
 		padding: 0;
 		transition: all 0.5s ease-out;
-		background-color: #404040;
+		background-color: var(--secondary-color);
 		max-height: 0;
 		overflow: hidden;
 		width: 100%;
 		font-family: 'Geologica', sans-serif;
 		font-size: 15px;
-		font-weight: 700;
 		font-style: normal;
-		text-transform: uppercase;
 	}
 
 	#hamburger {
@@ -308,14 +305,8 @@
 		text-decoration: none;
 	}
 
-	menu a:hover,
-	button:hover {
-		background-color: #303030;
-	}
-
-	.active {
+	menu a:hover {
 		font-weight: bold;
-		text-decoration: underline;
 	}
 
 	@media (max-width: 768px) {
@@ -359,8 +350,8 @@
 
 		menu {
 			margin: 0;
-			padding-top: 0.5rem;
-			padding-bottom: 0.5rem;
+			padding-top: 1rem;
+			padding-bottom: 1rem;
 			display: flex;
 			justify-content: space-around;
 			max-height: fit-content;

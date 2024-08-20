@@ -29,23 +29,12 @@
 		<SvelteMarkdown source={data.settings.homepageText} />
 	</div>
 </div>
-<div>
-	{#if data.settings.showAnnouncements}
-		{#if data.user !== undefined}
-			<!-- Admin announcements panel -->
-			<section id="Announcements">
-				<Announcements
-					announcements={data.announcements}
-					admin={data.user.roles.includes('ADMIN')}
-				/>
-			</section>
-		{:else}
-			<section id="Announcements">
-				<Announcements announcements={data.announcements} admin={false} />
-			</section>
-		{/if}
-	{/if}
-</div>
+
+{#if data.settings.showAnnouncements}
+	<section id="Announcements">
+		<Announcements announcements={data.announcements} />
+	</section>
+{/if}
 
 {#if data.settings.showSchedule}
 	<section id="Schedule">
