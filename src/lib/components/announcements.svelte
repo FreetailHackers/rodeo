@@ -44,7 +44,7 @@
 	}
 
 	.background {
-		background-color: var(--gray);
+		background-color: gray;
 		padding-bottom: var(--spacing);
 	}
 

@@ -24,7 +24,6 @@
 </svelte:head>
 
 <div>
-	<!-- svelte-ignore a11y-img-redundant-alt -->
 	<div class="homepage-text">
 		<SvelteMarkdown source={data.settings.homepageText} />
 	</div>
@@ -48,7 +47,7 @@
 
 {#if data.settings.showFAQ}
 	<section id="FAQ">
-		<FAQ user={data.user} questions={data.faqs} />
+		<FAQ questions={data.faqs} />
 	</section>
 {/if}
 
