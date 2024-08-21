@@ -2,23 +2,21 @@
 	import '../../routes/global.css';
 	import { onMount } from 'svelte';
 	import { generateIcsContent } from '$lib/ics';
-	import type { Event, AuthUser } from '@prisma/client';
+	import type { Event } from '@prisma/client';
 	import dayjs from 'dayjs';
 	import utc from 'dayjs/plugin/utc';
 	import timezone from 'dayjs/plugin/timezone';
 	import customParseFormat from 'dayjs/plugin/customParseFormat';
+
 	dayjs.extend(customParseFormat);
 	dayjs.extend(utc);
 	dayjs.extend(timezone);
 
-	export let user: AuthUser;
 	export let schedule: Event[];
-	export let settings_timezone: string;
-
-	let currentTime = new Date();
-	let groupByDateArray: { day: string; events: Event[] }[] = [];
+	export let settingsTimezone: string;
 
 	// Assumes there are no events occurring on the same day of the week but in different weeks.
+	let groupByDateArray: { day: string; events: Event[] }[] = [];
 	for (let event of schedule) {
 		const dayOfWeek = [
 			'Sunday',
@@ -39,11 +37,37 @@
 		dayEntry.events.push(event);
 	}
 
-	let selected: string | null = null;
+	function getDateString(startDate: Date | null, endDate: Date | null): string {
+		function getHour(date: Date): string {
+			return date.toLocaleString('en-US', {
+				timeZone: settingsTimezone,
+				hour: 'numeric',
+				minute: 'numeric',
+				hour12: true,
+			});
+		}
+		if (startDate !== null && endDate !== null) {
+			return `${getHour(startDate)} - ${getHour(endDate)}`;
+		} else if (startDate !== null) {
+			return getHour(startDate);
+		} else if (endDate !== null) {
+			return getHour(endDate);
+		}
+		throw new Error('Both startDate and endDate cannot be null');
+	}
+
+	let selectedFilters: string[] = [];
 	let filters = [...new Set(schedule.map((event: Event) => event.type))];
+	function toggleFilter(filter: string) {
+		if (selectedFilters.includes(filter)) {
+			selectedFilters = selectedFilters.filter((f) => f !== filter);
+		} else {
+			selectedFilters = [...selectedFilters, filter];
+		}
+	}
 
 	let url: string;
-
+	let currentTime = new Date();
 	onMount(() => {
 		url = generateIcsContent(schedule);
 
@@ -57,171 +81,93 @@
 	});
 </script>
 
-{#if schedule.length > 0}
-	<h1>Schedule</h1>
-	<div>
-		<h2>Filters</h2>
-		<div class="button-container">
-			{#each filters as filter}
-				<button
-					class:active={selected === filter}
-					data-name={filter}
-					on:click={() => (selected = selected === filter ? null : filter)}
-				>
-					{filter}
-				</button>
-			{/each}
+<div class="home-content">
+	<h2>What's Next?</h2>
+	<div class="button-container">
+		{#each filters as filter}
+			<button
+				class:active={selectedFilters.includes(filter)}
+				data-name={filter}
+				on:click={() => toggleFilter(filter)}
+			>
+				{filter}
+			</button>
+		{/each}
 
-			{#if url && schedule.length > 0}
-				<button
-					><a class="calendar-export" href={url} download="events.ics">Download Schedule</a></button
-				>{/if}
-		</div>
+		{#if url && schedule.length > 0}
+			<button
+				><a class="calendar-export" href={url} download="events.ics">Download Schedule</a></button
+			>{/if}
 	</div>
 	<div class="container">
 		{#each groupByDateArray as { day, events }}
 			<div class="column">
-				<h2>{day}</h2>
-				{#if selected === null || events.some((event) => event.type === selected)}
-					{#each events as event}
-						{#if selected === null || event.type === selected}
-							<div
-								class="card card-text"
-								class:currentEvent={currentTime >= event.start && currentTime < event.end}
-							>
-								<div class="flex-row">
-									<div>
-										<p class="name">{event.name}</p>
-										<p class="location">{event.location}</p>
-										{#if user?.roles.includes('ADMIN')}
-											<p>
-												<a class="edit" href="/admin/homepage/schedule/{event.id}">Edit</a>
-											</p>
-										{/if}
-									</div>
-
-									<p class="date">
-										from {event.start.toLocaleString('en-US', {
-											timeZone: settings_timezone,
-											hour: 'numeric',
-											minute: 'numeric',
-											hour12: true,
-										})} <br /> to {event.end.toLocaleString('en-US', {
-											timeZone: settings_timezone,
-											hour: 'numeric',
-											minute: 'numeric',
-											hour12: true,
-										})}
-									</p>
-								</div>
-
-								<p class="description">{event.description}</p>
+				<h3 class="day">{day}</h3>
+				{#each events as event}
+					<div
+						class:selected={selectedFilters.length === 0 || selectedFilters.includes(event.type)}
+						class:currentEvent={currentTime >= event.start && currentTime < event.end}
+						class="card card-text"
+					>
+						<div class="flex-row">
+							<div class="date">
+								<p>{getDateString(event.start, event.end)}</p>
 							</div>
-						{/if}
-					{/each}
-				{:else}
-					<p class="empty-events">There are no events that fall under this category.</p>
-				{/if}
+							<div>
+								<p class="name">{event.name}</p>
+								<p class="location">{event.location}</p>
+							</div>
+						</div>
+
+						<p class="description">{event.description}</p>
+					</div>
+				{/each}
 			</div>
 		{/each}
 	</div>
-{/if}
+</div>
 
 <style>
-	button {
-		background-color: var(--highlight-color);
-		color: #303030;
-		height: 2rem;
-		font-family: 'Geologica', sans-serif;
-		border-radius: 4px;
-		margin: 2px 2px;
-		flex-grow: 1;
-		justify-content: center;
-	}
-
-	.button-container {
-		display: flex;
-		flex-wrap: wrap;
-	}
-
-	.active {
-		background-color: #303030;
-		color: var(--highlight-color);
-	}
-
-	p {
-		margin: 0 0 0;
-	}
-
-	.date,
-	.name {
-		font-size: 18px;
-	}
-
-	.location,
-	.description {
-		font-size: 14px;
-	}
-
-	.date {
-		text-align: right;
-		flex-shrink: 0;
-	}
-
-	.description {
-		padding-top: 3px;
-	}
-
-	.calendar-export {
-		text-decoration: none;
-		color: #303030;
-	}
-
-	.flex-row {
-		display: flex;
-		justify-content: space-between;
-	}
-
-	.card {
-		box-shadow: 0 4px 8px rgb(0, 0, 0);
-		background-color: #303030;
-		border-radius: 10px;
-		display: flex;
-		flex-direction: column;
-		padding: 0.75rem;
-		margin-bottom: 0.75rem;
-	}
-
-	.currentEvent {
-		border: solid var(--primary-accent) 4px;
-		padding-bottom: calc(1rem - 4px);
-	}
-
-	.card-text,
-	.empty-events {
-		color: var(--highlight-color);
-	}
-
 	.container {
 		display: flex;
-		flex-wrap: wrap;
-		max-width: 75rem;
-		margin: auto;
+		align-items: flex-start;
+		gap: 1rem;
 	}
 
 	.column {
-		flex: 1;
-		margin: 0px 5px;
+		flex: 1 1;
+		border: 2px solid black;
+		border-radius: 15px;
+	}
+
+	.day,
+	.card {
+		padding: 0.75rem;
+	}
+
+	.card {
+		opacity: 0.5;
+		display: flex;
+		flex-direction: column;
+		border-top: 2px solid black;
+	}
+
+	.card.selected {
+		opacity: 1;
+	}
+
+	p {
+		margin: 0;
 	}
 
 	@media (max-width: 768px) {
-		.card {
-			user-select: none;
-		}
-
 		.container {
 			flex-direction: column;
-			margin: 0 10px 0 10px;
+			align-items: stretch;
+		}
+
+		.card {
+			user-select: none;
 		}
 	}
 </style>
