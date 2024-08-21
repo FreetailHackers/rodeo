@@ -43,7 +43,7 @@
 
 {#if data.settings.showChallenges}
 	<section id="Challenges">
-		<Challenges user={data.user} challenges={data.challenges} />
+		<Challenges challenges={data.challenges} />
 	</section>
 {/if}
 
