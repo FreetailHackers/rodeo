@@ -48,8 +48,8 @@ export const actions = {
 		const startDate = formData.get('start') as string | null;
 		const endDate = formData.get('end') as string | null;
 
-		let startTimeInTimezone: Date | undefined = undefined;
-		let endTimeInTimezone: Date | undefined = undefined;
+		let startTimeInTimezone: Date | null = null;
+		let endTimeInTimezone: Date | null = null;
 		if (startDate) {
 			startTimeInTimezone = dayjs.tz(startDate, timezone).toDate();
 		}
