@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Unverified Email</title>
+	<title>Rodeo | Unverified Email</title>
 </svelte:head>
 
 <div class="top-margin">
