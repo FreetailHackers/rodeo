@@ -1,7 +1,6 @@
 <script lang="ts">
 	import '../../routes/global.css';
 	import { onMount } from 'svelte';
-	import { generateIcsContent } from '$lib/ics';
 	import type { Event } from '@prisma/client';
 	import dayjs from 'dayjs';
 	import utc from 'dayjs/plugin/utc';
@@ -16,19 +15,18 @@
 	export let settingsTimezone: string;
 
 	// Assumes there are no events occurring on the same day of the week but in different weeks.
+	const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 	let groupByDateArray: { day: string; events: Event[] }[] = [];
 	for (let event of schedule) {
-		const dayOfWeek = [
-			'Sunday',
-			'Monday',
-			'Tuesday',
-			'Wednesday',
-			'Thursday',
-			'Friday',
-			'Saturday',
-		][new Date(event.start).getDay()];
-		let dayEntry = groupByDateArray.find((entry) => entry.day === dayOfWeek);
+		const dayOfWeek =
+			daysOfWeek[
+				new Date(
+					// Either event.start or event.end is guaranteed to be non-null
+					event.start !== null ? event.start : event.end!
+				).getDay()
+			];
 
+		let dayEntry = groupByDateArray.find((entry) => entry.day === dayOfWeek);
 		if (!dayEntry) {
 			dayEntry = { day: dayOfWeek, events: [] };
 			groupByDateArray.push(dayEntry);
@@ -50,10 +48,9 @@
 			return `${getHour(startDate)} - ${getHour(endDate)}`;
 		} else if (startDate !== null) {
 			return getHour(startDate);
-		} else if (endDate !== null) {
-			return getHour(endDate);
+		} else {
+			return getHour(endDate!);
 		}
-		throw new Error('Both startDate and endDate cannot be null');
 	}
 
 	let selectedFilters: string[] = [];
@@ -66,11 +63,8 @@
 		}
 	}
 
-	let url: string;
 	let currentTime = new Date();
 	onMount(() => {
-		url = generateIcsContent(schedule);
-
 		const interval = setInterval(() => {
 			currentTime = new Date();
 		}, 1000);
@@ -93,11 +87,6 @@
 				{filter}
 			</button>
 		{/each}
-
-		{#if url && schedule.length > 0}
-			<button
-				><a class="calendar-export" href={url} download="events.ics">Download Schedule</a></button
-			>{/if}
 	</div>
 	<div class="container">
 		{#each groupByDateArray as { day, events }}
@@ -106,7 +95,10 @@
 				{#each events as event}
 					<div
 						class:selected={selectedFilters.length === 0 || selectedFilters.includes(event.type)}
-						class:currentEvent={currentTime >= event.start && currentTime < event.end}
+						class:currentEvent={event.start !== null &&
+							event.end !== null &&
+							event.start <= currentTime &&
+							currentTime < event.end}
 						class="card card-text"
 					>
 						<div class="flex-row">

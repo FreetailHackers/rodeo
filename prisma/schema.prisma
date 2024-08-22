@@ -143,8 +143,8 @@ model Event {
   id          Int      @id @default(autoincrement())
   name        String
   description String
-  start       DateTime
-  end         DateTime
+  start       DateTime?
+  end         DateTime?
   location    String
   type        String
 }

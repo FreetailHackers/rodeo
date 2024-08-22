@@ -44,17 +44,31 @@ export const actions = {
 	createEvent: async ({ locals, request }) => {
 		const timezone = (await trpc(locals.auth).settings.getPublic()).timezone;
 		const formData = await request.formData();
-		const fixedStartTime = dayjs.tz(formData.get('start') as string, timezone).toDate();
-		const fixedEndTime = dayjs.tz(formData.get('end') as string, timezone).toDate();
+
+		const startDate = formData.get('start') as string | null;
+		const endDate = formData.get('end') as string | null;
+
+		let startTimeInTimezone: Date | undefined = undefined;
+		let endTimeInTimezone: Date | undefined = undefined;
+		if (startDate) {
+			startTimeInTimezone = dayjs.tz(startDate, timezone).toDate();
+		}
+		if (endDate) {
+			endTimeInTimezone = dayjs.tz(endDate, timezone).toDate();
+		}
+		if (!startTimeInTimezone && !endTimeInTimezone) {
+			return 'ERROR: Either start or end date must be provided.';
+		}
 
 		await trpc(locals.auth).events.create({
 			name: formData.get('name') as string,
 			description: formData.get('description') as string,
-			start: fixedStartTime,
-			end: fixedEndTime,
+			start: startTimeInTimezone,
+			end: endTimeInTimezone,
 			location: formData.get('location') as string,
 			type: formData.get('type') as string,
 		});
+
 		return 'Created event!';
 	},
 

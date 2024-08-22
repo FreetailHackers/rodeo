@@ -82,6 +82,7 @@
 
 <form method="POST" action="?/createEvent" use:enhance>
 	<label for="createNewEvent"><h2>Create New Event</h2></label>
+
 	<label for="name">Name</label>
 	<input type="text" id="name" name="name" required />
 
@@ -89,10 +90,10 @@
 	<textarea id="description" name="description" required />
 
 	<label for="start">Start Time</label>
-	<input type="datetime-local" id="start" name="start" required />
+	<input type="datetime-local" id="start" name="start" />
 
 	<label for="end">End Time</label>
-	<input type="datetime-local" id="end" name="end" required />
+	<input type="datetime-local" id="end" name="end" />
 
 	<label for="location">Location</label>
 	<input type="text" id="location" name="location" required />

@@ -7,8 +7,8 @@ import { t } from '../t';
 const eventSchema = z
 	.object({
 		name: z.string(),
-		start: z.date(),
-		end: z.date(),
+		start: z.date().optional(),
+		end: z.date().optional(),
 		description: z.string(),
 		type: z.string(),
 		location: z.string(),

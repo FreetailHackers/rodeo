@@ -49,7 +49,9 @@
 			id="start"
 			name="start"
 			required
-			value={data.event.start.toLocaleString('sv', { timeZone: data.timezone })}
+			value={data.event.start
+				? data.event.start.toLocaleString('sv', { timeZone: data.timezone })
+				: ''}
 		/>
 
 		<label for="end">End Time</label>
@@ -58,7 +60,7 @@
 			id="end"
 			name="end"
 			required
-			value={data.event.end.toLocaleString('sv', { timeZone: data.timezone })}
+			value={data.event.end ? data.event.end.toLocaleString('sv', { timeZone: data.timezone }) : ''}
 		/>
 
 		<label for="location">Location</label>
