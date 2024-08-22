@@ -3,7 +3,7 @@
 	import FAQ from '$lib/components/faq.svelte';
 	import Schedule from '$lib/components/schedule.svelte';
 	import Sponsors from '$lib/components/sponsors.svelte';
-	import Challenges from '$lib/components/challenges.svelte';
+	import Prizes from '$lib/components/prizes.svelte';
 	// import SvelteMarkdown from 'svelte-markdown';
 	import { toasts } from '$lib/stores';
 	export let data;
@@ -42,8 +42,8 @@
 {/if}
 
 {#if data.settings.showChallenges}
-	<section id="Challenges">
-		<Challenges challenges={data.challenges} />
+	<section id="Prizes">
+		<Prizes prizes={data.prizes} />
 	</section>
 {/if}
 
@@ -55,7 +55,7 @@
 
 {#if data.settings.showSponsors}
 	<section id="Sponsors">
-		<Sponsors user={data.user} sponsors={data.sponsors} />
+		<Sponsors sponsors={data.sponsors} />
 	</section>
 {/if}
 
