@@ -1,10 +1,10 @@
 <script lang="ts">
+	import SvelteMarkdown from 'svelte-markdown';
 	import Announcements from '$lib/components/announcements.svelte';
 	import FAQ from '$lib/components/faq.svelte';
 	import Schedule from '$lib/components/schedule.svelte';
 	import Sponsors from '$lib/components/sponsors.svelte';
 	import Prizes from '$lib/components/prizes.svelte';
-	// import SvelteMarkdown from 'svelte-markdown';
 	import { toasts } from '$lib/stores';
 	export let data;
 	import { onMount } from 'svelte';
@@ -23,37 +23,37 @@
 	<title>Rodeo | Home</title>
 </svelte:head>
 
-<!-- <div>
+<div>
 	<div class="homepage-text">
 		<SvelteMarkdown source={data.settings.homepageText} />
 	</div>
-</div> -->
+</div>
 
-{#if data.settings.showAnnouncements}
+{#if data.settings.showAnnouncements && data.announcements.length > 0}
 	<section id="Announcements">
 		<Announcements announcements={data.announcements} />
 	</section>
 {/if}
 
-{#if data.settings.showSchedule}
+{#if data.settings.showSchedule && data.schedule.length > 0}
 	<section id="Schedule">
 		<Schedule schedule={data.schedule} settingsTimezone={data.settings.timezone} />
 	</section>
 {/if}
 
-{#if data.settings.showChallenges}
+{#if data.settings.showChallenges && data.prizes.length > 0}
 	<section id="Prizes">
 		<Prizes prizes={data.prizes} />
 	</section>
 {/if}
 
-{#if data.settings.showFAQ}
+{#if data.settings.showFAQ && data.faqs.length > 0}
 	<section id="FAQ">
 		<FAQ questions={data.faqs} />
 	</section>
 {/if}
 
-{#if data.settings.showSponsors}
+{#if data.settings.showSponsors && data.sponsors.length > 0}
 	<section id="Sponsors">
 		<Sponsors sponsors={data.sponsors} />
 	</section>
