@@ -23,7 +23,6 @@
 			.map((char, i) => (i % 2 === 0 ? char.toLowerCase() : char.toUpperCase()))
 			.join('');
 	}
-	console.log('pongebobCase:', data.settings.spongeBobCase);
 </script>
 
 <svelte:head>
