@@ -156,6 +156,12 @@ model InfoBox {
   category    CategoryType
 }
 
+model FAQ {
+  id          Int     @id @default(autoincrement())
+  question    String
+  answer      String
+}
+
 model StatusChange {
   id        Int      @id @default(autoincrement())
   newStatus Status
@@ -202,7 +208,6 @@ enum QuestionType {
 }
 
 enum CategoryType {
-  FAQ
   CHALLENGE
   SPONSOR
 }

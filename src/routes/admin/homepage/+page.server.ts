@@ -75,10 +75,9 @@ export const actions = {
 	createFAQ: async ({ locals, request }) => {
 		const formData = await request.formData();
 
-		await trpc(locals.auth).infoBox.create({
-			title: formData.get('question') as string,
-			response: formData.get('answer') as string,
-			category: 'FAQ',
+		await trpc(locals.auth).faq.create({
+			question: formData.get('question') as string,
+			answer: formData.get('answer') as string,
 		});
 		return 'Created FAQ!';
 	},
@@ -124,7 +123,7 @@ export const actions = {
 			await trpc(locals.auth).events.deleteAll();
 			return 'Deleted all Events!';
 		} else if (deleteAllValue === 'FAQs') {
-			await trpc(locals.auth).infoBox.deleteAllOfCategory('FAQ');
+			await trpc(locals.auth).faq.deleteAll();
 			return 'Deleted all FAQ!';
 		} else if (deleteAllValue === 'challenges') {
 			await trpc(locals.auth).infoBox.deleteAllOfCategory('CHALLENGE');

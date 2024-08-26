@@ -1,28 +1,28 @@
 <script lang="ts">
-	import type { InfoBox } from '@prisma/client';
+	import type { FAQ } from '@prisma/client';
 	import Accordion from './accordion.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
 
-	export let questions: InfoBox[];
+	export let faqs: FAQ[];
 
-	const splitQuestions = (questions: InfoBox[]) => {
-		const middleIndex = Math.ceil(questions.length / 2);
-		return [questions.slice(0, middleIndex), questions.slice(middleIndex)];
+	const splitQuestions = (faqs: FAQ[]) => {
+		const middleIndex = Math.ceil(faqs.length / 2);
+		return [faqs.slice(0, middleIndex), faqs.slice(middleIndex)];
 	};
 
-	const [columnOne, columnTwo] = splitQuestions(questions);
+	const [columnOne, columnTwo] = splitQuestions(faqs);
 </script>
 
 <div class="home-content">
 	<h2>Any Questions?</h2>
-	<div class="faq-questions">
+	<div class="questions">
 		{#each [columnOne, columnTwo] as column}
-			<div class="faq-questions-col">
-				{#each column as question}
+			<div class="questions-col">
+				{#each column as faq}
 					<Accordion>
-						<span slot="head" class="question-title">{question.title}</span>
+						<span slot="head" class="question-title">{faq.question}</span>
 						<div slot="details" class="question-answer">
-							<SvelteMarkdown source={question.response} />
+							<SvelteMarkdown source={faq.answer} />
 						</div>
 					</Accordion>
 				{/each}
@@ -32,7 +32,7 @@
 </div>
 
 <style>
-	.faq-questions {
+	.questions {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: 1rem;
@@ -47,7 +47,7 @@
 	}
 
 	@media (max-width: 768px) {
-		.faq-questions {
+		.questions {
 			grid-template-columns: 1fr;
 			gap: 0;
 		}

@@ -2,18 +2,20 @@ import type { AuthUser } from '@prisma/client';
 import { admissionsRouter } from './routes/admissions';
 import { announcementsRouter } from './routes/announcements';
 import { eventsRouter } from './routes/events';
+import { infoBoxRouter } from './routes/infoBox';
+import { faqRouter } from './routes/faq';
 import { questionsRouter } from './routes/questions';
 import { settingsRouter } from './routes/settings';
 import { usersRouter } from './routes/users';
 import { createContext, createContextTest, t, tTest } from './t';
 import type { AuthRequest } from 'lucia';
-import { infoBoxRouter } from './routes/infoBox';
 
 const routes = {
 	admissions: admissionsRouter,
 	announcements: announcementsRouter,
 	events: eventsRouter,
 	infoBox: infoBoxRouter,
+	faq: faqRouter,
 	questions: questionsRouter,
 	settings: settingsRouter,
 	users: usersRouter,

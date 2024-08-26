@@ -7,7 +7,7 @@ export const load = async ({ locals, params }) => {
 	if (Number.isNaN(Number(params.faqQuestion))) {
 		throw error(404, 'Question not found');
 	}
-	const question = await trpc(locals.auth).infoBox.get(Number(params.faqQuestion));
+	const question = await trpc(locals.auth).faq.get(Number(params.faqQuestion));
 	if (question !== null) {
 		return {
 			question,
@@ -20,18 +20,17 @@ export const actions = {
 	edit: async ({ locals, request }) => {
 		const formData = await request.formData();
 
-		await trpc(locals.auth).infoBox.update({
+		await trpc(locals.auth).faq.update({
 			id: Number(formData.get('id') as string),
-			title: formData.get('title') as string,
-			response: formData.get('response') as string,
-			category: 'FAQ',
+			question: formData.get('question') as string,
+			answer: formData.get('answer') as string,
 		});
 		return 'Saved question!';
 	},
 
 	delete: async ({ locals, request }) => {
 		const formData = await request.formData();
-		await trpc(locals.auth).infoBox.delete(Number(formData.get('id') as string));
+		await trpc(locals.auth).faq.delete(Number(formData.get('id') as string));
 		throw redirect(303, '/');
 	},
 };

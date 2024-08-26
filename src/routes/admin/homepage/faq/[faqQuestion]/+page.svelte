@@ -7,7 +7,7 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Admin - FAQ - {data.question.title}</title>
+	<title>Rodeo | Admin - FAQ - {data.question.question}</title>
 </svelte:head>
 
 <div class="container">
@@ -37,7 +37,7 @@
 		<input type="hidden" name="id" value={data.question.id} />
 
 		<label for="title">Question</label>
-		<input type="text" id="title" name="title" required value={data.question.title} />
+		<input type="text" id="title" name="title" required value={data.question.question} />
 
 		<label for="response">Answer</label>
 		<TextEditor
@@ -45,7 +45,7 @@
 			name="response"
 			isHTML={false}
 			required
-			value={data.question.response}
+			value={data.question.answer}
 		/>
 
 		<button class="submit" type="submit">Save</button>

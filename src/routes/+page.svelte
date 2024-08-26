@@ -49,7 +49,7 @@
 
 {#if data.settings.showFAQ && data.faqs.length > 0}
 	<section id="FAQ">
-		<FAQ questions={data.faqs} />
+		<FAQ faqs={data.faqs} />
 	</section>
 {/if}
 

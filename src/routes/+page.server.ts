@@ -39,7 +39,7 @@ export const load = async ({ locals }) => {
 		announcements: await trpc(locals.auth).announcements.getAll(),
 		schedule: await trpc(locals.auth).events.getAll(),
 		settings: await trpc(locals.auth).settings.getPublic(),
-		faqs: await trpc(locals.auth).infoBox.getAllOfCategory('FAQ'),
+		faqs: await trpc(locals.auth).faq.getAll(),
 		prizes: await trpc(locals.auth).infoBox.getAllOfCategory('CHALLENGE'),
 		sponsors: combinedSponsorList,
 
