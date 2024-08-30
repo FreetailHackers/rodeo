@@ -181,7 +181,7 @@
 		<div class="flex-column">
 			<div class="row category">Other Hackathons</div>
 			<br />
-			<a target="_blank" rel="noopener noreferrer" href="https://tamuhack.org/"> TAMUhack</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://tamuhack.org/"> TAMUHack</a>
 			<a target="_blank" rel="noopener noreferrer" href="https://hackuta.org"> HackUTA</a>
 			<a target="_blank" rel="noopener noreferrer" href="https://www.unthackathon.com/">HackUNT</a>
 			<a target="_blank" rel="noopener noreferrer" href="https://rowdyhacks.org/"> RowdyHacks</a>
