@@ -197,12 +197,11 @@
 		padding: 10px 20px;
 		font-size: 16px;
 		color: #fff;
-		background-color: #007bff;
+		background-color: var(--accent-color);
 		border: none;
 		border-radius: 10px;
 		text-align: center;
 		text-decoration: none;
-
 		transition: background-color 0.3s ease;
 	}
 

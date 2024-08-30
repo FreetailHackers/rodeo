@@ -40,7 +40,6 @@
 			>)
 		</label>
 		<input
-			class="inputValues"
 			placeholder="Password"
 			type={hidden ? 'password' : 'text'}
 			id="password"
@@ -49,88 +48,47 @@
 			minlength="8"
 			autocomplete="new-password"
 		/>
-		<button>Continue</button>
+		<div class="button-wrapper">
+			<button>Register</button>
+		</div>
 	</form>
-	<div class="login">
-		<p>Already have an account?</p>
-		<!-- svelte-ignore a11y-missing-content -->
-		<a href="/login">
-			<button class="login-button">Login Here!</button>
-		</a>
-	</div>
+	<p class="login">Already have an account? <a href="/login">Login here!</a></p>
 </div>
 
 <style>
-	h1 {
-		color: var(--highlight-color);
+	h1,
+	.button-wrapper {
 		text-align: center;
-		white-space: nowrap;
-		font-size: min(12vw, 3.5em);
-		margin: 15px 0px;
+	}
+
+	.button-wrapper {
+		margin-top: 1em;
 	}
 
 	p {
-		margin: 4px 0;
-	}
-
-	form,
-	.login {
-		background-color: var(--highlight-color);
-		width: clamp(25rem, 30vw, 50rem);
-	}
-
-	form {
-		padding: 0em 1em 1em 1em;
-	}
-
-	.login {
-		display: flex;
-		text-align: center;
-		align-items: center;
-		justify-content: space-between;
-		padding: 0.5em 1em;
-		margin: 1em 0 15px 0;
-	}
-
-	.login-button {
 		margin: 0;
-		margin-left: 10px;
-		padding: 0px 15px;
 	}
 
-	label {
-		color: var(--background-color);
-		padding-top: 0.5em;
+	label,
+	.login {
+		margin-top: 0.5em;
+	}
+
+	input,
+	button {
+		border-radius: 15px;
 	}
 
 	input {
-		display: block;
+		color: grey;
 		border-width: 1px;
 	}
 
 	button {
-		margin-top: 0.5em;
-		box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
-		-moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
-		-webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
+		padding: 0.5em 1.5em;
 	}
 
-	.inputValues {
-		background-color: var(--highlight-color);
-		color: #404040;
-	}
-
-	@media (max-width: 768px) {
-		form,
-		.login {
-			min-width: 20rem;
-			width: 15vw;
-		}
-	}
-
-	@media (max-width: 1090px) {
-		h1 {
-			margin-top: 0px;
-		}
+	.login {
+		text-align: center;
 	}
 </style>

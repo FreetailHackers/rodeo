@@ -55,20 +55,16 @@
 
 <style>
 	h1 {
-		color: var(--highlight-color);
 		text-align: center;
-		font-size: min(9.5vw, 3.5em);
 		margin: 15px 0px;
 	}
 
 	form {
 		padding: 1em 1em 0 1em;
-		background-color: var(--highlight-color);
 	}
 
 	.verify {
 		padding: 1em;
-		background-color: var(--highlight-color);
 	}
 
 	button {
@@ -80,8 +76,7 @@
 	}
 
 	input {
-		background-color: var(--highlight-color);
-		color: #404040;
+		color: grey;
 		display: block;
 		margin-top: 1em;
 	}
