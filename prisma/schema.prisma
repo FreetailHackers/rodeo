@@ -156,6 +156,13 @@ model InfoBox {
   category    CategoryType
 }
 
+model Prizes {
+  id          Int     @id @default(autoincrement())
+  category    String
+  prize       String
+  description String?
+}
+
 model FAQ {
   id          Int     @id @default(autoincrement())
   question    String
