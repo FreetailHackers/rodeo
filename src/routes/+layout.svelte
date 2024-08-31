@@ -116,12 +116,11 @@
 
 <footer>
 	<div class="footer-flex">
-		<div class="flex-column">
+		<div class="flex-column" id="c1">
 			<div class="bat-and-main">
 				<img class="footer-bat" src="/Freetail_bat.png" alt="freetail-bat" />
 				<div>Freetail Hackers</div>
 			</div>
-			<br />
 			<a
 				class="freetail-link"
 				target="_blank"
@@ -129,6 +128,7 @@
 				href="https://freetailhackers.com">freetailhackers.com</a
 			>
 			<a
+				id="freetailmail"
 				class="freetail-link"
 				target="_blank"
 				rel="noopener noreferrer"
@@ -140,47 +140,44 @@
 					rel="noopener noreferrer"
 					href="https://www.linkedin.com/company/freetail-hackers/"
 				>
-					<img src="/media/linkedin.png" alt="media" />
+					<img height="30px" width="auto" src="/media/linkedin.png" alt="media" />
 				</a>
 				<a
 					target="_blank"
 					rel="noopener noreferrer"
 					href="https://www.instagram.com/freetailhackers/"
 				>
-					<img src="/media/instagram.png" alt="media" />
+					<img height="30px" width="auto" src="/media/instagram.png" alt="media" />
 				</a>
 				<a
 					target="_blank"
 					rel="noopener noreferrer"
 					href="https://www.facebook.com/freetailhackers/"
 				>
-					<img src="/media/facebook.png" alt="media" />
+					<img height="30px" width="auto" src="/media/facebook.png" alt="media" />
 				</a>
 				<a target="_blank" rel="noopener noreferrer" href="https://www.tiktok.com/@freetailhackers">
-					<img src="/media/tiktok.png" alt="media" />
+					<img height="30px" width="auto" src="/media/tiktok.png" alt="media" />
 				</a>
 				<a target="_blank" rel="noopener noreferrer" href="https://x.com/freetailhackers">
-					<img src="/media/twitter.png" alt="media" />
+					<img height="30px" width="auto" src="/media/twitter.png" alt="media" />
 				</a>
 			</div>
 		</div>
-		<div class="flex-column">
+		<div class="flex-column" id="c2">
 			<div class="row category">Hacker Resources</div>
-			<br />
 			<a target="_blank" rel="noopener noreferrer" href="#">Devpost</a>
 			<a target="_blank" rel="noopener noreferrer" href="#">Discord</a>
 			<a target="_blank" rel="noopener noreferrer" href="https://mlh.io/seasons/2025/events">MLH</a>
 		</div>
-		<div class="flex-column">
+		<div class="flex-column" id="c3">
 			<div class="row category">Other Resources</div>
-			<br />
 			<a target="_blank" rel="noopener noreferrer" href="https://uhsg.freetailhackers.com/">UHSG</a>
 			<a target="_blank" rel="noopener noreferrer" href="https://yearofai.utexas.edu/">Year of AI</a
 			>
 		</div>
-		<div class="flex-column">
+		<div class="flex-column" id="c4">
 			<div class="row category">Other Hackathons</div>
-			<br />
 			<a target="_blank" rel="noopener noreferrer" href="https://tamuhack.org/"> TAMUHack</a>
 			<a target="_blank" rel="noopener noreferrer" href="https://hackuta.org"> HackUTA</a>
 			<a target="_blank" rel="noopener noreferrer" href="https://www.unthackathon.com/">HackUNT</a>
@@ -206,7 +203,12 @@
 </footer>
 
 <style>
+	#freetailmail {
+		margin-bottom: 20px;
+	}
+
 	.bat-and-main {
+		margin-bottom: 20px;
 		font-size: 20px;
 		align-items: center;
 		display: inline-flex;
@@ -222,6 +224,7 @@
 	.footer-flex {
 		display: flex;
 		justify-content: space-around;
+		flex-wrap: wrap;
 		margin: auto;
 		max-width: 75em;
 		color: #000000;
@@ -258,7 +261,6 @@
 
 	.flex-column a {
 		color: #000000;
-		font-family: 'Helvetica Neue';
 		font-weight: normal;
 	}
 
@@ -277,7 +279,8 @@
 	}
 
 	.category {
-		font-size: 17px;
+		margin-bottom: 20px;
+		font-size: 18px;
 	}
 
 	label {
@@ -360,12 +363,32 @@
 	}
 
 	@media (max-width: 768px) {
+		#c1 {
+			width: 100%;
+		}
+		#c2 {
+			width: 50%;
+		}
+		#c3 {
+			width: 50%;
+		}
+		#c4 {
+			width: 100%;
+		}
+
 		.flex-column {
-			display: none;
+			width: 100%;
+			display: flex;
+			flex-wrap: wrap;
+			margin-bottom: 20px;
 		}
 
 		.footer-flex {
-			max-width: 60vw;
+			margin: 25px;
+			margin-bottom: 0px;
+		}
+		.footer-copyright-flex {
+			margin: 20px;
 		}
 	}
 
