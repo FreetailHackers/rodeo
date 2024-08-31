@@ -116,7 +116,7 @@
 
 <footer>
 	<div class="footer-flex">
-		<div class="flex-column" id="c1">
+		<div class="flex-column" id="freetailcolumn">
 			<div class="bat-and-main">
 				<img class="footer-bat" src="/Freetail_bat.png" alt="freetail-bat" />
 				<div>Freetail Hackers</div>
@@ -203,6 +203,10 @@
 </footer>
 
 <style>
+	#freetailcolumn {
+		flex-basis: 300px;
+	}
+
 	#freetailmail {
 		margin-bottom: 20px;
 	}
@@ -210,11 +214,8 @@
 	.bat-and-main {
 		margin-bottom: 20px;
 		font-size: 20px;
-		align-items: center;
 		display: inline-flex;
-		flex: 0 0 auto;
 		gap: 19px;
-		position: relative;
 	}
 	.footer-bat {
 		filter: brightness(0%);
@@ -222,12 +223,13 @@
 		height: auto;
 	}
 	.footer-flex {
+		align-items: flex-start;
 		display: flex;
-		justify-content: space-around;
+		justify-content: space-between;
 		flex-wrap: wrap;
 		margin: auto;
-		max-width: 75em;
-		color: #000000;
+		max-width: 65em;
+		color: black;
 	}
 
 	.login {
@@ -249,7 +251,7 @@
 		display: flex;
 		flex-direction: column;
 		font-size: 18px;
-		color: #000000;
+		color: black;
 	}
 
 	.footer-copyright-flex {
@@ -363,23 +365,7 @@
 	}
 
 	@media (max-width: 768px) {
-		#c1 {
-			width: 100%;
-		}
-		#c2 {
-			width: 50%;
-		}
-		#c3 {
-			width: 50%;
-		}
-		#c4 {
-			width: 100%;
-		}
-
 		.flex-column {
-			width: 100%;
-			display: flex;
-			flex-wrap: wrap;
 			margin-bottom: 20px;
 		}
 
