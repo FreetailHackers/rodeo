@@ -140,27 +140,57 @@
 					rel="noopener noreferrer"
 					href="https://www.linkedin.com/company/freetail-hackers/"
 				>
-					<img height="30px" width="auto" src="/media/linkedin.png" alt="media" />
+					<img
+						class="footer-media"
+						height="30px"
+						width="auto"
+						src="/media/linkedin.png"
+						alt="media"
+					/>
 				</a>
 				<a
 					target="_blank"
 					rel="noopener noreferrer"
 					href="https://www.instagram.com/freetailhackers/"
 				>
-					<img height="30px" width="auto" src="/media/instagram.png" alt="media" />
+					<img
+						class="footer-media"
+						height="30px"
+						width="auto"
+						src="/media/instagram.png"
+						alt="media"
+					/>
 				</a>
 				<a
 					target="_blank"
 					rel="noopener noreferrer"
 					href="https://www.facebook.com/freetailhackers/"
 				>
-					<img height="30px" width="auto" src="/media/facebook.png" alt="media" />
+					<img
+						class="footer-media"
+						height="30px"
+						width="auto"
+						src="/media/facebook.png"
+						alt="media"
+					/>
 				</a>
 				<a target="_blank" rel="noopener noreferrer" href="https://www.tiktok.com/@freetailhackers">
-					<img height="30px" width="auto" src="/media/tiktok.png" alt="media" />
+					<img
+						class="footer-media"
+						height="30px"
+						width="auto"
+						src="/media/tiktok.png"
+						alt="media"
+					/>
 				</a>
 				<a target="_blank" rel="noopener noreferrer" href="https://x.com/freetailhackers">
-					<img height="30px" width="auto" src="/media/twitter.png" alt="media" />
+					<img
+						class="footer-media"
+						height="30px"
+						width="auto"
+						src="/media/twitter.png"
+						alt="media"
+					/>
 				</a>
 			</div>
 		</div>
@@ -203,6 +233,9 @@
 </footer>
 
 <style>
+	.footer-media {
+		margin-right: 17px;
+	}
 	#freetailcolumn {
 		flex-basis: 300px;
 	}
@@ -252,6 +285,7 @@
 		flex-direction: column;
 		font-size: 18px;
 		color: black;
+		font-family: 'Inter';
 	}
 
 	.footer-copyright-flex {
@@ -265,6 +299,7 @@
 	.flex-column a {
 		color: #000000;
 		font-weight: normal;
+		font-family: 'Inter';
 	}
 
 	a {
@@ -379,6 +414,9 @@
 		}
 		.footer-copyright-flex .flex-column {
 			width: 100%;
+		}
+		.footer-copyright-flex .flex-column a {
+			color: lightgrey;
 		}
 	}
 
