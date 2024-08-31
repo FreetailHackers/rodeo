@@ -257,6 +257,7 @@
 	.footer-copyright-flex {
 		display: flex;
 		justify-content: space-between;
+		flex-wrap: wrap;
 		margin: auto;
 		max-width: 67em;
 	}
@@ -375,6 +376,9 @@
 		}
 		.footer-copyright-flex {
 			margin: 20px;
+		}
+		.footer-copyright-flex .flex-column {
+			width: 100%;
 		}
 	}
 
