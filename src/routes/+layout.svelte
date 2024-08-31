@@ -401,16 +401,17 @@
 	}
 
 	@media (max-width: 768px) {
-		.flex-column {
-			margin-bottom: 20px;
+		.footer-flex .flex-column {
+			margin-top: 20px;
 		}
-
+		footer {
+			padding: 0%;
+		}
 		.footer-flex {
-			margin: 25px;
-			margin-bottom: 0px;
+			margin: 4cap;
 		}
 		.footer-copyright-flex {
-			margin: 20px;
+			margin: 30px;
 		}
 		.footer-copyright-flex .flex-column {
 			width: 100%;
