@@ -55,7 +55,7 @@ async function main() {
 	await prisma.authUser.deleteMany();
 	await prisma.authSession.deleteMany();
 	await prisma.authKey.deleteMany();
-	await prisma.infoBox.deleteMany();
+	await prisma.prizeBox.deleteMany();
 
 	// Create example announcement
 	await prisma.announcement.create({
@@ -81,7 +81,8 @@ async function main() {
 	await prisma.fAQ.createMany({ data: faq });
 
 	// Create example Prizes
-	await prisma.infoBox.createMany({ data: prizes });
+	await prisma.prizeBox.createMany({ data: prizes });
+	console.log('created prizes');
 
 	// Generate fake users and status changes
 	// NOTE: By "fake", I mean the fact that there is no way to sign in

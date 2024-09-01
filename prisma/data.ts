@@ -394,41 +394,53 @@ export const faq: Prisma.FAQCreateInput[] = [
 	},
 ];
 
-export const prizes: Prisma.InfoBoxCreateInput[] = [
+export const prizes: Prisma.PrizeBoxCreateInput[] = [
 	{
 		title: 'Sustainability Challenge',
-		response:
+		description:
 			'Explore ways to promote sustainable practices and reduce environmental impact through innovative solutions. Address issues such as waste management, renewable energy, and conservation efforts to create a more sustainable future.',
-		category: 'CHALLENGE',
+		prizeType: 'CHALLENGE',
 	},
 	{
 		title: 'Health & Safety Challenge',
-		response:
+		description:
 			'Focus on improving health and safety standards in various environments, including workplaces, communities, and public spaces. Develop strategies to prevent accidents, mitigate risks, and enhance overall well-being for individuals and society.',
-		category: 'CHALLENGE',
+		prizeType: 'CHALLENGE',
 	},
 	{
 		title: 'Blockchain & Security Challenge',
-		response:
+		description:
 			'Dive into the world of blockchain technology and cybersecurity to tackle emerging threats and vulnerabilities. Explore encryption methods, decentralized systems, and secure data storage to ensure the integrity and confidentiality of digital transactions and information.',
-		category: 'CHALLENGE',
+		prizeType: 'CHALLENGE',
 	},
 	{
 		title: 'Human Computer Interaction Challenge',
-		response:
+		description:
 			'Enhance user experiences and interactions with technology by designing intuitive interfaces and user-friendly applications. Explore human-centered design principles to create engaging and accessible digital experiences for diverse audiences.',
-		category: 'CHALLENGE',
+		prizeType: 'CHALLENGE',
 	},
 	{
 		title: 'Efficiency Challenge',
-		response:
+		description:
 			"#Efficiency fuels progress in our fast-paced world. If you're a problem solver with a passion for streamlining processes and maximizing productivity, then the Efficiency Boosters Hackathon is the perfect platform for you. Join forces with like-minded individuals to develop innovative solutions that optimize workflows, enhance resource management, and boost overall efficiency across various domains. Your ingenuity could revolutionize industries, so let's hack for a more efficient future!",
-		category: 'CHALLENGE',
+		prizeType: 'CHALLENGE',
 	},
 	{
-		title: 'Earth & Space Challenge',
-		response:
-			"Embark on a journey beyond our planet and explore the vastness of both Earth and Space in this hackathon track. From addressing environmental challenges on our home planet to pioneering new frontiers in space exploration, this track welcomes visionaries and problem solvers who are eager to make a significant impact on our world, both near and far. Whether you're interested in climate solutions, space technology, or protecting our planet, this hackathon is your launchpad to innovation.",
-		category: 'CHALLENGE',
+		title: 'First Place Overall',
+		description:
+			'Overall did an amazing job and blew the judges away! Congratulations on winning first place!',
+		prizeType: 'FIRST',
+	},
+	{
+		title: 'Second Place Overall',
+		description:
+			'Overall did an amazing job and blew the judges away! Congrats on winning second place!',
+		prizeType: 'SECOND',
+	},
+	{
+		title: 'Third Place Overall',
+		description:
+			'Overall did an amazing job and blew the judges away! Congrats on winning third place!',
+		prizeType: 'THIRD',
 	},
 ];

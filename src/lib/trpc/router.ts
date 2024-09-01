@@ -2,7 +2,7 @@ import type { AuthUser } from '@prisma/client';
 import { admissionsRouter } from './routes/admissions';
 import { announcementsRouter } from './routes/announcements';
 import { eventsRouter } from './routes/events';
-import { infoBoxRouter } from './routes/infoBox';
+import { prizeBoxRouter } from './routes/prizeBox';
 import { faqRouter } from './routes/faq';
 import { questionsRouter } from './routes/questions';
 import { settingsRouter } from './routes/settings';
@@ -14,7 +14,7 @@ const routes = {
 	admissions: admissionsRouter,
 	announcements: announcementsRouter,
 	events: eventsRouter,
-	infoBox: infoBoxRouter,
+	prizeBox: prizeBoxRouter,
 	faq: faqRouter,
 	questions: questionsRouter,
 	settings: settingsRouter,

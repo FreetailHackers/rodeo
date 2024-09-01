@@ -55,7 +55,7 @@
 		/>
 
 		<label for="sponsorLink">Sponsor Link</label>
-		<input type="url" id="sponsorLink" name="sponsorLink" value={data.response} />
+		<input type="url" id="sponsorLink" name="sponsorLink" value={data.description} />
 
 		<button type="submit" style="margin-top: 1rem;">Save</button>
 	</form>

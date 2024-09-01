@@ -149,18 +149,12 @@ model Event {
   type        String
 }
 
-model InfoBox {
-  id          Int     @id @default(autoincrement())
+model PrizeBox {
+  id          Int      @id @default(autoincrement())
   title       String
-  response    String
-  category    CategoryType
-}
-
-model Prizes {
-  id          Int     @id @default(autoincrement())
-  category    String
-  prize       String
-  description String?
+  description String
+  prize       String?
+  prizeType   PrizeType
 }
 
 model FAQ {
@@ -217,6 +211,14 @@ enum QuestionType {
 enum CategoryType {
   CHALLENGE
   SPONSOR
+}
+
+enum PrizeType {
+  FIRST
+  SECOND
+  THIRD
+  SPONSOR
+  CHALLENGE
 }
 
 // This section lists the names of manually created triggers, and the

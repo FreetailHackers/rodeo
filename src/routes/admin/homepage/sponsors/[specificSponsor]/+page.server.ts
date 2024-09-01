@@ -8,7 +8,7 @@ export const load = async ({ locals, params }) => {
 	if (Number.isNaN(Number(params.specificSponsor))) {
 		throw error(404, 'Sponsor not found');
 	}
-	const sponsor = await trpc(locals.auth).infoBox.get(Number(params.specificSponsor));
+	const sponsor = await trpc(locals.auth).prizeBox.get(Number(params.specificSponsor));
 	if (sponsor !== null) {
 		return sponsor;
 	}
@@ -25,7 +25,7 @@ export const actions = {
 		if (sponsorLogo && sponsorLogo.size <= 1024 * 1024) {
 			let key: string = '';
 
-			const existingSponsor = await trpc(locals.auth).infoBox.get(
+			const existingSponsor = await trpc(locals.auth).prizeBox.get(
 				Number(formData.get('id') as string)
 			);
 
@@ -41,11 +41,12 @@ export const actions = {
 				s3Upload(key, sponsorLogo);
 			}
 
-			await trpc(locals.auth).infoBox.update({
+			await trpc(locals.auth).prizeBox.update({
 				id: Number(formData.get('id') as string),
+				prize: 'fake',
 				title: key,
-				response: sponsorLink,
-				category: 'SPONSOR',
+				description: sponsorLink,
+				prizeType: 'SPONSOR',
 			});
 			return 'Saved sponsor!';
 		} else {
@@ -57,12 +58,12 @@ export const actions = {
 		const formData = await request.formData();
 		const id = Number(formData.get('id') as string);
 
-		const existingSponsor = await trpc(locals.auth).infoBox.get(id);
+		const existingSponsor = await trpc(locals.auth).prizeBox.get(id);
 
 		// Deleting uploaded image
 		s3Delete(existingSponsor?.title);
 
-		await trpc(locals.auth).infoBox.delete(id);
+		await trpc(locals.auth).prizeBox.delete(id);
 		throw redirect(303, '/');
 	},
 };

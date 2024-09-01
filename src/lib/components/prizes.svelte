@@ -1,17 +1,17 @@
 <script lang="ts">
-	import type { InfoBox } from '@prisma/client';
+	import type { PrizeBox } from '@prisma/client';
 
-	export let prizes: InfoBox[];
+	export let prizes: PrizeBox[];
 </script>
 
 <div class="home-content">
 	<h2>Prizes</h2>
 	<div class="container">
 		{#each prizes as prize}
-			{#if prize.category === 'CHALLENGE'}
+			{#if prize.prizeType !== 'SPONSOR'}
 				<div>
 					<h6>{prize.title}</h6>
-					<p>{prize.response}</p>
+					<p>{prize.description}</p>
 				</div>
 			{/if}
 		{/each}

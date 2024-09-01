@@ -39,7 +39,7 @@
 		<input type="text" id="title" name="title" required value={data.challenge.title} />
 
 		<label for="response">Response</label>
-		<textarea id="response" name="response" required value={data.challenge.response} />
+		<textarea id="response" name="response" required value={data.challenge.description} />
 
 		<button type="submit" style="margin-top: 1rem;">Save</button>
 	</form>

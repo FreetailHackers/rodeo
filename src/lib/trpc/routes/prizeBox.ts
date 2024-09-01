@@ -1,35 +1,36 @@
-import { CategoryType, type InfoBox } from '@prisma/client';
+import { PrizeType, type PrizeBox } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 
-const infoBoxSchema = z
+const prizeBoxSchema = z
 	.object({
 		title: z.string(),
-		response: z.string(),
-		category: z.nativeEnum(CategoryType),
+		prize: z.string().optional(),
+		description: z.string(),
+		prizeType: z.nativeEnum(PrizeType),
 	})
 	.strict();
 
-export const infoBoxRouter = t.router({
+export const prizeBoxRouter = t.router({
 	/**
 	 * Gets all the records in the table by category
 	 */
 	getAllOfCategory: t.procedure
-		.input(z.nativeEnum(CategoryType))
-		.query(async (req): Promise<InfoBox[]> => {
-			return await prisma.infoBox.findMany({
+		.input(z.nativeEnum(PrizeType))
+		.query(async (req): Promise<PrizeBox[]> => {
+			return await prisma.prizeBox.findMany({
 				orderBy: { id: 'asc' },
-				where: { category: req.input },
+				where: { prizeType: req.input },
 			});
 		}),
 
 	/**
 	 * Gets a record by ID.
 	 */
-	get: t.procedure.input(z.number()).query(async (req): Promise<InfoBox | null> => {
-		return await prisma.infoBox.findUnique({ where: { id: req.input } });
+	get: t.procedure.input(z.number()).query(async (req): Promise<PrizeBox | null> => {
+		return await prisma.prizeBox.findUnique({ where: { id: req.input } });
 	}),
 
 	/**
@@ -38,9 +39,9 @@ export const infoBoxRouter = t.router({
 	 */
 	create: t.procedure
 		.use(authenticate(['ADMIN']))
-		.input(infoBoxSchema)
+		.input(prizeBoxSchema)
 		.mutation(async (req): Promise<void> => {
-			await prisma.infoBox.create({ data: { ...req.input } });
+			await prisma.prizeBox.create({ data: { ...req.input } });
 		}),
 
 	/**
@@ -48,9 +49,9 @@ export const infoBoxRouter = t.router({
 	 */
 	update: t.procedure
 		.use(authenticate(['ADMIN']))
-		.input(infoBoxSchema.merge(z.object({ id: z.number() })))
+		.input(prizeBoxSchema.merge(z.object({ id: z.number() })))
 		.mutation(async (req): Promise<void> => {
-			await prisma.infoBox.update({
+			await prisma.prizeBox.update({
 				where: { id: req.input.id },
 				data: { ...req.input },
 			});
@@ -63,16 +64,16 @@ export const infoBoxRouter = t.router({
 		.use(authenticate(['ADMIN']))
 		.input(z.number())
 		.mutation(async (req): Promise<void> => {
-			await prisma.infoBox.delete({ where: { id: req.input } });
+			await prisma.prizeBox.delete({ where: { id: req.input } });
 		}),
 
 	/**
-	 * Deletes all InfoBox from the page by category. User must be an admin.
+	 * Deletes all PrizeBox from the page by category. User must be an admin.
 	 */
 	deleteAllOfCategory: t.procedure
 		.use(authenticate(['ADMIN']))
-		.input(z.nativeEnum(CategoryType))
+		.input(z.nativeEnum(PrizeType))
 		.mutation(async (req): Promise<void> => {
-			await prisma.infoBox.deleteMany({ where: { category: req.input } });
+			await prisma.prizeBox.deleteMany({ where: { prizeType: req.input } });
 		}),
 });

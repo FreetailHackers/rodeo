@@ -7,7 +7,7 @@ export const load = async ({ locals, params }) => {
 	if (Number.isNaN(Number(params.specificChallenge))) {
 		throw error(404, 'Challenge not found');
 	}
-	const challenge = await trpc(locals.auth).infoBox.get(Number(params.specificChallenge));
+	const challenge = await trpc(locals.auth).prizeBox.get(Number(params.specificChallenge));
 	if (challenge !== null) {
 		return {
 			challenge,
@@ -19,18 +19,18 @@ export const load = async ({ locals, params }) => {
 export const actions = {
 	edit: async ({ locals, request }) => {
 		const formData = await request.formData();
-		await trpc(locals.auth).infoBox.update({
+		await trpc(locals.auth).prizeBox.update({
 			id: Number(formData.get('id') as string),
 			title: formData.get('title') as string,
-			response: formData.get('response') as string,
-			category: 'CHALLENGE',
+			description: formData.get('response') as string,
+			prizeType: 'CHALLENGE',
 		});
 		return 'Saved challenge!';
 	},
 
 	delete: async ({ locals, request }) => {
 		const formData = await request.formData();
-		await trpc(locals.auth).infoBox.delete(Number(formData.get('id') as string));
+		await trpc(locals.auth).prizeBox.delete(Number(formData.get('id') as string));
 		throw redirect(303, '/');
 	},
 };

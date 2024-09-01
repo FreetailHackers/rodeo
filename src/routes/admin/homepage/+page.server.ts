@@ -85,10 +85,10 @@ export const actions = {
 	createChallenge: async ({ locals, request }) => {
 		const formData = await request.formData();
 
-		await trpc(locals.auth).infoBox.create({
+		await trpc(locals.auth).prizeBox.create({
 			title: formData.get('category') as string,
-			response: formData.get('challenge') as string,
-			category: 'CHALLENGE',
+			description: formData.get('challenge') as string,
+			prizeType: 'CHALLENGE',
 		});
 		return 'Created challenge!';
 	},
@@ -105,10 +105,10 @@ export const actions = {
 
 			s3Upload(key, sponsorLogo);
 
-			await trpc(locals.auth).infoBox.create({
+			await trpc(locals.auth).prizeBox.create({
 				title: key,
-				response: sponsorLink,
-				category: 'SPONSOR',
+				description: sponsorLink,
+				prizeType: 'SPONSOR',
 			});
 			return 'Created sponsor!';
 		} else {
@@ -126,16 +126,19 @@ export const actions = {
 			await trpc(locals.auth).faq.deleteAll();
 			return 'Deleted all FAQ!';
 		} else if (deleteAllValue === 'challenges') {
-			await trpc(locals.auth).infoBox.deleteAllOfCategory('CHALLENGE');
+			await trpc(locals.auth).prizeBox.deleteAllOfCategory('CHALLENGE');
+			await trpc(locals.auth).prizeBox.deleteAllOfCategory('FIRST');
+			await trpc(locals.auth).prizeBox.deleteAllOfCategory('SECOND');
+			await trpc(locals.auth).prizeBox.deleteAllOfCategory('THIRD');
 			return 'Deleted all challenges!';
 		} else if (deleteAllValue === 'sponsors') {
-			const sponsors = await trpc(locals.auth).infoBox.getAllOfCategory('SPONSOR');
+			const sponsors = await trpc(locals.auth).prizeBox.getAllOfCategory('SPONSOR');
 
 			for (const sponsor of sponsors) {
 				s3Delete(sponsor.title);
 			}
 
-			await trpc(locals.auth).infoBox.deleteAllOfCategory('SPONSOR');
+			await trpc(locals.auth).prizeBox.deleteAllOfCategory('SPONSOR');
 			return 'Deleted all sponsors!';
 		} else {
 			return 'Invalid element to delete';

@@ -6,7 +6,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
 export const load = async ({ locals }) => {
-	const sponsors = await trpc(locals.auth).infoBox.getAllOfCategory('SPONSOR');
+	const sponsors = await trpc(locals.auth).prizeBox.getAllOfCategory('SPONSOR');
 	const sponsorLinks: Record<string, string> = {};
 
 	// Get links of all the sponsor images
@@ -30,7 +30,7 @@ export const load = async ({ locals }) => {
 	const combinedSponsorList = sponsors.map((sponsor) => [
 		sponsor.id,
 		sponsor.title,
-		sponsor.response,
+		sponsor.description,
 		sponsorLinks[sponsor.title],
 	]);
 
@@ -40,7 +40,7 @@ export const load = async ({ locals }) => {
 		schedule: await trpc(locals.auth).events.getAll(),
 		settings: await trpc(locals.auth).settings.getPublic(),
 		faqs: await trpc(locals.auth).faq.getAll(),
-		prizes: await trpc(locals.auth).infoBox.getAllOfCategory('CHALLENGE'),
+		prizes: await trpc(locals.auth).prizeBox.getAllOfCategory('CHALLENGE'),
 		sponsors: combinedSponsorList,
 
 		// Check whether various OAuth providers are set up in
