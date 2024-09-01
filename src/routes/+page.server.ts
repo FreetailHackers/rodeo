@@ -40,7 +40,7 @@ export const load = async ({ locals }) => {
 		schedule: await trpc(locals.auth).events.getAll(),
 		settings: await trpc(locals.auth).settings.getPublic(),
 		faqs: await trpc(locals.auth).faq.getAll(),
-		prizes: await trpc(locals.auth).prizeBox.getAllOfCategory('CHALLENGE'),
+		prizes: await trpc(locals.auth).prizeBox.getAll(),
 		sponsors: combinedSponsorList,
 
 		// Check whether various OAuth providers are set up in

@@ -27,6 +27,15 @@ export const prizeBoxRouter = t.router({
 		}),
 
 	/**
+	 * Gets all the records in the table by category
+	 */
+	getAll: t.procedure.query(async (): Promise<PrizeBox[]> => {
+		return await prisma.prizeBox.findMany({
+			orderBy: { id: 'asc' },
+		});
+	}),
+
+	/**
 	 * Gets a record by ID.
 	 */
 	get: t.procedure.input(z.number()).query(async (req): Promise<PrizeBox | null> => {
