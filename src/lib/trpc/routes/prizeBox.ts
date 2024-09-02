@@ -8,7 +8,7 @@ const prizeBoxSchema = z
 	.object({
 		title: z.string(),
 		prize: z.string().optional(),
-		description: z.string(),
+		description: z.string().optional(),
 		prizeType: z.nativeEnum(PrizeType),
 	})
 	.strict();

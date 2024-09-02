@@ -396,6 +396,24 @@ export const faq: Prisma.FAQCreateInput[] = [
 
 export const prizes: Prisma.PrizeBoxCreateInput[] = [
 	{
+		title: 'First Place',
+		description:
+			'Overall did an amazing job and blew the judges away! Congratulations on winning first place!',
+		prizeType: 'FIRST',
+	},
+	{
+		title: 'Second Place',
+		description:
+			'Overall did an amazing job and blew the judges away! Congrats on winning second place!',
+		prizeType: 'SECOND',
+	},
+	{
+		title: 'Third Place',
+		description:
+			'Overall did an amazing job and blew the judges away! Congrats on winning third place!',
+		prizeType: 'THIRD',
+	},
+	{
 		title: 'Sustainability Challenge',
 		description:
 			'Explore ways to promote sustainable practices and reduce environmental impact through innovative solutions. Address issues such as waste management, renewable energy, and conservation efforts to create a more sustainable future.',
@@ -424,23 +442,5 @@ export const prizes: Prisma.PrizeBoxCreateInput[] = [
 		description:
 			"#Efficiency fuels progress in our fast-paced world. If you're a problem solver with a passion for streamlining processes and maximizing productivity, then the Efficiency Boosters Hackathon is the perfect platform for you. Join forces with like-minded individuals to develop innovative solutions that optimize workflows, enhance resource management, and boost overall efficiency across various domains. Your ingenuity could revolutionize industries, so let's hack for a more efficient future!",
 		prizeType: 'CHALLENGE',
-	},
-	{
-		title: 'First Place Overall',
-		description:
-			'Overall did an amazing job and blew the judges away! Congratulations on winning first place!',
-		prizeType: 'FIRST',
-	},
-	{
-		title: 'Second Place Overall',
-		description:
-			'Overall did an amazing job and blew the judges away! Congrats on winning second place!',
-		prizeType: 'SECOND',
-	},
-	{
-		title: 'Third Place Overall',
-		description:
-			'Overall did an amazing job and blew the judges away! Congrats on winning third place!',
-		prizeType: 'THIRD',
 	},
 ];

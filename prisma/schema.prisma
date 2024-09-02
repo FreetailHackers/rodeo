@@ -152,7 +152,7 @@ model Event {
 model PrizeBox {
   id          Int      @id @default(autoincrement())
   title       String
-  description String
+  description String?
   prize       String?
   prizeType   PrizeType
 }

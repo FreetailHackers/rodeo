@@ -30,7 +30,7 @@ export const load = async ({ locals }) => {
 	const combinedSponsorList = sponsors.map((sponsor) => [
 		sponsor.id,
 		sponsor.title,
-		sponsor.description,
+		sponsor.description ? sponsor.description : 'No prize description available',
 		sponsorLinks[sponsor.title],
 	]);
 
