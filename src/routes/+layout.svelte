@@ -280,6 +280,7 @@
 	}
 
 	.flex-column {
+		flex-basis: 200px;
 		font-weight: bold;
 		display: flex;
 		flex-direction: column;
