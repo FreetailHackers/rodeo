@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Geologica&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Geo&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 html {
 	scroll-behavior: smooth;
@@ -231,8 +232,6 @@ img {
 }
 
 footer {
-	background-color: #303030;
-	color: #f2ebd9;
 	text-align: left;
 	padding: 1em 1em;
 }

@@ -116,80 +116,153 @@
 
 <footer>
 	<div class="footer-flex">
-		<div class="flex-column">
-			Made with ❤️ by <a
+		<div class="flex-column" id="freetailcolumn">
+			<div class="bat-and-main">
+				<img class="footer-bat" src="/Freetail_bat.png" alt="freetail-bat" />
+				<div>Freetail Hackers</div>
+			</div>
+			<a
 				class="freetail-link"
 				target="_blank"
 				rel="noopener noreferrer"
-				href="https://freetailhackers.com">Freetail Hackers</a
+				href="https://freetailhackers.com">freetailhackers.com</a
 			>
+			<a
+				id="freetailmail"
+				class="freetail-link"
+				target="_blank"
+				rel="noopener noreferrer"
+				href="mailto:admin@freetailhackers.com">admin@freetailhackers.com</a
+			>
+			<div>
+				<a
+					target="_blank"
+					rel="noopener noreferrer"
+					href="https://www.linkedin.com/company/freetail-hackers/"
+				>
+					<img
+						class="footer-media"
+						height="30px"
+						width="auto"
+						src="/media/linkedin.png"
+						alt="media"
+					/>
+				</a>
+				<a
+					target="_blank"
+					rel="noopener noreferrer"
+					href="https://www.instagram.com/freetailhackers/"
+				>
+					<img
+						class="footer-media"
+						height="30px"
+						width="auto"
+						src="/media/instagram.png"
+						alt="media"
+					/>
+				</a>
+				<a
+					target="_blank"
+					rel="noopener noreferrer"
+					href="https://www.facebook.com/freetailhackers/"
+				>
+					<img
+						class="footer-media"
+						height="30px"
+						width="auto"
+						src="/media/facebook.png"
+						alt="media"
+					/>
+				</a>
+				<a target="_blank" rel="noopener noreferrer" href="https://www.tiktok.com/@freetailhackers">
+					<img
+						class="footer-media"
+						height="30px"
+						width="auto"
+						src="/media/tiktok.png"
+						alt="media"
+					/>
+				</a>
+				<a target="_blank" rel="noopener noreferrer" href="https://x.com/freetailhackers">
+					<img
+						class="footer-media"
+						height="30px"
+						width="auto"
+						src="/media/twitter.png"
+						alt="media"
+					/>
+				</a>
+			</div>
 		</div>
 		<div class="flex-column">
 			<div class="row category">Hacker Resources</div>
-			<a
-				target="_blank"
-				rel="noopener noreferrer"
-				href="https://www.instagram.com/freetailhackers?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
-				>Instagram</a
-			>
-			<a
-				target="_blank"
-				rel="noopener noreferrer"
-				href="https://www.linkedin.com/company/freetail-hackers">LinkedIn</a
-			>
-			<a target="_blank" rel="noopener noreferrer" href="https://freetailhackers.com/discord"
-				>Discord</a
-			>
-			<a
-				target="_blank"
-				rel="noopener noreferrer"
-				href="https://docs.google.com/forms/d/e/1FAIpQLSdQld-vgVLXOuIXIcUNpTFMwii_7Cu9Vqj7CVxXs3ScFsCIrg/viewform?usp=sf_link"
-				>Feedback</a
-			>
-			<a href="mailto:admin@freetailhackers.com">Contact Us</a>
+			<a target="_blank" rel="noopener noreferrer" href="#">Devpost</a>
+			<a target="_blank" rel="noopener noreferrer" href="#">Discord</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://mlh.io/seasons/2025/events">MLH</a>
 		</div>
 		<div class="flex-column">
 			<div class="row category">Other Resources</div>
+			<a target="_blank" rel="noopener noreferrer" href="https://uhsg.freetailhackers.com/">UHSG</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://yearofai.utexas.edu/">Year of AI</a
+			>
+		</div>
+		<div class="flex-column" id="right-footer-col">
+			<div class="row category">Other Hackathons</div>
+			<a target="_blank" rel="noopener noreferrer" href="https://tamuhack.org/"> TAMUHack</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://hackuta.org"> HackUTA</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://www.unthackathon.com/">HackUNT</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://rowdyhacks.org/"> RowdyHacks</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://hackutd.co/"> HackUTD</a>
+		</div>
+	</div>
+</footer>
+<footer>
+	<div class="footer-copyright-flex">
+		<div class="flex-column">
 			<a
+				class="freetail-link"
 				target="_blank"
 				rel="noopener noreferrer"
-				href="https://www.instagram.com/freetailhackers?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
-				>Instagram</a
+				href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf">Code of Conduct</a
 			>
-			<a
-				target="_blank"
-				rel="noopener noreferrer"
-				href="https://www.linkedin.com/company/freetail-hackers">LinkedIn</a
-			>
-			<a target="_blank" rel="noopener noreferrer" href="https://freetailhackers.com/discord"
-				>Discord</a
-			>
-			<a
-				target="_blank"
-				rel="noopener noreferrer"
-				href="https://docs.google.com/forms/d/e/1FAIpQLSdQld-vgVLXOuIXIcUNpTFMwii_7Cu9Vqj7CVxXs3ScFsCIrg/viewform?usp=sf_link"
-				>Feedback</a
-			>
-			<a href="mailto:admin@freetailhackers.com">Contact Us</a>
 		</div>
 		<div class="flex-column">
-			<div class="row category">Other Hackathons</div>
-			<a target="_blank" rel="noopener noreferrer" href="https://rowdyhacks.org/"> RowdyHacks</a>
-			<a target="_blank" rel="noopener noreferrer" href="https://tamuhack.org/"> TAMUhack</a>
-			<a target="_blank" rel="noopener noreferrer" href="https://hackutd.co/"> HackUTD</a>
-			<a target="_blank" rel="noopener noreferrer" href="https://www.unthackathon.com/">HackUNT</a>
-			<a target="_blank" rel="noopener noreferrer" href="https://hackuta.org"> HackUTA</a>
+			<a> <div>Copyright @ Freetail Hackers 2024</div></a>
 		</div>
 	</div>
 </footer>
 
 <style>
+	.footer-media {
+		margin-right: 17px;
+	}
+	#freetailcolumn {
+		flex-basis: 300px;
+	}
+
+	#freetailmail {
+		margin-bottom: 20px;
+	}
+
+	.bat-and-main {
+		margin-bottom: 20px;
+		font-size: 20px;
+		display: inline-flex;
+		gap: 19px;
+	}
+	.footer-bat {
+		filter: brightness(0%);
+		width: 50px;
+		height: auto;
+	}
 	.footer-flex {
+		align-items: flex-start;
 		display: flex;
-		justify-content: space-around;
+		justify-content: space-between;
+		flex-wrap: wrap;
 		margin: auto;
-		max-width: 75em;
-		color: #f2ebd9;
+		max-width: 66em;
+		color: black;
 	}
 
 	.login {
@@ -206,9 +279,40 @@
 	}
 
 	.flex-column {
+		flex-basis: 200px;
+		font-weight: bold;
 		display: flex;
 		flex-direction: column;
-		font-size: 14px;
+		font-size: 18px;
+		color: black;
+		font-family: 'Inter';
+	}
+
+	#right-footer-col {
+		flex-basis: auto;
+	}
+
+	.footer-copyright-flex {
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		margin: auto;
+		max-width: 66.6em;
+	}
+
+	.footer-copyright-flex .flex-column {
+		flex-basis: auto;
+	}
+
+	.footer-flex .flex-column {
+		margin-top: 20px;
+	}
+
+	.flex-column a {
+		color: #000000;
+		font-weight: normal;
+		font-family: 'Inter';
+		flex-wrap: nowrap;
 	}
 
 	a {
@@ -226,7 +330,8 @@
 	}
 
 	.category {
-		font-size: 17px;
+		margin-bottom: 20px;
+		font-size: 18px;
 	}
 
 	label {
@@ -309,12 +414,24 @@
 	}
 
 	@media (max-width: 768px) {
-		.flex-column {
-			display: none;
+		#right-footer-col {
+			flex-basis: 200px;
 		}
 
+		footer {
+			padding: 0%;
+		}
 		.footer-flex {
-			max-width: 60vw;
+			margin: 4cap;
+		}
+		.footer-copyright-flex {
+			margin: 30px;
+		}
+		.footer-copyright-flex .flex-column {
+			width: 100%;
+		}
+		.footer-copyright-flex .flex-column a {
+			color: lightgrey;
 		}
 	}
 
