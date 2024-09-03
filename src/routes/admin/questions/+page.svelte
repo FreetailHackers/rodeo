@@ -26,7 +26,7 @@
 			<div class="flex-row">
 				<Toggle name={question.id + '_required'} label="Required" checked={question.required} />
 				<!-- Put a hidden disabled button before the these
-					 buttons to prevent enter from triggering them -->
+				buttons to prevent enter from triggering them -->
 				<div class="flex-row actions">
 					<button type="submit" disabled style="display: none" aria-hidden="true" />
 					<button

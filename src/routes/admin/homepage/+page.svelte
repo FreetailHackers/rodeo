@@ -123,16 +123,34 @@
 </form>
 
 <form method="POST" action="?/createChallenge" use:enhance>
-	<label for="createNewChallenge"><h2>Create New Challenge</h2></label>
+	<div class="prizes-header">
+		<label for="createNewChallenge"><h2>Challenges</h2></label>
+		<button class="createChallengeButton"> + New </button>
+	</div>
 
-	<label for="category">Category</label>
+	<hr />
+	{#each data.challenges as challenge}
+		<div class="challenge">
+			<div class="challengeInfoHeader">
+				<h3 class="challengeTitle">{challenge.title}</h3>
+				<div class="challengeButtons">
+					<button class="editChallenge">Edit</button>
+					<button class="deleteChallenge">Delete</button>
+				</div>
+			</div>
+			<p class="challengeInfo">{challenge.description}</p>
+		</div>
+		<hr />
+	{/each}
+</form>
+
+<!-- <label for="category">Category</label>
 	<input type="text" id="category" name="category" required />
 
 	<label for="challenge">Challenge</label>
-	<textarea id="challenge" name="challenge" required />
+	<textarea id="challenge" name="challenge" required /> -->
 
-	<button type="submit">Save</button>
-</form>
+<!-- <button type="submit">Save</button> -->
 
 <form method="POST" action="?/createSponsor" use:enhance enctype="multipart/form-data">
 	<label for="createNewSponsor"><h2>Create New Sponsor</h2></label>
@@ -166,6 +184,9 @@
 </form>
 
 <style>
+	form {
+		margin-bottom: 50px;
+	}
 	button {
 		margin-top: 20px;
 	}
@@ -184,5 +205,25 @@
 
 	.toggle-container {
 		margin-bottom: 1rem;
+	}
+
+	.prizes-header {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.challengeInfoHeader {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	hr {
+		border: 1px solid #bbb;
+		width: 100%;
+	}
+
+	.createChallengeButton {
+		border-radius: 15px 15px 0 15px;
+		padding: 0 20px 0 20px;
 	}
 </style>

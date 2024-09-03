@@ -43,7 +43,6 @@ export const actions = {
 
 			await trpc(locals.auth).prizeBox.update({
 				id: Number(formData.get('id') as string),
-				prize: 'fake',
 				title: key,
 				description: sponsorLink,
 				prizeType: 'SPONSOR',

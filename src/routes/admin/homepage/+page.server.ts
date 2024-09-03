@@ -12,6 +12,7 @@ export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['ADMIN']);
 	return {
 		settings: await trpc(locals.auth).settings.getPublic(),
+		challenges: await trpc(locals.auth).prizeBox.getAll(),
 	};
 };
 
