@@ -22,7 +22,7 @@ export const actions = {
 		await trpc(locals.auth).prizeBox.update({
 			id: Number(formData.get('id') as string),
 			title: formData.get('title') as string,
-			description: formData.get('response') as string,
+			description: formData.get('description') as string,
 			prizeType: 'CHALLENGE',
 		});
 		return 'Saved challenge!';

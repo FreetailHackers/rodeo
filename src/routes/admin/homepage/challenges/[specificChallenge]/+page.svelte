@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { confirmationDialog } from '$lib/actions.js';
+	import Dropdown from '$lib/components/dropdown.svelte';
+	import { PrizeType } from '@prisma/client';
 
 	export let data;
 </script>
@@ -38,8 +40,24 @@
 		<label for="title">Title</label>
 		<input type="text" id="title" name="title" required value={data.challenge.title} />
 
-		<label for="response">Response</label>
-		<textarea id="response" name="response" required value={data.challenge.description} />
+		<label for="description">Description</label>
+		<textarea id="description" name="description" required value={data.challenge.description} />
+
+		<label for="prizeType">Challenge Type</label>
+		<Dropdown
+			name="search"
+			class="search"
+			items={[
+				PrizeType.FIRST,
+				PrizeType.SECOND,
+				PrizeType.THIRD,
+				PrizeType.CHALLENGE,
+				PrizeType.SPONSOR,
+			]}
+			bind:value={data.challenge.prizeType}
+			json
+		/>
+		<textarea id="prizeType" name="prizeType" required value={data.challenge.prizeType} />
 
 		<button type="submit" style="margin-top: 1rem;">Save</button>
 	</form>
