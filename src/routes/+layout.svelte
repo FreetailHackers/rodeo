@@ -194,19 +194,19 @@
 				</a>
 			</div>
 		</div>
-		<div class="flex-column" id="c2">
+		<div class="flex-column">
 			<div class="row category">Hacker Resources</div>
 			<a target="_blank" rel="noopener noreferrer" href="#">Devpost</a>
 			<a target="_blank" rel="noopener noreferrer" href="#">Discord</a>
 			<a target="_blank" rel="noopener noreferrer" href="https://mlh.io/seasons/2025/events">MLH</a>
 		</div>
-		<div class="flex-column" id="c3">
+		<div class="flex-column">
 			<div class="row category">Other Resources</div>
 			<a target="_blank" rel="noopener noreferrer" href="https://uhsg.freetailhackers.com/">UHSG</a>
 			<a target="_blank" rel="noopener noreferrer" href="https://yearofai.utexas.edu/">Year of AI</a
 			>
 		</div>
-		<div class="flex-column" id="c4">
+		<div class="flex-column" id="right-footer-col">
 			<div class="row category">Other Hackathons</div>
 			<a target="_blank" rel="noopener noreferrer" href="https://tamuhack.org/"> TAMUHack</a>
 			<a target="_blank" rel="noopener noreferrer" href="https://hackuta.org"> HackUTA</a>
@@ -261,7 +261,7 @@
 		justify-content: space-between;
 		flex-wrap: wrap;
 		margin: auto;
-		max-width: 65em;
+		max-width: 66em;
 		color: black;
 	}
 
@@ -289,18 +289,31 @@
 		font-family: 'Inter';
 	}
 
+	#right-footer-col {
+		flex-basis: auto;
+	}
+
 	.footer-copyright-flex {
 		display: flex;
 		justify-content: space-between;
 		flex-wrap: wrap;
 		margin: auto;
-		max-width: 67em;
+		max-width: 66.6em;
+	}
+
+	.footer-copyright-flex .flex-column {
+		flex-basis: auto;
+	}
+
+	.footer-flex .flex-column {
+		margin-top: 20px;
 	}
 
 	.flex-column a {
 		color: #000000;
 		font-weight: normal;
 		font-family: 'Inter';
+		flex-wrap: nowrap;
 	}
 
 	a {
@@ -402,9 +415,10 @@
 	}
 
 	@media (max-width: 768px) {
-		.footer-flex .flex-column {
-			margin-top: 20px;
+		#right-footer-col {
+			flex-basis: 200px;
 		}
+
 		footer {
 			padding: 0%;
 		}
