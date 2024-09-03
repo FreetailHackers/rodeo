@@ -112,10 +112,6 @@ form {
 	flex-direction: column;
 }
 
-a {
-	color: var(--accent-color);
-}
-
 ::selection {
 	background: var(--accent-color);
 	color: white;
@@ -233,5 +229,7 @@ img {
 
 footer {
 	text-align: left;
-	padding: 1em 1em;
+	padding: 1em 0;
+	font-size: 18px;
+	font-family: 'Inter';
 }

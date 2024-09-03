@@ -114,22 +114,18 @@
 
 <Toasts />
 
-<footer>
+<footer class="home-content">
 	<div class="footer-flex">
 		<div class="flex-column" id="freetailcolumn">
 			<div class="bat-and-main">
 				<img class="footer-bat" src="/Freetail_bat.png" alt="freetail-bat" />
 				<div>Freetail Hackers</div>
 			</div>
-			<a
-				class="freetail-link"
-				target="_blank"
-				rel="noopener noreferrer"
-				href="https://freetailhackers.com">freetailhackers.com</a
+			<a target="_blank" rel="noopener noreferrer" href="https://freetailhackers.com"
+				>freetailhackers.com</a
 			>
 			<a
 				id="freetailmail"
-				class="freetail-link"
 				target="_blank"
 				rel="noopener noreferrer"
 				href="mailto:admin@freetailhackers.com">admin@freetailhackers.com</a
@@ -140,57 +136,27 @@
 					rel="noopener noreferrer"
 					href="https://www.linkedin.com/company/freetail-hackers/"
 				>
-					<img
-						class="footer-media"
-						height="30px"
-						width="auto"
-						src="/media/linkedin.png"
-						alt="media"
-					/>
+					<img class="footer-media" src="/media/linkedin.png" alt="media" />
 				</a>
 				<a
 					target="_blank"
 					rel="noopener noreferrer"
 					href="https://www.instagram.com/freetailhackers/"
 				>
-					<img
-						class="footer-media"
-						height="30px"
-						width="auto"
-						src="/media/instagram.png"
-						alt="media"
-					/>
+					<img class="footer-media" src="/media/instagram.png" alt="media" />
 				</a>
 				<a
 					target="_blank"
 					rel="noopener noreferrer"
 					href="https://www.facebook.com/freetailhackers/"
 				>
-					<img
-						class="footer-media"
-						height="30px"
-						width="auto"
-						src="/media/facebook.png"
-						alt="media"
-					/>
+					<img class="footer-media" src="/media/facebook.png" alt="media" />
 				</a>
 				<a target="_blank" rel="noopener noreferrer" href="https://www.tiktok.com/@freetailhackers">
-					<img
-						class="footer-media"
-						height="30px"
-						width="auto"
-						src="/media/tiktok.png"
-						alt="media"
-					/>
+					<img class="footer-media" src="/media/tiktok.png" alt="media" />
 				</a>
 				<a target="_blank" rel="noopener noreferrer" href="https://x.com/freetailhackers">
-					<img
-						class="footer-media"
-						height="30px"
-						width="auto"
-						src="/media/twitter.png"
-						alt="media"
-					/>
+					<img class="footer-media" src="/media/twitter.png" alt="media" />
 				</a>
 			</div>
 		</div>
@@ -215,19 +181,16 @@
 			<a target="_blank" rel="noopener noreferrer" href="https://hackutd.co/"> HackUTD</a>
 		</div>
 	</div>
-</footer>
-<footer>
 	<div class="footer-copyright-flex">
 		<div class="flex-column">
 			<a
-				class="freetail-link"
 				target="_blank"
 				rel="noopener noreferrer"
 				href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf">Code of Conduct</a
 			>
 		</div>
 		<div class="flex-column">
-			<a> <div>Copyright @ Freetail Hackers 2024</div></a>
+			<p>Copyright @ Freetail Hackers 2024</p>
 		</div>
 	</div>
 </footer>
@@ -236,6 +199,7 @@
 	.footer-media {
 		margin-right: 17px;
 	}
+
 	#freetailcolumn {
 		flex-basis: 300px;
 	}
@@ -250,19 +214,30 @@
 		display: inline-flex;
 		gap: 19px;
 	}
+
 	.footer-bat {
 		filter: brightness(0%);
 		width: 50px;
-		height: auto;
 	}
+
 	.footer-flex {
 		align-items: flex-start;
 		display: flex;
 		justify-content: space-between;
 		flex-wrap: wrap;
 		margin: auto;
-		max-width: 66em;
+	}
+
+	.flex-column a,
+	.flex-column p {
 		color: black;
+		font-weight: normal;
+		flex-wrap: nowrap;
+	}
+
+	.footer-copyright-flex > .flex-column a,
+	.footer-copyright-flex > .flex-column p {
+		color: lightgrey;
 	}
 
 	.login {
@@ -283,9 +258,6 @@
 		font-weight: bold;
 		display: flex;
 		flex-direction: column;
-		font-size: 18px;
-		color: black;
-		font-family: 'Inter';
 	}
 
 	#right-footer-col {
@@ -296,8 +268,7 @@
 		display: flex;
 		justify-content: space-between;
 		flex-wrap: wrap;
-		margin: auto;
-		max-width: 66.6em;
+		margin: 30px 0;
 	}
 
 	.footer-copyright-flex .flex-column {
@@ -308,17 +279,8 @@
 		margin-top: 20px;
 	}
 
-	.flex-column a {
-		color: #000000;
-		font-weight: normal;
-		font-family: 'Inter';
-		flex-wrap: nowrap;
-	}
-
 	a {
-		color: #f2ebd9;
 		text-decoration: none;
-		line-height: 1.5;
 	}
 
 	button {
@@ -414,24 +376,20 @@
 	}
 
 	@media (max-width: 768px) {
+		footer {
+			padding: 0;
+		}
+
 		#right-footer-col {
 			flex-basis: 200px;
 		}
 
-		footer {
-			padding: 0%;
-		}
 		.footer-flex {
 			margin: 4cap;
 		}
-		.footer-copyright-flex {
-			margin: 30px;
-		}
+
 		.footer-copyright-flex .flex-column {
 			width: 100%;
-		}
-		.footer-copyright-flex .flex-column a {
-			color: lightgrey;
 		}
 	}
 
