@@ -136,27 +136,27 @@
 					rel="noopener noreferrer"
 					href="https://www.linkedin.com/company/freetail-hackers/"
 				>
-					<img class="footer-media" src="/media/linkedin.png" alt="media" />
+					<img class="footer-media" src="/media/linkedin.png" alt="LinkedIn" />
 				</a>
 				<a
 					target="_blank"
 					rel="noopener noreferrer"
 					href="https://www.instagram.com/freetailhackers/"
 				>
-					<img class="footer-media" src="/media/instagram.png" alt="media" />
+					<img class="footer-media" src="/media/instagram.png" alt="Instagram" />
 				</a>
 				<a
 					target="_blank"
 					rel="noopener noreferrer"
 					href="https://www.facebook.com/freetailhackers/"
 				>
-					<img class="footer-media" src="/media/facebook.png" alt="media" />
+					<img class="footer-media" src="/media/facebook.png" alt="Facebook" />
 				</a>
 				<a target="_blank" rel="noopener noreferrer" href="https://www.tiktok.com/@freetailhackers">
-					<img class="footer-media" src="/media/tiktok.png" alt="media" />
+					<img class="footer-media" src="/media/tiktok.png" alt="Tiktok" />
 				</a>
 				<a target="_blank" rel="noopener noreferrer" href="https://x.com/freetailhackers">
-					<img class="footer-media" src="/media/twitter.png" alt="media" />
+					<img class="footer-media" src="/media/twitter.png" alt="Twitter" />
 				</a>
 			</div>
 		</div>
@@ -197,22 +197,22 @@
 
 <style>
 	.footer-media {
-		margin-right: 17px;
+		margin-right: 1em;
 	}
 
 	#freetailcolumn {
-		flex-basis: 300px;
+		flex-basis: 16em;
 	}
 
+	.bat-and-main,
 	#freetailmail {
-		margin-bottom: 20px;
+		margin-bottom: 1em;
 	}
 
 	.bat-and-main {
-		margin-bottom: 20px;
 		font-size: 20px;
 		display: inline-flex;
-		gap: 19px;
+		gap: 1em;
 	}
 
 	.footer-bat {
@@ -221,11 +221,9 @@
 	}
 
 	.footer-flex {
-		align-items: flex-start;
 		display: flex;
 		justify-content: space-between;
 		flex-wrap: wrap;
-		margin: auto;
 	}
 
 	.flex-column a,
@@ -235,8 +233,8 @@
 		flex-wrap: nowrap;
 	}
 
-	.footer-copyright-flex > .flex-column a,
-	.footer-copyright-flex > .flex-column p {
+	.footer-copyright-flex .flex-column a,
+	.footer-copyright-flex .flex-column p {
 		color: lightgrey;
 	}
 
@@ -254,7 +252,7 @@
 	}
 
 	.flex-column {
-		flex-basis: 200px;
+		flex-basis: 11em;
 		font-weight: bold;
 		display: flex;
 		flex-direction: column;
@@ -268,7 +266,7 @@
 		display: flex;
 		justify-content: space-between;
 		flex-wrap: wrap;
-		margin: 30px 0;
+		margin-top: 30px;
 	}
 
 	.footer-copyright-flex .flex-column {
@@ -390,6 +388,10 @@
 
 		.footer-copyright-flex .flex-column {
 			width: 100%;
+		}
+
+		.footer-copyright-flex {
+			margin-left: 1em;
 		}
 	}
 
