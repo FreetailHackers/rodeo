@@ -28,7 +28,7 @@
 			Already changed password?
 		</p>
 		<div class="button-wrapper">
-			<button><a href="/login">Login here!</a></button>
+			<a class="button" href="/login">Login here!</a>
 		</div>
 	{:else if $page.url.search.startsWith('?token')}
 		<h1>Resetting your password</h1>
@@ -60,10 +60,6 @@
 </div>
 
 <style>
-	a {
-		all: unset;
-	}
-
 	p {
 		margin-bottom: 0;
 	}

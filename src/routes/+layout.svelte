@@ -48,63 +48,49 @@
 		style="display: none"
 	/>
 	<menu id="menu" bind:this={menu}>
-		<img src="/Freetail_bat.png" id="menu-logo" alt="Freetail logo" />
+		<img src="/Freetail_bat.svg" id="menu-logo" alt="Freetail logo" />
 		<li>
-			<a href="/" class:active={$page.url.pathname === '/' && $page.url.hash === ''}>Home</a>
+			<a href="/">About</a>
 		</li>
-		{#if !data.user?.roles.includes('ADMIN')}
-			<li>
-				<a href="/#Announcements" class:active={$page.url.hash === '#Announcements'}
-					>Announcements</a
-				>
-			</li>
-			<li>
-				<a href="/#Schedule" class:active={$page.url.hash === '#Schedule'}>Schedule</a>
-			</li>
-			<li>
-				<a href="/#FAQ" class:active={$page.url.hash === '#FAQ'}>FAQ</a>
-			</li>
-			<li>
-				<a href="/#Challenges" class:active={$page.url.hash === '#Challenges'}>Challenges</a>
-			</li>
-			<li>
-				<a href="/#Sponsors" class:active={$page.url.hash === '#Sponsors'}>Sponsors</a>
-			</li>
-		{/if}
+		<li>
+			<a href="/#Announcements">Announcements</a>
+		</li>
+		<li>
+			<a href="/#Schedule">Schedule</a>
+		</li>
+
+		<li>
+			<a href="/#Prizes">Prizes</a>
+		</li>
+		<li>
+			<a href="/#FAQ">FAQ</a>
+		</li>
 		<!-- NOTE: if we ever add a mentor/judge/volunteer application this needs to be changed -->
 		{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
-			<li><a href="/id" class:active={$page.url.pathname.startsWith('/id')}>My Hacker ID</a></li>
+			<li><a href="/id">My Hacker ID</a></li>
 		{/if}
 		{#if data.user?.roles.includes('ORGANIZER') || data.user?.roles.includes('ADMIN')}
-			<li><a href="/scan" class:active={$page.url.pathname.startsWith('/scan')}>Scan</a></li>
+			<li><a href="/scan">Scan</a></li>
 		{/if}
 		{#if data.user?.roles.includes('HACKER')}
-			<li><a href="/apply" class:active={$page.url.pathname.startsWith('/apply')}>Apply</a></li>
+			<li><a href="/apply">Apply</a></li>
 		{/if}
 		{#if data.user?.roles.includes('ADMIN') || data.user?.roles.includes('SPONSOR')}
 			<li>
 				<!-- HACK: Tell SvelteKit to force refresh on /users since
 				IDK how to reset the filters on the users page otherwise -->
-				<a
-					href="/users"
-					class:active={$page.url.pathname.startsWith('/users')}
-					data-sveltekit-reload>Users</a
-				>
+				<a href="/users" data-sveltekit-reload>Users</a>
 			</li>
 			{#if data.user?.roles.includes('ADMIN')}
-				<li><a href="/admin" class:active={$page.url.pathname.startsWith('/admin')}>Admin</a></li>
+				<li><a href="/admin">Admin</a></li>
 				<li>
-					<a href="/admissions" class:active={$page.url.pathname.startsWith('/admissions')}
-						>Admissions</a
-					>
+					<a href="/admissions">Admissions</a>
 				</li>
 			{/if}
 		{/if}
 		<li>
 			{#if data.user === undefined}
-				<a class="login" href="/login" class:active={$page.url.pathname.startsWith('/login')}
-					>Login</a
-				>
+				<a class="button" href="/login">Login</a>
 			{:else}
 				<form method="POST" action="/logout">
 					<button class="button" type="submit">Logout</button>
@@ -121,114 +107,171 @@
 </nav>
 
 {#key $page.url.pathname}
-	<div in:fade={{ easing: cubicOut, duration: 400 }}>
+	<div in:fade={{ easing: cubicOut, duration: 300 }}>
 		<slot />
 	</div>
 {/key}
 
 <Toasts />
 
-<footer>
+<footer class="home-content">
 	<div class="footer-flex">
-		<div class="made-with-love">
-			Made with ❤️ by <a
-				class="freetail-link"
+		<div class="flex-column" id="freetailcolumn">
+			<div class="bat-and-main">
+				<img class="footer-bat" src="/Freetail_bat.svg" alt="freetail-bat" />
+				<div>Freetail Hackers</div>
+			</div>
+			<a target="_blank" rel="noopener noreferrer" href="https://freetailhackers.com"
+				>freetailhackers.com</a
+			>
+			<a
+				id="freetailmail"
 				target="_blank"
 				rel="noopener noreferrer"
-				href="https://freetailhackers.com">Freetail Hackers</a
+				href="mailto:admin@freetailhackers.com">admin@freetailhackers.com</a
 			>
+			<div>
+				<a
+					target="_blank"
+					rel="noopener noreferrer"
+					href="https://www.linkedin.com/company/freetail-hackers/"
+				>
+					<img class="footer-media" src="/media/linkedin.svg" alt="LinkedIn" />
+				</a>
+				<a
+					target="_blank"
+					rel="noopener noreferrer"
+					href="https://www.instagram.com/freetailhackers/"
+				>
+					<img class="footer-media" src="/media/instagram.svg" alt="Instagram" />
+				</a>
+				<a
+					target="_blank"
+					rel="noopener noreferrer"
+					href="https://www.facebook.com/freetailhackers/"
+				>
+					<img class="footer-media" src="/media/facebook.svg" alt="Facebook" />
+				</a>
+				<a target="_blank" rel="noopener noreferrer" href="https://www.tiktok.com/@freetailhackers">
+					<img class="footer-media" src="/media/tiktok.svg" alt="TikTok" />
+				</a>
+				<a target="_blank" rel="noopener noreferrer" href="https://x.com/freetailhackers">
+					<img class="footer-media" src="/media/twitter.svg" alt="Twitter" />
+				</a>
+			</div>
 		</div>
 		<div class="flex-column">
-			<div class="row category">Links</div>
-			<a
-				target="_blank"
-				rel="noopener noreferrer"
-				href="https://www.instagram.com/freetailhackers?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="
-				>Instagram</a
-			>
-			<a
-				target="_blank"
-				rel="noopener noreferrer"
-				href="https://www.linkedin.com/company/freetail-hackers">LinkedIn</a
-			>
-			<a target="_blank" rel="noopener noreferrer" href="https://freetailhackers.com/discord"
-				>Discord</a
-			>
-			<a
-				target="_blank"
-				rel="noopener noreferrer"
-				href="https://docs.google.com/forms/d/e/1FAIpQLSdQld-vgVLXOuIXIcUNpTFMwii_7Cu9Vqj7CVxXs3ScFsCIrg/viewform?usp=sf_link"
-				>Feedback</a
-			>
-			<a href="mailto:admin@freetailhackers.com">Contact Us</a>
+			<div class="row category">Hacker Resources</div>
+			<a target="_blank" rel="noopener noreferrer" href="#">Devpost</a>
+			<a target="_blank" rel="noopener noreferrer" href="#">Discord</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://mlh.io/seasons/2025/events">MLH</a>
 		</div>
 		<div class="flex-column">
+			<div class="row category">Other Resources</div>
+			<a target="_blank" rel="noopener noreferrer" href="https://uhsg.freetailhackers.com/">UHSG</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://yearofai.utexas.edu/">Year of AI</a
+			>
+		</div>
+		<div class="flex-column" id="right-footer-col">
 			<div class="row category">Other Hackathons</div>
-			<a target="_blank" rel="noopener noreferrer" href="https://rowdyhacks.org/"> RowdyHacks</a>
-			<a target="_blank" rel="noopener noreferrer" href="https://tamuhack.org/"> TAMUhack</a>
-			<a target="_blank" rel="noopener noreferrer" href="https://hackutd.co/"> HackUTD</a>
-			<a target="_blank" rel="noopener noreferrer" href="https://www.unthackathon.com/">HackUNT</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://tamuhack.org/"> TAMUHack</a>
 			<a target="_blank" rel="noopener noreferrer" href="https://hackuta.org"> HackUTA</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://www.unthackathon.com/">HackUNT</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://rowdyhacks.org/"> RowdyHacks</a>
+			<a target="_blank" rel="noopener noreferrer" href="https://hackutd.co/"> HackUTD</a>
+		</div>
+	</div>
+	<div class="footer-copyright-flex">
+		<div class="flex-column">
+			<a
+				target="_blank"
+				rel="noopener noreferrer"
+				href="https://static.mlh.io/docs/mlh-code-of-conduct.pdf">Code of Conduct</a
+			>
+		</div>
+		<div class="flex-column">
+			<p>Copyright @ Freetail Hackers 2024</p>
 		</div>
 	</div>
 </footer>
 
 <style>
-	footer {
-		background-color: #404040;
+	.footer-media {
+		margin-right: 1em;
+	}
+
+	#freetailcolumn {
+		flex-basis: 16em;
+	}
+
+	.bat-and-main,
+	#freetailmail {
+		margin-bottom: 1em;
+	}
+
+	.bat-and-main {
+		font-size: 20px;
+		display: inline-flex;
+		gap: 1em;
+	}
+
+	.footer-bat {
+		filter: brightness(0%);
+		width: 50px;
 	}
 
 	.footer-flex {
 		display: flex;
-		justify-content: space-around;
-		margin: auto;
-		max-width: 75em;
-		color: #f2ebd9;
+		justify-content: space-between;
+		flex-wrap: wrap;
 	}
 
-	.login {
-		color: #e1563f;
+	.flex-column a,
+	.flex-column p {
+		color: black;
+		font-weight: normal;
+		flex-wrap: nowrap;
 	}
 
-	.made-with-love {
-		white-space: nowrap;
-		align-self: center;
-	}
-
-	.freetail-link {
-		color: #e1563f;
-		text-decoration: underline;
+	.footer-copyright-flex .flex-column a,
+	.footer-copyright-flex .flex-column p {
+		color: lightgrey;
+		margin-top: 1em;
 	}
 
 	.flex-column {
+		flex-basis: 11em;
+		font-weight: bold;
 		display: flex;
 		flex-direction: column;
-		font-size: 14px;
+	}
+
+	#right-footer-col {
+		flex-basis: auto;
+	}
+
+	.footer-copyright-flex {
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		margin-top: 30px;
+	}
+
+	.footer-copyright-flex .flex-column {
+		flex-basis: auto;
+	}
+
+	.footer-flex .flex-column {
+		margin-top: 20px;
 	}
 
 	a {
-		color: #f2ebd9;
 		text-decoration: none;
-		line-height: 1.5;
-	}
-
-	button {
-		color: #e1563f;
-		text-decoration: none;
-		line-height: 1.5;
-		padding-left: 1rem;
-		padding-right: 1rem;
-	}
-
-	a:hover,
-	button:hover {
-		text-decoration-line: underline;
-		text-decoration-color: var(--primary-accent);
-		color: var(--primary-accent);
 	}
 
 	.category {
-		font-size: 17px;
+		margin-bottom: 20px;
+		font-size: 18px;
 	}
 
 	label {
@@ -251,19 +294,12 @@
 		display: none;
 	}
 
-	button {
-		background-color: #404040;
-		text-transform: uppercase;
-		font-family: 'Geologica', sans-serif;
-		font-weight: 700;
-	}
-
 	nav {
 		position: fixed;
 		top: 0;
 		margin: 0;
 		width: 100vw;
-		background-color: #404040;
+		background-color: var(--neutral-color);
 		z-index: 99;
 	}
 
@@ -272,15 +308,13 @@
 		margin: 0;
 		padding: 0;
 		transition: all 0.5s ease-out;
-		background-color: #404040;
+		background-color: var(--neutral-color);
 		max-height: 0;
 		overflow: hidden;
 		width: 100%;
 		font-family: 'Geologica', sans-serif;
 		font-size: 15px;
-		font-weight: 700;
 		font-style: normal;
-		text-transform: uppercase;
 	}
 
 	#hamburger {
@@ -300,44 +334,34 @@
 		max-height: 100vh;
 	}
 
-	menu a {
+	menu a:not(a.button) {
 		display: block;
 		width: 100%;
 		padding: 0.7rem 1rem;
-		color: #f2ebd9;
+		color: black;
 		text-decoration: none;
 	}
 
-	menu a:hover,
-	button:hover {
-		background-color: #303030;
-	}
-
-	.active {
+	menu a:hover:not(a.button) {
 		font-weight: bold;
-		text-decoration: underline;
 	}
 
 	@media (max-width: 768px) {
-		.flex-column {
-			display: none;
+		footer {
+			padding: 0;
 		}
 
-		.footer-flex {
-			max-width: 60vw;
+		#right-footer-col {
+			flex-basis: 200px;
 		}
-	}
 
-	@media (max-width: 1090px) {
-		.button {
-			display: flex;
+		.footer-copyright-flex .flex-column {
 			width: 100%;
-			padding-top: 0.3rem;
-			padding-bottom: 0.7rem;
-			padding-left: 1rem;
-			justify-content: flex-start;
-			flex-wrap: nowrap;
-			flex-direction: row;
+		}
+
+		.footer-copyright-flex,
+		.footer-flex {
+			margin-left: 1em;
 		}
 	}
 
@@ -359,16 +383,15 @@
 
 		menu {
 			margin: 0;
-			padding-top: 0.5rem;
-			padding-bottom: 0.5rem;
+			padding-top: 1rem;
+			padding-bottom: 1rem;
 			display: flex;
 			justify-content: space-around;
 			max-height: fit-content;
 			align-items: center;
 		}
 
-		menu a:hover,
-		button:hover {
+		menu a:hover {
 			border-radius: 5px;
 		}
 

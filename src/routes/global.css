@@ -5,10 +5,11 @@ html {
 }
 
 :root {
-	--font-family: 'Geologica', 'Helvetica Neue', 'Arial', sans-serif;
+	--font-family: 'Inter', 'Geologica', 'Helvetica Neue', 'Arial', sans-serif;
 	--font-size: 16px;
 	--highlight-color: #f2ebd9;
 	--background-color: #1c1c1c;
+	--neutral-color: #d9d9d9;
 	--primary-accent: #7970ff;
 	--secondary-color: #d8d5ff;
 }
@@ -53,27 +54,33 @@ nav {
 	margin: 1rem 0;
 }
 
-button {
+button,
+a.button {
 	font-family: var(--font-family);
 	height: 2.5rem;
 	font-size: var(--font-size);
-	color: white;
 	background-color: var(--primary-accent);
 	border: none;
-	transition: all 0.1s ease-in-out;
+	border-radius: 15px;
+	padding: 0.5em 1.5em;
+	color: white;
+	text-decoration: none;
 }
 
-button:not(:disabled):hover {
+button:not(:disabled):hover,
+a.button:not(:disabled):hover {
 	cursor: pointer;
 	background-color: var(--secondary-color);
 	color: var(--primary-accent);
 }
 
-button:not(:disabled):active {
+button:not(:disabled):active,
+a.button:not(:disabled):active {
 	scale: 0.99;
 }
 
-button[disabled] {
+button[disabled],
+a.button[disabled] {
 	opacity: 0.5;
 	cursor: not-allowed;
 }
@@ -223,8 +230,7 @@ dialog button {
 	width: 4rem;
 }
 
-.auth-content input,
-.auth-content button {
+.auth-content input {
 	border-radius: 15px;
 }
 
@@ -239,7 +245,6 @@ dialog button {
 
 .auth-content button {
 	margin-top: 1em;
-	padding: 0.5em 1.5em;
 }
 
 .auth-content .button-wrapper {
