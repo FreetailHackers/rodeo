@@ -1,7 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Zen+Dots&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Fugaz+One&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Geologica&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Geo&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 html {
 	scroll-behavior: smooth;
@@ -11,9 +8,9 @@ html {
 	--font-family: 'Geologica', 'Helvetica Neue', 'Arial', sans-serif;
 	--font-size: 16px;
 	--highlight-color: #f2ebd9;
-	--secondary-color: #4e656d;
 	--background-color: #1c1c1c;
-	--primary-accent: #e1563f;
+	--primary-accent: #7970ff;
+	--secondary-color: #d8d5ff;
 }
 
 h1,
@@ -22,8 +19,9 @@ h3,
 h4,
 h5,
 h6 {
-	font-family: 'Zen Dots', 'ruddy', sans-serif;
+	font-family: var(--font-family);
 	font-weight: 700;
+	color: var(--primary-accent);
 	font-style: normal;
 	text-transform: uppercase;
 	cursor: default;
@@ -67,7 +65,8 @@ button {
 
 button:not(:disabled):hover {
 	cursor: pointer;
-	opacity: 90%;
+	background-color: var(--secondary-color);
+	color: var(--primary-accent);
 }
 
 button:not(:disabled):active {
@@ -204,6 +203,55 @@ dialog button {
 	padding: 0 1rem;
 }
 
+.home-content {
+	max-width: 70rem;
+	margin: 0 auto;
+	padding: 0 1rem;
+}
+
+/* Login, Register, Reset Password */
+.auth-content {
+	max-width: 30rem;
+	margin: 0 auto;
+	padding: 10rem 1rem 10rem 1rem;
+}
+
+.auth-content .bat {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: 4rem;
+}
+
+.auth-content input,
+.auth-content button {
+	border-radius: 15px;
+}
+
+.auth-content label {
+	margin: 0.5em 0;
+}
+
+.auth-content input {
+	border-width: 1px;
+	padding: 1em;
+}
+
+.auth-content button {
+	margin-top: 1em;
+	padding: 0.5em 1.5em;
+}
+
+.auth-content .button-wrapper {
+	text-align: center;
+}
+
+@media (max-width: 780px) {
+	.auth-content {
+		padding-top: 5rem;
+	}
+}
+
 @media (max-width: 450px) {
 	dialog {
 		margin-block-end: 0;
@@ -225,8 +273,8 @@ img {
 }
 
 footer {
-	background-color: #303030;
-	color: #f2ebd9;
 	text-align: left;
-	padding: 1em 1em;
+	padding: 1em 0;
+	font-size: 18px;
+	font-family: 'Inter';
 }

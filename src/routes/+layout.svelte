@@ -121,7 +121,7 @@
 </nav>
 
 {#key $page.url.pathname}
-	<div in:fade={{ easing: cubicOut, duration: 300 }}>
+	<div in:fade={{ easing: cubicOut, duration: 400 }}>
 		<slot />
 	</div>
 {/key}
