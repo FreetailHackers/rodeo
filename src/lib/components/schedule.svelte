@@ -73,19 +73,29 @@
 			clearInterval(interval);
 		};
 	});
+
+	const colors = [
+		'#0773a6', // Required
+		'#6da540', // Event
+		'#ffc144', // Food
+		'#ff80bb'  // For Fun
+	];
 </script>
 
 <div class="home-content">
 	<h2>What's Next?</h2>
 	<div class="button-container">
-		{#each filters as filter}
+		{#each filters as filter, index}
+			<div class="schedule-button schedule-button-filters">
 			<button
-				class:active={selectedFilters.includes(filter)}
+				class:selected={selectedFilters.includes(filter)}
 				data-name={filter}
 				on:click={() => toggleFilter(filter)}
+				style="--color: {colors[index]}"
 			>
 				{filter}
 			</button>
+				</div>
 		{/each}
 	</div>
 	<div class="container">
@@ -132,7 +142,56 @@
 		border-radius: 15px;
 	}
 
-	.day,
+  .schedule-button-filters {
+      display: inline-flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+			padding: 5px;
+  }
+
+
+  .schedule-button button{
+      cursor: pointer;
+      font-size: var(--font-size-l);
+      align-items: center;
+      border: 3px solid transparent; /* Start with no border */
+      background: transparent;
+      border-radius: 100px;
+      display: inline-flex;
+      flex: 0 0 auto;
+      justify-content: center;
+      padding: 5px 10px;
+      position: relative;
+
+
+      color: var(--color);
+      font-style: normal;
+      font-weight: 500;
+  }
+
+  /* Active (clicked) button style */
+  .schedule-button button.selected {
+      background-color: var(--color); /* Apply background color from the array */
+      color: white; /* Text turns white */
+      border-color: transparent; /* Remove border when active */
+  }
+
+  /* Hover over an active (clicked) button - no effect */
+  .schedule-button button.selected:hover {
+      background-color: var(--color); /* Maintain the background */
+      color: white; /* Maintain white text */
+  }
+
+  /* Hover over an inactive (not clicked) button */
+  .schedule-button button:not(.selected):hover {
+      border-color: var(--color); /* Border turns into the color from the array */
+      color: var(--color); /* Text color changes to the same color */
+  }
+
+
+
+
+  .day,
 	.card {
 		padding: 0.75rem;
 	}
