@@ -118,7 +118,7 @@
 	<div class="footer-flex">
 		<div class="flex-column" id="freetailcolumn">
 			<div class="bat-and-main">
-				<img class="footer-bat" src="/Freetail_bat.png" alt="freetail-bat" />
+				<img class="footer-bat" src="/Freetail_bat.svg" alt="freetail-bat" />
 				<div>Freetail Hackers</div>
 			</div>
 			<a target="_blank" rel="noopener noreferrer" href="https://freetailhackers.com"
@@ -136,27 +136,27 @@
 					rel="noopener noreferrer"
 					href="https://www.linkedin.com/company/freetail-hackers/"
 				>
-					<img class="footer-media" src="/media/linkedin.png" alt="LinkedIn" />
+					<img class="footer-media" src="/media/linkedin.svg" alt="LinkedIn" />
 				</a>
 				<a
 					target="_blank"
 					rel="noopener noreferrer"
 					href="https://www.instagram.com/freetailhackers/"
 				>
-					<img class="footer-media" src="/media/instagram.png" alt="Instagram" />
+					<img class="footer-media" src="/media/instagram.svg" alt="Instagram" />
 				</a>
 				<a
 					target="_blank"
 					rel="noopener noreferrer"
 					href="https://www.facebook.com/freetailhackers/"
 				>
-					<img class="footer-media" src="/media/facebook.png" alt="Facebook" />
+					<img class="footer-media" src="/media/facebook.svg" alt="Facebook" />
 				</a>
 				<a target="_blank" rel="noopener noreferrer" href="https://www.tiktok.com/@freetailhackers">
-					<img class="footer-media" src="/media/tiktok.png" alt="Tiktok" />
+					<img class="footer-media" src="/media/tiktok.svg" alt="Tiktok" />
 				</a>
 				<a target="_blank" rel="noopener noreferrer" href="https://x.com/freetailhackers">
-					<img class="footer-media" src="/media/twitter.png" alt="Twitter" />
+					<img class="footer-media" src="/media/twitter.svg" alt="Twitter" />
 				</a>
 			</div>
 		</div>
@@ -236,6 +236,7 @@
 	.footer-copyright-flex .flex-column a,
 	.footer-copyright-flex .flex-column p {
 		color: lightgrey;
+		margin-top: 1em;
 	}
 
 	.login {
