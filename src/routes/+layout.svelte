@@ -120,21 +120,6 @@
 	{/if}
 </nav>
 
-{#if $page.url.pathname === '/'}
-	<a
-		class="banner"
-		id="mlh-trust-badge"
-		href="https://mlh.io/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2024-season&utm_content=red"
-		target="_blank"
-		rel="noreferrer"
-		><img
-			src="https://s3.amazonaws.com/logged-assets/trust-badge/2024/mlh-trust-badge-2024-red.svg"
-			alt="Major League Hacking 2024 Hackathon Season"
-			id="mlh-badge-image"
-		/></a
-	>
-{/if}
-
 {#key $page.url.pathname}
 	<div in:fade={{ easing: cubicOut, duration: 300 }}>
 		<slot />
@@ -189,19 +174,6 @@
 </footer>
 
 <style>
-	#mlh-trust-badge {
-		z-index: 2;
-		position: absolute;
-		display: block;
-		right: 15px;
-		top: 56px;
-		width: calc(4vw + 3rem);
-	}
-
-	#mlh-badge-image {
-		width: 100%;
-	}
-
 	footer {
 		background-color: #404040;
 	}
@@ -366,10 +338,6 @@
 			justify-content: flex-start;
 			flex-wrap: nowrap;
 			flex-direction: row;
-		}
-
-		#mlh-trust-badge {
-			top: 42.2px;
 		}
 	}
 
