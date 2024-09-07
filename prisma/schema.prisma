@@ -58,13 +58,15 @@ model SingleUseKey {
 
 model User {
   // Data about the user that is not used in authentication or authorization
-  authUserId    String         @id @unique
-  authUser      AuthUser       @relation(fields: [authUserId], references: [id], onDelete: Cascade)
-  decision      Decision?
-  application   Json           @default("{}")
-  scanCount     Json           @default("{}")
-  statusChanges StatusChange[]
-  scans         Scan[]
+  authUserId            String            @id @unique
+  authUser              AuthUser          @relation(fields: [authUserId], references: [id], onDelete: Cascade)
+  decision              Decision?
+  application           Json              @default("{}")
+  scanCount             Json              @default("{}")
+  statusChanges         StatusChange[]
+  scans                 Scan[]
+  name                  String
+  dietaryRestrictions   String
 }
 
 model Announcement {

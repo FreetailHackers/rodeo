@@ -19,44 +19,45 @@
 <svelte:head>
 	<title>Rodeo | Login</title>
 </svelte:head>
-
-<div class="auth-content">
-	<img class="bat" src="/auth-assets/bat.svg" alt="Freetail Bat" />
-	<h1>Login</h1>
-	<div class="socials">
-		<SocialLogin providers={data.providers} />
-	</div>
-
-	<hr />
-
-	<form
-		method="POST"
-		action="?/login"
-		use:enhance={() => {
-			return async ({ update }) => {
-				update({ reset: false });
-			};
-		}}
-	>
-		<label for="email">Email</label>
-		<input placeholder="Email" id="email" name="email" required autocomplete="username" />
-
-		<label for="password">Password</label>
-		<input
-			type="password"
-			placeholder="Password"
-			id="password"
-			name="password"
-			autocomplete="current-password"
-		/>
-		<p class="forgot-password"><a href="/login/reset-password">Forgot password?</a></p>
-
-		<div class="button-wrapper">
-			<button>Login</button>
+<main>
+	<div class="auth-content">
+		<img class="bat" src="/auth-assets/bat.svg" alt="Freetail Bat" />
+		<h1>Login</h1>
+		<div class="socials">
+			<SocialLogin providers={data.providers} />
 		</div>
-	</form>
-	<p class="register">Don't have an account yet? <a href="/register">Sign up here!</a></p>
-</div>
+
+		<hr />
+
+		<form
+			method="POST"
+			action="?/login"
+			use:enhance={() => {
+				return async ({ update }) => {
+					update({ reset: false });
+				};
+			}}
+		>
+			<label for="email">Email</label>
+			<input placeholder="Email" id="email" name="email" required autocomplete="username" />
+
+			<label for="password">Password</label>
+			<input
+				type="password"
+				placeholder="Password"
+				id="password"
+				name="password"
+				autocomplete="current-password"
+			/>
+			<p class="forgot-password"><a href="/login/reset-password">Forgot password?</a></p>
+
+			<div class="button-wrapper">
+				<button>Login</button>
+			</div>
+		</form>
+		<p class="register">Don't have an account yet? <a href="/register">Sign up here!</a></p>
+	</div>
+</main>
 
 <style>
 	h1 {
