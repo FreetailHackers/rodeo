@@ -36,20 +36,22 @@
 	}
 
 	function getDateString(startDate: Date | null, endDate: Date | null): string {
-		function getHour(date: Date): string {
+		function getHour(date: Date, includePeriod: boolean): string {
 			return date.toLocaleString('en-US', {
 				timeZone: settingsTimezone,
 				hour: 'numeric',
 				minute: 'numeric',
-				hour12: true,
+				hour12: includePeriod,
 			});
 		}
 		if (startDate !== null && endDate !== null) {
-			return `${getHour(startDate)} - ${getHour(endDate)}`;
+			const startHour = getHour(startDate, false);
+			const endHour = getHour(endDate, true);
+			return startHour + ' -\n' + endHour;
 		} else if (startDate !== null) {
-			return getHour(startDate);
+			return getHour(startDate, true);
 		} else {
-			return getHour(endDate!);
+			return getHour(endDate!, true);
 		}
 	}
 
@@ -78,7 +80,7 @@
 		'#0773a6', // Required
 		'#6da540', // Event
 		'#ffc144', // Food
-		'#ff80bb'  // For Fun
+		'#ff80bb', // For Fun
 	];
 </script>
 
@@ -87,15 +89,16 @@
 	<div class="button-container">
 		{#each filters as filter, index}
 			<div class="schedule-button schedule-button-filters">
-			<button
-				class:selected={selectedFilters.includes(filter)}
-				data-name={filter}
-				on:click={() => toggleFilter(filter)}
-				style="--color: {colors[index]}"
-			>
-				{filter}
-			</button>
-				</div>
+				<button
+					class:selected={selectedFilters.includes(filter)}
+					data-name={filter}
+					on:click={() => toggleFilter(filter)}
+					style="--color: {colors[index]}"
+				>
+					<span class="dot">●</span>
+					{filter}
+				</button>
+			</div>
 		{/each}
 	</div>
 	<div class="container">
@@ -111,17 +114,17 @@
 							currentTime < event.end}
 						class="card card-text"
 					>
-						<div class="flex-row">
+						<div class="event">
 							<div class="date">
 								<p>{getDateString(event.start, event.end)}</p>
 							</div>
-							<div>
+							<div class="separator" />
+							<div class="details">
 								<p class="name">{event.name}</p>
 								<p class="location">{event.location}</p>
+								<p class="description">{event.description}</p>
 							</div>
 						</div>
-
-						<p class="description">{event.description}</p>
 					</div>
 				{/each}
 			</div>
@@ -136,62 +139,79 @@
 		gap: 1rem;
 	}
 
+	.event {
+		display: flex;
+		justify-content: space-between;
+		gap: 20px;
+	}
+
+	.date {
+		align-self: flex-start;
+		flex-basis: 5em;
+	}
+
+	.separator {
+		border: 1px solid black;
+	}
+
+	.details {
+		flex: 1;
+	}
+
+	.details p {
+		margin: 0;
+	}
+
 	.column {
 		flex: 1 1;
 		border: 2px solid black;
 		border-radius: 15px;
 	}
 
-  .schedule-button-filters {
-      display: inline-flex;
-      justify-content: space-between;
-      margin-bottom: 20px;
-			padding: 5px;
-  }
+	.schedule-button-filters {
+		display: inline-flex;
+		/*justify-content: space-between;*/
+		margin-bottom: 20px;
+		padding: 5px;
+	}
 
+	.dot {
+		font-size: 1.5em;
+		margin-right: 0.25em;
+	}
 
-  .schedule-button button{
-      cursor: pointer;
-      font-size: var(--font-size-l);
-      align-items: center;
-      border: 3px solid transparent; /* Start with no border */
-      background: transparent;
-      border-radius: 100px;
-      display: inline-flex;
-      flex: 0 0 auto;
-      justify-content: center;
-      padding: 5px 10px;
-      position: relative;
+	.schedule-button button {
+		cursor: pointer;
+		/*font-size: var(--font-size-l);*/
+		align-items: center;
+		border: 3px solid transparent;
+		background: transparent;
+		border-radius: 100px;
+		display: inline-flex;
+		flex: 0 0 auto;
+		justify-content: center;
+		padding: 5px 10px;
+		position: relative;
 
+		color: var(--color);
+		font-style: normal;
+		font-weight: 500;
+	}
 
-      color: var(--color);
-      font-style: normal;
-      font-weight: 500;
-  }
+	/* Clicked Button*/
+	.schedule-button button:not(.selected) {
+		background-color: var(--color); /* Apply background color from the array */
+		color: white; /* Text turns white */
+		border-color: transparent; /* Remove border when active */
+	}
 
-  /* Active (clicked) button style */
-  .schedule-button button.selected {
-      background-color: var(--color); /* Apply background color from the array */
-      color: white; /* Text turns white */
-      border-color: transparent; /* Remove border when active */
-  }
+	/* Hover over an unclicked button*/
+	.schedule-button button.selected:hover {
+		border-color: var(--color); /* Border turns into the color from the array */
+		color: var(--color); /* Text color changes to the same color */
+	}
 
-  /* Hover over an active (clicked) button - no effect */
-  .schedule-button button.selected:hover {
-      background-color: var(--color); /* Maintain the background */
-      color: white; /* Maintain white text */
-  }
-
-  /* Hover over an inactive (not clicked) button */
-  .schedule-button button:not(.selected):hover {
-      border-color: var(--color); /* Border turns into the color from the array */
-      color: var(--color); /* Text color changes to the same color */
-  }
-
-
-
-
-  .day,
+	.day,
 	.card {
 		padding: 0.75rem;
 	}
