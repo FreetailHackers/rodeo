@@ -251,6 +251,12 @@ dialog button {
 	text-align: center;
 }
 
+.form-heading {
+	text-transform: unset;
+	color: black;
+	font-weight: normal;
+}
+
 @media (max-width: 780px) {
 	.auth-content {
 		padding-top: 5rem;
