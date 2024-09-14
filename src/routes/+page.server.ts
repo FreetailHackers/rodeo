@@ -1,48 +1,17 @@
 import { googleAuth, githubAuth } from '$lib/lucia';
 import { trpc } from '$lib/trpc/router';
-// import { S3Client } from '@aws-sdk/client-s3';
-// import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
-// import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-
-// const s3Client = new S3Client({ region: process.env.AWS_REGION });
+import { authenticate } from '$lib/authenticate';
+import type { Question } from '@prisma/client';
+import { redirect } from '@sveltejs/kit';
 
 export const load = async ({ locals }) => {
-	// const sponsors = await trpc(locals.auth).infoBox.getAllOfCategory('SPONSOR');
-	// const sponsorLinks: Record<string, string> = {};
-
-	// Get links of all the sponsor images
-	// await Promise.all(
-	// 	sponsors.map(async (sponsor) => {
-	// 		try {
-	// 			const url = await getSignedUrl(
-	// 				s3Client,
-	// 				new GetObjectCommand({
-	// 					Bucket: process.env.S3_BUCKET,
-	// 					Key: `${sponsor.title}`,
-	// 				})
-	// 			);
-	// 			sponsorLinks[sponsor.title] = url;
-	// 		} catch (error) {
-	// 			console.error(`Error fetching signed URL for ${sponsor.title}:`, error);
-	// 		}
-	// 	})
-	// );
-
-	// const combinedSponsorList = sponsors.map((sponsor) => [
-	// 	sponsor.id,
-	// 	sponsor.title,
-	// 	sponsor.response,
-	// 	sponsorLinks[sponsor.title],
-	// ]);
+	await authenticate(locals.auth, ['HACKER']);
 
 	return {
-		user: (await locals.auth.validate())?.user,
-		announcements: await trpc(locals.auth).announcements.getAll(),
-		// schedule: await trpc(locals.auth).events.getAll(),
+		user: await trpc(locals.auth).users.get(),
+		rsvpDeadline: await trpc(locals.auth).users.getRSVPDeadline(),
 		settings: await trpc(locals.auth).settings.getPublic(),
-		// faqs: await trpc(locals.auth).infoBox.getAllOfCategory('FAQ'),
-		// challenges: await trpc(locals.auth).infoBox.getAllOfCategory('CHALLENGE'),
-		// sponsors: combinedSponsorList,
+		questions: await trpc(locals.auth).questions.get(),
 
 		// Check whether various OAuth providers are set up in
 		// environment variables so we can show/hide buttons.
@@ -54,16 +23,65 @@ export const load = async ({ locals }) => {
 	};
 };
 
+function formToApplication(questions: Question[], formData: FormData) {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	const application: Record<string, any> = {};
+	for (const question of questions) {
+		if (
+			question.type === 'SENTENCE' ||
+			question.type === 'PARAGRAPH' ||
+			question.type === 'RADIO' ||
+			question.type === 'FILE'
+		) {
+			application[question.id] = formData.get(question.id);
+		} else if (question.type === 'NUMBER') {
+			application[question.id] = Number(formData.get(question.id));
+			if (isNaN(application[question.id])) {
+				application[question.id] = undefined;
+			}
+		} else if (question.type === 'CHECKBOX') {
+			application[question.id] = formData.get(question.id) === 'on';
+		} else if (question.type === 'DROPDOWN') {
+			const selected = formData.get(question.id) as string;
+			try {
+				application[question.id] = JSON.parse(selected);
+			} catch (ignore) {
+				// empty try-catch needed because JSON.parse on an empty string errors
+			}
+		}
+	}
+	return application;
+}
+
 export const actions = {
-	announce: async ({ locals, request }) => {
-		const formData = await request.formData();
-		const body = formData.get('announcement') as string;
-		await trpc(locals.auth).announcements.create(body);
+	save: async ({ locals, request }) => {
+		await trpc(locals.auth).users.update(
+			formToApplication(await trpc(locals.auth).questions.get(), await request.formData())
+		);
 	},
 
-	unannounce: async ({ locals, request }) => {
-		const formData = await request.formData();
-		const id = formData.get('id') as string;
-		await trpc(locals.auth).announcements.delete(Number(id));
+	finish: async ({ locals, request }) => {
+		if (!(await trpc(locals.auth).admissions.canApply())) {
+			throw redirect(301, '/apply');
+		}
+		await trpc(locals.auth).users.update(
+			formToApplication(await trpc(locals.auth).questions.get(), await request.formData())
+		);
+		return await trpc(locals.auth).users.submitApplication();
+	},
+
+	withdraw: async ({ locals }) => {
+		if (!(await trpc(locals.auth).admissions.canApply())) {
+			throw redirect(301, '/apply');
+		}
+		await trpc(locals.auth).users.withdrawApplication();
+	},
+
+	confirm: async ({ locals }) => {
+		await trpc(locals.auth).users.rsvp('CONFIRMED');
+	},
+
+	decline: async ({ locals }) => {
+		await trpc(locals.auth).users.rsvp('DECLINED');
 	},
 };
