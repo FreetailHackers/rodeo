@@ -47,7 +47,7 @@
 		<ul class="sidebar-menu">
 			<li><a href="https://hacktx.com/">HackTX</a></li>
 			{#if data.user?.roles.includes('HACKER')}
-				<li><a href="/apply">My Application</a></li>
+				<li><a href="/">My Application</a></li>
 			{/if}
 			{#if data.user?.roles.includes('ADMIN')}
 				<li><a href="/admin">Admin</a></li>

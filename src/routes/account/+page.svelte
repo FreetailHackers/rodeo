@@ -21,8 +21,8 @@
 	<!-- Left Section with Forms -->
 	<div class="left-section">
 		<!-- Name and Food Group -->
-		<h2>Name Name</h2>
-		<p>Email: namename@gmail.com</p>
+		<h2>{data.name}</h2>
+		<p>Email: {data.user.email}</p>
 		<hr style="color: #EBEBEB" />
 		<p>Food Group: #1</p>
 		<p>Dietary Restrictions: None</p>

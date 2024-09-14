@@ -24,20 +24,27 @@ export const teamRouter = t.router({
 		.use(authenticate(['HACKER']))
 		.query(async (req): Promise<TeamWithMembers | null> => {
 			const team = await getTeam(req.ctx.user.id);
-			if (!team) {
-				return null;
-			}
+			if (!team) return null;
 
-			const teamAuthUserIds = team.members.map((member) => member.authUserId);
-			const teamMembers = await prisma.authUser.findMany({
-				where: { id: { in: teamAuthUserIds } },
-				select: { email: true },
+			const memberIds = team.members.map((member) => member.authUserId);
+
+			const emails = await prisma.authUser.findMany({
+				where: { id: { in: memberIds } },
+				select: { id: true, email: true },
 			});
 
-			const members = teamMembers.map((member) => ({
-				name: 'Hacker', // TODO: Add name to the authUser model
-				email: member.email,
-			}));
+			const names = await prisma.user.findMany({
+				where: { authUserId: { in: memberIds } },
+				select: { authUserId: true, name: true },
+			});
+
+			const members = team.members.map((member) => {
+				const email = emails.find((user) => user.id === member.authUserId)?.email;
+				if (!email) throw new Error(`Email not found for authUserId: ${member.authUserId}`);
+
+				const name = names.find((user) => user.authUserId === member.authUserId)?.name || 'Hacker';
+				return { name, email };
+			});
 
 			return {
 				id: team.id,
@@ -110,12 +117,17 @@ export const teamRouter = t.router({
 		});
 	}),
 
-	// Update the devpost URL of the team of the authenticated user
+	// Update the devpost URL of the team of the authenticated user, false if the URL is invalid
 	uploadDevpost: t.procedure
 		.input(z.string())
 		.use(authenticate(['HACKER']))
-		.mutation(async ({ ctx, input }): Promise<void> => {
+		.mutation(async ({ ctx, input }): Promise<boolean> => {
 			const userId = ctx.user.id;
+
+			const devpostRegex = /^https:\/\/devpost\.com\/software\/[a-zA-Z0-9_-]+$/;
+			if (!devpostRegex.test(input)) {
+				return false;
+			}
 
 			const user = await prisma.user.findUniqueOrThrow({
 				where: { authUserId: userId },
@@ -130,6 +142,8 @@ export const teamRouter = t.router({
 				where: { id: user.teamId },
 				data: { devpostUrl: input },
 			});
+
+			return true;
 		}),
 
 	getTeamInvitations: t.procedure
