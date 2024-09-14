@@ -26,7 +26,7 @@
 		<hr style="color: #EBEBEB" />
 		<p>Food Group: #1</p>
 		<p>Dietary Restrictions: None</p>
-		<hr style="color: #BBBBBB" />
+		<hr style="color: #ccc" />
 		<!-- My Team Section -->
 		{#if !data.team}
 			<form method="POST" action="?/createTeam" use:enhance>
@@ -35,18 +35,26 @@
 				<button type="submit">Create Team</button>
 			</form>
 		{:else}
-			<h2>Your Team: {data.team.name}</h2>
-			<p>Team Members:</p>
-			<ul>
-				{#each data.team.members as member}
-					<li>{member.name} - {member.email}</li>
-				{/each}
-			</ul>
-
 			<!-- Update devpost url frm -->
 			<h3>My Project</h3>
 
 			<form method="POST" action="?/updateDevpost" use:enhance>
+				<label for="track-select">Track:</label>
+				<select name="track">
+					<option value="">Select one</option>
+					<hr />
+					<optgroup label="General Tracks">
+						<option value="abc">abc</option>
+						<option value="abc">abc</option>
+						<option value="abc">abc</option>
+					</optgroup>
+					<hr />
+					<optgroup label="AI Tracks">
+						<option value="abc">abc</option>
+						<option value="abc">abc</option>
+						<option value="abc">abc</option>
+					</optgroup>
+				</select>
 				<label for="teamDevpost">Devpost Link:</label>
 
 				<input
@@ -57,9 +65,36 @@
 					placeholder="Paste the project link here"
 				/>
 
-				<button type="submit">Save</button>
+				<div class="cancel-save">
+					<p>Last saved on 8/11/2024 at 1:04 PM</p>
+					<button type="reset" class="empty-button">Cancel</button>
+					<button type="submit">Save</button>
+				</div>
 			</form>
 
+			<hr />
+
+			<!-- Team Members -->
+			<h2>My Team: {data.team.name}</h2>
+			{#each data.team.members as member}
+				<div class="member">
+					<div class="member-info">
+						<p>{member.name}</p>
+						<p>{member.email}</p>
+					</div>
+				</div>
+			{/each}
+			{#if data.invitations.length > 0}
+				{#each data.invitations as invite}
+					<div class="member">
+						<div class="member-info">
+							<p>name</p>
+							<p>{invite.email}</p>
+						</div>
+						<p><b>Pending</b></p>
+					</div>
+				{/each}
+			{/if}
 			<!-- Invitations -->
 
 			<form method="POST" action="?/inviteUser">
@@ -67,15 +102,6 @@
 				<input type="text" id="inviteEmail" name="inviteEmail" placeholder="Enter email" required />
 				<button type="submit">Send Invitation</button>
 			</form>
-
-			{#if data.invitations.length > 0}
-				<h4>Pending Invitations:</h4>
-				<ul>
-					{#each data.invitations as invite}
-						<li>{invite.email}</li>
-					{/each}
-				</ul>
-			{/if}
 
 			<!-- Leave team -->
 			<form method="POST" action="?/leaveTeam">
@@ -94,6 +120,10 @@
 </div>
 
 <style>
+	hr {
+		margin: 1em 0;
+	}
+
 	.container {
 		display: flex;
 		justify-content: space-around;
@@ -136,17 +166,77 @@
 		border: 1px solid #ccc;
 	}
 
+	select {
+		color: grey;
+		background: white;
+		padding: 0.5rem;
+		border-radius: 5px;
+		border: 1px solid #ccc;
+	}
+
+	option {
+		padding: 0.5em 1em;
+		line-height: 3;
+	}
+
 	button {
 		background-color: #6c63ff;
 		color: white;
 		border: none;
-		padding: 0.5rem 1rem;
-		border-radius: 5px;
+		padding: 0rem 1.5rem;
+		border-radius: 15px;
 		cursor: pointer;
+		white-space: nowrap; /* Prevents letters from wrapping */
+
+		transition: all 0.1s ease-out; /* Button hover animation */
 	}
 
 	button:hover {
-		background-color: #5548c8;
+		background-color: var(--secondary-color);
+		color: var(--primary-accent);
+	}
+
+	.cancel-save {
+		display: flex;
+		justify-content: end;
+		align-items: center;
+		gap: 1em;
+	}
+
+	.cancel-save button {
+		padding: 0 1.5em;
+		border-radius: 15px;
+	}
+
+	.empty-button {
+		color: var(--primary-accent);
+		background-color: var(--white);
+		border: 1px solid var(--primary-accent);
+	}
+
+	.empty-button:hover {
+		color: white;
+		background-color: var(--primary-accent);
+	}
+
+	.member {
+		display: flex;
+		justify-content: space-between;
+		position: relative;
+	}
+
+	.member::after {
+		content: '';
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 1px;
+		background: black;
+		position: absolute;
+	}
+
+	.member:last-child::after {
+		content: none;
 	}
 
 	/* Mobile Devices */
