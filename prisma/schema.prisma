@@ -67,6 +67,7 @@ model User {
   scans         Scan[]
   team          Team?          @relation(name: "membersRelation", fields: [teamId], references: [id]) // Relation to the team as a member
   teamId        Int?
+  name          String?
 }
 
 model Announcement {

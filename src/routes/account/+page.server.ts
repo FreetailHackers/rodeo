@@ -6,6 +6,7 @@ export const load = async ({ locals }) => {
 		user: await authenticate(locals.auth),
 		team: await trpc(locals.auth).team.getUserTeam(),
 		invitations: await trpc(locals.auth).team.getTeamInvitations(),
+		name: await trpc(locals.auth).users.getName(),
 	};
 };
 
@@ -23,13 +24,17 @@ export const actions = {
 
 	updateDevpost: async ({ locals, request }) => {
 		const devpostUrl = (await request.formData()).get('devpostUrl') as string;
-		await trpc(locals.auth).team.uploadDevpost(devpostUrl);
+		if (!(await trpc(locals.auth).team.uploadDevpost(devpostUrl))) {
+			return 'Invalid Devpost URL. Should be in the format https://devpost.com/software/your-project';
+		}
 		return 'Updated Devpost!';
 	},
 
 	inviteUser: async ({ locals, request }) => {
 		const email = (await request.formData()).get('inviteEmail') as string;
-		console.log(email);
+		if (!(await trpc(locals.auth).users.doesEmailExist(email))) {
+			return 'The provided email is not associated with any account.';
+		}
 		await trpc(locals.auth).team.inviteUser(email);
 		return 'Invited user!';
 	},
