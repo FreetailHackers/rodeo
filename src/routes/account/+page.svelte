@@ -23,9 +23,10 @@
 		<!-- Name and Food Group -->
 		<h2>Name Name</h2>
 		<p>Email: namename@gmail.com</p>
+		<hr style="color: #EBEBEB" />
 		<p>Food Group: #1</p>
 		<p>Dietary Restrictions: None</p>
-
+		<hr style="color: #BBBBBB" />
 		<!-- My Team Section -->
 		{#if !data.team}
 			<form method="POST" action="?/createTeam" use:enhance>
@@ -85,8 +86,8 @@
 
 	<!-- Right Section with Hacker ID -->
 	<div class="right-section">
-		<h3>My Hacker ID</h3>
-		<div class="driver-div">
+		<h2>My Hacker ID</h2>
+		<div class="id-card">
 			<canvas bind:this={canvas} id="qrcode" />
 		</div>
 	</div>
@@ -98,13 +99,13 @@
 		justify-content: space-around;
 		flex-wrap: wrap-reverse;
 		padding: 3rem;
-		margin-left: 16rem;
 		gap: 3rem;
 	}
 
 	.left-section {
 		flex-basis: 30rem;
 		flex-shrink: 0;
+		flex-grow: 1;
 	}
 
 	.right-section {
@@ -114,11 +115,11 @@
 		align-items: center;
 	}
 
-	.driver-div {
+	.id-card {
 		padding: 1rem 2rem;
 		box-shadow: 4px 4px 16px 0px #00000040;
-		border-radius: 10px;
-		margin-top: 1rem;
+		border-radius: 15px;
+		background: url(static/hackerid/hackerid.svg);
 	}
 
 	form {
