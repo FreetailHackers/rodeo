@@ -11,11 +11,11 @@
 <div class="container">
 	<!-- Name and Email -->
 	<div class="user-info">
-		<label class="form-heading" for="name">Name: </label>
-		<input type="text" id="name" value="Name Name" />
+		<label class="form-heading" for="name">Name:</label>
+		<input type="text" id="name" placeholder="Enter your name" />
 
 		<label class="form-heading" for="email">Email:</label>
-		<input type="email" id="email" value="namename@gmail.com" />
+		<input type="email" id="email" placeholder="Enter your email" />
 	</div>
 	<div />
 
@@ -73,8 +73,9 @@
 	.container {
 		margin-left: 3%;
 		padding: 3rem;
-		background-color: #fff;
-		max-width: 40vw;
+		background-color: white;
+		min-width: 40vw;
+		max-width: 40em;
 	}
 
 	input {
@@ -112,7 +113,7 @@
 		gap: 1em;
 	}
 	#reset-password-buttons #reset-password-buttons-cancel {
-		background-color: #ffffff;
+		background-color: white;
 		border-color: #7970ff;
 		border: 1px solid #7970ff;
 		color: #7970ff;
@@ -131,7 +132,7 @@
 		background-origin: content-box;
 	}
 	select option {
-		color: #000000;
+		color: black;
 	}
 
 	@media only screen and (max-width: 767px) {
