@@ -7,7 +7,7 @@
 	import { fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	// import Loader from '$lib/components/loader.svelte';
-	import { beforeNavigate, afterNavigate } from '$app/navigation';
+	// import { beforeNavigate, afterNavigate } from '$app/navigation';
 
 	export let data;
 
@@ -16,19 +16,19 @@
 		toasts.notify($page.form);
 	}
 
-	let menu: HTMLMenuElement;
-	let hamburgerCheckbox: HTMLInputElement;
-	let isLoading = false;
-	beforeNavigate(() => (isLoading = true));
-	afterNavigate(() => (isLoading = false));
+	// let menu: HTMLMenuElement;
+	// let hamburgerCheckbox: HTMLInputElement;
+	// let isLoading = false;
+	// beforeNavigate(() => (isLoading = true));
+	// afterNavigate(() => (isLoading = false));
 
 	onMount(() => {
-		for (const link of menu.childNodes) {
-			link.addEventListener('click', () => {
-				// Close the menu when a link is clicked on mobile
-				hamburgerCheckbox.checked = false;
-			});
-		}
+		// for (const link of menu.childNodes) {
+		// 	link.addEventListener('click', () => {
+		// 		// Close the menu when a link is clicked on mobile
+		// 		hamburgerCheckbox.checked = false;
+		// 	});
+		// }
 	});
 
 	const noLayoutRoutes = ['/login', '/register']; // Routes that shouldn't have layout
@@ -45,6 +45,7 @@
 {#if !noLayoutRoutes.some((route) => $page.url.pathname.startsWith(route))}
 	<div class="sidebar">
 		<ul class="sidebar-menu">
+			<li><a href="https://hacktx.com/">HackTX</a></li>
 			{#if data.user?.roles.includes('HACKER')}
 				<li><a href="/apply">My Application</a></li>
 			{/if}

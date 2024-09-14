@@ -109,5 +109,6 @@ class TokenType {
 
 export const emailVerificationToken = new TokenType('email-verification', 7 * 24 * 60 * 60);
 export const resetPasswordToken = new TokenType('reset-password', 10 * 60);
+export const inviteToTeamToken = new TokenType('invite-to-team', 7 * 24 * 60 * 60);
 
 export type Auth = typeof auth;

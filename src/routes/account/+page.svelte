@@ -1,9 +1,9 @@
 <script lang="ts">
 	import QRCode from 'qrcode';
 	import { onMount } from 'svelte';
+	import { enhance } from '$app/forms';
 
 	export let data;
-
 	let canvas: HTMLCanvasElement;
 
 	onMount(() => {
@@ -26,29 +26,61 @@
 		<p>Food Group: #1</p>
 		<p>Dietary Restrictions: None</p>
 
-		<!-- My Project Form -->
-		<h3>My Project</h3>
-		<form>
-			<label for="track">Track:</label>
-			<select id="track" name="track">
-				<option value="" disabled selected>Select one</option>
-				<option value="track1">Track 1</option>
-				<option value="track2">Track 2</option>
-			</select>
-
-			<label for="devpost-link">Devpost Link:</label>
-			<input type="text" id="devpost-link" placeholder="Paste the project link here" />
-
-			<button type="button">Save</button>
-		</form>
-
 		<!-- My Team Section -->
-		<h3>My Team</h3>
-		<div class="team-members">
-			<p>Team Member 1 - email1@gmail.com</p>
-			<p>Team Member 2 - email2@gmail.com</p>
-			<p>Team Member 3 - email3@gmail.com</p>
-		</div>
+		{#if !data.team}
+			<form method="POST" action="?/createTeam" use:enhance>
+				<h2>Create a Team</h2>
+				<input type="text" id="teamName" name="teamName" placeholder="Enter Team Name" required />
+				<button type="submit">Create Team</button>
+			</form>
+		{:else}
+			<h2>Your Team: {data.team.name}</h2>
+			<p>Team Members:</p>
+			<ul>
+				{#each data.team.members as member}
+					<li>{member.name} - {member.email}</li>
+				{/each}
+			</ul>
+
+			<!-- Update devpost url frm -->
+			<h3>My Project</h3>
+
+			<form method="POST" action="?/updateDevpost" use:enhance>
+				<label for="teamDevpost">Devpost Link:</label>
+
+				<input
+					type="text"
+					id="devpostUrl"
+					name="devpostUrl"
+					value={data.team.devpostUrl}
+					placeholder="Paste the project link here"
+				/>
+
+				<button type="submit">Save</button>
+			</form>
+
+			<!-- Invitations -->
+
+			<form method="POST" action="?/inviteUser">
+				<h3>Invite a new member</h3>
+				<input type="text" id="inviteEmail" name="inviteEmail" placeholder="Enter email" required />
+				<button type="submit">Send Invitation</button>
+			</form>
+
+			{#if data.invitations.length > 0}
+				<h4>Pending Invitations:</h4>
+				<ul>
+					{#each data.invitations as invite}
+						<li>{invite.email}</li>
+					{/each}
+				</ul>
+			{/if}
+
+			<!-- Leave team -->
+			<form method="POST" action="?/leaveTeam">
+				<button type="submit">Leave Team</button>
+			</form>
+		{/if}
 	</div>
 
 	<!-- Right Section with Hacker ID -->
@@ -96,8 +128,8 @@
 		margin-top: 1rem;
 	}
 
-	input,
-	select {
+	/* select, */
+	input {
 		padding: 0.5rem;
 		border-radius: 5px;
 		border: 1px solid #ccc;

@@ -359,12 +359,7 @@ export const usersRouter = t.router({
 			'Click on the following link to verify your email address:<br><br>' +
 			link +
 			'<br><br>If you did not request this email, please ignore it.';
-		await sendEmails(
-			[req.ctx.user.email],
-			'Email Verification',
-			body,
-			false // The raw HTML should not be sent
-		);
+		await sendEmails([req.ctx.user.email], 'Email Verification', body, false);
 	}),
 
 	/**
