@@ -76,32 +76,13 @@
 		background-color: #fff;
 		max-width: 40vw;
 	}
-	hr {
-		border: none;
-		border-top: 1px solid #bbbbbb;
+
+	input {
 		margin-bottom: 1em;
 	}
 	label {
 		display: inline-block;
 		margin-bottom: 1em;
-	}
-
-	::placeholder {
-		color: #bbbbbb;
-	}
-
-	#reset-password-buttons {
-		display: flex;
-		justify-content: end;
-	}
-	#reset-password-buttons button {
-		margin-left: 1em;
-	}
-	#reset-password-buttons #reset-password-buttons-cancel {
-		background-color: #ffffff;
-		border-color: #7970ff;
-		border: 1px solid #7970ff;
-		color: #7970ff;
 	}
 
 	input,
@@ -114,24 +95,43 @@
 		border: 1px solid #bbbbbb;
 		padding: 1em;
 	}
+
+	hr {
+		border: none;
+		border-top: 1px solid #bbbbbb;
+		margin-bottom: 1em;
+	}
+
+	::placeholder {
+		color: #bbbbbb;
+	}
+
+	#reset-password-buttons {
+		display: flex;
+		justify-content: end;
+		gap: 1em;
+	}
+	#reset-password-buttons #reset-password-buttons-cancel {
+		background-color: #ffffff;
+		border-color: #7970ff;
+		border: 1px solid #7970ff;
+		color: #7970ff;
+	}
+
 	select {
 		appearance: none;
 		color: #bbbbbb;
-		padding: unset;
-		padding-left: 1em;
-		padding-right: 1em;
+		padding: 0 1em;
 		margin-bottom: 1em;
 
-		/* Arrow Icon Shit*/
-		background-image: url('selectionarrow.png');
+		background-image: url('/static/settings/selection-arrow.png');
 		background-repeat: no-repeat;
 		background-position: right center;
 		padding-right: 1em;
 		background-origin: content-box;
 	}
-
-	input {
-		margin-bottom: 1em;
+	select option {
+		color: #000000;
 	}
 
 	@media only screen and (max-width: 767px) {
