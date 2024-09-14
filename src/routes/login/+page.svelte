@@ -80,6 +80,6 @@
 
 	.register {
 		text-align: center;
-		color: var(--primary-accent);
+		color: var(--accent);
 	}
 </style>
