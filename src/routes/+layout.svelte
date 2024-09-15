@@ -58,9 +58,7 @@
 			{#if data.user?.roles.includes('ORGANIZER') || data.user?.roles.includes('ADMIN')}
 				<li><a href="/scan">Scan</a></li>
 			{/if}
-			{#if data.user?.roles.includes('HACKER')}
-				<li><a href="/account">My Account</a></li>
-			{/if}
+			<li><a href="/account">My Account</a></li>
 			<li><a href="/settings">Settings</a></li>
 			<li>
 				<form method="POST" action="/logout">

@@ -18,6 +18,11 @@ type TeamWithMembers = {
 	}[];
 };
 
+export type TeamWithAdmissionStatus = {
+	email: string;
+	status: string;
+};
+
 export const teamRouter = t.router({
 	// Get the team of the authenticated user, if no team is found, return null
 	getUserTeam: t.procedure
@@ -26,24 +31,13 @@ export const teamRouter = t.router({
 			const team = await getTeam(req.ctx.user.id);
 			if (!team) return null;
 
-			const memberIds = team.members.map((member) => member.authUserId);
-
-			const emails = await prisma.authUser.findMany({
-				where: { id: { in: memberIds } },
-				select: { id: true, email: true },
-			});
-
-			const names = await prisma.user.findMany({
-				where: { authUserId: { in: memberIds } },
-				select: { authUserId: true, name: true },
-			});
-
-			const members = team.members.map((member) => {
-				const email = emails.find((user) => user.id === member.authUserId)?.email;
-				if (!email) throw new Error(`Email not found for authUserId: ${member.authUserId}`);
-
-				const name = names.find((user) => user.authUserId === member.authUserId)?.name || 'Hacker';
-				return { name, email };
+			const members = await prisma.user.findMany({
+				where: { teamId: team.id },
+				select: {
+					authUserId: true,
+					name: true,
+					authUser: { select: { email: true } },
+				},
 			});
 
 			return {
@@ -52,14 +46,26 @@ export const teamRouter = t.router({
 				createdAt: team.createdAt,
 				tracks: team.tracks,
 				devpostUrl: team.devpostUrl,
-				members,
+				members: members.map((member) => ({
+					name: member.name || 'Hacker',
+					email: member.authUser.email,
+				})),
 			};
 		}),
 
 	// Create a new team with the authenticated user as the only member
 	createTeam: t.procedure
 		.use(authenticate(['HACKER']))
-		.input(z.string())
+		.input(
+			z
+				.string()
+				.trim()
+				.min(1)
+				.max(50)
+				.refine((name) => name.trim().length > 0, {
+					message: 'Team name cannot be empty or just whitespace',
+				})
+		)
 		.mutation(async (req): Promise<void> => {
 			const user = req.ctx.user;
 			const userId = user?.id;
@@ -124,7 +130,7 @@ export const teamRouter = t.router({
 		.mutation(async ({ ctx, input }): Promise<boolean> => {
 			const userId = ctx.user.id;
 
-			const devpostRegex = /^https:\/\/devpost\.com\/software\/[a-zA-Z0-9_-]+$/;
+			const devpostRegex = /^https:\/\/(www\.)?devpost\.com\/software\/[a-zA-Z0-9_-]+$/;
 			if (!devpostRegex.test(input)) {
 				return false;
 			}
@@ -148,11 +154,9 @@ export const teamRouter = t.router({
 
 	getTeamInvitations: t.procedure
 		.use(authenticate(['HACKER']))
-		.query(async ({ ctx }): Promise<Invitation[]> => {
-			const userId = ctx.user.id;
-
+		.query(async ({ ctx }): Promise<(Invitation & { name: string })[]> => {
 			const user = await prisma.user.findUniqueOrThrow({
-				where: { authUserId: userId },
+				where: { authUserId: ctx.user.id },
 				select: { teamId: true },
 			});
 
@@ -160,9 +164,27 @@ export const teamRouter = t.router({
 				return [];
 			}
 
-			return prisma.invitation.findMany({
+			const invitations = await prisma.invitation.findMany({
 				where: { teamId: user.teamId },
 			});
+
+			// Fetch the corresponding user names for the invitations
+			const invitationsWithNames = await Promise.all(
+				invitations.map(async (invitation) => {
+					// Find the user associated with the userId in the invitation
+					const invitedUser = await prisma.user.findUnique({
+						where: { authUserId: invitation.userId },
+						select: { name: true },
+					});
+
+					return {
+						...invitation,
+						name: invitedUser?.name || 'Hacker',
+					};
+				})
+			);
+
+			return invitationsWithNames;
 		}),
 
 	inviteUser: t.procedure
@@ -170,9 +192,8 @@ export const teamRouter = t.router({
 		.use(authenticate(['HACKER']))
 		.mutation(async ({ ctx, input }): Promise<void> => {
 			const callerId = ctx.user.id;
-			const email = input.toLowerCase().trim(); // Sanitize email input
+			const email = input.toLowerCase().trim();
 
-			// Ensure caller is on a team
 			const { teamId } = await prisma.user.findUniqueOrThrow({
 				where: { authUserId: callerId },
 				select: { teamId: true },
@@ -180,14 +201,12 @@ export const teamRouter = t.router({
 
 			if (!teamId) throw new Error('You must be on a team to invite others.');
 
-			// Ensure the invited user exists and is not the same as the caller
 			const invitedUser = await prisma.authUser.findUniqueOrThrow({
 				where: { email },
 			});
 
 			if (callerId === invitedUser.id) throw new Error('You cannot invite yourself.');
 
-			// Overwrite any existing invitations for the same email and team
 			await prisma.invitation.deleteMany({ where: { email, teamId } });
 
 			await prisma.invitation.create({
@@ -199,19 +218,24 @@ export const teamRouter = t.router({
 				},
 			});
 
-			// Generate invitation link with token and send email
 			const token = await inviteToTeamToken.issue(invitedUser.id);
 			const inviteLink = `${process.env.DOMAIN_NAME}/account?token=${token}&teamId=${teamId}`;
 			const emailBody = `
-			You have been invited to join a team.
-			Click the following link to accept the invitation: 
-			<a href="${inviteLink}">Join Team</a>
-		  `;
+				You have been invited to join a team.
+				Click the following link to accept the invitation: 
+				<a href="${inviteLink}">Join Team</a>
+			`;
 
-			await sendEmails([email], 'You have been invited to a team', emailBody, true);
+			try {
+				await sendEmails([email], 'You have been invited to a team', emailBody, true);
+			} catch (error) {
+				console.error('Error inviting user:', error);
+				throw new Error('Failed to send invitation email. Please try again.');
+			}
 		}),
 
 	acceptInvitation: t.procedure
+		.use(authenticate(['HACKER']))
 		.input(
 			z.object({
 				token: z.string(),
@@ -225,40 +249,56 @@ export const teamRouter = t.router({
 				throw new Error('Invalid or expired token');
 			}
 
-			// Find the pending invitation
-			const invitation = await prisma.invitation.findFirst({
-				where: {
-					userId,
-					teamId,
-					status: 'PENDING',
-				},
-			});
-			if (!invitation) {
-				throw new Error('No valid invitation found for the specified team');
-			}
+			await prisma.$transaction(async (prisma) => {
+				const teamSize = await getTeamSize(teamId);
+				if (teamSize >= 4) {
+					throw new Error('Team is full');
+				}
 
-			// Add the user to the team and accept the invitation in a single transaction
-			await prisma.$transaction([
-				prisma.team.update({
+				const invitation = await prisma.invitation.findFirst({
+					where: {
+						userId,
+						teamId,
+						status: 'PENDING',
+					},
+				});
+				if (!invitation) {
+					throw new Error('No valid invitation found for the specified team');
+				}
+
+				// User status must be 'CREATED', 'APPLIED', 'ACCEPTED', or 'CONFIRMED'
+				const user = await prisma.authUser.findUnique({
+					where: { id: userId },
+					select: { status: true },
+				});
+
+				if (!user || !['CREATED', 'APPLIED', 'ACCEPTED', 'CONFIRMED'].includes(user?.status)) {
+					throw new Error('User is not eligible to join a team');
+				}
+
+				await prisma.team.update({
 					where: { id: teamId },
 					data: {
 						members: {
 							connect: { authUserId: userId },
 						},
 					},
-				}),
-				prisma.user.update({
+				});
+
+				await prisma.user.update({
 					where: { authUserId: userId },
 					data: { teamId },
-				}),
-				prisma.invitation.update({
+				});
+
+				await prisma.invitation.update({
 					where: { id: invitation.id },
 					data: { status: 'ACCEPTED' },
-				}),
-			]);
+				});
+			});
 		}),
 
 	rejectInvitation: t.procedure
+		.use(authenticate(['HACKER']))
 		.input(
 			z.object({
 				token: z.string(),
@@ -268,13 +308,11 @@ export const teamRouter = t.router({
 		.mutation(async ({ input }): Promise<void> => {
 			const { token, teamId } = input;
 
-			// Validate the token and fetch userId
 			const userId = await inviteToTeamToken.validate(token);
 			if (!userId) {
 				throw new Error('Invalid or expired token');
 			}
 
-			// Find the pending invitation using userId and teamId
 			const invitation = await prisma.invitation.findFirst({
 				where: {
 					userId,
@@ -287,11 +325,59 @@ export const teamRouter = t.router({
 				throw new Error('No valid invitation found for the specified team.');
 			}
 
-			// Mark the invitation as rejected
 			await prisma.invitation.update({
 				where: { id: invitation.id },
 				data: { status: 'REJECTED' },
 			});
+		}),
+
+	getTeamSize: t.procedure.use(authenticate(['HACKER'])).query(async ({ ctx }): Promise<number> => {
+		const user = await prisma.user.findUniqueOrThrow({
+			where: { authUserId: ctx.user.id },
+			select: { teamId: true },
+		});
+
+		if (!user.teamId) {
+			return 0;
+		}
+
+		return getTeamSize(user.teamId);
+	}),
+
+	// Get teammates and admission status for the authenticated user
+	getTeammatesAndAdmissionStatus: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(z.string())
+		.query(async (req): Promise<TeamWithAdmissionStatus[]> => {
+			const userId = req.input;
+			if (!userId) {
+				throw new Error('Valid user ID is required');
+			}
+
+			const team = await getTeam(userId.toString());
+			if (!team) {
+				return [];
+			}
+
+			const memberIds = team.members.map((member) => member.authUserId);
+			if (memberIds.length === 0) {
+				return [];
+			}
+
+			try {
+				return await prisma.authUser.findMany({
+					where: { id: { in: memberIds } },
+					select: {
+						email: true,
+						status: true,
+					},
+				});
+			} catch (error) {
+				console.error('Error fetching teammates and admission statuses:', error);
+				throw new Error(
+					'Unable to fetch teammates and their admission statuses. Please try again.'
+				);
+			}
 		}),
 });
 
@@ -302,14 +388,71 @@ async function getTeam(userId: string): Promise<(Team & { members: User[] }) | n
 		select: { teamId: true },
 	});
 
-	// If user or teamId is not found, return null
 	if (!user?.teamId) {
 		return null;
 	}
 
-	// Include the team members in the response
+	await removeTeammembers(user.teamId);
+
 	return await prisma.team.findUnique({
 		where: { id: user.teamId },
 		include: { members: true },
 	});
+}
+
+// Removes team members who have been rejected or declined the hackathon
+async function removeTeammembers(teamId: number): Promise<void> {
+	await prisma.$transaction(async (prisma) => {
+		const team = await prisma.team.findUnique({
+			where: { id: teamId },
+			include: { members: true },
+		});
+
+		if (!team) return;
+
+		const memberIds = team.members.map((member) => member.authUserId);
+
+		const users = await prisma.authUser.findMany({
+			where: { id: { in: memberIds } },
+			select: { id: true, status: true },
+		});
+
+		const usersToRemove = users.filter(
+			(user) => user.status === 'REJECTED' || user.status === 'DECLINED'
+		);
+
+		if (usersToRemove.length === 0) return;
+
+		await prisma.team.update({
+			where: { id: teamId },
+			data: {
+				members: {
+					disconnect: usersToRemove.map((user) => ({ authUserId: user.id })),
+				},
+			},
+		});
+
+		await prisma.user.updateMany({
+			where: {
+				authUserId: { in: usersToRemove.map((user) => user.id) },
+			},
+			data: { teamId: null },
+		});
+	});
+}
+
+// Get the size of the team, ensuring that rejected or declined members are removed first
+async function getTeamSize(teamId: number): Promise<number> {
+	await removeTeammembers(teamId);
+
+	const team = await prisma.team.findUnique({
+		where: { id: teamId },
+		select: { members: true },
+	});
+
+	if (!team) {
+		return 0;
+	}
+
+	return team.members.length;
 }
