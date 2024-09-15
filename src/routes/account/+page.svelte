@@ -134,7 +134,7 @@
 
 			<div class="id-card">
 				<canvas bind:this={canvas} id="qrcode" />
-				<img src="hacker-id/background.svg" alt="hacker id-card" />
+				<img src="hacker-id/background.png" alt="hacker id-card" />
 			</div>
 		</div>
 	{/if}
