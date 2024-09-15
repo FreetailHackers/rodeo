@@ -112,6 +112,7 @@ a.button[disabled] {
 .negative-button {
 	background-color: var(--white);
 	color: var(--accent);
+	border: 1px solid var(--accent);
 }
 
 .negative-button:not(:disabled):hover {
