@@ -68,19 +68,6 @@ nav {
 	margin: 1rem 0;
 }
 
-button {
-	background-color: var(--accent);
-	color: var(--white);
-	border: none;
-	padding: 0.5rem 1rem;
-	border-radius: 5px;
-	cursor: pointer;
-}
-
-button:hover {
-	background-color: var(--light-accent);
-}
-
 button,
 a.button {
 	background-color: var(--accent);
