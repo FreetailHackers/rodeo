@@ -219,7 +219,7 @@ export const teamRouter = t.router({
 			});
 
 			const token = await inviteToTeamToken.issue(invitedUser.id);
-			const inviteLink = `${process.env.DOMAIN_NAME}/account?token=${token}&teamId=${teamId}`;
+			const inviteLink = `${process.env.DOMAIN_NAME}/account/respond-invitation?token=${token}&teamId=${teamId}`;
 			const emailBody = `
 				You have been invited to join a team.
 				Click the following link to accept the invitation: 
@@ -269,10 +269,14 @@ export const teamRouter = t.router({
 				// User status must be 'CREATED', 'APPLIED', 'ACCEPTED', or 'CONFIRMED'
 				const user = await prisma.authUser.findUnique({
 					where: { id: userId },
-					select: { status: true },
+					select: { status: true, user: true },
 				});
 
-				if (!user || !['CREATED', 'APPLIED', 'ACCEPTED', 'CONFIRMED'].includes(user?.status)) {
+				if (
+					!user ||
+					!['CREATED', 'APPLIED', 'ACCEPTED', 'CONFIRMED'].includes(user?.status) ||
+					user.user?.teamId !== null
+				) {
 					throw new Error('User is not eligible to join a team');
 				}
 

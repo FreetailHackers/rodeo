@@ -13,8 +13,15 @@
 			scale: 10,
 		});
 
-		canvas.style.width = '64%';
-		canvas.style.height = 'auto';
+		if (
+			data.user !== undefined &&
+			(!data.user.roles.includes('HACKER') ||
+				data.user.roles.length > 1 ||
+				data.user.status === 'CONFIRMED')
+		) {
+			canvas.style.width = '64%';
+			canvas.style.height = 'auto';
+		}
 	});
 	let closeModal = false;
 </script>
@@ -83,7 +90,10 @@
 										placeholder="Enter email"
 										required
 									/>
-									<p>You can only invite users with an existing Rodeo account.</p>
+									<p>
+										You can only invite users who have a Rodeo account and are not already part of a
+										team.
+									</p>
 									<button id="modalSubmit" type="submit">Send Invitation</button>
 								</form>
 							</div>
