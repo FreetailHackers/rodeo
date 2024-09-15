@@ -15,9 +15,13 @@
 	<h2>Settings</h2>
 	<!-- Name and Email -->
 	<div class="label-and-button">
-		<label for="name"
-			>Name:
-			{#if data.name}{data.name}{/if}
+		<label for="name">
+			Name:
+			{#if data.name}
+				{data.name}
+			{:else}
+				You have not set a name yet.
+			{/if}
 		</label>
 		<Modal button={false} close={closeModal}>
 			<Content>

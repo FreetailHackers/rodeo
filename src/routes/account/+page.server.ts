@@ -2,11 +2,21 @@ import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 
 export const load = async ({ locals }) => {
+	const user = await authenticate(locals.auth);
+	const name = await trpc(locals.auth).users.getName();
+
+	if (user.status === 'HACKER') {
+		return {
+			user: user,
+			team: await trpc(locals.auth).team.getUserTeam(),
+			invitations: await trpc(locals.auth).team.getTeamInvitations(),
+			name: name ?? 'HACKER',
+		};
+	}
+
 	return {
-		user: await authenticate(locals.auth),
-		team: await trpc(locals.auth).team.getUserTeam(),
-		invitations: await trpc(locals.auth).team.getTeamInvitations(),
-		name: (await trpc(locals.auth).users.getName()) ?? 'HACKER',
+		user: user,
+		name: name ?? 'GUEST',
 	};
 };
 
