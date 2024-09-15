@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	//@ts-ignore
 	import { Modal, Content, Trigger } from 'sv-popup';
 
 	export let data;
