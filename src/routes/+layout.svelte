@@ -16,19 +16,16 @@
 		toasts.notify($page.form);
 	}
 
-	// let menu: HTMLMenuElement;
-	// let hamburgerCheckbox: HTMLInputElement;
-	// let isLoading = false;
-	// beforeNavigate(() => (isLoading = true));
-	// afterNavigate(() => (isLoading = false));
+	let menu: HTMLMenuElement;
+	let hamburgerCheckbox: HTMLInputElement;
 
 	onMount(() => {
-		// for (const link of menu.childNodes) {
-		// 	link.addEventListener('click', () => {
-		// 		// Close the menu when a link is clicked on mobile
-		// 		hamburgerCheckbox.checked = false;
-		// 	});
-		// }
+		for (const link of menu.childNodes) {
+			link.addEventListener('click', () => {
+				// Close the menu when a link is clicked on mobile
+				hamburgerCheckbox.checked = false;
+			});
+		}
 	});
 
 	const noLayoutRoutes = ['/login', '/register']; // Routes that shouldn't have layout
@@ -43,14 +40,24 @@
 {/if}
 
 {#if !noLayoutRoutes.some((route) => $page.url.pathname.startsWith(route))}
-	<div class="sidebar">
-		<ul class="sidebar-menu">
-			<li><a href="https://hacktx.com/">HackTX</a></li>
+	<nav>
+		<label for="hamburgerCheckbox"
+			><h3>HackTX 2024</h3>
+			<img draggable="false" src="/burger_Menu.png" alt="burger-menu" id="hamburger-logo" /></label
+		>
+		<input
+			type="checkbox"
+			id="hamburgerCheckbox"
+			bind:this={hamburgerCheckbox}
+			style="display: none"
+		/>
+		<menu id="menu" bind:this={menu}>
+			<li><a href="https://hacktx.com/">Homepage</a></li>
 			{#if data.user?.roles.includes('HACKER')}
 				<li><a href="/apply">My Application</a></li>
 			{/if}
 			{#if data.user?.roles.includes('ADMIN')}
-				<li><a href="/admin">Admin</a></li>
+				<li><a href="/admin">Master Dashboard</a></li>
 				<li>
 					<a href="/admissions">Admissions</a>
 				</li>
@@ -66,43 +73,9 @@
 				<form method="POST" action="/logout">
 					<button type="submit">Logout</button>
 				</form>
-			</li>
-		</ul>
-	</div>
-
-	<div class="topbar">
-		<div class="topbar-header">
-			<h3>HackTX 2024</h3>
-			<img alt="hamburger_menu" src="/burger_Menu.png">
-		</div>
-		<ul class="topbar-menu">
-			Dashboard
-			<ul class="topbar-menu">
-				<li><a href="https://hacktx.com/">HackTX</a></li>
-				{#if data.user?.roles.includes('HACKER')}
-					<li><a href="/apply">My Application</a></li>
-				{/if}
-				{#if data.user?.roles.includes('ADMIN')}
-					<li><a href="/admin">Admin</a></li>
-					<li>
-						<a href="/admissions">Admissions</a>
-					</li>
-				{/if}
-				{#if data.user?.roles.includes('ORGANIZER') || data.user?.roles.includes('ADMIN')}
-					<li><a href="/scan">Scan</a></li>
-				{/if}
-				{#if data.user?.roles.includes('HACKER')}
-					<li><a href="/account">My Account</a></li>
-				{/if}
-				<li><a href="/settings">Settings</a></li>
-				<li>
-					<form method="POST" action="/logout">
-						<button type="submit">Logout</button>
-					</form>
-				</li>
-			</ul>
-		</ul>
-	</div>
+			</li></menu
+		>
+	</nav>
 {/if}
 
 {#key $page.url.pathname}
@@ -121,93 +94,93 @@
 		margin-left: 16rem;
 	}
 
-	.sidebar {
+	nav {
 		width: 16rem;
 		height: 100vh;
-		background-color: var(--light-grey);
 		position: fixed;
 		top: 0;
-		left: 0;
+		margin: 0;
+		background-color: var(--light-grey);
+		z-index: 10;
 	}
 
-	.sidebar-menu,
-	.topbar-menu {
+	nav label {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1em;
+	}
+
+	nav label h3 {
+		margin: 0;
+	}
+
+	#hamburger-logo {
+		display: none;
+	}
+
+	nav menu {
 		list-style: none;
 		padding: 0;
+		margin: 0;
+		overflow: clip;
+		transition: max-height 0.4s ease-in-out;
 	}
 
-	.sidebar-menu {
-		padding: 5rem 0;
-	}
-
-	.sidebar-menu button,
-	.topbar-menu button {
-		background-color: unset;
-		text-align: left;
-	}
-
-	.sidebar-menu li a,
-	.sidebar-menu li form button {
+	nav menu li a,
+	nav menu li form button {
 		text-decoration: none;
 		color: var(--black);
 		display: block;
 		padding: 1.5em 2em;
-		transition: all 0.3s;
+		background-color: unset;
+		text-align: left;
+		transition: all 0.2s;
 	}
 
-	.sidebar-menu li a:hover,
-	.sidebar-menu li form button:hover,
-	.topbar-menu li a:hover {
+	nav menu li a:hover,
+	nav menu li form button:hover {
 		background-color: var(--white);
 		font-weight: normal;
 	}
 
-	.sidebar-menu li a:active {
-		background-color: white;
+	nav menu li a:active {
+		background-color: var(--white);
 		font-weight: bold;
 	}
 
-	.topbar-header {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-
-		background: var(--light-grey);
-		padding: 1em;
-	}
-
-	.topbar-header img {
-		height: 2em;
-	}
-
-	.topbar-header h3 {
-		margin: 0;
-	}
-
-	.topbar-menu {
-		padding: 2rem;
-	}
-
-	.topbar ul {
-		padding: 0 1em;
-	}
-
-	.topbar-menu li a,
-	.topbar-menu li form button {
-		text-decoration: none;
-		color: var(--black);
-		display: block;
-		padding: 0.5em 1em;
-		transition: all 0.3s;
-	}
-
 	@media (max-width: 780px) {
-		.sidebar {
-			display: none;
-		}
-		
 		.container {
+			margin-top: 5em;
 			margin-left: 0;
+		}
+
+		nav {
+			width: 100vw;
+			height: unset;
+		}
+
+		#hamburger-logo {
+			height: 2rem;
+			width: 2rem;
+			display: block;
+			user-select: none;
+			filter: brightness(0);
+		}
+
+		/* Close hamburger menu */
+		menu {
+			max-height: 0;
+		}
+
+		/* Opens hamburger menu when clicked */
+		#hamburgerCheckbox:checked + menu {
+			max-height: 100vh;
+		}
+
+		nav menu li a,
+		nav menu li form button {
+			padding: 0.5em 2em;
 		}
 	}
 </style>
