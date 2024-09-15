@@ -111,10 +111,6 @@
 		padding: 1em 1.5em;
 	}
 
-	nav label h3 {
-		margin: 0;
-	}
-
 	#hamburger-logo {
 		display: none;
 	}

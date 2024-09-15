@@ -25,22 +25,20 @@
 	<ul>
 		{#each announcements as announcement}
 			<li class="card">
-				<div class="date-container">
-					<span class="date">
-						<p class="month-day">
-							{announcement.published.toLocaleDateString('en-us', {
-								month: 'long',
-								day: 'numeric',
-							})}
-						</p>
-						<span class="time">
-							{announcement.published.toLocaleTimeString('en-us', {
-								hour: 'numeric',
-								minute: 'numeric',
-							})}
-						</span>
+				<span class="date">
+					<p class="month-day">
+						{announcement.published.toLocaleDateString('en-us', {
+							month: 'long',
+							day: 'numeric',
+						})}
+					</p>
+					<span class="time">
+						{announcement.published.toLocaleTimeString('en-us', {
+							hour: 'numeric',
+							minute: 'numeric',
+						})}
 					</span>
-				</div>
+				</span>
 
 				<div class="text">
 					<SvelteMarkdown source={announcement.body} />
@@ -56,7 +54,6 @@
 	}
 
 	#announcements {
-		background: var(--background-grey);
 	}
 
 	h2 {
@@ -65,12 +62,17 @@
 
 	ul {
 		list-style: none;
-		padding: 0;
+		padding: 1em;
 		margin: 0;
+		height: 25em;
+		overflow-y: scroll;
+		scroll-snap-type: y mandatory;
 	}
 
 	li {
 		margin-bottom: var(--spacing);
+		scroll-snap-align: start;
+		scroll-margin-top: 3em;
 	}
 
 	ul li:last-child,
@@ -79,26 +81,24 @@
 	}
 
 	.card {
-		background-color: white;
-		border-radius: 25px / 35px;
+		background-color: var(--background-grey);
+		border-radius: 50px;
 		position: relative;
 		padding: 1rem;
 	}
 
-	.date-container {
-		position: absolute;
-		top: -1rem;
-		left: 1rem;
-		width: 14rem;
-		z-index: 1;
-	}
-
 	.date {
+		position: absolute;
+		top: -1em;
+		left: 1rem;
+		/* width: 14rem; */
+		z-index: 1;
 		background-color: var(--accent);
 		border-radius: 15px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		gap: 1em;
 		color: var(--white);
 		padding: 0.3rem 1rem;
 	}
