@@ -159,7 +159,17 @@ fieldset {
 
 select {
 	padding: 1rem;
-	border: 1px solid var(--grey);
+	border-radius: 15px;
+	border: 1px solid #ccc;
+
+	appearance: none;
+
+	/* Dropdown arrow */
+	background: var(--white) url('/dropdown-arrow.png');
+	background-repeat: no-repeat;
+	background-position: right center;
+	background-origin: content-box;
+
 	/* for some reason overflowing text causes horizontal scrolling */
 	overflow: hidden;
 	text-overflow: ellipsis;
