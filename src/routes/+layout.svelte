@@ -6,6 +6,7 @@
 	import './global.css';
 	import { fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
+	import { goto } from '$app/navigation';
 	// import Loader from '$lib/components/loader.svelte';
 	// import { beforeNavigate, afterNavigate } from '$app/navigation';
 
@@ -29,6 +30,9 @@
 		// 		hamburgerCheckbox.checked = false;
 		// 	});
 		// }
+		if(data.user===null || data.user===undefined){
+			goto("/login");
+		}
 	});
 
 	const noLayoutRoutes = ['/login', '/register']; // Routes that shouldn't have layout
