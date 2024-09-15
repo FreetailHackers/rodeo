@@ -32,7 +32,7 @@
 			<form method="POST" action="?/createTeam" use:enhance>
 				<h2>Create a Team</h2>
 				<input type="text" id="teamName" name="teamName" placeholder="Enter Team Name" required />
-				<button type="submit">Create Team</button>
+				<button class="user-button" type="submit">Create Team</button>
 			</form>
 		{:else}
 			<!-- Update devpost url frm -->
@@ -67,8 +67,8 @@
 
 				<div class="cancel-save">
 					<p>Last saved on 8/11/2024 at 1:04 PM</p>
-					<button type="reset" class="empty-button">Cancel</button>
-					<button type="submit">Save</button>
+					<button class="user-button negative-button" type="reset">Cancel</button>
+					<button class="user-button" type="submit">Save</button>
 				</div>
 			</form>
 
@@ -179,44 +179,11 @@
 		line-height: 3;
 	}
 
-	button {
-		background-color: #6c63ff;
-		color: white;
-		border: none;
-		padding: 0rem 1.5rem;
-		border-radius: 15px;
-		cursor: pointer;
-		white-space: nowrap; /* Prevents letters from wrapping */
-
-		transition: all 0.1s ease-out; /* Button hover animation */
-	}
-
-	button:hover {
-		background-color: var(--secondary-color);
-		color: var(--primary-accent);
-	}
-
 	.cancel-save {
 		display: flex;
 		justify-content: end;
 		align-items: center;
 		gap: 1em;
-	}
-
-	.cancel-save button {
-		padding: 0 1.5em;
-		border-radius: 15px;
-	}
-
-	.empty-button {
-		color: var(--primary-accent);
-		background-color: var(--white);
-		border: 1px solid var(--primary-accent);
-	}
-
-	.empty-button:hover {
-		color: white;
-		background-color: var(--primary-accent);
 	}
 
 	.member {
