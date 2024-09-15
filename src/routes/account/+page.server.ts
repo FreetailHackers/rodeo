@@ -4,7 +4,6 @@ import { trpc } from '$lib/trpc/router';
 export const load = async ({ locals }) => {
 	const user = await authenticate(locals.auth);
 	const name = await trpc(locals.auth).users.getName();
-	// console.log(user);
 	if (user.roles.includes('HACKER')) {
 		return {
 			user: user,
