@@ -30,8 +30,8 @@
 		// 		hamburgerCheckbox.checked = false;
 		// 	});
 		// }
-		if(data.user===null || data.user===undefined){
-			goto("/login");
+		if (data.user === null || data.user === undefined) {
+			goto('/login');
 		}
 	});
 
