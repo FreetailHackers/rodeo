@@ -127,8 +127,8 @@
 		transition: max-height 0.4s ease-in-out;
 	}
 
-	nav menu li a,
-	nav menu li form button {
+	nav a,
+	nav form button {
 		text-decoration: none;
 		color: var(--black);
 		display: block;
@@ -138,13 +138,13 @@
 		transition: all 0.2s;
 	}
 
-	nav menu li a:hover,
-	nav menu li form button:hover {
+	nav a:hover,
+	nav form button:hover {
 		background-color: var(--white);
 		font-weight: normal;
 	}
 
-	nav menu li a:active {
+	nav a:active {
 		background-color: var(--white);
 		font-weight: bold;
 	}
