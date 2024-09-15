@@ -5,6 +5,6 @@ export const actions = {
 	default: async ({ locals }) => {
 		await trpc(locals.auth).users.logout();
 		locals.auth.setSession(null);
-		throw redirect(303, '/');
+		throw redirect(303, '/login');
 	},
 };

@@ -1,17 +1,17 @@
 <script lang="ts">
-	import { enhance } from '$app/forms';
+	import '../../routes/global.css';
 	import type { Announcement } from '@prisma/client';
+	import { enhance } from '$app/forms';
+	import TextEditor from './text-editor.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
-	import TextEditor from '$lib/components/text-editor.svelte';
-
 	export let admin: boolean;
 
 	export let announcements: Announcement[];
 </script>
 
-<div class="bg-img">
-	<div class="announcement-container">
-		<h1 class="announcementHeader">ANNOUNCEMENTS</h1>
+<div class="background">
+	<div class="home-content">
+		<h2>Announcements</h2>
 		{#if admin}
 			<form class="pad" method="POST" action="?/announce" use:enhance>
 				<TextEditor
@@ -19,153 +19,98 @@
 					placeholder="Make an announcement here..."
 					isHTML={false}
 					required
-					useAnnouncementFont={true}
 				/>
 				<button class="announcement-button-label">Announce</button>
 			</form>
 		{/if}
-		{#if announcements.length > 0}
-			<ul>
-				{#each announcements as announcement}
-					<li class="announcement-card">
-						<span>
-							<p>
-								<span class="date">
-									{announcement.published.toLocaleDateString('en-us', {
-										month: 'long',
-										day: 'numeric',
-									})}
-								</span>
-								<span class="time">
-									{announcement.published.toLocaleTimeString('en-us', {
-										hour: 'numeric',
-										minute: 'numeric',
-									})}
-								</span>
+		<ul>
+			{#each announcements as announcement}
+				<li class="card">
+					<div class="date-container">
+						<span class="date">
+							<p class="month-day">
+								{announcement.published.toLocaleDateString('en-us', {
+									month: 'long',
+									day: 'numeric',
+								})}
 							</p>
-							{#if admin}
-								<form method="POST" action="?/unannounce" use:enhance>
-									<input type="hidden" name="id" value={announcement.id} />
-									<button class="deleteButton">✕</button>
-								</form>
-							{/if}
+							<span class="time">
+								{announcement.published.toLocaleTimeString('en-us', {
+									hour: 'numeric',
+									minute: 'numeric',
+								})}
+							</span>
 						</span>
-						<div class="announcement-text">
-							<SvelteMarkdown source={announcement.body} />
-						</div>
-						<!-- Corner piece -->
-						<div class="bottom-right-image">
-							<svg id="triangle" viewBox="0 0 100 100">
-								<polygon points="101 30, 101 101, 0 101" fill="#1c1c1c" />
-							</svg>
-						</div>
-					</li>
-				{/each}
-			</ul>
-		{:else}
-			<p class="no-announcements-message">There are no announcements at this time.</p>
-		{/if}
+					</div>
+
+					<div class="text">
+						<SvelteMarkdown source={announcement.body} />
+					</div>
+				</li>
+			{/each}
+		</ul>
 	</div>
 </div>
 
 <style>
-	.announcement-card {
-		background: ivory;
+	:root {
+		--spacing: 3rem;
 	}
 
-	.announcement-container {
-		padding: 20px;
-		max-width: 75rem;
-		margin: auto;
-		font-family: 'Fugaz One';
-		color: #e1563f;
-	}
-
-	.bg-img {
-		background-color: #1c1c1c;
-	}
-
-	.announcementHeader {
+	h2 {
 		text-align: center;
-		font-size: clamp(1rem, 6vw, 5rem);
-		font-weight: 400;
-		text-shadow: 0 4px 12px black;
-		margin: 0 auto;
 	}
 
-	.bottom-right-image {
-		background-size: contain;
-		background-position: center bottom;
-		background-repeat: no-repeat;
-		position: absolute;
-		bottom: 0;
-		right: 0;
-		width: 75px;
-		height: 75px;
-	}
-	.announcement-button-label {
-		color: #1d1d1c;
-		font-family: 'Fugaz One';
-	}
-	.no-announcements-message {
-		text-align: center;
-		font-size: 20px;
-		margin-top: 20px;
-		margin-bottom: 40px;
-	}
-	p {
-		/* Styles for the entire paragraph */
-		display: flex;
-		align-items: center;
-		font-size: 20px;
-		color: #e1563f;
-		margin: 0;
-		flex-grow: 1;
-	}
-
-	p span.date {
-		margin-right: 10px;
-	}
-
-	p span.time {
-		font-size: 10px;
-		opacity: 0.6;
-	}
-
-	.pad {
-		padding-top: 15px;
-	}
-
-	.announcement-text {
-		font-family: 'Fugaz One';
-		color: #1d1d1c;
-		font-weight: 400;
-		margin-top: -10px;
-	}
 	ul {
 		list-style: none;
-		padding-left: 0;
+		padding: 0;
+		margin: 0;
 	}
 
 	li {
-		display: flex;
-		justify-content: center;
-		flex-direction: column;
-		background-color: #ffffff;
-		padding: 1rem 2rem 2rem;
-		margin-bottom: 1rem;
-		margin-top: 1.5rem;
+		margin-bottom: var(--spacing);
+	}
+
+	ul li:last-child,
+	p {
+		margin: 0;
+	}
+
+	.card {
+		background-color: white;
+		border-radius: 25px / 35px;
 		position: relative;
+		padding: 1rem;
 	}
 
-	span {
+	.date-container {
+		position: absolute;
+		top: -1rem;
+		left: 1rem;
+		width: 14rem;
+		z-index: 1;
+	}
+
+	.date {
+		background-color: var(--accent-color);
+		border-radius: 15px;
 		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		color: white;
+		padding: 0.3rem 1rem;
 	}
 
-	.deleteButton {
-		display: inline;
-		height: initial;
-		background-color: transparent;
-		color: gray;
+	.month-day {
+		display: flex;
+		align-items: center;
+		white-space: nowrap;
+	}
+
+	.time {
+		font-size: small;
+		font-weight: lighter;
+		font-style: italic;
+		white-space: nowrap;
 	}
 </style>
