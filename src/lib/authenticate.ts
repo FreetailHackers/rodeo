@@ -14,7 +14,7 @@ import type { AuthRequest, UserSchema } from 'lucia';
 export async function authenticate(auth: AuthRequest, roles?: Role[]): Promise<UserSchema> {
 	const session = await auth.validate();
 	if (session === null) {
-		throw redirect(303, '/?unauthenticated');
+		throw redirect(303, 'login/?unauthenticated');
 	}
 	const user = session.user;
 	if (roles !== undefined && !hasAnyRole(user.roles, roles)) {
@@ -25,7 +25,7 @@ export async function authenticate(auth: AuthRequest, roles?: Role[]): Promise<U
 	// in the backend; this is just a convenience to prevent users
 	// from using an account with a typo'd address.
 	if (!user.verifiedEmail) {
-		throw redirect(303, '/unverified');
+		throw redirect(303, 'login/unverified');
 	}
 	return user;
 }

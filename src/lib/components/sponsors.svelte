@@ -10,36 +10,34 @@
 	export let sponsors: SponsorArray[];
 </script>
 
-<div class="main-container">
-	<img class="background-grid" src="/Grid.png" alt="Grid Background" />
-	<div class="content-container">
-		<h1>Sponsors</h1>
-		<p>
-			Our success is fueled by incredible sponsors hosting workshops, job opportunities, prizes, and
-			more.
-		</p>
+<img class="background-grid" src="/Grid.png" alt="Grid Background" />
+<div class="content-container">
+	<h1>Sponsors</h1>
+	<p>
+		Our success is fueled by incredible sponsors hosting workshops, job opportunities, prizes, and
+		more.
+	</p>
 
-		<button
-			><a href="mailto:corporate@freetailhackers.com" target="_blank" rel="noopener noreferrer"
-				>Become a sponsor</a
-			></button
-		>
-		<div class="sponsor-container">
-			{#each sponsors as sponsor}
-				<div class="format-edit-and-sponsor">
-					<div class="sponsor-card">
-						<a href={sponsor[2]?.toString()} target="_blank" rel="noopener noreferrer">
-							<img alt="SponsorImage" src={`${sponsor[3]}`} />
-						</a>
-					</div>
-					{#if user?.roles.includes('ADMIN')}
-						<div class="edit">
-							<a href="/admin/homepage/sponsors/{sponsor[0]}">Edit</a>
-						</div>
-					{/if}
+	<button
+		><a href="mailto:corporate@freetailhackers.com" target="_blank" rel="noopener noreferrer"
+			>Become a sponsor</a
+		></button
+	>
+	<div class="sponsor-container">
+		{#each sponsors as sponsor}
+			<div class="format-edit-and-sponsor">
+				<div class="sponsor-card">
+					<a href={sponsor[2]?.toString()} target="_blank" rel="noopener noreferrer">
+						<img alt="SponsorImage" src={`${sponsor[3]}`} />
+					</a>
 				</div>
-			{/each}
-		</div>
+				{#if user?.roles.includes('ADMIN')}
+					<div class="edit">
+						<a href="/admin/homepage/sponsors/{sponsor[0]}">Edit</a>
+					</div>
+				{/if}
+			</div>
+		{/each}
 	</div>
 </div>
 
@@ -48,11 +46,6 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-	}
-	.main-container {
-		position: relative;
-		background-color: #1c1c1c;
-		overflow: hidden;
 	}
 
 	button {

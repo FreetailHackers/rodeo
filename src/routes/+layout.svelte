@@ -47,7 +47,7 @@
 		<ul class="sidebar-menu">
 			<li><a href="https://hacktx.com/">HackTX</a></li>
 			{#if data.user?.roles.includes('HACKER')}
-				<li><a href="/">My Application</a></li>
+				<li><a href="/apply">My Application</a></li>
 			{/if}
 			{#if data.user?.roles.includes('ADMIN')}
 				<li><a href="/admin">Admin</a></li>
@@ -58,7 +58,9 @@
 			{#if data.user?.roles.includes('ORGANIZER') || data.user?.roles.includes('ADMIN')}
 				<li><a href="/scan">Scan</a></li>
 			{/if}
-			<li><a href="/account">My Account</a></li>
+			{#if data.user?.roles.includes('HACKER')}
+				<li><a href="/account">My Account</a></li>
+			{/if}
 			<li><a href="/settings">Settings</a></li>
 			<li>
 				<form method="POST" action="/logout">
