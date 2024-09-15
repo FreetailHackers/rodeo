@@ -149,7 +149,7 @@
 		padding: 1rem 2rem;
 		box-shadow: 4px 4px 16px 0px #00000040;
 		border-radius: 15px;
-		background: url(static/hackerid/hackerid.svg);
+		/* background: url(/hackerid.svg); */
 	}
 
 	form {
@@ -160,25 +160,6 @@
 	}
 
 	/* select, */
-	input {
-		padding: 0.5rem;
-		border-radius: 5px;
-		border: 1px solid #ccc;
-	}
-
-	select {
-		color: grey;
-		background: white;
-		padding: 0.5rem;
-		border-radius: 5px;
-		border: 1px solid #ccc;
-	}
-
-	option {
-		padding: 0.5em 1em;
-		line-height: 3;
-	}
-
 	.cancel-save {
 		display: flex;
 		justify-content: end;
