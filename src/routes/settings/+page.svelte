@@ -27,7 +27,7 @@
 						<img
 							class="close-button"
 							src="/close-button.png"
-							alt="edit-name"
+							alt="close edit name"
 							draggable="false"
 							on:click={() => (closeModal = true)}
 							on:keypress={() => (closeModal = true)}
@@ -59,7 +59,7 @@
 	<br />
 	<label for="email">Email: {data.email}</label>
 	<hr />
-	Please reset your password<a href="login/reset-password">here</a>
+	Please reset your password&nbsp;<a href="login/reset-password">here</a>
 </div>
 
 <style>
@@ -69,18 +69,6 @@
 		background-color: white;
 		min-width: 40vw;
 		max-width: 40em;
-	}
-	.modal {
-		border-radius: 1em;
-		background-color: white;
-		padding: 3% 3%;
-		user-select: none;
-	}
-	.label-and-button {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		user-select: none;
 	}
 
 	input {
@@ -103,15 +91,7 @@
 		border: 1px solid #bbbbbb;
 		padding: 1em;
 	}
-	.modal-header {
-		display: flex;
-		justify-content: space-between;
-		margin-top: unset;
-		user-select: text;
-	}
-	.close-button {
-		cursor: pointer;
-	}
+
 	hr {
 		border: none;
 		border-top: 1px solid #bbbbbb;

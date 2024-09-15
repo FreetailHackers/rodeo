@@ -2,15 +2,21 @@
 	import QRCode from 'qrcode';
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
-
+	// @ts-expect-error: The 'sv-popup' module does not have type definitions, so we are temporarily using 'any' type.
+	import { Modal, Content, Trigger } from 'sv-popup';
 	export let data;
+
 	let canvas: HTMLCanvasElement;
 
 	onMount(() => {
 		QRCode.toCanvas(canvas, data.user.id, {
-			width: 300,
+			scale: 10,
 		});
+
+		canvas.style.width = '64%';
+		canvas.style.height = 'auto';
 	});
+	let closeModal = false;
 </script>
 
 <svelte:head>
@@ -75,7 +81,46 @@
 			<hr />
 
 			<!-- Team Members -->
-			<h2>My Team: {data.team.name}</h2>
+			<h2 class="label-and-button">
+				My Team: {data.team.name}
+				<Modal button={false} close={closeModal}>
+					<Content>
+						<div class="modal">
+							<form method="POST" action="?/inviteUser">
+								<h3 class="modal-header">
+									Invite a new member
+									<img
+										class="close-button"
+										src="/close-button.png"
+										alt="close add team member"
+										draggable="false"
+										on:click={() => (closeModal = true)}
+										on:keypress={() => (closeModal = true)}
+									/>
+								</h3>
+								<input
+									type="text"
+									id="inviteEmail"
+									name="inviteEmail"
+									placeholder="Enter email"
+									required
+								/>
+								<p>*You can only invite users that have signed up on Rodeo*</p>
+								<button id="modalSubmit" type="submit">Send Invitation</button>
+							</form>
+						</div>
+					</Content>
+					<Trigger>
+						<img
+							src="/add-button.png"
+							alt="add team member"
+							draggable="false"
+							on:click={() => (closeModal = false)}
+							on:keypress={() => (closeModal = false)}
+						/>
+					</Trigger>
+				</Modal>
+			</h2>
 			{#each data.team.members as member}
 				<div class="member">
 					<div class="member-info">
@@ -95,13 +140,6 @@
 					</div>
 				{/each}
 			{/if}
-			<!-- Invitations -->
-
-			<form method="POST" action="?/inviteUser">
-				<h3>Invite a new member</h3>
-				<input type="text" id="inviteEmail" name="inviteEmail" placeholder="Enter email" required />
-				<button type="submit">Send Invitation</button>
-			</form>
 
 			<!-- Leave team -->
 			<form method="POST" action="?/leaveTeam">
@@ -115,11 +153,16 @@
 		<h2>My Hacker ID</h2>
 		<div class="id-card">
 			<canvas bind:this={canvas} id="qrcode" />
+			<img src="hacker-id/background.svg" alt="hacker id-card" />
 		</div>
 	</div>
 </div>
 
 <style>
+	/* #modalSubmit {
+		margin-bottom: 1rem;
+	} */
+
 	hr {
 		margin: 1em 0;
 	}
@@ -144,12 +187,24 @@
 		flex-direction: column;
 		align-items: center;
 	}
-
 	.id-card {
-		padding: 1rem 2rem;
+		position: relative;
 		box-shadow: 4px 4px 16px 0px #00000040;
 		border-radius: 15px;
-		background: url(hacker-id/background.svg);
+		min-width: 13rem;
+	}
+	.id-card img {
+		display: block;
+		top: 0;
+		left: 0;
+		width: 400px;
+	}
+	.id-card #qrcode {
+		position: absolute;
+		object-fit: contain;
+		margin: 18%;
+		margin-top: 23%;
+		border-radius: 10%;
 	}
 
 	form {
@@ -157,6 +212,14 @@
 		flex-direction: column;
 		gap: 1rem;
 		margin-top: 1rem;
+	}
+	.modal form {
+		margin: unset;
+	}
+	.member-info {
+		display: flex;
+		justify-content: space-between;
+		width: 100%;
 	}
 
 	/* select, */
@@ -169,7 +232,8 @@
 
 	.member {
 		display: flex;
-		justify-content: space-between;
+		/* justify-content: space-between; */
+		flex-direction: column; /*i think*/
 		position: relative;
 	}
 
@@ -190,7 +254,7 @@
 	/* Mobile Devices */
 	@media only screen and (max-width: 767px) {
 		.container {
-			flex-direction: column;
+			flex-direction: column-reverse;
 			align-items: center;
 		}
 

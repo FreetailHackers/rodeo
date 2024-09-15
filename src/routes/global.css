@@ -265,6 +265,32 @@ dialog button {
 	font-weight: normal;
 }
 
+.modal {
+	border-radius: 1em;
+	background-color: white;
+	padding: 3% 3%;
+	user-select: none;
+}
+
+.modal-header {
+	display: flex;
+	justify-content: space-between;
+	margin-top: unset;
+	user-select: text;
+}
+
+.label-and-button {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	user-select: none;
+}
+
+.close-button {
+	cursor: pointer;
+	object-fit: contain;
+}
+
 @media (max-width: 780px) {
 	.auth-content {
 		padding-top: 5rem;
