@@ -64,9 +64,43 @@
 			<li><a href="/settings">Settings</a></li>
 			<li>
 				<form method="POST" action="/logout">
-					<button class="button" type="submit">Logout</button>
+					<button type="submit">Logout</button>
 				</form>
 			</li>
+		</ul>
+	</div>
+
+	<div class="topbar">
+		<div class="topbar-header">
+			<h3>HackTX 2024</h3>
+			<img alt="hamburger_menu" src="/burger_Menu.png">
+		</div>
+		<ul class="topbar-menu">
+			Dashboard
+			<ul class="topbar-menu">
+				<li><a href="https://hacktx.com/">HackTX</a></li>
+				{#if data.user?.roles.includes('HACKER')}
+					<li><a href="/apply">My Application</a></li>
+				{/if}
+				{#if data.user?.roles.includes('ADMIN')}
+					<li><a href="/admin">Admin</a></li>
+					<li>
+						<a href="/admissions">Admissions</a>
+					</li>
+				{/if}
+				{#if data.user?.roles.includes('ORGANIZER') || data.user?.roles.includes('ADMIN')}
+					<li><a href="/scan">Scan</a></li>
+				{/if}
+				{#if data.user?.roles.includes('HACKER')}
+					<li><a href="/account">My Account</a></li>
+				{/if}
+				<li><a href="/settings">Settings</a></li>
+				<li>
+					<form method="POST" action="/logout">
+						<button type="submit">Logout</button>
+					</form>
+				</li>
+			</ul>
 		</ul>
 	</div>
 {/if}
@@ -83,10 +117,6 @@
 <Toasts />
 
 <style>
-	.sidebar-menu li form button {
-		all: unset;
-	}
-
 	.container {
 		margin-left: 16rem;
 	}
@@ -94,40 +124,90 @@
 	.sidebar {
 		width: 16rem;
 		height: 100vh;
-		background-color: #f0f0f0;
+		background-color: var(--light-grey);
 		position: fixed;
 		top: 0;
 		left: 0;
-		box-sizing: border-box;
+	}
+
+	.sidebar-menu,
+	.topbar-menu {
+		list-style: none;
+		padding: 0;
 	}
 
 	.sidebar-menu {
-		list-style: none;
 		padding: 5rem 0;
+	}
+
+	.sidebar-menu button,
+	.topbar-menu button {
+		background-color: unset;
+		text-align: left;
 	}
 
 	.sidebar-menu li a,
 	.sidebar-menu li form button {
 		text-decoration: none;
-		color: black;
-		font-size: 1em;
-		padding: 10px;
+		color: var(--black);
 		display: block;
-		width: 100%;
-		background-color: #f0f0f0;
-		transition: background-color 0.3s, font-weight 0.3s;
-		box-sizing: border-box;
 		padding: 1.5em 2em;
+		transition: all 0.3s;
 	}
 
 	.sidebar-menu li a:hover,
-	.sidebar-menu li form button:hover {
-		background-color: white;
+	.sidebar-menu li form button:hover,
+	.topbar-menu li a:hover {
+		background-color: var(--white);
 		font-weight: normal;
 	}
 
 	.sidebar-menu li a:active {
 		background-color: white;
 		font-weight: bold;
+	}
+
+	.topbar-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		background: var(--light-grey);
+		padding: 1em;
+	}
+
+	.topbar-header img {
+		height: 2em;
+	}
+
+	.topbar-header h3 {
+		margin: 0;
+	}
+
+	.topbar-menu {
+		padding: 2rem;
+	}
+
+	.topbar ul {
+		padding: 0 1em;
+	}
+
+	.topbar-menu li a,
+	.topbar-menu li form button {
+		text-decoration: none;
+		color: var(--black);
+		display: block;
+		padding: 0.5em 1em;
+		transition: all 0.3s;
+	}
+
+	@media (max-width: 780px) {
+		.sidebar {
+			display: none;
+		}
+		
+		.container {
+			margin-left: 0;
+		}
 	}
 </style>
