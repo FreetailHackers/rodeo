@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	//@ts-ignore
 	import { Modal, Content, Trigger } from 'sv-popup';
 
 	export let data;
@@ -8,13 +9,12 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Hacker ID</title>
+	<title>Rodeo | Settings</title>
 </svelte:head>
 <div class="container">
-
 	<h3>Account Info</h3>
 	<!-- Name and Email -->
-	<div class="label-and-button" >
+	<div class="label-and-button">
 		<label for="name"
 			>Name:
 			{#if data.name}{data.name}{/if}
@@ -22,10 +22,11 @@
 		<Modal button={false} close={closeModal}>
 			<Content>
 				<div class="modal">
-					<h3 class = "modal-header">Change Name  
+					<h3 class="modal-header">
+						Change Name
 						<img
-							class = "close-button"
-							src="/settings/close-button.png"
+							class="close-button"
+							src="/close-button.png"
 							alt="edit-name"
 							draggable="false"
 							on:click={() => (closeModal = true)}
@@ -46,7 +47,7 @@
 			</Content>
 			<Trigger>
 				<img
-					src="/settings/edit-button.png"
+					src="/edit-button.png"
 					alt="edit-name"
 					draggable="false"
 					on:click={() => (closeModal = false)}
@@ -58,7 +59,7 @@
 	<br />
 	<label for="email">Email: {data.email}</label>
 	<hr />
-	Please reset your password <a href="login/reset-password">here</a>
+	Please reset your password<a href="login/reset-password">here</a>
 </div>
 
 <style>
@@ -86,11 +87,10 @@
 		margin-bottom: 1em;
 	}
 	label {
-		user-select:text;
+		user-select: text;
 		display: inline-block;
 	}
 
-	/* select, */
 	input {
 		padding: 0.8rem;
 		border-radius: 8px;
@@ -109,7 +109,7 @@
 		margin-top: unset;
 		user-select: text;
 	}
-	.close-button{
+	.close-button {
 		cursor: pointer;
 	}
 	hr {
@@ -121,34 +121,6 @@
 	::placeholder {
 		color: #bbbbbb;
 	}
-
-	/* #reset-password-buttons {
-		display: flex;
-		justify-content: end;
-		gap: 1em;
-	}
-	#reset-password-buttons #reset-password-buttons-cancel {
-		background-color: white;
-		border-color: #7970ff;
-		border: 1px solid #7970ff;
-		color: #7970ff;
-	}
-
-	select {
-		appearance: none;
-		color: #bbbbbb;
-		padding: 0 1em;
-		margin-bottom: 1em;
-
-		background-image: url('/static/settings/selection-arrow.png');
-		background-repeat: no-repeat;
-		background-position: right center;
-		padding-right: 1em;
-		background-origin: content-box;
-	}
-	select option {
-		color: black;
-	} */
 
 	@media only screen and (max-width: 767px) {
 		.container {
