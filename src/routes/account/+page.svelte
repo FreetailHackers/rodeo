@@ -26,14 +26,13 @@
 <div class="container">
 	<!-- Left Section with Forms -->
 	<div class="left-section">
-		<!-- Name and Food Group -->
 		<h2>{data.name}</h2>
 		<p>Email: {data.user.email}</p>
-		<hr style="color: #EBEBEB" />
-		<p>Food Group: #1</p>
-		<p>Dietary Restrictions: None</p>
-		<hr style="color: #ccc" />
-		<!-- My Team Section -->
+		<hr />
+		<!-- <p>Food Group: #1</p>
+		<p>Dietary Restrictions: None</p> 
+				<hr />
+-->
 		{#if !data.team}
 			<form method="POST" action="?/createTeam" use:enhance>
 				<h2>Create a Team</h2>
@@ -41,11 +40,10 @@
 				<button class="user-button" type="submit">Create Team</button>
 			</form>
 		{:else}
-			<!-- Update devpost url frm -->
-			<h3>My Project</h3>
+			<h2>My Project</h2>
 
 			<form method="POST" action="?/updateDevpost" use:enhance>
-				<label for="track-select">Track:</label>
+				<!-- <label for="track-select">Track:</label>
 				<select name="track">
 					<option value="">Select one</option>
 					<hr />
@@ -60,7 +58,7 @@
 						<option value="abc">abc</option>
 						<option value="abc">abc</option>
 					</optgroup>
-				</select>
+				</select> -->
 				<label for="teamDevpost">Devpost Link:</label>
 
 				<input
@@ -104,7 +102,7 @@
 									placeholder="Enter email"
 									required
 								/>
-								<p>*You can only invite users that have signed up on Rodeo*</p>
+								<p>You can only invite users with an existing Rodeo account.</p>
 								<button id="modalSubmit" type="submit">Send Invitation</button>
 							</form>
 						</div>
@@ -130,13 +128,15 @@
 			{/each}
 			{#if data.invitations.length > 0}
 				{#each data.invitations as invite}
-					<div class="member">
-						<div class="member-info">
-							<p>name</p>
-							<p>{invite.email}</p>
+					{#if invite.status !== 'ACCEPTED'}
+						<div class="member">
+							<div class="member-info">
+								<p>{invite.name}</p>
+								<p>{invite.email}</p>
+							</div>
+							<p><b>{invite.status}</b></p>
 						</div>
-						<p><b>Pending</b></p>
-					</div>
+					{/if}
 				{/each}
 			{/if}
 
@@ -158,10 +158,6 @@
 </div>
 
 <style>
-	/* #modalSubmit {
-		margin-bottom: 1rem;
-	} */
-
 	hr {
 		margin: 1em 0;
 	}
@@ -215,11 +211,6 @@
 	.modal form {
 		margin: unset;
 	}
-	.member-info {
-		display: flex;
-		justify-content: space-between;
-		width: 100%;
-	}
 
 	/* select, */
 	.cancel-save {
@@ -231,8 +222,7 @@
 
 	.member {
 		display: flex;
-		/* justify-content: space-between; */
-		flex-direction: column; /*i think*/
+		justify-content: space-between;
 		position: relative;
 	}
 

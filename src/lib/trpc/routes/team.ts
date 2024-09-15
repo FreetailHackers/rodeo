@@ -154,11 +154,9 @@ export const teamRouter = t.router({
 
 	getTeamInvitations: t.procedure
 		.use(authenticate(['HACKER']))
-		.query(async ({ ctx }): Promise<Invitation[]> => {
-			const userId = ctx.user.id;
-
+		.query(async ({ ctx }): Promise<(Invitation & { name: string })[]> => {
 			const user = await prisma.user.findUniqueOrThrow({
-				where: { authUserId: userId },
+				where: { authUserId: ctx.user.id },
 				select: { teamId: true },
 			});
 
@@ -166,9 +164,27 @@ export const teamRouter = t.router({
 				return [];
 			}
 
-			return prisma.invitation.findMany({
+			const invitations = await prisma.invitation.findMany({
 				where: { teamId: user.teamId },
 			});
+
+			// Fetch the corresponding user names for the invitations
+			const invitationsWithNames = await Promise.all(
+				invitations.map(async (invitation) => {
+					// Find the user associated with the userId in the invitation
+					const invitedUser = await prisma.user.findUnique({
+						where: { authUserId: invitation.userId },
+						select: { name: true },
+					});
+
+					return {
+						...invitation,
+						name: invitedUser?.name || 'Hacker',
+					};
+				})
+			);
+
+			return invitationsWithNames;
 		}),
 
 	inviteUser: t.procedure

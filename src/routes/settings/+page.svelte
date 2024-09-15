@@ -12,7 +12,7 @@
 	<title>Rodeo | Settings</title>
 </svelte:head>
 <div class="container">
-	<h3>Account Info</h3>
+	<h2>Settings</h2>
 	<!-- Name and Email -->
 	<div class="label-and-button">
 		<label for="name"
@@ -22,7 +22,7 @@
 		<Modal button={false} close={closeModal}>
 			<Content>
 				<div class="modal">
-					<h3 class="modal-header">
+					<h2 class="modal-header">
 						Change Name
 						<img
 							class="close-button"
@@ -32,13 +32,19 @@
 							on:click={() => (closeModal = true)}
 							on:keypress={() => (closeModal = true)}
 						/>
-					</h3>
+					</h2>
 					<form method="POST" action="?/updateName" use:enhance>
 						<div class="user-info">
 							{#if data.name}
-								<input type="text" id="name" name="name" value={data.name} />
+								<input
+									type="text"
+									id="name"
+									name="name"
+									placeholder="Insert your name"
+									value={data.name}
+								/>
 							{:else}
-								<input type="text" id="name" name="name" />
+								<input type="text" id="name" name="name" placeholder="Insert your name" />
 							{/if}
 						</div>
 						<button type="submit">Submit</button>
