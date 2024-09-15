@@ -1,8 +1,13 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { page } from '$app/stores';
+	import { Modal, Content, Trigger } from 'sv-popup';
 
-	let hidden = true;
+	export let data;
+
+	let closeModal = false;
+	function closeModalFunction() {
+		closeModal = true;
+	}
 </script>
 
 <svelte:head>
@@ -10,63 +15,43 @@
 </svelte:head>
 <div class="container">
 	<!-- Name and Email -->
-	<div class="user-info">
-		<label class="form-heading" for="name">Name:</label>
-		<input type="text" id="name" placeholder="Enter your name" />
 
-		<label class="form-heading" for="email">Email:</label>
-		<input type="email" id="email" placeholder="Enter your email" />
-	</div>
-	<div />
-
-	<!-- Dietary Restrictions -->
-	<hr />
-	<div class="dietary-restrictions">
-		<label class="form-heading" for="dietary">Dietary Restrictions</label>
-		<select id="dietary">
-			<option value="" disabled selected>Select one</option>
-			<option value="none">None</option>
-			<option value="vegetarian">Vegetarian</option>
-			<option value="vegan">Vegan</option>
-			<option value="gluten-free">Gluten-Free</option>
-			<option value="halal">Halal</option>
-			<option value="kosher">Kosher</option>
-		</select>
-	</div>
-
-	<!-- Reset Password -->
-	<hr />
-	<h3 class="form-heading">Reset Password</h3>
-	<form method="POST" action="?/reset" use:enhance>
-		<label class="form-heading" for="password">
-			<!-- svelte-ignore a11y-invalid-attribute -->
-			Enter a new password (<a href="javascript:;" on:click={() => (hidden = !hidden)}>
-				{#if hidden}show{:else}hide{/if}</a
-			>):
+	<div class="label-and-button">
+		<label for="name"
+			>Name:
+			{#if data.name}{data.name}{/if}
 		</label>
-		<input
-			type={hidden ? 'password' : 'text'}
-			id="password"
-			name="password"
-			required
-			minlength="8"
-			placeholder="Old Password"
-		/>
-		<input
-			type={hidden ? 'password' : 'text'}
-			id="password"
-			name="password"
-			required
-			minlength="8"
-			placeholder="New Password"
-			autocomplete="new-password"
-		/>
-		<input type="hidden" name="token" value={$page.url.searchParams.get('token')} />
-		<div id="reset-password-buttons">
-			<button id="reset-password-buttons-cancel" type="reset">Cancel</button>
-			<button type="submit">Reset</button>
-		</div>
-	</form>
+		<Modal button={false} close={closeModal}>
+			<Content>
+				<button on:click={() => (closeModal = true)}>Close</button>
+				<div class="modal">
+					<h3>Change Name</h3>
+					<form method="POST" action="?/updateName" use:enhance>
+						<div class="user-info">
+							{#if data.name}
+								<input type="text" id="name" name="name" value={data.name} />
+							{:else}
+								<input type="text" id="name" name="name" />
+							{/if}
+						</div>
+						<button type="submit">Submit</button>
+					</form>
+				</div>
+			</Content>
+			<Trigger>
+				<img
+					src="src/routes/settings/edit-button.png"
+					alt="edit-name"
+					on:click={closeModalFunction}
+					on:keypress={closeModalFunction}
+				/>
+			</Trigger>
+		</Modal>
+	</div>
+	<br />
+	<label for="email">Email: {data.email}</label>
+	<hr />
+	Please reset your password<a href="login/reset-password">here</a>
 </div>
 
 <style>
@@ -77,17 +62,29 @@
 		min-width: 40vw;
 		max-width: 40em;
 	}
+	.modal {
+		border-radius: 1em;
+		background-color: white;
+		padding: 3% 3%;
+	}
+	.label-and-button {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
 
 	input {
 		margin-bottom: 1em;
 	}
 	label {
 		display: inline-block;
-		margin-bottom: 1em;
 	}
 
-	input,
-	select {
+	/* select, */
+	input {
+		padding: 0.8rem;
+		border-radius: 8px;
+		border: 1px solid #ccc;
 		font-size: 1rem;
 		width: 100%;
 
@@ -96,18 +93,20 @@
 		border: 1px solid #bbbbbb;
 		padding: 1em;
 	}
-
+	h3 {
+		margin-top: unset;
+	}
 	hr {
 		border: none;
 		border-top: 1px solid #bbbbbb;
-		margin-bottom: 1em;
+		margin: 1em;
 	}
 
 	::placeholder {
 		color: #bbbbbb;
 	}
 
-	#reset-password-buttons {
+	/* #reset-password-buttons {
 		display: flex;
 		justify-content: end;
 		gap: 1em;
@@ -133,7 +132,7 @@
 	}
 	select option {
 		color: black;
-	}
+	} */
 
 	@media only screen and (max-width: 767px) {
 		.container {
