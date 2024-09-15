@@ -5,9 +5,14 @@ export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['ADMIN']);
 	const questions = await trpc(locals.auth).questions.get();
 	const admissionRelevantQuestions = questions.filter((question) => !question.hideAdmission);
+	const user = await trpc(locals.auth).admissions.getAppliedUser();
 	return {
-		user: await trpc(locals.auth).admissions.getAppliedUser(),
+		user: user,
 		questions: admissionRelevantQuestions,
+		teamAndAdmissionStatus:
+			user !== null
+				? await trpc(locals.auth).team.getTeammatesAndAdmissionStatus(user.authUserId)
+				: [],
 	};
 };
 

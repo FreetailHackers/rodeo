@@ -59,7 +59,9 @@
 	<br />
 	<label for="email">Email: {data.email}</label>
 	<hr />
-	Please reset your password&nbsp;<a href="login/reset-password">here</a>
+	<p>
+		If you would like to reset your password, you can do so <a href="login/reset-password">here</a>.
+	</p>
 </div>
 
 <style>

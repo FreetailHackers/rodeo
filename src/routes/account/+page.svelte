@@ -72,7 +72,6 @@
 				/>
 
 				<div class="cancel-save">
-					<p>Last saved on 8/11/2024 at 1:04 PM</p>
 					<button class="user-button negative-button" type="reset">Cancel</button>
 					<button class="user-button" type="submit">Save</button>
 				</div>
