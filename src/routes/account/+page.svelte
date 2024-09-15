@@ -66,7 +66,6 @@
 				/>
 
 				<div class="cancel-save">
-					<p>Last saved on 8/11/2024 at 1:04 PM</p>
 					<button class="user-button negative-button" type="reset">Cancel</button>
 					<button class="user-button" type="submit">Save</button>
 				</div>
@@ -149,7 +148,7 @@
 		padding: 1rem 2rem;
 		box-shadow: 4px 4px 16px 0px #00000040;
 		border-radius: 15px;
-		background: url(hacker-id/background.svg);
+		/* background: url(hacker-id\background.svg); */
 	}
 
 	form {

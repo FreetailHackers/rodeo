@@ -59,7 +59,9 @@
 	<br />
 	<label for="email">Email: {data.email}</label>
 	<hr />
-	Please reset your password<a href="login/reset-password">here</a>
+	<p>
+		If you would like to reset your password, you can do so <a href="login/reset-password">here</a>.
+	</p>
 </div>
 
 <style>
@@ -68,7 +70,7 @@
 		padding: 3rem;
 		background-color: white;
 		min-width: 40vw;
-		max-width: 40em;
+		max-width: 50em;
 	}
 	.modal {
 		border-radius: 1em;
