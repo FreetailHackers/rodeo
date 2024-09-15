@@ -9,79 +9,80 @@
 	export let announcements: Announcement[];
 </script>
 
-<section id="announcements">
-	<h2>Announcements</h2>
-	{#if admin}
-		<form class="pad" method="POST" action="?/announce" use:enhance>
-			<TextEditor
-				name="announcement"
-				placeholder="Make an announcement here..."
-				isHTML={false}
-				required
-			/>
-			<button class="announcement-button-label">Announce</button>
-		</form>
-	{/if}
-	<ul>
-		{#each announcements as announcement}
-			<li class="card">
-				<span class="date">
-					<p class="month-day">
-						{announcement.published.toLocaleDateString('en-us', {
-							month: 'long',
-							day: 'numeric',
-						})}
-					</p>
-					<span class="time">
-						{announcement.published.toLocaleTimeString('en-us', {
-							hour: 'numeric',
-							minute: 'numeric',
-						})}
-					</span>
+<h1>Announcements</h1>
+{#if admin}
+	<form class="pad" method="POST" action="?/announce" use:enhance>
+		<TextEditor
+			name="announcement"
+			placeholder="Make an announcement here..."
+			isHTML={false}
+			required
+		/>
+		<button class="announcement-button-label">Announce</button>
+	</form>
+{/if}
+<ul>
+	{#each announcements as announcement}
+		<li class="card text">
+			<span class="date">
+				<p class="month-day">
+					{announcement.published.toLocaleDateString('en-us', {
+						month: 'long',
+						day: 'numeric',
+					})}
+				</p>
+				<span class="time">
+					{announcement.published.toLocaleTimeString('en-us', {
+						hour: 'numeric',
+						minute: 'numeric',
+					})}
 				</span>
+			</span>
 
-				<div class="text">
-					<SvelteMarkdown source={announcement.body} />
-				</div>
-			</li>
-		{/each}
-	</ul>
-</section>
+			<SvelteMarkdown source={announcement.body} />
+		</li>
+	{/each}
+</ul>
 
 <style>
 	:root {
 		--spacing: 3rem;
 	}
 
-	#announcements {
+	h1 {
+		text-align: center;
 	}
 
-	h2 {
-		text-align: center;
+	.pad {
+		padding: 2em 0;
 	}
 
 	ul {
 		list-style: none;
 		padding: 1em;
 		margin: 0;
-		height: 25em;
+		height: 70vh;
 		overflow-y: scroll;
 		scroll-snap-type: y mandatory;
+		mask-image: linear-gradient(to bottom, black calc(100% - 5em), transparent 100%);
 	}
 
 	li {
-		margin-bottom: var(--spacing);
+		margin-top: 2em;
 		scroll-snap-align: start;
-		scroll-margin-top: 3em;
+		scroll-margin-top: 2em;
 	}
 
-	ul li:last-child,
+	li:last-child {
+		margin-bottom: 5em;
+	}
+
 	p {
 		margin: 0;
 	}
 
 	.card {
-		background-color: var(--background-grey);
+		background-color: var(--light-grey);
 		border-radius: 50px;
 		position: relative;
 		padding: 1rem;
@@ -91,15 +92,13 @@
 		position: absolute;
 		top: -1em;
 		left: 1rem;
-		/* width: 14rem; */
-		z-index: 1;
 		background-color: var(--accent);
+		color: var(--white);
 		border-radius: 15px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		gap: 1em;
-		color: var(--white);
 		padding: 0.3rem 1rem;
 	}
 
@@ -111,8 +110,6 @@
 
 	.time {
 		font-size: small;
-		font-weight: lighter;
-		font-style: italic;
 		white-space: nowrap;
 	}
 </style>
