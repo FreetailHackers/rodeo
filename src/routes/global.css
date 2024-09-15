@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
 
 html {
@@ -5,31 +6,44 @@ html {
 }
 
 :root {
-	--font-family: 'Inter', 'Geologica', 'Helvetica Neue', 'Arial', sans-serif;
-	--font-size: 16px;
-	--highlight-color: #f2ebd9;
-	--background-color: #1c1c1c;
-	--neutral-color: #d9d9d9;
-	--primary-accent: #7970ff;
-	--secondary-color: #d8d5ff;
+	/* Fonts */
+	--font-titles: 'Monsterrat', 'Inter';
+	--font-standard: 'Inter', 'Geologica', 'Helvetica Neue', sans-serif;
+
+	/* Colors */
+	--white: #fff;
+	--black: #000;
+	--accent: #7970ff;
+	--light-accent: #d8d5ff;
+	--grey: #bbb;
+	--light-grey: #ebebeb;
+
+	/* Everything scales to root font size. */
+	font-size: 18px;
+
+	/* All standard fonts inherit these rules */
+	/* Specify new rules only for special cases */
+	font-family: var(--font-standard);
+	font-weight: 400;
 }
 
 h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-	font-family: var(--font-family);
+h3 {
+	font-family: var(--font-titles);
 	font-weight: 700;
-	color: var(--primary-accent);
-	font-style: normal;
-	text-transform: uppercase;
-	cursor: default;
 }
 
-p {
-	cursor: default;
+h1 {
+	font-size: 2.67rem; /* 48pt */
+}
+h2 {
+	font-size: 2.22rem; /* 40pt */
+}
+h3 {
+	font-size: 1.56rem; /* 28pt */
+}
+h4 {
+	font-size: 1.33rem; /* 24pt */
 }
 
 html {
@@ -40,12 +54,12 @@ html {
 *,
 *:before,
 *:after {
+	font-family: inherit;
+	font-size: inherit;
 	box-sizing: inherit;
 }
 
 body {
-	font-family: var(--font-family);
-	font-size: var(--font-size);
 	margin: 0 auto;
 	overflow-wrap: anywhere;
 }
@@ -54,24 +68,34 @@ nav {
 	margin: 1rem 0;
 }
 
+button {
+	background-color: var(--accent);
+	color: var(--white);
+	border: none;
+	padding: 0.5rem 1rem;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+button:hover {
+	background-color: var(--light-accent);
+}
+
 button,
 a.button {
-	font-family: var(--font-family);
-	height: 2.5rem;
-	font-size: var(--font-size);
-	background-color: var(--primary-accent);
+	background-color: var(--accent);
+	color: var(--white);
 	border: none;
-	border-radius: 15px;
 	padding: 0.5em 1.5em;
-	color: white;
 	text-decoration: none;
+	cursor: pointer;
 }
 
 button:not(:disabled):hover,
 a.button:not(:disabled):hover {
 	cursor: pointer;
-	background-color: var(--secondary-color);
-	color: var(--primary-accent);
+	background-color: var(--light-accent);
+	color: var(--accent);
 }
 
 button:not(:disabled):active,
@@ -85,12 +109,30 @@ a.button[disabled] {
 	cursor: not-allowed;
 }
 
+.negative-button {
+	background-color: var(--white);
+	color: var(--accent);
+	border: 1px solid var(--accent);
+}
+
+.negative-button:not(:disabled):hover {
+	background-color: var(--accent);
+	color: var(--white);
+}
+
+.user-button {
+	border-radius: 15px;
+}
+
+.admin-button {
+	/* Rule is here in case we want more differentiation */
+	border-radius: 0px;
+}
+
 input {
-	font-family: var(--font-family);
-	font-size: var(--font-size);
-	height: 2.5rem;
-	padding-left: 0.5rem;
-	border: 2px solid gray;
+	padding: 1rem;
+	border: 1px solid var(--grey);
+	border-radius: 15px;
 }
 
 input[type='checkbox'],
@@ -104,8 +146,6 @@ input[type='radio'] {
 }
 
 textarea {
-	font-family: var(--font-family);
-	font-size: var(--font-size);
 	padding: 1rem;
 	resize: vertical;
 	border: 2px solid gray;
@@ -118,12 +158,12 @@ form {
 }
 
 a {
-	color: var(--primary-accent);
+	color: var(--accent);
 }
 
 ::selection {
-	background: var(--primary-accent);
-	color: white;
+	background: var(--accent);
+	color: var(--white);
 }
 
 fieldset {
@@ -131,11 +171,8 @@ fieldset {
 }
 
 select {
-	font-family: var(--font-family);
-	font-size: var(--font-size);
-	height: 2.5rem;
-	padding-left: 0.5rem;
-	border: 2px solid gray;
+	padding: 1rem;
+	border: 1px solid var(--grey);
 	/* for some reason overflowing text causes horizontal scrolling */
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -150,9 +187,8 @@ input[type='file'] {
 	padding: 0 1rem;
 	margin-right: 1rem;
 	height: 100%;
-	font-size: var(--font-size);
 	color: white;
-	background-color: var(--primary-accent);
+	background-color: var(--accent);
 	border: none;
 }
 
@@ -284,8 +320,5 @@ img {
 }
 
 footer {
-	text-align: left;
 	padding: 1em 0;
-	font-size: 18px;
-	font-family: 'Inter';
 }

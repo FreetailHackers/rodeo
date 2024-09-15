@@ -157,7 +157,7 @@
 	}
 
 	h1 {
-		color: var(--highlight-color);
+		color: var(--white);
 		font-size: 64px;
 		font-weight: 400;
 		margin: 0;
@@ -167,14 +167,14 @@
 	}
 
 	h2 {
-		color: var(--highlight-color);
+		color: var(--white);
 		font-family: 'Fugaz One';
 		font-size: 36px;
 		text-shadow: 0 4px 8px rgb(0, 0, 0);
 	}
 
 	button {
-		background-color: var(--highlight-color);
+		background-color: var(--white);
 		color: #303030;
 		height: 2rem;
 		font-family: 'Geologica', sans-serif;
@@ -191,7 +191,7 @@
 
 	.active {
 		background-color: #303030;
-		color: var(--highlight-color);
+		color: var(--white);
 	}
 
 	p {
@@ -245,12 +245,12 @@
 	}
 
 	.currentEvent {
-		border: solid var(--primary-accent) 4px;
+		border: solid var(--accent) 4px;
 		padding-bottom: calc(1rem - 4px);
 	}
 
 	.card:hover {
-		background-color: var(--highlight-color);
+		background-color: var(--white);
 	}
 
 	.card:hover .description,
@@ -264,7 +264,7 @@
 
 	.card-text,
 	.empty-events {
-		color: var(--highlight-color);
+		color: var(--white);
 	}
 
 	.card-text:hover {
