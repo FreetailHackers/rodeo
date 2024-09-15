@@ -2,15 +2,21 @@
 	import QRCode from 'qrcode';
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
-
+	// @ts-expect-error: The 'sv-popup' module does not have type definitions, so we are temporarily using 'any' type.
+	import { Modal, Content, Trigger } from 'sv-popup';
 	export let data;
+
 	let canvas: HTMLCanvasElement;
 
 	onMount(() => {
 		QRCode.toCanvas(canvas, data.user.id, {
-			width: 300,
+			scale: 10,
 		});
+
+		canvas.style.width = '64%';
+		canvas.style.height = 'auto';
 	});
+	let closeModal = false;
 </script>
 
 <svelte:head>
@@ -19,90 +25,138 @@
 
 <div class="container">
 	<!-- Left Section with Forms -->
-	<div class="left-section">
-		<!-- Name  -->
-		<h2>{data.name}</h2>
-		<p>Email: {data.user.email}</p>
+	{#if data.user.roles.includes('HACKER')}
+		<div class="left-section">
+			<h2>{data.name}</h2>
+			<p>Email: {data.user.email}</p>
+			<hr />
+			{#if !data.team}
+				<form method="POST" action="?/createTeam" use:enhance>
+					<h2>Create a Team</h2>
+					<input type="text" id="teamName" name="teamName" placeholder="Enter Team Name" required />
+					<button class="user-button" type="submit">Create Team</button>
+				</form>
+			{:else}
+				{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.status === 'CONFIRMED')}
+					<h2>My Project</h2>
 
-		<!-- My Team Section -->
-		{#if !data.team}
-			<form method="POST" action="?/createTeam" use:enhance>
-				<h2>Create a Team</h2>
-				<input type="text" id="teamName" name="teamName" placeholder="Enter Team Name" required />
-				<button type="submit">Create Team</button>
-			</form>
-		{:else}
-			<h2>Your Team: {data.team.name}</h2>
-			<p>Team Members:</p>
-			<ul>
+					<form method="POST" action="?/updateDevpost" use:enhance>
+						<label for="teamDevpost">Devpost Link:</label>
+
+						<input
+							type="text"
+							id="devpostUrl"
+							name="devpostUrl"
+							value={data.team.devpostUrl}
+							placeholder="Paste the project link here"
+						/>
+
+						<div class="cancel-save">
+							<button class="user-button negative-button" type="reset">Cancel</button>
+							<button class="user-button" type="submit">Save</button>
+						</div>
+					</form>
+					<hr />
+				{/if}
+
+				<h2 class="label-and-button">
+					My Team: {data.team.name}
+					<Modal button={false} close={closeModal}>
+						<Content>
+							<div class="modal">
+								<form method="POST" action="?/inviteUser">
+									<h3 class="modal-header">
+										Invite a new member
+										<img
+											class="close-button"
+											src="/close-button.png"
+											alt="close add team member"
+											draggable="false"
+											on:click={() => (closeModal = true)}
+											on:keypress={() => (closeModal = true)}
+										/>
+									</h3>
+									<input
+										type="text"
+										id="inviteEmail"
+										name="inviteEmail"
+										placeholder="Enter email"
+										required
+									/>
+									<p>You can only invite users with an existing Rodeo account.</p>
+									<button id="modalSubmit" type="submit">Send Invitation</button>
+								</form>
+							</div>
+						</Content>
+						<Trigger>
+							<img
+								src="/add-button.png"
+								alt="add team member"
+								draggable="false"
+								on:click={() => (closeModal = false)}
+								on:keypress={() => (closeModal = false)}
+							/>
+						</Trigger>
+					</Modal>
+				</h2>
 				{#each data.team.members as member}
-					<li>{member.name} - {member.email}</li>
+					<div class="member">
+						<div class="member-info">
+							<p>{member.name}</p>
+							<p>{member.email}</p>
+						</div>
+					</div>
 				{/each}
-			</ul>
-
-			<!-- Update devpost url frm -->
-			<h3>My Project</h3>
-
-			<form method="POST" action="?/updateDevpost" use:enhance>
-				<label for="teamDevpost">Devpost Link:</label>
-
-				<input
-					type="text"
-					id="devpostUrl"
-					name="devpostUrl"
-					value={data.team.devpostUrl}
-					placeholder="Paste the project link here"
-				/>
-
-				<button type="submit">Save</button>
-			</form>
-
-			<!-- Invitations -->
-
-			<form method="POST" action="?/inviteUser">
-				<h3>Invite a new member</h3>
-				<input type="text" id="inviteEmail" name="inviteEmail" placeholder="Enter email" required />
-				<button type="submit">Send Invitation</button>
-			</form>
-
-			{#if data.invitations.length > 0}
-				<h4>Pending Invitations:</h4>
-				<ul>
+				{#if data.invitations.length > 0}
 					{#each data.invitations as invite}
-						<li>{invite.email}</li>
+						{#if invite.status !== 'ACCEPTED'}
+							<div class="member">
+								<div class="member-info">
+									<p>{invite.name}</p>
+									<p>{invite.email}</p>
+								</div>
+								<p><b>{invite.status}</b></p>
+							</div>
+						{/if}
 					{/each}
-				</ul>
+				{/if}
+
+				<form method="POST" action="?/leaveTeam">
+					<button type="submit">Leave Team</button>
+				</form>
 			{/if}
-
-			<!-- Leave team -->
-			<form method="POST" action="?/leaveTeam">
-				<button type="submit">Leave Team</button>
-			</form>
-		{/if}
-	</div>
-
-	<!-- Right Section with Hacker ID -->
-	<div class="right-section">
-		<h3>My Hacker ID</h3>
-		<div class="driver-div">
-			<canvas bind:this={canvas} id="qrcode" />
 		</div>
-	</div>
+	{/if}
+	{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
+		<!-- Right Section with Hacker ID -->
+		<div class="right-section">
+			<h2>My Hacker ID</h2>
+
+			<div class="id-card">
+				<canvas bind:this={canvas} id="qrcode" />
+				<img src="hacker-id/background.png" alt="hacker id-card" />
+			</div>
+		</div>
+	{/if}
 </div>
 
 <style>
+	hr {
+		margin: 1em 0;
+	}
+
 	.container {
 		display: flex;
 		justify-content: space-around;
 		flex-wrap: wrap-reverse;
 		padding: 3rem;
-		margin-left: 16rem;
 		gap: 3rem;
 	}
 
 	.left-section {
 		flex-basis: 30rem;
 		flex-shrink: 0;
+		flex-grow: 1;
 	}
 
 	.right-section {
@@ -111,12 +165,24 @@
 		flex-direction: column;
 		align-items: center;
 	}
-
-	.driver-div {
-		padding: 1rem 2rem;
+	.id-card {
+		position: relative;
 		box-shadow: 4px 4px 16px 0px #00000040;
-		border-radius: 10px;
-		margin-top: 1rem;
+		border-radius: 15px;
+		min-width: 13rem;
+	}
+	.id-card img {
+		display: block;
+		top: 0;
+		left: 0;
+		width: 400px;
+	}
+	.id-card #qrcode {
+		position: absolute;
+		object-fit: contain;
+		margin: 18%;
+		margin-top: 23%;
+		border-radius: 10%;
 	}
 
 	form {
@@ -125,31 +191,42 @@
 		gap: 1rem;
 		margin-top: 1rem;
 	}
+	.modal form {
+		margin: unset;
+	}
 
 	/* select, */
-	input {
-		padding: 0.5rem;
-		border-radius: 5px;
-		border: 1px solid #ccc;
+	.cancel-save {
+		display: flex;
+		justify-content: end;
+		align-items: center;
+		gap: 1em;
 	}
 
-	button {
-		background-color: #6c63ff;
-		color: white;
-		border: none;
-		padding: 0.5rem 1rem;
-		border-radius: 5px;
-		cursor: pointer;
+	.member {
+		display: flex;
+		justify-content: space-between;
+		position: relative;
 	}
 
-	button:hover {
-		background-color: #5548c8;
+	.member::after {
+		content: '';
+		left: 0;
+		right: 0;
+		bottom: 0;
+		height: 1px;
+		background: black;
+		position: absolute;
+	}
+
+	.member:last-child::after {
+		content: none;
 	}
 
 	/* Mobile Devices */
 	@media only screen and (max-width: 767px) {
 		.container {
-			flex-direction: column;
+			flex-direction: column-reverse;
 			align-items: center;
 		}
 
