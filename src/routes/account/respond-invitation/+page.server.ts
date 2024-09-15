@@ -1,8 +1,9 @@
-// +page.server.ts
 import { trpc } from '$lib/trpc/router';
 import { redirect } from '@sveltejs/kit';
+import { authenticate } from '$lib/authenticate';
 
-export const load = async ({ url }) => {
+export const load = async ({ locals, url }) => {
+	await authenticate(locals.auth);
 	const token = url.searchParams.get('token');
 	const teamId = url.searchParams.get('teamId');
 
