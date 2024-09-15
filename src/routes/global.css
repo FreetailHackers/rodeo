@@ -160,7 +160,8 @@ fieldset {
 select {
 	padding: 1rem;
 	border-radius: 15px;
-	border: 1px solid #ccc;
+	border: 1px solid var(--grey);
+	color: var(--grey);
 
 	appearance: none;
 
