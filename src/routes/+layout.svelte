@@ -42,7 +42,7 @@
 {#if !noLayoutRoutes.some((route) => $page.url.pathname.startsWith(route))}
 	<nav>
 		<label for="hamburgerCheckbox"
-			><h3>HackTX 2024</h3>
+			><img draggable="false" src="/auth-assets/bat.svg" alt="burger-menu" id="hamburger-logo" />
 			<img draggable="false" src="/burger_Menu.png" alt="burger-menu" id="hamburger-logo" /></label
 		>
 		<input
@@ -108,7 +108,7 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding: 1em;
+		padding: 1em 1.5em;
 	}
 
 	nav label h3 {
