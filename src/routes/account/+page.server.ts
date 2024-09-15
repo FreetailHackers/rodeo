@@ -6,7 +6,7 @@ export const load = async ({ locals }) => {
 		user: await authenticate(locals.auth),
 		team: await trpc(locals.auth).team.getUserTeam(),
 		invitations: await trpc(locals.auth).team.getTeamInvitations(),
-		name: await trpc(locals.auth).users.getName(),
+		name: (await trpc(locals.auth).users.getName()) ?? 'HACKER',
 	};
 };
 
