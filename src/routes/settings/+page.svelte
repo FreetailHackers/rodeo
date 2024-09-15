@@ -5,27 +5,33 @@
 	export let data;
 
 	let closeModal = false;
-	function closeModalFunction() {
-		closeModal = true;
-	}
 </script>
 
 <svelte:head>
 	<title>Rodeo | Hacker ID</title>
 </svelte:head>
 <div class="container">
-	<!-- Name and Email -->
 
-	<div class="label-and-button">
+	<h3>Account Info</h3>
+	<!-- Name and Email -->
+	<div class="label-and-button" >
 		<label for="name"
 			>Name:
 			{#if data.name}{data.name}{/if}
 		</label>
 		<Modal button={false} close={closeModal}>
 			<Content>
-				<button on:click={() => (closeModal = true)}>Close</button>
 				<div class="modal">
-					<h3>Change Name</h3>
+					<h3 class = "modal-header">Change Name  
+						<img
+							class = "close-button"
+							src="/settings/close-button.png"
+							alt="edit-name"
+							draggable="false"
+							on:click={() => (closeModal = true)}
+							on:keypress={() => (closeModal = true)}
+						/>
+					</h3>
 					<form method="POST" action="?/updateName" use:enhance>
 						<div class="user-info">
 							{#if data.name}
@@ -40,10 +46,11 @@
 			</Content>
 			<Trigger>
 				<img
-					src="src/routes/settings/edit-button.png"
+					src="/settings/edit-button.png"
 					alt="edit-name"
-					on:click={closeModalFunction}
-					on:keypress={closeModalFunction}
+					draggable="false"
+					on:click={() => (closeModal = false)}
+					on:keypress={() => (closeModal = false)}
 				/>
 			</Trigger>
 		</Modal>
@@ -51,7 +58,7 @@
 	<br />
 	<label for="email">Email: {data.email}</label>
 	<hr />
-	Please reset your password<a href="login/reset-password">here</a>
+	Please reset your password <a href="login/reset-password">here</a>
 </div>
 
 <style>
@@ -66,17 +73,20 @@
 		border-radius: 1em;
 		background-color: white;
 		padding: 3% 3%;
+		user-select: none;
 	}
 	.label-and-button {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		user-select: none;
 	}
 
 	input {
 		margin-bottom: 1em;
 	}
 	label {
+		user-select:text;
 		display: inline-block;
 	}
 
@@ -93,13 +103,19 @@
 		border: 1px solid #bbbbbb;
 		padding: 1em;
 	}
-	h3 {
+	.modal-header {
+		display: flex;
+		justify-content: space-between;
 		margin-top: unset;
+		user-select: text;
+	}
+	.close-button{
+		cursor: pointer;
 	}
 	hr {
 		border: none;
 		border-top: 1px solid #bbbbbb;
-		margin: 1em;
+		margin: 1em 0em;
 	}
 
 	::placeholder {
