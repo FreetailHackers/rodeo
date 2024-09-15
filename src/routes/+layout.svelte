@@ -100,7 +100,7 @@
 		position: fixed;
 		top: 0;
 		margin: 0;
-		background-color: var(--light-grey);
+		background-color: var(--background-grey);
 		z-index: 10;
 	}
 

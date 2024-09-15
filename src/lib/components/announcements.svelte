@@ -9,52 +9,54 @@
 	export let announcements: Announcement[];
 </script>
 
-<div class="background">
-	<div class="home-content">
-		<h2>Announcements</h2>
-		{#if admin}
-			<form class="pad" method="POST" action="?/announce" use:enhance>
-				<TextEditor
-					name="announcement"
-					placeholder="Make an announcement here..."
-					isHTML={false}
-					required
-				/>
-				<button class="announcement-button-label">Announce</button>
-			</form>
-		{/if}
-		<ul>
-			{#each announcements as announcement}
-				<li class="card">
-					<div class="date-container">
-						<span class="date">
-							<p class="month-day">
-								{announcement.published.toLocaleDateString('en-us', {
-									month: 'long',
-									day: 'numeric',
-								})}
-							</p>
-							<span class="time">
-								{announcement.published.toLocaleTimeString('en-us', {
-									hour: 'numeric',
-									minute: 'numeric',
-								})}
-							</span>
+<section id="announcements">
+	<h2>Announcements</h2>
+	{#if admin}
+		<form class="pad" method="POST" action="?/announce" use:enhance>
+			<TextEditor
+				name="announcement"
+				placeholder="Make an announcement here..."
+				isHTML={false}
+				required
+			/>
+			<button class="announcement-button-label">Announce</button>
+		</form>
+	{/if}
+	<ul>
+		{#each announcements as announcement}
+			<li class="card">
+				<div class="date-container">
+					<span class="date">
+						<p class="month-day">
+							{announcement.published.toLocaleDateString('en-us', {
+								month: 'long',
+								day: 'numeric',
+							})}
+						</p>
+						<span class="time">
+							{announcement.published.toLocaleTimeString('en-us', {
+								hour: 'numeric',
+								minute: 'numeric',
+							})}
 						</span>
-					</div>
+					</span>
+				</div>
 
-					<div class="text">
-						<SvelteMarkdown source={announcement.body} />
-					</div>
-				</li>
-			{/each}
-		</ul>
-	</div>
-</div>
+				<div class="text">
+					<SvelteMarkdown source={announcement.body} />
+				</div>
+			</li>
+		{/each}
+	</ul>
+</section>
 
 <style>
 	:root {
 		--spacing: 3rem;
+	}
+
+	#announcements {
+		background: var(--background-grey);
 	}
 
 	h2 {
@@ -92,12 +94,12 @@
 	}
 
 	.date {
-		background-color: var(--accent-color);
+		background-color: var(--accent);
 		border-radius: 15px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		color: white;
+		color: var(--white);
 		padding: 0.3rem 1rem;
 	}
 
