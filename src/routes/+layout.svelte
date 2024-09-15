@@ -178,8 +178,8 @@
 			max-height: 100vh;
 		}
 
-		nav menu li a,
-		nav menu li form button {
+		nav a,
+		nav form button {
 			padding: 0.5em 2em;
 		}
 	}
