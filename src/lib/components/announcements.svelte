@@ -9,95 +9,96 @@
 	export let announcements: Announcement[];
 </script>
 
-<div class="background">
-	<div class="home-content">
-		<h2>Announcements</h2>
-		{#if admin}
-			<form class="pad" method="POST" action="?/announce" use:enhance>
-				<TextEditor
-					name="announcement"
-					placeholder="Make an announcement here..."
-					isHTML={false}
-					required
-				/>
-				<button class="announcement-button-label">Announce</button>
-			</form>
-		{/if}
-		<ul>
-			{#each announcements as announcement}
-				<li class="card">
-					<div class="date-container">
-						<span class="date">
-							<p class="month-day">
-								{announcement.published.toLocaleDateString('en-us', {
-									month: 'long',
-									day: 'numeric',
-								})}
-							</p>
-							<span class="time">
-								{announcement.published.toLocaleTimeString('en-us', {
-									hour: 'numeric',
-									minute: 'numeric',
-								})}
-							</span>
-						</span>
-					</div>
+<h1>Announcements</h1>
+{#if admin}
+	<form class="pad" method="POST" action="?/announce" use:enhance>
+		<TextEditor
+			name="announcement"
+			placeholder="Make an announcement here..."
+			isHTML={false}
+			required
+		/>
+		<button class="announcement-button-label">Announce</button>
+	</form>
+{/if}
+<ul>
+	{#each announcements as announcement}
+		<li class="card text">
+			<span class="date">
+				<p class="month-day">
+					{announcement.published.toLocaleDateString('en-us', {
+						month: 'long',
+						day: 'numeric',
+					})}
+				</p>
+				<span class="time">
+					{announcement.published.toLocaleTimeString('en-us', {
+						hour: 'numeric',
+						minute: 'numeric',
+					})}
+				</span>
+			</span>
 
-					<div class="text">
-						<SvelteMarkdown source={announcement.body} />
-					</div>
-				</li>
-			{/each}
-		</ul>
-	</div>
-</div>
+			<SvelteMarkdown source={announcement.body} />
+		</li>
+	{/each}
+</ul>
 
 <style>
 	:root {
 		--spacing: 3rem;
 	}
 
-	h2 {
+	h1 {
 		text-align: center;
+	}
+
+	.pad {
+		padding: 2em 0;
 	}
 
 	ul {
 		list-style: none;
-		padding: 0;
+		padding: 1em;
 		margin: 0;
+		height: 70vh;
+		overflow-y: scroll;
+		scroll-snap-type: y mandatory;
+		mask-image: linear-gradient(to bottom, black calc(100% - 5em), transparent 100%);
 	}
 
 	li {
-		margin-bottom: var(--spacing);
+		margin-top: 2em;
+		scroll-snap-align: start;
+		scroll-margin-top: 2em;
 	}
 
-	ul li:last-child,
+	li:last-child {
+		margin-bottom: 5em;
+	}
+
 	p {
 		margin: 0;
 	}
 
 	.card {
-		background-color: white;
-		border-radius: 25px / 35px;
+		background-color: var(--light-grey);
+		border-radius: 50px;
 		position: relative;
 		padding: 1rem;
 	}
 
-	.date-container {
-		position: absolute;
-		top: -1rem;
-		left: 1rem;
-		width: 14rem;
-		z-index: 1;
-	}
-
 	.date {
-		background-color: var(--accent-color);
+		position: absolute;
+		top: -1em;
+		left: 1rem;
+		background-color: var(--accent);
+		color: var(--white);
 		border-radius: 15px;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		color: white;
+		gap: 1em;
 		padding: 0.3rem 1rem;
 	}
 
@@ -109,8 +110,6 @@
 
 	.time {
 		font-size: small;
-		font-weight: lighter;
-		font-style: italic;
 		white-space: nowrap;
 	}
 </style>

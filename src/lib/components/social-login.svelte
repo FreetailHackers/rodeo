@@ -33,7 +33,7 @@
 	}
 
 	img {
-		height: 100%;
+		height: 1.5em;
 		vertical-align: middle;
 		padding-right: 0.25rem;
 	}
