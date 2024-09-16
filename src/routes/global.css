@@ -31,11 +31,15 @@ html {
 h1,
 h3 {
 	font-family: var(--font-titles);
-	font-weight: 700;
+	color: var(--accent);
 }
 
 h1 {
 	font-size: 2.67rem; /* 48pt */
+	font-weight: 800;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	margin: 1rem;
 }
 h2 {
 	font-size: 2.22rem; /* 40pt */
@@ -220,10 +224,10 @@ blockquote {
 }
 
 dialog {
-	min-width: 20rem;
-	max-width: 40rem;
-	padding: 0 1rem;
-	box-shadow: 0.5rem 0.5rem 1rem rgba(0, 0, 0, 1);
+	border: none;
+	padding: 1rem 2rem;
+	border-radius: 1rem;
+	box-shadow: 0.5rem 0.5rem 1rem rgba(0, 0, 0, 0.5);
 }
 
 dialog div {
@@ -233,8 +237,8 @@ dialog div {
 }
 
 dialog button {
-	padding: 0 1rem;
-	margin-bottom: 1rem;
+	border-radius: 15px;
+	margin: 1rem;
 }
 
 .main-content {
@@ -284,6 +288,41 @@ dialog button {
 
 .auth-content .button-wrapper {
 	text-align: center;
+}
+
+.form-heading {
+	text-transform: unset;
+	color: black;
+	font-weight: normal;
+}
+
+.modal {
+	border-radius: 1em;
+	background-color: white;
+	padding: 2rem;
+	user-select: none;
+}
+
+.modal-header {
+	display: flex;
+	justify-content: space-between;
+	margin-top: unset;
+	user-select: text;
+}
+
+.label-and-button {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	user-select: none;
+}
+
+.close-button {
+	position: absolute;
+	top: 1em;
+	right: 1em;
+	cursor: pointer;
+	object-fit: contain;
 }
 
 @media (max-width: 780px) {

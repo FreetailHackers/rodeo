@@ -20,12 +20,12 @@
 	let hamburgerCheckbox: HTMLInputElement;
 
 	onMount(() => {
-		for (const link of menu.childNodes) {
-			link.addEventListener('click', () => {
-				// Close the menu when a link is clicked on mobile
-				hamburgerCheckbox.checked = false;
-			});
-		}
+		// for (const link of menu.childNodes) {
+		// 	link.addEventListener('click', () => {
+		// 		// Close the menu when a link is clicked on mobile
+		// 		hamburgerCheckbox.checked = false;
+		// 	});
+		// }
 	});
 
 	const noLayoutRoutes = ['/login', '/register']; // Routes that shouldn't have layout
@@ -65,9 +65,7 @@
 			{#if data.user?.roles.includes('ORGANIZER') || data.user?.roles.includes('ADMIN')}
 				<li><a href="/scan">Scan</a></li>
 			{/if}
-			{#if data.user?.roles.includes('HACKER')}
-				<li><a href="/account">My Account</a></li>
-			{/if}
+			<li><a href="/account">My Account</a></li>
 			<li><a href="/settings">Settings</a></li>
 			<li>
 				<form method="POST" action="/logout">
