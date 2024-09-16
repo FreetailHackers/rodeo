@@ -2,6 +2,7 @@ import { trpc } from '$lib/trpc/router';
 import { authenticate } from '$lib/authenticate';
 
 export const load = async ({ locals }) => {
+	await authenticate(locals.auth);
 	return {
 		name: await trpc(locals.auth).users.getName(),
 		email: (await authenticate(locals.auth))?.email,
