@@ -6,8 +6,8 @@
 	import './global.css';
 	import { fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
-	// import Loader from '$lib/components/loader.svelte';
-	// import { beforeNavigate, afterNavigate } from '$app/navigation';
+	import Loader from '$lib/components/loader.svelte';
+	import { beforeNavigate, afterNavigate } from '$app/navigation';
 
 	export let data;
 
@@ -18,6 +18,9 @@
 
 	let menu: HTMLMenuElement;
 	let hamburgerCheckbox: HTMLInputElement;
+	let isLoading = false;
+	beforeNavigate(() => (isLoading = true));
+	afterNavigate(() => (isLoading = false));
 
 	onMount(() => {
 		for (const link of menu.childNodes) {
@@ -55,25 +58,51 @@
 			<li><a href="https://hacktx.com/">Homepage</a></li>
 			<li><a href="/">Announcements</a></li>
 			{#if data.user?.roles.includes('HACKER')}
-				<li><a href="/apply">My Application</a></li>
-			{/if}
-			{#if data.user?.roles.includes('ADMIN')}
-				<li><a href="/admin">Master Dashboard</a></li>
 				<li>
-					<a href="/admissions">Admissions</a>
+					<a href="/apply" class:active={$page.url.pathname.startsWith('/apply')}> Application</a>
 				</li>
 			{/if}
-			{#if data.user?.roles.includes('ORGANIZER') || data.user?.roles.includes('ADMIN')}
-				<li><a href="/scan">Scan</a></li>
+			{#if data.user?.roles.includes('ADMIN') || data.user?.roles.includes('SPONSOR')}
+				<li>
+					<!-- HACK: Tell SvelteKit to force refresh on /users since
+				IDK how to reset the filters on the users page otherwise -->
+					<a
+						href="/users"
+						class:active={$page.url.pathname.startsWith('/users')}
+						data-sveltekit-reload>Users</a
+					>
+				</li>
+				{#if data.user?.roles.includes('ADMIN')}
+					<li><a href="/admin" class:active={$page.url.pathname.startsWith('/admin')}>Admin</a></li>
+					<li>
+						<a href="/admissions" class:active={$page.url.pathname.startsWith('/admissions')}
+							>Admissions</a
+						>
+					</li>
+				{/if}
 			{/if}
-			<li><a href="/account">My Account</a></li>
-			<li><a href="/settings">Settings</a></li>
+
+			{#if data.user?.roles.includes('ORGANIZER') || data.user?.roles.includes('ADMIN')}
+				<li><a href="/scan" class:active={$page.url.pathname.startsWith('/scan')}>Scan</a></li>
+			{/if}
+			<li>
+				<a href="/account" class:active={$page.url.pathname.startsWith('/account')}> Account</a>
+			</li>
+			<li>
+				<a href="/settings" class:active={$page.url.pathname.startsWith('/settings')}>Settings</a>
+			</li>
 			<li>
 				<form method="POST" action="/logout">
 					<button type="submit">Logout</button>
 				</form>
 			</li></menu
 		>
+
+		{#if isLoading}
+			<div class="overlay">
+				<Loader />
+			</div>
+		{/if}
 	</div>
 {/if}
 
