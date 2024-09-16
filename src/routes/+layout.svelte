@@ -101,12 +101,6 @@
 				</form>
 			</li></menu
 		>
-
-		{#if isLoading}
-			<div class="overlay">
-				<Loader />
-			</div>
-		{/if}
 	</div>
 {/if}
 
@@ -120,6 +114,12 @@
 {/key}
 <!-- No layout for /login or /register and their children -->
 <Toasts />
+
+{#if isLoading}
+	<div class="overlay">
+		<Loader />
+	</div>
+{/if}
 
 <style>
 	.container {
