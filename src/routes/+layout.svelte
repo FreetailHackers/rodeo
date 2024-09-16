@@ -20,12 +20,12 @@
 	let hamburgerCheckbox: HTMLInputElement;
 
 	onMount(() => {
-		// for (const link of menu.childNodes) {
-		// 	link.addEventListener('click', () => {
-		// 		// Close the menu when a link is clicked on mobile
-		// 		hamburgerCheckbox.checked = false;
-		// 	});
-		// }
+		for (const link of menu.childNodes) {
+			link.addEventListener('click', () => {
+				// Close the menu when a link is clicked on mobile
+				hamburgerCheckbox.checked = false;
+			});
+		}
 	});
 
 	const noLayoutRoutes = ['/login', '/register']; // Routes that shouldn't have layout
@@ -53,6 +53,7 @@
 		/>
 		<menu id="menu" bind:this={menu}>
 			<li><a href="https://hacktx.com/">Homepage</a></li>
+			<li><a href="/">Announcements</a></li>
 			{#if data.user?.roles.includes('HACKER')}
 				<li><a href="/apply">My Application</a></li>
 			{/if}
