@@ -22,16 +22,20 @@
 	beforeNavigate(() => (isLoading = true));
 	afterNavigate(() => (isLoading = false));
 
+	const noLayoutRoutes = ['/login', '/register']; // Routes that shouldn't have layout
+
 	onMount(() => {
-		for (const link of menu.childNodes) {
-			link.addEventListener('click', () => {
-				// Close the menu when a link is clicked on mobile
-				hamburgerCheckbox.checked = false;
-			});
+		if (menu && menu.childNodes) {
+			for (const link of menu.childNodes) {
+				if (link) {
+					link.addEventListener('click', () => {
+						// Close the menu when a link is clicked on mobile
+						hamburgerCheckbox.checked = false;
+					});
+				}
+			}
 		}
 	});
-
-	const noLayoutRoutes = ['/login', '/register']; // Routes that shouldn't have layout
 </script>
 
 {#if data.user?.roles.includes('ADMIN') || data.user?.roles.includes('SPONSOR')}
