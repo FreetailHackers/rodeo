@@ -16,19 +16,16 @@
 		toasts.notify($page.form);
 	}
 
-	// let menu: HTMLMenuElement;
-	// let hamburgerCheckbox: HTMLInputElement;
-	// let isLoading = false;
-	// beforeNavigate(() => (isLoading = true));
-	// afterNavigate(() => (isLoading = false));
+	let menu: HTMLMenuElement;
+	let hamburgerCheckbox: HTMLInputElement;
 
 	onMount(() => {
-		// for (const link of menu.childNodes) {
-		// 	link.addEventListener('click', () => {
-		// 		// Close the menu when a link is clicked on mobile
-		// 		hamburgerCheckbox.checked = false;
-		// 	});
-		// }
+		for (const link of menu.childNodes) {
+			link.addEventListener('click', () => {
+				// Close the menu when a link is clicked on mobile
+				hamburgerCheckbox.checked = false;
+			});
+		}
 	});
 
 	const noLayoutRoutes = ['/login', '/register']; // Routes that shouldn't have layout
@@ -43,14 +40,25 @@
 {/if}
 
 {#if !noLayoutRoutes.some((route) => $page.url.pathname.startsWith(route))}
-	<div class="sidebar">
-		<ul class="sidebar-menu">
-			<li><a href="https://hacktx.com/">HackTX</a></li>
+	<div class="navbar">
+		<label for="hamburgerCheckbox"
+			><img draggable="false" src="/auth-assets/bat.svg" alt="burger-menu" id="hamburger-logo" />
+			<img draggable="false" src="/burger_Menu.png" alt="burger-menu" id="hamburger-logo" /></label
+		>
+		<input
+			type="checkbox"
+			id="hamburgerCheckbox"
+			bind:this={hamburgerCheckbox}
+			style="display: none"
+		/>
+		<menu id="menu" bind:this={menu}>
+			<li><a href="https://hacktx.com/">Homepage</a></li>
+			<li><a href="/">Announcements</a></li>
 			{#if data.user?.roles.includes('HACKER')}
 				<li><a href="/apply">My Application</a></li>
 			{/if}
 			{#if data.user?.roles.includes('ADMIN')}
-				<li><a href="/admin">Admin</a></li>
+				<li><a href="/admin">Master Dashboard</a></li>
 				<li>
 					<a href="/admissions">Admissions</a>
 				</li>
@@ -62,10 +70,10 @@
 			<li><a href="/settings">Settings</a></li>
 			<li>
 				<form method="POST" action="/logout">
-					<button class="button" type="submit">Logout</button>
+					<button type="submit">Logout</button>
 				</form>
-			</li>
-		</ul>
+			</li></menu
+		>
 	</div>
 {/if}
 
@@ -81,51 +89,93 @@
 <Toasts />
 
 <style>
-	.sidebar-menu li form button {
-		all: unset;
-	}
-
 	.container {
 		margin-left: 16rem;
 	}
 
-	.sidebar {
+	.navbar {
 		width: 16rem;
 		height: 100vh;
-		background-color: #f0f0f0;
 		position: fixed;
 		top: 0;
-		left: 0;
-		box-sizing: border-box;
+		margin: 0;
+		background-color: var(--background-grey);
+		z-index: 10;
 	}
 
-	.sidebar-menu {
+	.navbar label {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1em 1.5em;
+	}
+
+	#hamburger-logo {
+		display: none;
+	}
+
+	.navbar menu {
 		list-style: none;
-		padding: 5rem 0;
+		padding: 0;
+		margin: 0;
+		overflow: clip;
+		transition: max-height 0.4s ease-in-out;
 	}
 
-	.sidebar-menu li a,
-	.sidebar-menu li form button {
+	.navbar a,
+	.navbar form button {
 		text-decoration: none;
-		color: black;
-		font-size: 1em;
-		padding: 10px;
+		color: var(--black);
 		display: block;
-		width: 100%;
-		background-color: #f0f0f0;
-		transition: background-color 0.3s, font-weight 0.3s;
-		box-sizing: border-box;
 		padding: 1.5em 2em;
+		background-color: unset;
+		text-align: left;
+		transition: all 0.2s;
 	}
 
-	.sidebar-menu li a:hover,
-	.sidebar-menu li form button:hover {
-		background-color: white;
+	.navbar a:hover,
+	.navbar form button:hover {
+		background-color: var(--white);
 		font-weight: normal;
 	}
 
-	.sidebar-menu li a:active {
-		background-color: white;
+	.navbar a:active {
+		background-color: var(--white);
 		font-weight: bold;
+	}
+
+	@media (max-width: 780px) {
+		.container {
+			margin-top: 5em;
+			margin-left: 0;
+		}
+
+		.navbar {
+			width: 100vw;
+			height: unset;
+		}
+
+		#hamburger-logo {
+			height: 2rem;
+			width: 2rem;
+			display: block;
+			user-select: none;
+			filter: brightness(0);
+		}
+
+		/* Close hamburger menu */
+		menu {
+			max-height: 0;
+		}
+
+		/* Opens hamburger menu when clicked */
+		#hamburgerCheckbox:checked + menu {
+			max-height: 100vh;
+		}
+
+		.navbar a,
+		.navbar form button {
+			padding: 0.5em 2em;
+		}
 	}
 </style>
