@@ -40,7 +40,7 @@
 {/if}
 
 {#if !noLayoutRoutes.some((route) => $page.url.pathname.startsWith(route))}
-	<nav>
+	<div class="navbar">
 		<label for="hamburgerCheckbox"
 			><img draggable="false" src="/auth-assets/bat.svg" alt="burger-menu" id="hamburger-logo" />
 			<img draggable="false" src="/burger_Menu.png" alt="burger-menu" id="hamburger-logo" /></label
@@ -74,7 +74,7 @@
 				</form>
 			</li></menu
 		>
-	</nav>
+	</div>
 {/if}
 
 {#key $page.url.pathname}
@@ -93,7 +93,7 @@
 		margin-left: 16rem;
 	}
 
-	nav {
+	.navbar {
 		width: 16rem;
 		height: 100vh;
 		position: fixed;
@@ -103,7 +103,7 @@
 		z-index: 10;
 	}
 
-	nav label {
+	.navbar label {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -114,7 +114,7 @@
 		display: none;
 	}
 
-	nav menu {
+	.navbar menu {
 		list-style: none;
 		padding: 0;
 		margin: 0;
@@ -122,8 +122,8 @@
 		transition: max-height 0.4s ease-in-out;
 	}
 
-	nav a,
-	nav form button {
+	.navbar a,
+	.navbar form button {
 		text-decoration: none;
 		color: var(--black);
 		display: block;
@@ -133,13 +133,13 @@
 		transition: all 0.2s;
 	}
 
-	nav a:hover,
-	nav form button:hover {
+	.navbar a:hover,
+	.navbar form button:hover {
 		background-color: var(--white);
 		font-weight: normal;
 	}
 
-	nav a:active {
+	.navbar a:active {
 		background-color: var(--white);
 		font-weight: bold;
 	}
@@ -150,7 +150,7 @@
 			margin-left: 0;
 		}
 
-		nav {
+		.navbar {
 			width: 100vw;
 			height: unset;
 		}
@@ -173,8 +173,8 @@
 			max-height: 100vh;
 		}
 
-		nav a,
-		nav form button {
+		.navbar a,
+		.navbar form button {
 			padding: 0.5em 2em;
 		}
 	}
