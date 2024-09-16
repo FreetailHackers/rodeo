@@ -15,13 +15,14 @@
 	<h2>Settings</h2>
 	<!-- Name and Email -->
 	<div class="label-and-button">
-		<label for="name">
-			Name:
-			{#if data.name}
-				{data.name}
-			{:else}
-				You have not set a name yet.
-			{/if}
+		<label for="name"
+			><b>
+				{#if data.name}
+					{data.name}
+				{:else}
+					You have not set a name yet.
+				{/if}</b
+			>
 		</label>
 		<Modal button={false} close={closeModal}>
 			<Content>
@@ -49,12 +50,13 @@
 								<input type="text" id="name" name="name" placeholder="Insert your name" />
 							{/if}
 						</div>
-						<button type="submit">Submit</button>
+						<button class="user-button" type="submit">Submit</button>
 					</form>
 				</div>
 			</Content>
 			<Trigger>
 				<img
+					id="edit-button"
 					src="/edit-button.png"
 					alt="edit-name"
 					draggable="false"
@@ -64,8 +66,7 @@
 			</Trigger>
 		</Modal>
 	</div>
-	<br />
-	<label for="email">Email: {data.email}</label>
+	<label for="email">{data.email}</label>
 	<hr />
 	<p>
 		If you would like to reset your password, you can do so <a href="login/reset-password">here</a>.
@@ -74,42 +75,13 @@
 
 <style>
 	.container {
-		margin-left: 3%;
 		padding: 3rem;
-		background-color: white;
-		min-width: 40vw;
-		max-width: 40em;
+		max-width: 50em;
 	}
 
 	input {
-		margin-bottom: 1em;
-	}
-	label {
-		user-select: text;
-		display: inline-block;
-	}
-
-	input {
-		padding: 0.8rem;
-		border-radius: 8px;
-		border: 1px solid #ccc;
-		font-size: 1rem;
 		width: 100%;
-
-		height: 3em;
-		border-radius: 15px;
-		border: 1px solid #bbbbbb;
-		padding: 1em;
-	}
-
-	hr {
-		border: none;
-		border-top: 1px solid #bbbbbb;
-		margin: 1em 0em;
-	}
-
-	::placeholder {
-		color: #bbbbbb;
+		margin-bottom: 1em;
 	}
 
 	@media only screen and (max-width: 767px) {
@@ -118,8 +90,8 @@
 			box-shadow: none;
 		}
 
-		button {
-			width: 100%;
+		#edit-button {
+			margin-right: 1em;
 		}
 	}
 </style>

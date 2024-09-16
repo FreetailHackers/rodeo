@@ -34,18 +34,18 @@
 	<!-- Left Section with Forms -->
 	{#if data.user.roles.includes('HACKER')}
 		<div class="left-section">
-			<h2>{data.name}</h2>
-			<p>Email: {data.user.email}</p>
+			<h3>{data.name}</h3>
+			<p>{data.user.email}</p>
 			<hr />
 			{#if !data.team}
 				<form method="POST" action="?/createTeam" use:enhance>
-					<h2>Create a Team</h2>
+					<h3>Create a Team</h3>
 					<input type="text" id="teamName" name="teamName" placeholder="Enter Team Name" required />
 					<button class="user-button" type="submit">Create Team</button>
 				</form>
 			{:else}
 				{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.status === 'CONFIRMED')}
-					<h2>My Project</h2>
+					<h3>My Project</h3>
 
 					<form method="POST" action="?/updateDevpost" use:enhance>
 						<label for="teamDevpost">Devpost Link:</label>
@@ -66,7 +66,7 @@
 					<hr />
 				{/if}
 
-				<h2 class="label-and-button">
+				<h3 class="label-and-button">
 					My Team: {data.team.name}
 					<Modal button={false} close={closeModal}>
 						<Content>
@@ -94,7 +94,8 @@
 										You can only invite users who have a Rodeo account and are not already part of a
 										team.
 									</p>
-									<button id="modalSubmit" type="submit">Send Invitation</button>
+									<button id="modalSubmit" class="user-button" type="submit">Send Invitation</button
+									>
 								</form>
 							</div>
 						</Content>
@@ -108,7 +109,7 @@
 							/>
 						</Trigger>
 					</Modal>
-				</h2>
+				</h3>
 				{#each data.team.members as member}
 					<div class="member">
 						<div class="member-info">
@@ -132,7 +133,7 @@
 				{/if}
 
 				<form method="POST" action="?/leaveTeam">
-					<button type="submit">Leave Team</button>
+					<button class="user-button" type="submit">Leave Team</button>
 				</form>
 			{/if}
 		</div>
@@ -151,8 +152,8 @@
 </div>
 
 <style>
-	hr {
-		margin: 1em 0;
+	h3 {
+		margin-bottom: 0.5em;
 	}
 
 	.container {
@@ -163,8 +164,12 @@
 		gap: 3rem;
 	}
 
+	.container:only-child {
+		max-width: 50em;
+	}
+
 	.left-section {
-		flex-basis: 30rem;
+		/* flex-basis: 30rem; */
 		flex-shrink: 0;
 		flex-grow: 1;
 	}
@@ -178,7 +183,7 @@
 	.id-card {
 		position: relative;
 		box-shadow: 4px 4px 16px 0px #00000040;
-		border-radius: 15px;
+		border-radius: var(--border-radius);
 		min-width: 13rem;
 	}
 	.id-card img {
@@ -225,12 +230,8 @@
 		right: 0;
 		bottom: 0;
 		height: 1px;
-		background: black;
+		background: var(--grey);
 		position: absolute;
-	}
-
-	.member:last-child::after {
-		content: none;
 	}
 
 	/* Mobile Devices */

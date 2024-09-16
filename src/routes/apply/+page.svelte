@@ -232,7 +232,7 @@
 
 				<div id="actions-container">
 					<div id="actions">
-						<button bind:this={saveButton}>Save and finish later</button>
+						<button class="negative-button" bind:this={saveButton}>Save and finish later</button>
 						<button
 							formaction="?/finish"
 							on:click={() => {
@@ -289,8 +289,8 @@
 	}
 
 	#status {
-		border: 2px solid black;
-		padding: 0 1rem;
+		border: 2px solid var(--grey);
+		padding: 1rem;
 		text-align: center;
 		margin-bottom: 1rem;
 	}

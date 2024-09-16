@@ -94,7 +94,7 @@
 		left: 1rem;
 		background-color: var(--accent);
 		color: var(--white);
-		border-radius: 15px;
+		border-radius: var(--border-radius);
 		display: flex;
 		align-items: center;
 		justify-content: space-between;

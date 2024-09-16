@@ -19,6 +19,8 @@ html {
 	--light-grey: #ebebeb;
 	--background-grey: #d9d9d9;
 
+	--border-radius: 15px;
+
 	/* Everything scales to root font size. */
 	font-size: 18px;
 
@@ -26,6 +28,10 @@ html {
 	/* Specify new rules only for special cases */
 	font-family: var(--font-standard);
 	font-weight: 400;
+}
+
+p {
+	margin: 0.5em 0;
 }
 
 h1,
@@ -49,6 +55,11 @@ h3 {
 }
 h4 {
 	font-size: 1.33rem; /* 24pt */
+}
+hr {
+	border: none;
+	border-top: 1px solid var(--grey);
+	margin: 1em 0em;
 }
 
 html {
@@ -81,6 +92,7 @@ a.button {
 	padding: 0.5em 1.5em;
 	text-decoration: none;
 	cursor: pointer;
+	transition: all 0.1s;
 }
 
 button:not(:disabled):hover,
@@ -113,7 +125,7 @@ a.button[disabled] {
 }
 
 .user-button {
-	border-radius: 15px;
+	border-radius: var(--border-radius);
 }
 
 .admin-button {
@@ -124,13 +136,11 @@ a.button[disabled] {
 input {
 	padding: 1rem;
 	border: 1px solid var(--grey);
-	border-radius: 15px;
+	border-radius: var(--border-radius);
 }
 
 input[type='checkbox'],
 input[type='radio'] {
-	height: 1.5rem;
-	min-height: 1.5rem;
 	width: 1.5rem;
 	min-width: 1.5rem;
 	margin: 0;
@@ -138,9 +148,10 @@ input[type='radio'] {
 }
 
 textarea {
+	border: 1px solid var(--grey);
+	border-radius: var(--border-radius);
 	padding: 1rem;
 	resize: vertical;
-	border: 2px solid gray;
 	height: 10rem;
 }
 
@@ -158,13 +169,17 @@ a {
 	color: var(--white);
 }
 
+::placeholder {
+	color: var(--grey);
+}
+
 fieldset {
 	padding: 1rem;
 }
 
 select {
 	padding: 1rem;
-	border-radius: 15px;
+	border-radius: var(--border-radius);
 	border: 1px solid var(--grey);
 	color: var(--grey);
 
@@ -179,6 +194,13 @@ select {
 	/* for some reason overflowing text causes horizontal scrolling */
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.svelte-select {
+	/* Svelte's default css overwrites ours due to its specificity */
+	/* Use important to overwrite svelte's default css */
+	border-radius: var(--border-radius) !important;
+	border: 1px solid var(--grey) !important;
 }
 
 input[type='file'] {
@@ -237,7 +259,7 @@ dialog div {
 }
 
 dialog button {
-	border-radius: 15px;
+	border-radius: var(--border-radius);
 	margin: 1rem;
 }
 
@@ -270,7 +292,7 @@ dialog button {
 }
 
 .auth-content input {
-	border-radius: 15px;
+	border-radius: var(--border-radius);
 }
 
 .auth-content label {
