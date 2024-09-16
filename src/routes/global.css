@@ -326,6 +326,10 @@ dialog button {
 }
 
 @media (max-width: 780px) {
+	:root {
+		font-size: 14px;
+	}
+
 	.auth-content {
 		padding-top: 5rem;
 	}
