@@ -182,13 +182,14 @@
 		position: relative;
 		box-shadow: 4px 4px 16px 0px #00000040;
 		border-radius: var(--border-radius);
-		min-width: 22rem;
 	}
 	.id-card img {
 		display: block;
 		top: 0;
 		left: 0;
-		width: 30rem;
+		object-fit: cover;
+		width: 100%;
+		height: 60vh;
 	}
 	.id-card #qrcode {
 		position: absolute;
