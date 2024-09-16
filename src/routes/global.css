@@ -280,8 +280,7 @@ dialog button {
 /* Login, Register, Reset Password */
 .auth-content {
 	max-width: 30rem;
-	margin: 0 auto;
-	padding: 10rem 1rem 10rem 1rem;
+	margin: 15vh auto;
 }
 
 .auth-content .bat {

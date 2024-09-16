@@ -141,7 +141,7 @@
 	{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
 		<!-- Right Section with Hacker ID -->
 		<div class="right-section">
-			<h2>My Hacker ID</h2>
+			<h3>My Hacker ID</h3>
 
 			<div class="id-card">
 				<canvas bind:this={canvas} id="qrcode" />
@@ -158,31 +158,28 @@
 
 	.container {
 		display: flex;
-		justify-content: space-around;
+		justify-content: space-between;
 		flex-wrap: wrap-reverse;
-		align-items: center;
-		justify-items: center;
 		padding: 3rem;
 		gap: 3rem;
 	}
 
 	.left-section {
-		flex-basis: 30rem;
-		flex-shrink: 0;
 		flex-grow: 1;
 	}
 
 	.right-section {
-		flex-basis: 30rem;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 	}
+
 	.id-card {
 		position: relative;
 		box-shadow: 4px 4px 16px 0px #00000040;
 		border-radius: var(--border-radius);
 	}
+
 	.id-card img {
 		display: block;
 		top: 0;
@@ -191,6 +188,7 @@
 		width: 100%;
 		height: 60vh;
 	}
+
 	.id-card #qrcode {
 		position: absolute;
 		object-fit: contain;

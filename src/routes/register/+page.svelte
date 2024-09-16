@@ -51,7 +51,7 @@
 			autocomplete="new-password"
 		/>
 		<div class="button-wrapper">
-			<button>Register</button>
+			<button class="user-button">Register</button>
 		</div>
 	</form>
 	<p class="login">Already have an account? <a href="/login">Login here!</a></p>

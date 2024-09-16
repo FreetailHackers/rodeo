@@ -74,6 +74,9 @@
 </div>
 
 <style>
+	h2 {
+		color: var(--accent);
+	}
 	.container {
 		padding: 3rem;
 		max-width: 50em;

@@ -52,7 +52,7 @@
 			<p class="forgot-password"><a href="/login/reset-password">Forgot password?</a></p>
 
 			<div class="button-wrapper">
-				<button>Login</button>
+				<button class="user-button">Login</button>
 			</div>
 		</form>
 		<p class="register">Don't have an account yet? <a href="/register">Sign up here!</a></p>
