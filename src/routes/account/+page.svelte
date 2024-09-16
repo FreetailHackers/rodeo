@@ -166,10 +166,6 @@
 		gap: 3rem;
 	}
 
-	.container:only-child {
-		/* max-width: 50em; */
-	}
-
 	.left-section {
 		flex-basis: 30rem;
 		flex-shrink: 0;
