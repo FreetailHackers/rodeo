@@ -160,22 +160,24 @@
 		display: flex;
 		justify-content: space-around;
 		flex-wrap: wrap-reverse;
+		align-items: center;
+		justify-items: center;
 		padding: 3rem;
 		gap: 3rem;
 	}
 
 	.container:only-child {
-		max-width: 50em;
+		/* max-width: 50em; */
 	}
 
 	.left-section {
-		/* flex-basis: 30rem; */
+		flex-basis: 30rem;
 		flex-shrink: 0;
 		flex-grow: 1;
 	}
 
 	.right-section {
-		flex-basis: 30%;
+		flex-basis: 30rem;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -184,13 +186,13 @@
 		position: relative;
 		box-shadow: 4px 4px 16px 0px #00000040;
 		border-radius: var(--border-radius);
-		min-width: 13rem;
+		min-width: 22rem;
 	}
 	.id-card img {
 		display: block;
 		top: 0;
 		left: 0;
-		width: 400px;
+		width: 30rem;
 	}
 	.id-card #qrcode {
 		position: absolute;
