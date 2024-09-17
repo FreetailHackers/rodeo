@@ -190,7 +190,7 @@ export const teamRouter = t.router({
 	inviteUser: t.procedure
 		.input(z.string().email())
 		.use(authenticate(['HACKER']))
-		.mutation(async ({ ctx, input }): Promise<void> => {
+		.mutation(async ({ ctx, input }): Promise<string> => {
 			const callerId = ctx.user.id;
 			const email = input.toLowerCase().trim();
 
@@ -199,13 +199,21 @@ export const teamRouter = t.router({
 				select: { teamId: true },
 			});
 
-			if (!teamId) throw new Error('You must be on a team to invite others.');
+			if (!teamId) return 'You must be on a team to invite others.';
 
-			const invitedUser = await prisma.authUser.findUniqueOrThrow({
+			if ((await getTeamSize(teamId)) >= 4) {
+				return `Your team already has the maximum allowed size. You cannot invite more users.`;
+			}
+
+			const invitedUser = await prisma.authUser.findUnique({
 				where: { email },
 			});
 
-			if (callerId === invitedUser.id) throw new Error('You cannot invite yourself.');
+			if (!invitedUser) {
+				return 'The provided email is not associated with any account.';
+			}
+
+			if (callerId === invitedUser.id) return 'You cannot invite yourself.';
 
 			await prisma.invitation.deleteMany({ where: { email, teamId } });
 
@@ -228,9 +236,10 @@ export const teamRouter = t.router({
 
 			try {
 				await sendEmails([email], 'You have been invited to a team', emailBody, true);
+				return 'Invited user!';
 			} catch (error) {
 				console.error('Error inviting user:', error);
-				throw new Error('Failed to send invitation email. Please try again.');
+				return 'Failed to send invitation email. Please try again later.';
 			}
 		}),
 

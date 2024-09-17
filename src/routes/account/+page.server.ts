@@ -46,17 +46,6 @@ export const actions = {
 
 	inviteUser: async ({ locals, request }) => {
 		const email = (await request.formData()).get('inviteEmail') as string;
-		const doesEmailExist = await trpc(locals.auth).users.doesEmailExist(email);
-		if (!doesEmailExist) {
-			return 'The provided email is not associated with any account.';
-		}
-
-		const teamSize = await trpc(locals.auth).team.getTeamSize();
-		if (teamSize >= 4) {
-			return `Your team already has ${teamSize} members, which is the maximum allowed. You cannot invite more users.`;
-		}
-
-		await trpc(locals.auth).team.inviteUser(email);
-		return 'Invited user!';
+		return await trpc(locals.auth).team.inviteUser(email);
 	},
 };
