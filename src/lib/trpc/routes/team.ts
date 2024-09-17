@@ -229,8 +229,9 @@ export const teamRouter = t.router({
 			const token = await inviteToTeamToken.issue(invitedUser.id);
 			const inviteLink = `${process.env.DOMAIN_NAME}/account/respond-invitation?token=${token}&teamId=${teamId}`;
 			const emailBody = `
-				You have been invited to join a team.
-				Click the following link to accept the invitation: 
+			    You have been invited to join a team. 
+				Please note that this link will expire in one week.
+    			Click the following link to accept the invitation:
 				<a href="${inviteLink}">Join Team</a>
 			`;
 

@@ -134,7 +134,7 @@
 										/>
 									</h3>
 									<input
-										type="text"
+										type="email"
 										id="inviteEmail"
 										name="inviteEmail"
 										placeholder="Enter email"
