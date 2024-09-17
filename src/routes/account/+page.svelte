@@ -48,7 +48,14 @@
 								on:click={() => (closeModal = true)}
 								on:keypress={() => (closeModal = true)}
 							/>
-							<form method="POST" action="?/updateName" use:enhance>
+							<form
+								method="POST"
+								action="?/updateName"
+								use:enhance
+								on:submit={(event) => {
+									closeModal = true;
+								}}
+							>
 								<div class="user-info">
 									{#if data.name}
 										<input
