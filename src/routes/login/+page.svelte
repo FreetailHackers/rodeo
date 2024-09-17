@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { toasts } from '$lib/stores';
-	export let data;
 	import { onMount } from 'svelte';
 	import SocialLogin from '$lib/components/social-login.svelte';
+
+	export let data;
 
 	// Some helpful error messages triggered in /src/lib/authenticate.ts
 	onMount(() => {
@@ -16,15 +17,18 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Login</title>
+	<title>Rodeo | Login</title>
 </svelte:head>
-
-<div class="topographic-background">
-	<div class="main-content">
+<main class="vert-center">
+	<div class="auth-content">
+		<img class="bat" src="/auth-assets/bat.svg" alt="Freetail Bat" />
 		<h1>Login</h1>
 		<div class="socials">
 			<SocialLogin providers={data.providers} />
 		</div>
+
+		<hr />
+
 		<form
 			method="POST"
 			action="?/login"
@@ -35,121 +39,47 @@
 			}}
 		>
 			<label for="email">Email</label>
+			<input placeholder="Email" id="email" name="email" required autocomplete="username" />
+
+			<label for="password">Password</label>
 			<input
-				class="inputValues"
-				placeholder="Email"
-				id="email"
-				name="email"
-				required
-				autocomplete="username"
-			/>
-			<label for="password">Password (<a href="/login/reset-password">forgot?</a>)</label>
-			<!-- HACK: Not required so we can easily log into test accounts lol -->
-			<input
-				class="inputValues"
 				type="password"
 				placeholder="Password"
 				id="password"
 				name="password"
 				autocomplete="current-password"
 			/>
-			<button>Continue</button>
+			<p class="forgot-password"><a href="/login/reset-password">Forgot password?</a></p>
+
+			<div class="button-wrapper">
+				<button class="user-button">Login</button>
+			</div>
 		</form>
-		<div class="register">
-			<p>Don't have an account yet?</p>
-			<!-- svelte-ignore a11y-missing-content -->
-			<a href="/register">
-				<button class="register-button">Register Here!</button>
-			</a>
-		</div>
+		<p class="register">Don't have an account yet? <a href="/register">Sign up here!</a></p>
 	</div>
-</div>
+</main>
 
 <style>
-	.topographic-background {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		background-color: #303030;
-		background-image: url('/Topographic Background.svg');
-		background-size: 110%;
-		min-height: calc(100vh - 159px);
+	h1 {
+		text-align: center;
 	}
 
-	h1 {
-		color: var(--highlight-color);
-		text-align: center;
-		white-space: nowrap;
-		font-size: min(12vw, 3.5em);
-		margin: 15px 0px;
+	.forgot-password {
+		margin-top: 0.5em;
+		text-align: right;
 	}
 
 	p {
-		margin: 4px 0;
-	}
-
-	form,
-	.register {
-		background-color: var(--highlight-color);
-		width: clamp(25rem, 30vw, 50rem);
-	}
-
-	form {
-		padding: 0em 1em 1em 1em;
-	}
-
-	.register {
-		display: flex;
-		text-align: center;
-		align-items: center;
-		justify-content: space-between;
-		padding: 0.5em 1em;
-		margin: 1em 0 15px 0;
-	}
-
-	.register-button {
 		margin: 0;
-		margin-left: 10px;
-		padding: 0px 15px;
 	}
 
-	label {
-		color: var(--background-color);
-		padding-top: 0.5em;
-	}
-
-	input {
-		display: block;
-		border-width: 1px;
-	}
-
-	button {
+	label,
+	.register {
 		margin-top: 0.5em;
-		box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
-		-moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
-		-webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
 	}
 
-	.inputValues {
-		background-color: var(--highlight-color);
-		color: #404040;
-	}
-
-	@media (max-width: 768px) {
-		.topographic-background {
-			min-height: calc(100vh - 56px);
-		}
-
-		form,
-		.register {
-			min-width: 20rem;
-			width: 15vw;
-		}
-	}
-
-	@media (max-width: 1090px) {
-		h1 {
-			margin-top: 0px;
-		}
+	.register {
+		text-align: center;
+		color: var(--accent);
 	}
 </style>

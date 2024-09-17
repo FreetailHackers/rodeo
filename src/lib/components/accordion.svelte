@@ -29,7 +29,7 @@
 <style>
 	.accordion {
 		margin-bottom: 2rem;
-		color: var(--highlight-color);
+		color: var(--white);
 	}
 
 	.header {

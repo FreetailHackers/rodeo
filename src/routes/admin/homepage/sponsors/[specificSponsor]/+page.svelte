@@ -16,7 +16,7 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Admin - Sponsor</title>
+	<title>Rodeo | Admin - Sponsor</title>
 </svelte:head>
 
 <div class="container">
