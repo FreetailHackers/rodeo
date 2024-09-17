@@ -322,7 +322,7 @@ export const teamRouter = t.router({
 
 			const userId = await inviteToTeamToken.validate(token);
 			if (!userId) {
-				throw new Error('Invalid or expired token');
+				return 'Invalid or expired token';
 			}
 
 			const invitation = await prisma.invitation.findFirst({
@@ -341,6 +341,7 @@ export const teamRouter = t.router({
 				where: { id: invitation.id },
 				data: { status: 'REJECTED' },
 			});
+
 			return 'Invitation has been rejected';
 		}),
 
