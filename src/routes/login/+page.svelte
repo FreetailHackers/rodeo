@@ -19,7 +19,7 @@
 <svelte:head>
 	<title>Rodeo | Login</title>
 </svelte:head>
-<main>
+<main class="vert-center">
 	<div class="auth-content">
 		<img class="bat" src="/auth-assets/bat.svg" alt="Freetail Bat" />
 		<h1>Login</h1>

@@ -277,10 +277,16 @@ dialog button {
 	padding: 0 1rem;
 }
 
+.vert-center {
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-items: center;
+}
+
 /* Login, Register, Reset Password */
 .auth-content {
 	max-width: 30rem;
-	margin: 15vh auto;
 }
 
 .auth-content .bat {
