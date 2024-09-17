@@ -252,63 +252,61 @@ export const teamRouter = t.router({
 				teamId: z.number(),
 			})
 		)
-		.mutation(async ({ input }): Promise<void> => {
+		.mutation(async ({ input }): Promise<string> => {
 			const { token, teamId } = input;
 			const userId = await inviteToTeamToken.validate(token);
 			if (!userId) {
 				throw new Error('Invalid or expired token');
 			}
 
-			await prisma.$transaction(async (prisma) => {
-				const teamSize = await getTeamSize(teamId);
-				if (teamSize >= 4) {
-					throw new Error('Team is full');
-				}
+			const teamSize = await getTeamSize(teamId);
+			if (teamSize >= 4) {
+				return 'Team is full';
+			}
 
-				const invitation = await prisma.invitation.findFirst({
-					where: {
-						userId,
-						teamId,
-						status: 'PENDING',
-					},
-				});
-				if (!invitation) {
-					throw new Error('No valid invitation found for the specified team');
-				}
-
-				// User status must be 'CREATED', 'APPLIED', 'ACCEPTED', or 'CONFIRMED'
-				const user = await prisma.authUser.findUnique({
-					where: { id: userId },
-					select: { status: true, user: true },
-				});
-
-				if (
-					!user ||
-					!['CREATED', 'APPLIED', 'ACCEPTED', 'CONFIRMED'].includes(user?.status) ||
-					user.user?.teamId !== null
-				) {
-					throw new Error('User is not eligible to join a team');
-				}
-
-				await prisma.team.update({
-					where: { id: teamId },
-					data: {
-						members: {
-							connect: { authUserId: userId },
-						},
-					},
-				});
-
-				await prisma.user.update({
-					where: { authUserId: userId },
-					data: { teamId },
-				});
-
-				await prisma.invitation.update({
-					where: { id: invitation.id },
-					data: { status: 'ACCEPTED' },
-				});
+			const invitation = await prisma.invitation.findFirst({
+				where: {
+					userId,
+					teamId,
+					status: 'PENDING',
+				},
 			});
+			if (!invitation) {
+				return 'No valid invitation found for the specified team';
+			}
+
+			const user = await prisma.authUser.findUnique({
+				where: { id: userId },
+				select: { status: true, user: true },
+			});
+
+			if (
+				!user ||
+				!['CREATED', 'APPLIED', 'ACCEPTED', 'CONFIRMED'].includes(user?.status) ||
+				user.user?.teamId !== null
+			) {
+				return 'User is not eligible to join a team';
+			}
+
+			await prisma.team.update({
+				where: { id: teamId },
+				data: {
+					members: {
+						connect: { authUserId: userId },
+					},
+				},
+			});
+
+			await prisma.user.update({
+				where: { authUserId: userId },
+				data: { teamId },
+			});
+
+			await prisma.invitation.update({
+				where: { id: invitation.id },
+				data: { status: 'ACCEPTED' },
+			});
+			return 'User has been added to the team';
 		}),
 
 	rejectInvitation: t.procedure
@@ -319,12 +317,12 @@ export const teamRouter = t.router({
 				teamId: z.number(),
 			})
 		)
-		.mutation(async ({ input }): Promise<void> => {
+		.mutation(async ({ input }): Promise<string> => {
 			const { token, teamId } = input;
 
 			const userId = await inviteToTeamToken.validate(token);
 			if (!userId) {
-				throw new Error('Invalid or expired token');
+				return 'Invalid or expired token';
 			}
 
 			const invitation = await prisma.invitation.findFirst({
@@ -336,13 +334,15 @@ export const teamRouter = t.router({
 			});
 
 			if (!invitation) {
-				throw new Error('No valid invitation found for the specified team.');
+				return 'No valid invitation found for the specified team';
 			}
 
 			await prisma.invitation.update({
 				where: { id: invitation.id },
 				data: { status: 'REJECTED' },
 			});
+
+			return 'Invitation has been rejected';
 		}),
 
 	getTeamSize: t.procedure.use(authenticate(['HACKER'])).query(async ({ ctx }): Promise<number> => {
