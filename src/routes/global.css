@@ -281,7 +281,7 @@ dialog button {
 	height: 100vh;
 	display: flex;
 	align-items: center;
-	justify-items: center;
+	justify-content: center;
 }
 
 /* Login, Register, Reset Password */
