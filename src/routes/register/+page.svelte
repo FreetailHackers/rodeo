@@ -8,15 +8,16 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Register</title>
+	<title>Rodeo | Register</title>
 </svelte:head>
-
-<div class="topographic-background">
-	<div class="main-content">
+<main class="vert-center">
+	<div class="auth-content">
+		<img class="bat" src="/auth-assets/bat.svg" alt="Freetail Bat" />
 		<h1>Register</h1>
 		<div class="socials">
 			<SocialLogin providers={data.providers} />
 		</div>
+		<hr />
 		<form
 			method="POST"
 			use:enhance={() => {
@@ -41,7 +42,6 @@
 				>)
 			</label>
 			<input
-				class="inputValues"
 				placeholder="Password"
 				type={hidden ? 'password' : 'text'}
 				id="password"
@@ -50,103 +50,29 @@
 				minlength="8"
 				autocomplete="new-password"
 			/>
-			<button>Continue</button>
+			<div class="button-wrapper">
+				<button class="user-button">Register</button>
+			</div>
 		</form>
-		<div class="login">
-			<p>Already have an account?</p>
-			<!-- svelte-ignore a11y-missing-content -->
-			<a href="/login">
-				<button class="login-button">Login Here!</button>
-			</a>
-		</div>
+		<p class="login">Already have an account? <a href="/login">Login here!</a></p>
 	</div>
-</div>
+</main>
 
 <style>
-	.topographic-background {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		background-color: #303030;
-		background-image: url('/Topographic Background.svg');
-		background-size: 110%;
-		min-height: calc(100vh - 159px);
-	}
-
 	h1 {
-		color: var(--highlight-color);
 		text-align: center;
-		white-space: nowrap;
-		font-size: min(12vw, 3.5em);
-		margin: 15px 0px;
 	}
 
 	p {
-		margin: 4px 0;
-	}
-
-	form,
-	.login {
-		background-color: var(--highlight-color);
-		width: clamp(25rem, 30vw, 50rem);
-	}
-
-	form {
-		padding: 0em 1em 1em 1em;
-	}
-
-	.login {
-		display: flex;
-		text-align: center;
-		align-items: center;
-		justify-content: space-between;
-		padding: 0.5em 1em;
-		margin: 1em 0 15px 0;
-	}
-
-	.login-button {
 		margin: 0;
-		margin-left: 10px;
-		padding: 0px 15px;
 	}
 
-	label {
-		color: var(--background-color);
-		padding-top: 0.5em;
-	}
-
-	input {
-		display: block;
-		border-width: 1px;
-	}
-
-	button {
+	label,
+	.login {
 		margin-top: 0.5em;
-		box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.25);
-		-moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
-		-webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
 	}
 
-	.inputValues {
-		background-color: var(--highlight-color);
-		color: #404040;
-	}
-
-	@media (max-width: 768px) {
-		.topographic-background {
-			min-height: calc(100vh - 56px);
-		}
-
-		form,
-		.login {
-			min-width: 20rem;
-			width: 15vw;
-		}
-	}
-
-	@media (max-width: 1090px) {
-		h1 {
-			margin-top: 0px;
-		}
+	.login {
+		text-align: center;
 	}
 </style>

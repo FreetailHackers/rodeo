@@ -359,12 +359,7 @@ export const usersRouter = t.router({
 			'Click on the following link to verify your email address:<br><br>' +
 			link +
 			'<br><br>If you did not request this email, please ignore it.';
-		await sendEmails(
-			[req.ctx.user.email],
-			'Email Verification',
-			body,
-			false // The raw HTML should not be sent
-		);
+		await sendEmails([req.ctx.user.email], 'Email Verification', body, false);
 	}),
 
 	/**
@@ -694,6 +689,38 @@ export const usersRouter = t.router({
 				});
 			});
 			return responses;
+		}),
+
+	getName: t.procedure
+		.use(authenticate(['HACKER', 'ADMIN', 'ORGANIZER', 'SPONSOR', 'JUDGE', 'VOLUNTEER']))
+		.query(async (req): Promise<string> => {
+			return (
+				await prisma.user.findUnique({
+					where: { authUserId: req.ctx.user.id },
+					select: { name: true },
+				})
+			)?.name as string;
+		}),
+
+	updateName: t.procedure
+		.use(authenticate(['HACKER', 'ADMIN', 'ORGANIZER', 'SPONSOR', 'JUDGE', 'VOLUNTEER']))
+		.input(z.string())
+		.mutation(async (req): Promise<void> => {
+			await prisma.user.update({
+				where: { authUserId: req.ctx.user.id },
+				data: { name: req.input },
+			});
+		}),
+
+	doesEmailExist: t.procedure
+		.use(authenticate(['ADMIN', 'HACKER']))
+		.input(z.string())
+		.query(async (req): Promise<boolean> => {
+			return (
+				(await prisma.authUser.findUnique({
+					where: { email: req.input },
+				})) !== null
+			);
 		}),
 
 	/**
