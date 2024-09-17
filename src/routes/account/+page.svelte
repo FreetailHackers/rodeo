@@ -34,7 +34,50 @@
 	<!-- Left Section with Forms -->
 	{#if data.user.roles.includes('HACKER')}
 		<div class="left-section">
-			<h3>{data.name}</h3>
+			<div class="name-and-edit">
+				<h3>{data.name}</h3>
+				<Modal button={false} close={closeModal}>
+					<Content>
+						<div class="modal">
+							<h2 class="modal-header">Change Name</h2>
+							<img
+								class="close-button"
+								src="/close-button.png"
+								alt="close edit name"
+								draggable="false"
+								on:click={() => (closeModal = true)}
+								on:keypress={() => (closeModal = true)}
+							/>
+							<form method="POST" action="?/updateName" use:enhance>
+								<div class="user-info">
+									{#if data.name}
+										<input
+											type="text"
+											id="name"
+											name="name"
+											placeholder="Insert your name"
+											value={data.name}
+										/>
+									{:else}
+										<input type="text" id="name" name="name" placeholder="Insert your name" />
+									{/if}
+								</div>
+								<button class="user-button" type="submit">Submit</button>
+							</form>
+						</div>
+					</Content>
+					<Trigger>
+						<img
+							id="edit-button"
+							src="/edit-button.png"
+							alt="edit-name"
+							draggable="false"
+							on:click={() => (closeModal = false)}
+							on:keypress={() => (closeModal = false)}
+						/>
+					</Trigger>
+				</Modal>
+			</div>
 			<p>{data.user.email}</p>
 			<hr />
 			{#if !data.team}
@@ -164,6 +207,10 @@
 		gap: 3rem;
 	}
 
+	.container:only-child {
+		max-width: 50rem;
+	}
+
 	.left-section {
 		flex-grow: 1;
 	}
@@ -171,6 +218,12 @@
 	.right-section {
 		display: flex;
 		flex-direction: column;
+		align-items: center;
+	}
+
+	.name-and-edit {
+		display: flex;
+		justify-content: space-between;
 		align-items: center;
 	}
 

@@ -20,6 +20,11 @@ export const load = async ({ locals }) => {
 };
 
 export const actions = {
+	updateName: async ({ locals, request }) => {
+		const name = (await request.formData()).get('name') as string;
+		await trpc(locals.auth).users.updateName(name);
+	},
+
 	createTeam: async ({ locals, request }) => {
 		const name = (await request.formData()).get('teamName') as string;
 		await trpc(locals.auth).team.createTeam(name);
