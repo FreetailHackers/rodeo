@@ -52,7 +52,7 @@
 								method="POST"
 								action="?/updateName"
 								use:enhance
-								on:submit={(event) => {
+								on:submit={() => {
 									closeModal = true;
 								}}
 							>
