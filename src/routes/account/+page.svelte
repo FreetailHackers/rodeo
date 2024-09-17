@@ -256,6 +256,11 @@
 		gap: 1rem;
 		margin-top: 1rem;
 	}
+
+	input {
+		width: 100%;
+	}
+
 	.modal form {
 		margin: unset;
 	}

@@ -51,6 +51,7 @@
 
 	h1 {
 		text-align: center;
+		font-size: 2rem;
 	}
 
 	.pad {
@@ -85,7 +86,7 @@
 		background-color: var(--light-grey);
 		border-radius: 50px;
 		position: relative;
-		padding: 1rem;
+		padding: 1rem 1.5em;
 	}
 
 	.date {

@@ -2,7 +2,7 @@
 	import { page } from '$app/stores';
 	import Toasts from '$lib/components/toasts.svelte';
 	import { toasts } from '$lib/stores';
-	import { onMount } from 'svelte';
+	import { afterUpdate } from 'svelte';
 	import './global.css';
 	import { fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
@@ -24,7 +24,7 @@
 
 	const noLayoutRoutes = ['/login', '/register']; // Routes that shouldn't have layout
 
-	onMount(() => {
+	afterUpdate(() => {
 		if (menu && menu.childNodes) {
 			for (const link of menu.childNodes) {
 				if (link) {

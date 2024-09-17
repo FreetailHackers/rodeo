@@ -357,6 +357,29 @@ dialog button {
 		font-size: 14px;
 	}
 
+	h1,
+	h3 {
+		font-family: var(--font-titles);
+		color: var(--accent);
+	}
+
+	h1 {
+		font-size: 2.12rem; /* 48pt */
+		font-weight: 800;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		margin: 1rem;
+	}
+	h2 {
+		font-size: 1.92rem; /* 40pt */
+	}
+	h3 {
+		font-size: 1.28rem; /* 28pt */
+	}
+	h4 {
+		font-size: 1.14rem; /* 24pt */
+	}
+
 	.auth-content {
 		padding-top: 5rem;
 	}
