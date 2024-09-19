@@ -214,12 +214,16 @@
 		gap: 3rem;
 	}
 
-	.container:only-child {
+	.left-section:only-child {
 		max-width: 50rem;
 	}
 
 	.left-section {
 		flex-grow: 1;
+	}
+
+	.right-section:only-child {
+		width: 100%;
 	}
 
 	.right-section {
