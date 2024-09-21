@@ -375,6 +375,7 @@
 		width: 100%;
 		min-width: 0;
 		flex-wrap: wrap;
+		margin: 1em 0;
 	}
 
 	.key {
