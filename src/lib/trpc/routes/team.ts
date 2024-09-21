@@ -214,6 +214,7 @@ export const teamRouter = t.router({
 			}
 
 			if (callerId === invitedUser.id) return 'You cannot invite yourself.';
+			if (!invitedUser.roles.includes('HACKER')) return 'The user is not a hacker.';
 
 			await prisma.invitation.deleteMany({ where: { email, teamId } });
 
