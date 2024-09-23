@@ -244,6 +244,8 @@
 					</div>
 				</div>
 			</form>
+		{:else if new Date() < new Date(new Date().getFullYear(), 8, 21)}
+			<p>Applications will open on September 21st!</p>
 		{:else}
 			<p>
 				Sorry, applications have closed. If space permits, you may sign up as a walk-in at the doors
