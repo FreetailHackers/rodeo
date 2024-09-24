@@ -1062,10 +1062,19 @@ async function getRSVPDeadline(user: User) {
 
 	const settings = await getSettings();
 	const daysToRSVP = settings.daysToRSVP;
+	const hackathonStartDate = settings.hackathonStartDate;
 
 	if (daysToRSVP !== null) {
 		const timeOfAcceptance = dayjs.utc(new Date(daysToConfirmBy)).tz(settings.timezone, false);
-		return timeOfAcceptance.add(daysToRSVP, 'days').endOf('day').toDate();
+		const calculatedTime = timeOfAcceptance.add(daysToRSVP, 'days').endOf('day').toDate();
+
+		if (hackathonStartDate !== null) {
+			if (calculatedTime.getTime() > hackathonStartDate.getTime()) {
+				return hackathonStartDate;
+			}
+		} else {
+			return calculatedTime;
+		}
 	}
 
 	return null;
