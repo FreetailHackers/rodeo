@@ -25,7 +25,7 @@ export async function authenticate(auth: AuthRequest, roles?: Role[]): Promise<U
 	// in the backend; this is just a convenience to prevent users
 	// from using an account with a typo'd address.
 	if (!user.verifiedEmail) {
-		throw redirect(303, '/login/unverified');
+		throw redirect(303, '/unverified');
 	}
 	return user;
 }
