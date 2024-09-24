@@ -58,8 +58,8 @@
 
 	<status-container>
 		<label for="applicationLimit"
-			>Hackers can only apply if there are at most this number of accounts with status APPLIED,
-			ACCEPTED, or CONFIRMED (leaving empty will disable this limit)</label
+			>Hackers can still apply if did not reach this many APPLIED, ACCEPTED, or CONFIRMED Hacker
+			applications (leaving empty will disable this limit)</label
 		>
 		<input
 			readonly={!applicationOpenStatus}
