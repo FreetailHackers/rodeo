@@ -22,7 +22,7 @@
 	beforeNavigate(() => (isLoading = true));
 	afterNavigate(() => (isLoading = false));
 
-	const noLayoutRoutes = ['/login', '/register']; // Routes that shouldn't have layout
+	const noLayoutRoutes = ['/login', '/register', '/unverified']; // Routes that shouldn't have layout
 
 	afterUpdate(() => {
 		if (menu && menu.childNodes) {
