@@ -832,6 +832,24 @@ export const usersRouter = t.router({
 				(await getSettings()).byStatusIsHTML
 			);
 		}),
+
+	getAllHackers: t.procedure.use(authenticate(['ADMIN'])).query(async (): Promise<User[]> => {
+		return await prisma.user.findMany({
+			where: { authUser: { roles: { has: 'HACKER' } } },
+		});
+	}),
+
+	getAppliedHackers: t.procedure.use(authenticate(['ADMIN'])).query(async (): Promise<User[]> => {
+		return await prisma.user.findMany({
+			where: {
+				authUser: {
+					status: {
+						in: ['APPLIED', 'CONFIRMED', 'RECEIVED'],
+					},
+				},
+			},
+		});
+	}),
 });
 
 async function getWhereCondition(

@@ -15,7 +15,7 @@ export const canApply = async (): Promise<boolean> => {
 	const settings = await getSettings();
 	const count = await prisma.authUser.count({
 		where: {
-			status: { in: ['APPLIED', 'ACCEPTED', 'CONFIRMED'] },
+			status: { in: ['APPLIED', 'ACCEPTED', 'RECEIVED', 'CONFIRMED'] },
 		},
 	});
 	return (

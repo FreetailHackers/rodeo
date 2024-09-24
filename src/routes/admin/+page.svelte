@@ -6,6 +6,7 @@
 	export let data;
 
 	let applicationOpenStatus = data.settings.applicationOpen;
+	let hackersLeft = data.allHackers.length - data.appliedHackers.length;
 </script>
 
 <svelte:head>
@@ -70,6 +71,10 @@
 			placeholder="10000"
 			min="0"
 		/>
+	</status-container>
+
+	<status-container>
+		<p>Cans still accept this many applications: {hackersLeft}</p>
 	</status-container>
 
 	<label for="statusChangeText"><h2>User Status Count Over Time</h2></label>
