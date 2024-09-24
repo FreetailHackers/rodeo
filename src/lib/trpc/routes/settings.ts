@@ -16,11 +16,25 @@ const settingsSchema = z
 		waitlistTemplate: z.string().optional(),
 		confirmTemplate: z.string().optional(),
 		declineTemplate: z.string().optional(),
+		withdrawalWarningTemplate: z.string().optional(),
 		scanActions: z.string().array().optional(),
 		timezone: z.string().optional(),
 		applicationDeadline: z.date().nullable().optional(),
 		applicationLimit: z.number().nullable().optional(),
 		hackathonStartDate: z.date().nullable().optional(),
+		showAnnouncements: z.boolean().optional(),
+		showSchedule: z.boolean().optional(),
+		showFAQ: z.boolean().optional(),
+		showChallenges: z.boolean().optional(),
+		showSponsors: z.boolean().optional(),
+		submitIsHTML: z.boolean().optional(),
+		acceptIsHTML: z.boolean().optional(),
+		rejectIsHTML: z.boolean().optional(),
+		waitlistIsHTML: z.boolean().optional(),
+		confirmIsHTML: z.boolean().optional(),
+		declineIsHTML: z.boolean().optional(),
+		withdrawIsHTML: z.boolean().optional(),
+		byStatusIsHTML: z.boolean().optional(),
 	})
 	.strict();
 
@@ -41,6 +55,19 @@ export const settingsRouter = t.router({
 			timezone: string;
 			applicationDeadline: Date | null;
 			hackathonStartDate: Date | null;
+			showAnnouncements: boolean;
+			showSchedule: boolean;
+			showFAQ: boolean;
+			showChallenges: boolean;
+			showSponsors: boolean;
+			submitIsHTML: boolean;
+			acceptIsHTML: boolean;
+			rejectIsHTML: boolean;
+			waitlistIsHTML: boolean;
+			confirmIsHTML: boolean;
+			declineIsHTML: boolean;
+			withdrawIsHTML: boolean;
+			byStatusIsHTML: boolean;
 		}> => {
 			const settings = await getSettings();
 			return {
@@ -51,6 +78,19 @@ export const settingsRouter = t.router({
 				timezone: settings.timezone,
 				applicationDeadline: settings.applicationDeadline,
 				hackathonStartDate: settings.hackathonStartDate,
+				showAnnouncements: settings.showAnnouncements,
+				showSchedule: settings.showSchedule,
+				showFAQ: settings.showFAQ,
+				showChallenges: settings.showChallenges,
+				showSponsors: settings.showSponsors,
+				submitIsHTML: settings.submitIsHTML,
+				acceptIsHTML: settings.acceptIsHTML,
+				rejectIsHTML: settings.rejectIsHTML,
+				waitlistIsHTML: settings.waitlistIsHTML,
+				confirmIsHTML: settings.confirmIsHTML,
+				declineIsHTML: settings.declineIsHTML,
+				withdrawIsHTML: settings.withdrawIsHTML,
+				byStatusIsHTML: settings.byStatusIsHTML,
 			};
 		}
 	),

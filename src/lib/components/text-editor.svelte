@@ -13,6 +13,7 @@
 	let textarea: HTMLTextAreaElement;
 
 	export let useAnnouncementFont: boolean = false;
+	export let isHTML: boolean;
 
 	// HACK: This is a workaround for Svelte not updating input bindings a form is reset
 	onMount(() => {
@@ -44,7 +45,11 @@
 			<p class:announcement-font={useAnnouncementFont} class="empty-preview">Nothing to preview.</p>
 		{:else}
 			<div class:announcement-font={useAnnouncementFont}>
-				<SvelteMarkdown source={value} />
+				{#if isHTML}
+					{@html value}
+				{:else}
+					<SvelteMarkdown source={value} />
+				{/if}
 			</div>
 		{/if}
 	</div>

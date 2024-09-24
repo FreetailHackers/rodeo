@@ -65,6 +65,9 @@ model User {
   scanCount     Json           @default("{}")
   statusChanges StatusChange[]
   scans         Scan[]
+  team          Team?          @relation(name: "membersRelation", fields: [teamId], references: [id]) // Relation to the team as a member
+  teamId        Int?
+  name          String?
 }
 
 model Announcement {
@@ -93,16 +96,30 @@ model Settings {
   timezone            String    @default("America/Chicago")
   applicationDeadline DateTime?
   hackathonStartDate  DateTime?
+  showAnnouncements   Boolean   @default(true)
+  showSchedule        Boolean   @default(true)
+  showFAQ             Boolean   @default(true)
+  showChallenges      Boolean   @default(true)
+  showSponsors        Boolean   @default(true)
+  submitIsHTML        Boolean   @default(false)
+  acceptIsHTML        Boolean   @default(false)
+  rejectIsHTML        Boolean   @default(false)
+  waitlistIsHTML      Boolean   @default(false)
+  confirmIsHTML       Boolean   @default(false)
+  declineIsHTML       Boolean   @default(false)
+  withdrawIsHTML      Boolean   @default(false)
+  byStatusIsHTML      Boolean   @default(false)
 
   // PRIVATE SETTINGS (settings that non-admins do not need)
-  rollingAdmissions Boolean @default(false)
-  submitTemplate    String  @default("We have received your application to our hackathon!")
-  acceptTemplate    String  @default("You have been accepted to our hackathon!")
-  rejectTemplate    String  @default("We regret to inform you that we cannot offer you a spot at our hackathon this year.")
-  waitlistTemplate  String  @default("We regret to inform you that we cannot offer you a spot at our hackathon at this time.")
-  confirmTemplate   String  @default("Thank you for confirming your attendance to our hackathon! We look forward to seeing you there!")
-  declineTemplate   String  @default("Thank you for letting us know that you will not be able to attend. We hope to see you next year!")
-  applicationLimit  Int?
+  rollingAdmissions         Boolean @default(false)
+  submitTemplate            String  @default("We have received your application to our hackathon!")
+  acceptTemplate            String  @default("You have been accepted to our hackathon!")
+  rejectTemplate            String  @default("We regret to inform you that we cannot offer you a spot at our hackathon this year.")
+  waitlistTemplate          String  @default("We regret to inform you that we cannot offer you a spot at our hackathon at this time.")
+  confirmTemplate           String  @default("Thank you for confirming your attendance to our hackathon! We look forward to seeing you there!")
+  declineTemplate           String  @default("Thank you for letting us know that you will not be able to attend. We hope to see you next year!")
+  withdrawalWarningTemplate String  @default("We've noticed that your application has been withdrawn from our hackathon. If you're still intending to submit, please ensure that you complete your edits and click 'submit'.")
+  applicationLimit          Int?
 }
 
 model Question {
@@ -137,10 +154,10 @@ model Event {
 }
 
 model InfoBox {
-  id          Int     @id @default(autoincrement())
-  title       String
-  response    String
-  category    CategoryType
+  id       Int          @id @default(autoincrement())
+  title    String
+  response String
+  category CategoryType
 }
 
 model StatusChange {
@@ -157,6 +174,31 @@ model Scan {
   timestamp DateTime @default(now())
   userId    String
   user      User     @relation(fields: [userId], references: [authUserId], onDelete: Cascade)
+}
+
+model Team {
+  id          Int          @id @default(autoincrement())
+  name        String
+  createdAt   DateTime     @default(now())
+  members     User[]       @relation(name: "membersRelation")
+  tracks      String[]
+  devpostUrl  String?
+  invitations Invitation[]
+}
+
+model Invitation {
+  id        Int              @id @default(autoincrement())
+  teamId    Int
+  email     String
+  userId    String
+  status    InvitationStatus @default(PENDING)
+  team      Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }
 
 enum Role {
@@ -191,6 +233,7 @@ enum QuestionType {
 enum CategoryType {
   FAQ
   CHALLENGE
+  SPONSOR
 }
 
 // This section lists the names of manually created triggers, and the

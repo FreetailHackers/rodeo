@@ -9,7 +9,7 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Admin - Admissions</title>
+	<title>Rodeo | Admin - Admissions</title>
 </svelte:head>
 
 <form
@@ -133,8 +133,13 @@
 	#release {
 		font-weight: bold;
 		margin-top: 0;
-		padding-top: 0;
 		text-transform: uppercase;
+		background-color: red;
+	}
+
+	#release:hover {
+		color: white;
+		background-color: #ff5555;
 	}
 
 	label {

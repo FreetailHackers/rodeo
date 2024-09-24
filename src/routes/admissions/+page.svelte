@@ -6,14 +6,18 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Admissions</title>
+	<title>Rodeo | Admissions</title>
 </svelte:head>
 <div class="main-content">
 	{#if data.user === null}
 		<p>Congratulations! You've read every application.</p>
 	{:else}
 		<h1>{data.user.authUser.email}</h1>
-		<UserCard user={data.user} questions={data.questions} />
+		<UserCard
+			user={data.user}
+			questions={data.questions}
+			teamAndAdmissionStatus={data.teamAndAdmissionStatus}
+		/>
 		<div id="form">
 			<div id="padding" />
 			<form method="POST" use:enhance>

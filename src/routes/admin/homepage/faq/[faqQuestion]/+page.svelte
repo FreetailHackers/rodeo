@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { confirmationDialog } from '$lib/actions.js';
-	import MarkdownEditor from '$lib/components/markdown-editor.svelte';
+	import TextEditor from '$lib/components/text-editor.svelte';
 
 	export let data;
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Admin - FAQ - {data.question.title}</title>
+	<title>Rodeo | Admin - FAQ - {data.question.title}</title>
 </svelte:head>
 
 <div class="container">
@@ -40,7 +40,13 @@
 		<input type="text" id="title" name="title" required value={data.question.title} />
 
 		<label for="response">Answer</label>
-		<MarkdownEditor id="response" name="response" required value={data.question.response} />
+		<TextEditor
+			id="response"
+			name="response"
+			isHTML={false}
+			required
+			value={data.question.response}
+		/>
 
 		<button class="submit" type="submit">Save</button>
 	</form>

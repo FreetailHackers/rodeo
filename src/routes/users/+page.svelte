@@ -60,7 +60,7 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Users</title>
+	<title>Rodeo | Users</title>
 </svelte:head>
 
 <div class="main-content">
@@ -375,6 +375,7 @@
 		width: 100%;
 		min-width: 0;
 		flex-wrap: wrap;
+		margin: 1em 0;
 	}
 
 	.key {

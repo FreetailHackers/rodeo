@@ -92,7 +92,7 @@ export const usersRouter = t.router({
 						req.input[question.id].size > 0 &&
 						req.input[question.id].size <= question.maxSizeMB * 1024 * 1024
 					) {
-						const key = `${req.ctx.user.id}/${question.id}`;
+						const key = `files/${req.ctx.user.id}/${question.id}`;
 						const deleteObjectCommand = new DeleteObjectCommand({
 							Bucket: process.env.S3_BUCKET,
 							Key: key,
@@ -207,7 +207,16 @@ export const usersRouter = t.router({
 				});
 				// notify user through their email on successful application submission
 				const subject = 'Thanks for submitting!';
-				await sendEmails([req.ctx.user.email], subject, (await getSettings()).submitTemplate);
+				await sendEmails(
+					[req.ctx.user.email],
+					subject,
+					(
+						await getSettings()
+					).submitTemplate,
+					(
+						await getSettings()
+					).submitIsHTML
+				);
 			}
 			return errors;
 		}),
@@ -226,6 +235,17 @@ export const usersRouter = t.router({
 				where: { id: req.ctx.user.id },
 				data: { status: 'CREATED' },
 			});
+			const subject = 'Application Withdrawal Warning';
+			await sendEmails(
+				[req.ctx.user.email],
+				subject,
+				(
+					await getSettings()
+				).withdrawalWarningTemplate,
+				(
+					await getSettings()
+				).withdrawIsHTML
+			);
 		}),
 
 	getRSVPDeadline: t.procedure
@@ -254,7 +274,10 @@ export const usersRouter = t.router({
 						'Thanks for your RSVP!',
 						(
 							await getSettings()
-						).confirmTemplate
+						).confirmTemplate,
+						(
+							await getSettings()
+						).confirmIsHTML
 					);
 				}
 			} else {
@@ -269,7 +292,10 @@ export const usersRouter = t.router({
 						'Thanks for your RSVP!',
 						(
 							await getSettings()
-						).declineTemplate
+						).declineTemplate,
+						(
+							await getSettings()
+						).declineIsHTML
 					);
 				}
 			}
@@ -333,7 +359,7 @@ export const usersRouter = t.router({
 			'Click on the following link to verify your email address:<br><br>' +
 			link +
 			'<br><br>If you did not request this email, please ignore it.';
-		await sendEmails([req.ctx.user.email], 'Email Verification', body);
+		await sendEmails([req.ctx.user.email], 'Email Verification', body, false);
 	}),
 
 	/**
@@ -353,7 +379,7 @@ export const usersRouter = t.router({
 				const body =
 					'Click on the following link to reset your password (valid for 10 minutes):<br><br>' +
 					link;
-				await sendEmails([user.email], 'Password Reset', body);
+				await sendEmails([user.email], 'Password Reset', body, false);
 			}
 		}),
 
@@ -665,6 +691,38 @@ export const usersRouter = t.router({
 			return responses;
 		}),
 
+	getName: t.procedure
+		.use(authenticate(['HACKER', 'ADMIN', 'ORGANIZER', 'SPONSOR', 'JUDGE', 'VOLUNTEER']))
+		.query(async (req): Promise<string> => {
+			return (
+				await prisma.user.findUnique({
+					where: { authUserId: req.ctx.user.id },
+					select: { name: true },
+				})
+			)?.name as string;
+		}),
+
+	updateName: t.procedure
+		.use(authenticate(['HACKER', 'ADMIN', 'ORGANIZER', 'SPONSOR', 'JUDGE', 'VOLUNTEER']))
+		.input(z.string())
+		.mutation(async (req): Promise<void> => {
+			await prisma.user.update({
+				where: { authUserId: req.ctx.user.id },
+				data: { name: req.input },
+			});
+		}),
+
+	doesEmailExist: t.procedure
+		.use(authenticate(['ADMIN', 'HACKER']))
+		.input(z.string())
+		.query(async (req): Promise<boolean> => {
+			return (
+				(await prisma.authUser.findUnique({
+					where: { email: req.input },
+				})) !== null
+			);
+		}),
+
 	/**
 	 * Bulk sets the status of all the users. User must be an admin.
 	 */
@@ -767,7 +825,12 @@ export const usersRouter = t.router({
 					select: { email: true },
 				})
 			).map((user) => user.email);
-			return sendEmails(emailArray, req.input.subject, req.input.emailBody);
+			return sendEmails(
+				emailArray,
+				req.input.subject,
+				req.input.emailBody,
+				(await getSettings()).byStatusIsHTML
+			);
 		}),
 });
 

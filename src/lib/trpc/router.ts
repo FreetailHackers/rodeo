@@ -5,9 +5,10 @@ import { eventsRouter } from './routes/events';
 import { questionsRouter } from './routes/questions';
 import { settingsRouter } from './routes/settings';
 import { usersRouter } from './routes/users';
+import { teamRouter } from './routes/team';
+import { infoBoxRouter } from './routes/infoBox';
 import { createContext, createContextTest, t, tTest } from './t';
 import type { AuthRequest } from 'lucia';
-import { infoBoxRouter } from './routes/infoBox';
 
 const routes = {
 	admissions: admissionsRouter,
@@ -17,6 +18,7 @@ const routes = {
 	questions: questionsRouter,
 	settings: settingsRouter,
 	users: usersRouter,
+	team: teamRouter,
 };
 
 export const router = t.router(routes);
