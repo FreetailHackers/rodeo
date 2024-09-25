@@ -174,28 +174,34 @@
 					</div>
 				</div>
 			{/if}
-			<div class="flex-row">
+			<div class="flex-row checkboxes">
 				<span>
-					<input
-						type="checkbox"
-						name={question.id + '_hideAdmission'}
-						checked={question.hideAdmission}
-					/>
-					<label for={question.id + '_hideAdmission'}>Hide Question From Admission</label>
+					<label>
+						<input
+							type="checkbox"
+							name={question.id + '_hideAdmission'}
+							checked={question.hideAdmission}
+						/>Hide Question From Admission</label
+					>
 				</span>
 				<span>
-					<input type="checkbox" name={question.id + '_hideScan'} checked={question.hideScan} />
-					<label for={question.id + '_hideScan'}>Hide Question From Scan Page</label>
+					<label>
+						<input
+							type="checkbox"
+							name={question.id + '_hideScan'}
+							checked={question.hideScan}
+						/>Hide Question From Scan Page
+					</label>
 				</span>
 				<span>
-					<label for={question.id + '_sponsorView'}
-						><input
+					<label>
+						<input
 							type="checkbox"
 							name={question.id + '_sponsorView'}
 							checked={question.sponsorView}
 						/>
-						Viewable by Sponsors</label
-					>
+						Viewable by Sponsors
+					</label>
 				</span>
 			</div>
 			<div class="flex-row">
@@ -227,7 +233,7 @@
 							text: 'Are you sure you want to delete this question and all responses to it? This cannot be undone!',
 							cancel: 'Cancel',
 							ok: 'Delete',
-						}}><img alt="✕" src="/Trashcan.svg" /></button
+						}}>✕</button
 					>
 				</div>
 			</div>
@@ -279,7 +285,7 @@
 	}
 
 	fieldset button {
-		width: 2.5rem;
+		padding: 0.25em 0.5em;
 	}
 
 	#addQuestion {
@@ -316,6 +322,10 @@
 
 	.flex-row:has(> span) {
 		flex-wrap: nowrap;
+	}
+
+	.checkboxes {
+		font-size: var(--font-size-xs);
 	}
 
 	.actions {
