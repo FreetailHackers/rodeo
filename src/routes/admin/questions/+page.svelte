@@ -2,7 +2,14 @@
 	import { enhance } from '$app/forms';
 	import { confirmationDialog } from '$lib/actions.js';
 	import Toggle from '$lib/components/toggle.svelte';
+	import { QuestionType } from '@prisma/client';
 
+	let questionTypes: string[] = [];
+	Object.entries(QuestionType).forEach((keyValue) => {
+		if (keyValue[1]) {
+			questionTypes.push(keyValue[1]);
+		}
+	});
 	export let data;
 </script>
 
@@ -21,56 +28,57 @@
 	<!-- NOTE: see corresponding +page.server.ts to see how form data is structured and parsed -->
 	{#each data.questions as question, i (question.id)}
 		<fieldset>
-			<input type="hidden" name={question.id + '_type'} value={question.type} />
-			<!-- Fields common to all question types -->
 			<div class="flex-row">
-				<Toggle name={question.id + '_required'} label="Required" checked={question.required} />
-				<!-- Put a hidden disabled button before the these
-					 buttons to prevent enter from triggering them -->
-				<div class="flex-row actions">
-					<button type="submit" disabled style="display: none" aria-hidden="true" />
-					<button
-						type="submit"
-						name="id"
-						value={question.id}
-						formaction="?/moveUp"
-						disabled={i === 0}>↑</button
+				<div>
+					<label for={question.id + '_label'}>Question</label>
+					<input
+						value={question.label}
+						name={question.id + '_label'}
+						id={question.id + '_label'}
+						placeholder="What is your name?"
+					/>
+				</div>
+				<div>
+					<label for={question.id + '_label'}>Question Type</label>
+					<select
+						bind:value={question.type}
+						name={question.id + '_label'}
+						id={question.id + '_label'}
+						placeholder="What is your name?"
 					>
-					<button
-						type="submit"
-						name="id"
-						value={question.id}
-						formaction="?/moveDown"
-						disabled={i === data.questions.length - 1}>↓</button
-					>
-					<button
-						type="submit"
-						name="id"
-						value={question.id}
-						formaction="?/delete"
-						use:confirmationDialog={{
-							text: 'Are you sure you want to delete this question and all responses to it? This cannot be undone!',
-							cancel: 'Cancel',
-							ok: 'Delete',
-						}}>✕</button
-					>
+						{#each questionTypes as type}
+							<option>{type}</option>
+						{/each}
+					</select>
 				</div>
 			</div>
-			<div>
-				<label for={question.id + '_label'}><b>{question.type}</b> Label</label>
-				<input
-					value={question.label}
-					name={question.id + '_label'}
-					id={question.id + '_label'}
-					placeholder="What is your name?"
-				/>
-			</div>
-			<!-- Question-type-specific fields -->
 			{#if question.type === 'SENTENCE' || question.type === 'PARAGRAPH'}
+				<div class="flex-row">
+					<div>
+						<label for={question.id + '_placeholder'}>Placeholder</label>
+						<input
+							value={question.placeholder}
+							name={question.id + '_placeholder'}
+							id={question.id + '_placeholder'}
+							placeholder="J. Random Hacker"
+						/>
+					</div>
+					<div>
+						<label for={question.id + '_regex'}>Response must match regex:</label>
+						<input
+							value={question.regex}
+							name={question.id + '_regex'}
+							id={question.id + '_regex'}
+							placeholder="Leave empty to accept all"
+						/>
+					</div>
+				</div>
+			{:else if question.type === 'NUMBER'}
 				<div>
 					<label for={question.id + '_placeholder'}>Placeholder</label>
 					<input
 						value={question.placeholder}
+						type="number"
 						name={question.id + '_placeholder'}
 						id={question.id + '_placeholder'}
 						placeholder="J. Random Hacker"
@@ -85,19 +93,8 @@
 						placeholder="Leave empty to accept all"
 					/>
 				</div>
-			{:else if question.type === 'NUMBER'}
-				<div>
-					<label for={question.id + '_placeholder'}>Placeholder</label>
-					<input
-						value={question.placeholder}
-						type="number"
-						name={question.id + '_placeholder'}
-						id={question.id + '_placeholder'}
-						placeholder="J. Random Hacker"
-					/>
-				</div>
 				<div class="flex-row">
-					<div>
+					<span>
 						<label for={question.id + '_min'}>Minimum</label>
 						<input
 							value={question.min}
@@ -107,8 +104,8 @@
 							placeholder="0"
 							step="any"
 						/>
-					</div>
-					<div>
+					</span>
+					<span>
 						<label for={question.id + '_max'}>Maximum</label>
 						<input
 							value={question.max}
@@ -118,8 +115,8 @@
 							placeholder="100"
 							step="any"
 						/>
-					</div>
-					<div>
+					</span>
+					<span>
 						<label for={question.id + '_step'}>Step</label>
 						<input
 							value={question.step}
@@ -129,7 +126,7 @@
 							placeholder="1"
 							step="any"
 						/>
-					</div>
+					</span>
 				</div>
 			{:else if question.type === 'DROPDOWN' || question.type === 'RADIO'}
 				<div>
@@ -178,22 +175,62 @@
 				</div>
 			{/if}
 			<div class="flex-row">
-				<Toggle
-					name={question.id + '_hideAdmission'}
-					label="Hide Question From Admission"
-					checked={question.hideAdmission}
-				/>
-				<Toggle
-					name={question.id + '_hideScan'}
-					label="Hide Question From Scan Page"
-					checked={question.hideScan}
-				/>
+				<span>
+					<input
+						type="checkbox"
+						name={question.id + '_hideAdmission'}
+						checked={question.hideAdmission}
+					/>
+					<label for={question.id + '_hideAdmission'}>Hide Question From Admission</label>
+				</span>
+				<span>
+					<input type="checkbox" name={question.id + '_hideScan'} checked={question.hideScan} />
+					<label for={question.id + '_hideScan'}>Hide Question From Scan Page</label>
+				</span>
+				<span>
+					<label for={question.id + '_sponsorView'}
+						><input
+							type="checkbox"
+							name={question.id + '_sponsorView'}
+							checked={question.sponsorView}
+						/>
+						Viewable by Sponsors</label
+					>
+				</span>
 			</div>
-			<Toggle
-				name={question.id + '_sponsorView'}
-				label="Viewable by Sponsors"
-				checked={question.sponsorView}
-			/>
+			<div class="flex-row">
+				<Toggle name={question.id + '_required'} label="Required" checked={question.required} />
+				<!-- Put a hidden disabled button before the these
+					 buttons to prevent enter from triggering them -->
+				<div class="flex-row actions">
+					<button type="submit" disabled style="display: none" aria-hidden="true" />
+					<button
+						type="submit"
+						name="id"
+						value={question.id}
+						formaction="?/moveUp"
+						disabled={i === 0}>↑</button
+					>
+					<button
+						type="submit"
+						name="id"
+						value={question.id}
+						formaction="?/moveDown"
+						disabled={i === data.questions.length - 1}>↓</button
+					>
+					<button
+						type="submit"
+						name="id"
+						value={question.id}
+						formaction="?/delete"
+						use:confirmationDialog={{
+							text: 'Are you sure you want to delete this question and all responses to it? This cannot be undone!',
+							cancel: 'Cancel',
+							ok: 'Delete',
+						}}><img alt="✕" src="/Trashcan.svg" /></button
+					>
+				</div>
+			</div>
 		</fieldset>
 	{/each}
 
@@ -218,6 +255,10 @@
 		flex-direction: column;
 		gap: 1rem;
 		margin-bottom: 1rem;
+
+		background: var(--background-grey);
+		border-radius: var(--border-radius);
+		border: none;
 	}
 
 	label {
@@ -229,6 +270,12 @@
 	textarea {
 		flex-grow: 1;
 		width: 100%;
+	}
+
+	input[type='checkbox'] {
+		flex-grow: 0;
+		width: unset;
+		margin: 0;
 	}
 
 	fieldset button {
@@ -259,6 +306,16 @@
 
 	.flex-row > div {
 		flex-grow: 1;
+		flex-basis: 40%;
+	}
+
+	.flex-row > div > select {
+		width: 100%;
+		color: var(--black);
+	}
+
+	.flex-row:has(> span) {
+		flex-wrap: nowrap;
 	}
 
 	.actions {
