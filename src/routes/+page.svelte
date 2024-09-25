@@ -48,4 +48,7 @@
 </div>
 
 <style>
+	.homepage-text {
+		margin-bottom: 2.5rem;
+	}
 </style>

@@ -58,17 +58,16 @@
 									}}
 								>
 									<div class="user-info">
-										{#if data.name}
-											<input
-												type="text"
-												id="name"
-												name="name"
-												placeholder="Insert your name"
-												value={data.name}
-											/>
-										{:else}
-											<input type="text" id="name" name="name" placeholder="Insert your name" />
-										{/if}
+										<input
+											type="text"
+											id="name"
+											name="name"
+											placeholder="Insert your name"
+											pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\s'.-]+$"
+											maxlength="70"
+											value={data.name || ''}
+											required
+										/>
 									</div>
 									<button class="user-button" type="submit">Submit</button>
 								</form>
@@ -87,7 +86,15 @@
 					</Modal>
 				{:else}
 					<form class="new-name" method="POST" action="?/updateName" use:enhance>
-						<input type="text" id="name" name="name" placeholder="Insert your name" />
+						<input
+							type="text"
+							id="name"
+							name="name"
+							placeholder="Insert your name"
+							pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\s'.-]+$"
+							maxlength="70"
+							required
+						/>
 						<button class="user-button" type="submit">Submit</button>
 					</form>
 				{/if}
@@ -97,7 +104,15 @@
 			{#if !data.team}
 				<form method="POST" action="?/createTeam" use:enhance>
 					<h3>Create a Team</h3>
-					<input type="text" id="teamName" name="teamName" placeholder="Enter Team Name" required />
+					<input
+						type="text"
+						id="teamName"
+						name="teamName"
+						placeholder="Enter Team Name"
+						pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\s'.-]+$"
+						maxlength="50"
+						required
+					/>
 					<button class="user-button" type="submit">Create Team</button>
 				</form>
 			{:else}
