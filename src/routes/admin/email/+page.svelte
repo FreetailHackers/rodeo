@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { Status } from '@prisma/client';
-	import Toggle from '$lib/components/toggle.svelte';
 	import TextEditor from '$lib/components/text-editor.svelte';
 	const statuses: Status[] = Object.keys(Status) as Status[];
 	export let data;
