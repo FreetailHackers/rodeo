@@ -101,10 +101,10 @@
 	}
 
 	.border {
-      border: 2px solid gray;
-      padding: 0 1rem;
-      min-height: 3rem;
-  }
+		border: 2px solid gray;
+		padding: 0 1rem;
+		min-height: 3rem;
+	}
 
 	.empty-preview {
 		color: gray;
