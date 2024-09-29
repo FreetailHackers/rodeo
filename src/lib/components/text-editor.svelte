@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import SvelteMarkdown from 'svelte-markdown';
+	import Toggle from '$lib/components/toggle.svelte';
 
 	export let name: string;
 	export let id = name;
@@ -25,20 +26,6 @@
 	});
 </script>
 
-<div>
-	<button
-		class:announcement-font={useAnnouncementFont}
-		type="button"
-		class:selected={!previewing}
-		on:click={() => (previewing = false)}>Write</button
-	>
-	<button
-		class:announcement-font={useAnnouncementFont}
-		type="button"
-		class:selected={previewing}
-		on:click={() => (previewing = true)}>Preview</button
-	>
-</div>
 {#if previewing}
 	<div class="border white-preview-background">
 		{#if value === ''}
@@ -73,12 +60,37 @@
 		bind:this={textarea}
 	/>
 {/if}
+<div class="container">
+	<div class="toggle-container">
+		<Toggle name="confirmFormType" label="Use HTML (Default: Markdown)" bind:checked={isHTML} />
+	</div>
+	<label>
+		<input
+			class:announcement-font={useAnnouncementFont}
+			type="checkbox"
+			bind:checked={previewing}
+		/>
+		Preview
+	</label>
+</div>
 
 <style>
+	.container {
+		display: flex;
+		justify-content: flex-end;
+		align-items: center;
+		margin-bottom: 10px;
+		margin-top: 5px;
+	}
+
+	.toggle-container {
+		margin-right: 10px;
+	}
+
 	.white-preview-background {
 		background: white;
 	}
-	button {
+	input {
 		padding: 0 1rem;
 		background-color: #ddd;
 		color: black;
