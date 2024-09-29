@@ -75,8 +75,8 @@
 					</div>
 				</div>
 			{:else if question.type === 'NUMBER'}
-				<div class="flex-row">
-					<div>
+				<div class="flex-row number-inputs">
+					<span>
 						<label for={question.id + '_placeholder'}>Placeholder</label>
 						<input
 							value={question.placeholder}
@@ -85,18 +85,20 @@
 							id={question.id + '_placeholder'}
 							placeholder="J. Random Hacker"
 						/>
-					</div>
-					<div>
-						<label for={question.id + '_regex'}>Response must match regex:</label>
+					</span>
+					<span>
+						<label for={question.id + '_step'}>Step</label>
 						<input
-							value={question.regex}
-							name={question.id + '_regex'}
-							id={question.id + '_regex'}
-							placeholder="Leave empty to accept all"
+							value={question.step}
+							type="number"
+							name={question.id + '_step'}
+							id={question.id + '_step'}
+							placeholder="1"
+							step="any"
 						/>
-					</div>
+					</span>
 				</div>
-				<div class="flex-row">
+				<div class="flex-row number-inputs">
 					<span>
 						<label for={question.id + '_min'}>Minimum</label>
 						<input
@@ -116,17 +118,6 @@
 							name={question.id + '_max'}
 							id={question.id + '_max'}
 							placeholder="100"
-							step="any"
-						/>
-					</span>
-					<span>
-						<label for={question.id + '_step'}>Step</label>
-						<input
-							value={question.step}
-							type="number"
-							name={question.id + '_step'}
-							id={question.id + '_step'}
-							placeholder="1"
 							step="any"
 						/>
 					</span>
@@ -178,34 +169,25 @@
 				</div>
 			{/if}
 			<div class="flex-row checkboxes">
-				<span>
-					<label>
-						<input
-							type="checkbox"
-							name={question.id + '_hideAdmission'}
-							checked={question.hideAdmission}
-						/>Hide Question From Admission</label
-					>
-				</span>
-				<span>
-					<label>
-						<input
-							type="checkbox"
-							name={question.id + '_hideScan'}
-							checked={question.hideScan}
-						/>Hide Question From Scan Page
-					</label>
-				</span>
-				<span>
-					<label>
-						<input
-							type="checkbox"
-							name={question.id + '_sponsorView'}
-							checked={question.sponsorView}
-						/>
-						Viewable by Sponsors
-					</label>
-				</span>
+				<label>
+					<input
+						type="checkbox"
+						name={question.id + '_hideAdmission'}
+						checked={question.hideAdmission}
+					/>Hide Question From Admission</label
+				>
+				<label>
+					<input type="checkbox" name={question.id + '_hideScan'} checked={question.hideScan} />Hide
+					Question From Scan Page
+				</label>
+				<label>
+					<input
+						type="checkbox"
+						name={question.id + '_sponsorView'}
+						checked={question.sponsorView}
+					/>
+					Viewable by Sponsors
+				</label>
 			</div>
 			<div class="flex-row">
 				<Toggle name={question.id + '_required'} label="Required" checked={question.required} />
@@ -315,20 +297,22 @@
 
 	.flex-row > div {
 		flex-grow: 1;
-		flex-basis: 40%;
+		flex-basis: calc(50% - 0.5rem);
+		min-width: fit-content;
 	}
 
-	.flex-row > div > select {
+	select {
 		width: 100%;
 		color: var(--black);
 	}
 
-	.flex-row:has(> span) {
-		flex-wrap: nowrap;
-	}
-
 	.checkboxes {
 		font-size: var(--font-size-xs);
+	}
+
+	.number-inputs > * {
+		flex-grow: 1;
+		width: 150px;
 	}
 
 	.actions {
