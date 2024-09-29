@@ -101,14 +101,10 @@
 	}
 
 	.border {
-		border: 2px solid gray;
-		padding: 0 1rem;
-		min-height: 3rem;
-	}
-
-	.selected {
-		text-decoration: underline;
-	}
+      border: 2px solid gray;
+      padding: 0 1rem;
+      min-height: 3rem;
+  }
 
 	.empty-preview {
 		color: gray;
