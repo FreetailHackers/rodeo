@@ -28,6 +28,8 @@
 	<!-- NOTE: see corresponding +page.server.ts to see how form data is structured and parsed -->
 	{#each data.questions as question, i (question.id)}
 		<fieldset>
+			<input type="hidden" name={question.id + '_type'} value={question.type} />
+			<!-- Fields common to all question types -->
 			<div class="flex-row">
 				<div>
 					<label for={question.id + '_label'}>Question</label>
@@ -74,24 +76,26 @@
 					</div>
 				</div>
 			{:else if question.type === 'NUMBER'}
-				<div>
-					<label for={question.id + '_placeholder'}>Placeholder</label>
-					<input
-						value={question.placeholder}
-						type="number"
-						name={question.id + '_placeholder'}
-						id={question.id + '_placeholder'}
-						placeholder="J. Random Hacker"
-					/>
-				</div>
-				<div>
-					<label for={question.id + '_regex'}>Response must match regex:</label>
-					<input
-						value={question.regex}
-						name={question.id + '_regex'}
-						id={question.id + '_regex'}
-						placeholder="Leave empty to accept all"
-					/>
+				<div class="flex-row">
+					<div>
+						<label for={question.id + '_placeholder'}>Placeholder</label>
+						<input
+							value={question.placeholder}
+							type="number"
+							name={question.id + '_placeholder'}
+							id={question.id + '_placeholder'}
+							placeholder="J. Random Hacker"
+						/>
+					</div>
+					<div>
+						<label for={question.id + '_regex'}>Response must match regex:</label>
+						<input
+							value={question.regex}
+							name={question.id + '_regex'}
+							id={question.id + '_regex'}
+							placeholder="Leave empty to accept all"
+						/>
+					</div>
 				</div>
 				<div class="flex-row">
 					<span>
