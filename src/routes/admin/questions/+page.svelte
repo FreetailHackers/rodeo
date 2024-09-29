@@ -28,7 +28,6 @@
 	<!-- NOTE: see corresponding +page.server.ts to see how form data is structured and parsed -->
 	{#each data.questions as question, i (question.id)}
 		<fieldset>
-			<input type="hidden" name={question.id + '_type'} value={question.type} />
 			<!-- Fields common to all question types -->
 			<div class="flex-row">
 				<div>
