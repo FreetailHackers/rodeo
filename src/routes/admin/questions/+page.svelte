@@ -41,11 +41,11 @@
 					/>
 				</div>
 				<div>
-					<label for={question.id + '_label'}>Question Type</label>
+					<label for={question.id + '_type'}>Question Type</label>
 					<select
 						bind:value={question.type}
-						name={question.id + '_label'}
-						id={question.id + '_label'}
+						name={question.id + '_type'}
+						id={question.id + '_type'}
 						placeholder="What is your name?"
 					>
 						{#each questionTypes as type}
