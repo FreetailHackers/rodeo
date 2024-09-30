@@ -92,9 +92,9 @@ deploy-preview-job:
     # Export .env to environment variables in shell so we can use them in this script
     - "export $(grep -v '^#' .vercel/.env.preview.local | xargs)"
     # Drop existing branch-specific database if it exists
-    - echo "DROP DATABASE IF EXISTS \"$CI_COMMIT_BRANCH\"" | psql $DATABASE_URL/master
+    - echo "DROP DATABASE IF EXISTS \"$CI_COMMIT_BRANCH\"" | psql $DATABASE_URL/postgres
     # Create a branch-specific database
-    - echo "CREATE DATABASE \"$CI_COMMIT_BRANCH\"" | psql $DATABASE_URL/master
+    - echo "CREATE DATABASE \"$CI_COMMIT_BRANCH\"" | psql $DATABASE_URL/postgres
     # Set database connection string to use preview database
     - export DATABASE_URL=$DATABASE_URL/$CI_COMMIT_BRANCH
     - export DIRECT_URL=$DIRECT_URL/$CI_COMMIT_BRANCH
@@ -108,7 +108,7 @@ deploy-preview-job:
     - npx vercel deploy --token=$VERCEL_TOKEN --env DATABASE_URL=$DATABASE_URL > domain.txt
     # If this is the master branch, alias it to our permanent staging URL
     - export DOMAIN_NAME=$(cat domain.txt)
-    - if [ "$CI_COMMIT_BRANCH" == "master" ]; then npx vercel alias --token=$VERCEL_TOKEN --scope=$VERCEL_SCOPE set $DOMAIN_NAME $STAGING_URL; fi
+    - if [ "$CI_COMMIT_BRANCH" == "master" ]; then npx vercel switch --token=$VERCEL_TOKEN --scope=$VERCEL_SCOPE && npx vercel alias $DOMAIN_NAME $STAGING_URL --token=$VERCEL_TOKEN ; fi
     # Set dynamic environment URL
     - echo "DOMAIN_NAME=$DOMAIN_NAME" >> deploy.env
   artifacts:
@@ -128,7 +128,7 @@ stop-preview-job:
     # !!! WARNING !!! NEVER RUN ON PRODUCTION ENVIRONMENT !!!
     - npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
     - "export $(grep -v '^#' .vercel/.env.preview.local | xargs)"
-    - echo "DROP DATABASE IF EXISTS \"$CI_COMMIT_BRANCH\"" | psql $DATABASE_URL/postgres
+    - echo "DROP DATABASE \"$CI_COMMIT_BRANCH\"" | psql $DATABASE_URL/postgres
 
 deploy-production-job:
   stage: deploy-production
