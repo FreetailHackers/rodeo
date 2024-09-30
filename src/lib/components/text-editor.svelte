@@ -64,13 +64,13 @@
 	<div class="toggle-container">
 		<Toggle name="confirmFormType" label="Use HTML (Default: Markdown)" bind:checked={isHTML} />
 	</div>
-	<label>
+	<label class="preview-label">
 		<input
 			class:announcement-font={useAnnouncementFont}
 			type="checkbox"
 			bind:checked={previewing}
 		/>
-		Preview
+		<span>Preview</span>
 	</label>
 </div>
 
@@ -84,16 +84,22 @@
 	}
 
 	.toggle-container {
-		margin-right: 10px;
+		margin-right: 20px;
 	}
 
 	.white-preview-background {
 		background: white;
 	}
+
+	.preview-label {
+		white-space: nowrap;
+	}
+
 	input {
 		padding: 0 1rem;
 		background-color: #ddd;
 		color: black;
+		margin-right: -5px;
 	}
 	textarea {
 		height: auto;
