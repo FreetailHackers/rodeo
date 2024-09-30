@@ -128,7 +128,7 @@ stop-preview-job:
     # !!! WARNING !!! NEVER RUN ON PRODUCTION ENVIRONMENT !!!
     - npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
     - "export $(grep -v '^#' .vercel/.env.preview.local | xargs)"
-    - echo "DROP DATABASE \"$CI_COMMIT_BRANCH\"" | psql $DATABASE_URL/master
+    - echo "DROP DATABASE IF EXISTS \"$CI_COMMIT_BRANCH\"" | psql $DATABASE_URL/postgres
 
 deploy-production-job:
   stage: deploy-production
