@@ -286,6 +286,8 @@
 
 	#addQuestion button {
 		padding: 0 1rem;
+		min-width: fit-content;
+		margin: 0;
 	}
 
 	.flex-row {
