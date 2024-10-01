@@ -33,6 +33,7 @@
 		placeholder="Type email body here"
 		name="emailBody"
 		isHTML={data.settings.byStatusIsHTML}
+		toggleName="byStatusFormType"
 		required
 	/>
 
@@ -54,6 +55,7 @@
 		value={data.settings.submitTemplate}
 		name="submitTemplate"
 		isHTML={data.settings.submitIsHTML}
+		toggleName="submitFormType"
 	/>
 
 	<label for="acceptanceTemplate"><h2>Acceptance Email Template</h2></label>
@@ -61,6 +63,7 @@
 		value={data.settings.acceptTemplate}
 		name="acceptTemplate"
 		isHTML={data.settings.acceptIsHTML}
+		toggleName="acceptFormType"
 	/>
 
 	<label for="rejectTemplate"><h2>Rejection Email Template</h2></label>
@@ -68,6 +71,7 @@
 		value={data.settings.rejectTemplate}
 		name="rejectTemplate"
 		isHTML={data.settings.rejectIsHTML}
+		toggleName="rejectFormType"
 	/>
 
 	<label for="waitlistTemplate"><h2>Waitlist Email Template</h2></label>
@@ -75,6 +79,7 @@
 		value={data.settings.waitlistTemplate}
 		name="waitlistTemplate"
 		isHTML={data.settings.waitlistIsHTML}
+		toggleName="waitlistFormType"
 		id="waitlistTemplate"
 	/>
 
@@ -84,6 +89,7 @@
 		name="confirmTemplate"
 		isHTML={data.settings.confirmIsHTML}
 		id="confirmTemplate"
+		toggleName="confirmFormType"
 	/>
 
 	<label for="withdrawTemplate"><h2>Decline Attendance Email Template</h2></label>
@@ -92,6 +98,7 @@
 		name="declineTemplate"
 		isHTML={data.settings.declineIsHTML}
 		id="declineTemplate"
+		toggleName="declineFormType"
 	/>
 
 	<label for="withdrawalWarningTemplate"><h2>Withdrawal Warning Email Template</h2></label>
@@ -99,6 +106,7 @@
 		value={data.settings.withdrawalWarningTemplate}
 		name="withdrawalWarningTemplate"
 		isHTML={data.settings.withdrawIsHTML}
+		toggleName="withdrawFormType"
 	/>
 
 	<button id="save-templates" type="submit">Save</button>

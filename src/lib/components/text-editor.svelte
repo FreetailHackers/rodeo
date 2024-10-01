@@ -15,6 +15,7 @@
 
 	export let useAnnouncementFont: boolean = false;
 	export let isHTML: boolean;
+	export let toggleName: string = '';
 
 	// HACK: This is a workaround for Svelte not updating input bindings a form is reset
 	onMount(() => {
@@ -62,7 +63,7 @@
 {/if}
 <div class="container">
 	<div class="toggle-container">
-		<Toggle name="confirmFormType" label="Use HTML (Default: Markdown)" bind:checked={isHTML} />
+		<Toggle name={toggleName} label="Use HTML (Default: Markdown)" bind:checked={isHTML} />
 	</div>
 	<label class="preview-label">
 		<input
