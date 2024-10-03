@@ -121,7 +121,7 @@
 		font-weight: bold;
 		margin-top: 0;
 		text-transform: uppercase;
-		background-color: red;
+		background-color: #e53c09;
 	}
 
 	#release:hover {
