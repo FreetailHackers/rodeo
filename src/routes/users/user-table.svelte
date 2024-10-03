@@ -221,6 +221,9 @@
 </form>
 
 <style>
+	select {
+		color: #000;
+	}
 	ul {
 		list-style: none;
 		margin: 0;

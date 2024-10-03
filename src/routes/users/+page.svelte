@@ -366,6 +366,9 @@
 </div>
 
 <style>
+	select {
+		color: #000;
+	}
 	.filter {
 		display: flex;
 		flex-direction: row;

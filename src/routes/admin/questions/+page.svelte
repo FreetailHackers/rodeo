@@ -227,13 +227,9 @@
 
 	<form method="POST" id="addQuestion" action="?/create" use:enhance>
 		<select name="type" form="addQuestion">
-			<option value="SENTENCE">Sentence</option>
-			<option value="PARAGRAPH">Paragraph</option>
-			<option value="NUMBER">Number</option>
-			<option value="DROPDOWN">Dropdown</option>
-			<option value="CHECKBOX">Checkbox</option>
-			<option value="RADIO">Radio</option>
-			<option value="FILE">File</option>
+			{#each questionTypes as type}
+				<option>{type}</option>
+			{/each}
 		</select>
 		<button type="submit">Add Question</button>
 	</form>
