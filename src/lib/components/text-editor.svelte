@@ -13,7 +13,6 @@
 	let previewing = false;
 	let textarea: HTMLTextAreaElement;
 
-	export let useAnnouncementFont: boolean = false;
 	export let isHTML: boolean;
 	export let toggleName: string = '';
 
@@ -30,9 +29,9 @@
 {#if previewing}
 	<div class="border white-preview-background">
 		{#if value === ''}
-			<p class:announcement-font={useAnnouncementFont} class="empty-preview">Nothing to preview.</p>
+			<p class="empty-preview">Nothing to preview.</p>
 		{:else}
-			<div class:announcement-font={useAnnouncementFont}>
+			<div>
 				{#if isHTML}
 					{@html value}
 				{:else}
@@ -41,36 +40,16 @@
 			</div>
 		{/if}
 	</div>
-	<textarea
-		class:announcement-font={useAnnouncementFont}
-		style="display: none;"
-		{id}
-		{name}
-		{required}
-		{value}
-	/>
+	<textarea style="display: none;" {id} {name} {required} {value} />
 {:else}
-	<textarea
-		class:announcement-font={useAnnouncementFont}
-		{id}
-		{name}
-		{placeholder}
-		{required}
-		{rows}
-		bind:value
-		bind:this={textarea}
-	/>
+	<textarea {id} {name} {placeholder} {required} {rows} bind:value bind:this={textarea} />
 {/if}
 <div class="container">
 	<div class="toggle-container">
 		<Toggle name={toggleName} label="Use HTML (Default: Markdown)" bind:checked={isHTML} />
 	</div>
 	<label class="preview-label">
-		<input
-			class:announcement-font={useAnnouncementFont}
-			type="checkbox"
-			bind:checked={previewing}
-		/>
+		<input type="checkbox" bind:checked={previewing} />
 		<span>Preview</span>
 	</label>
 </div>
@@ -116,11 +95,5 @@
 	.empty-preview {
 		color: gray;
 		font-style: italic;
-	}
-
-	.announcement-font {
-		font-family: 'Fugaz One';
-		font-weight: 400;
-		color: #000000;
 	}
 </style>
