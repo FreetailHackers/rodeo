@@ -23,14 +23,13 @@
 >
 	<label for="applicationStatus"><h2>Application Status</h2></label>
 
-	<Toggle
-		name="applicationOpen"
-		label="Accept new applications"
-		bind:checked={applicationOpenStatus}
-	/>
+	<div class="flex-row">
+		Accept new applications
+		<Toggle name="applicationOpen" label="" bind:checked={applicationOpenStatus} />
+	</div>
 
 	<status-container>
-		<label for="applicationDeadline">Hackers must apply before:</label>
+		<label for="applicationDeadline">Application will close on</label>
 		<input
 			readonly={!applicationOpenStatus}
 			type="datetime-local"
@@ -45,8 +44,7 @@
 
 	<status-container>
 		<label for="applicationLimit"
-			>Hackers can only apply if there are at most this number of accounts with status APPLIED,
-			ACCEPTED, or CONFIRMED (leaving empty will disable this limit)</label
+			>Application will close after this many people with the status Applied, Accepted, or Confirmed</label
 		>
 		<input
 			readonly={!applicationOpenStatus}
@@ -54,25 +52,34 @@
 			name="applicationLimit"
 			id="applicationLimit"
 			value={data.settings.applicationLimit}
-			placeholder="10000"
+			placeholder="Leave empty to disable"
 			min="0"
 		/>
 	</status-container>
 
-	<label for="statusChangeText"><h2>User Status Count Over Time</h2></label>
+	<label for="statusChangeText"><h2>User Status Over Time</h2></label>
 	<Graph statusChanges={data.graph} />
 
-	<label for="daysToRSVP">
-		<h2>Hackers have this many days after being accepted to RSVP (leave blank to disable RSVPs)</h2>
-	</label>
-	<input
-		type="number"
-		id="daysToRSVP"
-		name="daysToRSVP"
-		placeholder="10"
-		min="0"
-		value={data.settings.daysToRSVP}
-	/>
+	<status-container>
+		<label for="daysToRSVP"> Hackers must RSVP within this many days after acceptance </label>
+		<input
+			type="number"
+			id="daysToRSVP"
+			name="daysToRSVP"
+			placeholder="Leave empty to disable"
+			min="0"
+			value={data.settings.daysToRSVP}
+		/>
+	</status-container>
+
+	<status-container>
+		<label for="timezone">Timezone</label>
+		<select name="timezone" id="timezone" value={data.settings.timezone}>
+			{#each Intl.supportedValuesOf('timeZone') as timezone}
+				<option value={timezone}>{timezone}</option>
+			{/each}
+		</select>
+	</status-container>
 
 	<label for="scanActions"><h2>Scan Options</h2></label>
 	<textarea
@@ -81,13 +88,6 @@
 		id="scanActions"
 		placeholder="Write one option per line, like this:&#13;OPTION 1&#13;OPTION 2&#13;OPTION 3"
 	/>
-
-	<label for="timezone"><h2>Timezone</h2></label>
-	<select name="timezone" id="timezone" value={data.settings.timezone}>
-		{#each Intl.supportedValuesOf('timeZone') as timezone}
-			<option value={timezone}>{timezone}</option>
-		{/each}
-	</select>
 
 	<button type="submit">Save</button>
 </form>
@@ -111,6 +111,12 @@
 		padding-top: 10px;
 	}
 
+	.flex-row {
+		display: flex;
+		justify-content: flex-end;
+		gap: 1em;
+	}
+
 	button {
 		margin-top: 30px;
 		width: 100%;
@@ -120,8 +126,13 @@
 	#release {
 		font-weight: bold;
 		margin-top: 0;
+		margin: 0 auto;
+		margin-bottom: 1rem;
 		text-transform: uppercase;
-		background-color: red;
+		background-color: #e53c09;
+		border-radius: 0.75rem;
+		max-width: 50%;
+		height: 3rem;
 	}
 
 	#release:hover {
@@ -142,6 +153,9 @@
 
 	status-container {
 		margin-top: 1rem;
+	}
+	select {
+		width: 100%;
 	}
 
 	input[readonly] {
