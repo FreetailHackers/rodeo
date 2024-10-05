@@ -47,7 +47,7 @@ export const usersRouter = t.router({
 				if (req.input === undefined) {
 					return await prisma.user.findUniqueOrThrow({
 						where: { authUserId: user.id },
-						include: { authUser: true, decision: true},
+						include: { authUser: true, decision: true },
 					});
 				} else {
 					if (!user.roles.includes('ADMIN') && !user.roles.includes('ORGANIZER')) {
@@ -55,7 +55,7 @@ export const usersRouter = t.router({
 					}
 					return await prisma.user.findUniqueOrThrow({
 						where: { authUserId: req.input },
-						include: { authUser: true, decision: true},
+						include: { authUser: true, decision: true },
 					});
 				}
 			}
@@ -63,33 +63,32 @@ export const usersRouter = t.router({
 	getLatestUpdateDate: t.procedure
 		.input(z.string().optional())
 		.query(async (req): Promise<Date> => {
-		  const session = await req.ctx.validate();
-		  if (session === null) {
-			throw new Error('Unauthorized');
-		  }
-	  
-		  const user = session.user;
-		  if (req.input === undefined) {
-			const result = await prisma.statusChange.findFirst({
-				where: { userId: user.id },
-				orderBy: { id: 'desc' },
-				select: { timestamp: true },
-			  });
-		  
-			  return result?.timestamp??new Date();
-		  }
-		  else{
-			if (!user.roles.includes('ADMIN') && !user.roles.includes('ORGANIZER')) {
-				throw new Error('Forbidden');
-		  	}
-			  const result = await prisma.statusChange.findFirst({
-				where: { userId: user.id },
-				orderBy: { id: 'desc' },
-				select: { timestamp: true },
-			  });
-		  
-			  return result?.timestamp??new Date();
-		  }
+			const session = await req.ctx.validate();
+			if (session === null) {
+				throw new Error('Unauthorized');
+			}
+
+			const user = session.user;
+			if (req.input === undefined) {
+				const result = await prisma.statusChange.findFirst({
+					where: { userId: user.id },
+					orderBy: { id: 'desc' },
+					select: { timestamp: true },
+				});
+
+				return result?.timestamp ?? new Date();
+			} else {
+				if (!user.roles.includes('ADMIN') && !user.roles.includes('ORGANIZER')) {
+					throw new Error('Forbidden');
+				}
+				const result = await prisma.statusChange.findFirst({
+					where: { userId: user.id },
+					orderBy: { id: 'desc' },
+					select: { timestamp: true },
+				});
+
+				return result?.timestamp ?? new Date();
+			}
 		}),
 	/**
 	 * Sets the logged in user to the given data. If the user has

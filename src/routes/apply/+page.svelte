@@ -14,16 +14,17 @@
 
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 	let saveButton: HTMLButtonElement;
-	let rsvpSelectedValue:string = '';
-	$: colorClass = data.user.authUser.status === 'APPLIED' ? 'APPLIED' : 
-	data.user.authUser.status === 'ACCEPTED' ? 'ACCEPTED' : 
-	data.user.authUser.status === 'CONFIRMED' ? 'CONFIRMED' : 
-	data.user.authUser.status === 'DECLINED' ? 'DECLINED' : '';
-
-
-
-
-
+	let rsvpSelectedValue: string = '';
+	$: colorClass =
+		data.user.authUser.status === 'APPLIED'
+			? 'APPLIED'
+			: data.user.authUser.status === 'ACCEPTED'
+			? 'ACCEPTED'
+			: data.user.authUser.status === 'CONFIRMED'
+			? 'CONFIRMED'
+			: data.user.authUser.status === 'DECLINED'
+			? 'DECLINED'
+			: '';
 </script>
 
 <svelte:head>
@@ -55,114 +56,124 @@
 			{/if}
 		{/if}
 
-
 		{#if data.user.authUser.status === 'APPLIED'}
-			<h2 class = "status-message">You've submitted your application!</h2>
-			<p>Submitted on {data.latestUpdate.toLocaleDateString('en-US', {
-				month: 'numeric',
-				day: 'numeric',
-				year: 'numeric',
-				hour: 'numeric',
-				minute: 'numeric',
-			})}</p>
+			<h2 class="status-message">You've submitted your application!</h2>
+			<p>
+				Submitted on {data.latestUpdate.toLocaleDateString('en-US', {
+					month: 'numeric',
+					day: 'numeric',
+					year: 'numeric',
+					hour: 'numeric',
+					minute: 'numeric',
+				})}
+			</p>
 		{:else if data.user.authUser.status === 'REJECTED'}
-			<h2 class = "status-message">Unfortunately, we do not have the space to offer you admission this year.</h2>
+			<h2 class="status-message">
+				Unfortunately, we do not have the space to offer you admission this year.
+			</h2>
 		{:else if data.user.authUser.status === 'WAITLISTED'}
-			<h2 class = "status-message">Unfortunately, we do not have the space to offer you admission at this time.</h2>
+			<h2 class="status-message">
+				Unfortunately, we do not have the space to offer you admission at this time.
+			</h2>
 			<p>We will contact you should this situation change.</p>
 		{:else if data.user.authUser.status === 'ACCEPTED'}
-				{#if data.rsvpDeadline === null || new Date() < data.rsvpDeadline}
-				
-					<h2 class = "status-message">You’ve been accepted!<br>
-						RSVP to confirm your attendance :)</h2>
-					{#if data.rsvpDeadline}
-						<div class ="rsvp-deadline">
-							<p>Please confirm your attendance by</p>
-							<h5>{data.rsvpDeadline.toLocaleDateString('en-US', {
+			{#if data.rsvpDeadline === null || new Date() < data.rsvpDeadline}
+				<h2 class="status-message">
+					You’ve been accepted!<br />
+					RSVP to confirm your attendance :)
+				</h2>
+				{#if data.rsvpDeadline}
+					<div class="rsvp-deadline">
+						<p>Please confirm your attendance by</p>
+						<h5>
+							{data.rsvpDeadline.toLocaleDateString('en-US', {
 								weekday: 'long',
 								month: 'long',
 								day: 'numeric',
 								hour: 'numeric',
 								minute: 'numeric',
-							})}</h5>
-						</div>
-					{/if}
-				{:else}
+							})}
+						</h5>
+					</div>
+				{/if}
+			{:else}
 				<h2>Sorry, the deadline to confirm your attendance has passed.</h2>
-					<p>
-						If space permits, you may sign
-						up as a walk-in at the doors the day of the event, but we cannot make any guarantees.
-					</p>
+				<p>
+					If space permits, you may sign up as a walk-in at the doors the day of the event, but we
+					cannot make any guarantees.
+				</p>
 			{/if}
 		{:else if data.user.authUser.status === 'CONFIRMED'}
-			<h2 class = "status-message">Thanks for confirming your attendance!<br>Excited to see you :)</h2>
+			<h2 class="status-message">
+				Thanks for confirming your attendance!<br />Excited to see you :)
+			</h2>
 		{:else if data.user.authUser.status === 'DECLINED'}
-			<h2 class = "status-message">Sorry to see you go :(<br>Hope to see you next year!</h2>
+			<h2 class="status-message">Sorry to see you go :(<br />Hope to see you next year!</h2>
 		{/if}
 		{#if data.user.authUser.status !== 'CREATED'}
-		<div id ="status-and-rsvp-sections">
-			<div id = "application-section">
-				<h5>Application Status</h5>
-				{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'CONFIRMED'||data.user.authUser.status === 'DECLINED'}
-					<h5 id = "application-status" class = "ACCEPTED" >Accepted</h5>
-				{:else}
-				<h5 id = "application-status" class = {colorClass}>{data.user.authUser.status}</h5>
-				{/if}
-			</div>
-			{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'CONFIRMED'||data.user.authUser.status === 'DECLINED'}
-				<hr>
-				<div id = "rsvp-section">
-					<h5>RSVP</h5>
-					{#if data.user.authUser.status === 'ACCEPTED'}
-						<select bind:value={rsvpSelectedValue}>
-							<option value="" disabled selected hidden>Select one</option>
-							<option value="confirm">Confirm</option>
-							<option value="decline">Decline</option>
-						</select>
+			<div id="status-and-rsvp-sections">
+				<div id="application-section">
+					<h5>Application Status</h5>
+					{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'CONFIRMED' || data.user.authUser.status === 'DECLINED'}
+						<h5 id="application-status" class="ACCEPTED">Accepted</h5>
 					{:else}
-						<h5 id = "application-status" class = {colorClass}>{data.user.authUser.status}</h5>
+						<h5 id="application-status" class={colorClass}>{data.user.authUser.status}</h5>
 					{/if}
 				</div>
-			{/if}
-		</div>
-			
-		{#if data.user.authUser.status === 'ACCEPTED'}
-			{#if data.rsvpDeadline === null || new Date() < data.rsvpDeadline}
-				<form class = "status-form" method="POST" use:enhance>
-					{#if rsvpSelectedValue === 'confirm'}
-						<button disabled={!rsvpSelectedValue}
-							formaction="?/confirm"
-							use:confirmationDialog={{
-								text: 'Are you sure you want to CONFIRM your attendance?',
-								cancel: 'No, go back',
-								ok: 'Yes, I want to CONFIRM',
-							}}>Submit</button
-						>
-					{:else if rsvpSelectedValue === 'decline'}
-						<button disabled={!rsvpSelectedValue}
-							formaction="?/decline"
-							use:confirmationDialog={{
-								text: 'Are you sure you want to DECLINE your attendance?',
-								cancel: 'No, go back',
-								ok: 'Yes, I want to DECLINE',
-							}}>Submit</button
-						>
+				{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'CONFIRMED' || data.user.authUser.status === 'DECLINED'}
+					<hr />
+					<div id="rsvp-section">
+						<h5>RSVP</h5>
+						{#if data.user.authUser.status === 'ACCEPTED'}
+							<select bind:value={rsvpSelectedValue}>
+								<option value="" disabled selected hidden>Select one</option>
+								<option value="confirm">Confirm</option>
+								<option value="decline">Decline</option>
+							</select>
+						{:else}
+							<h5 id="application-status" class={colorClass}>{data.user.authUser.status}</h5>
+						{/if}
+					</div>
+				{/if}
+			</div>
+
+			{#if data.user.authUser.status === 'ACCEPTED'}
+				{#if data.rsvpDeadline === null || new Date() < data.rsvpDeadline}
+					<form class="status-form" method="POST" use:enhance>
+						{#if rsvpSelectedValue === 'confirm'}
+							<button
+								disabled={!rsvpSelectedValue}
+								formaction="?/confirm"
+								use:confirmationDialog={{
+									text: 'Are you sure you want to CONFIRM your attendance?',
+									cancel: 'No, go back',
+									ok: 'Yes, I want to CONFIRM',
+								}}>Submit</button
+							>
+						{:else if rsvpSelectedValue === 'decline'}
+							<button
+								disabled={!rsvpSelectedValue}
+								formaction="?/decline"
+								use:confirmationDialog={{
+									text: 'Are you sure you want to DECLINE your attendance?',
+									cancel: 'No, go back',
+									ok: 'Yes, I want to DECLINE',
+								}}>Submit</button
+							>
+						{:else}
+							<button disabled={!rsvpSelectedValue}>Submit</button>
+						{/if}
+					</form>
+				{/if}
+			{:else if data.user.authUser.status === 'APPLIED'}
+				<form class="status-form" method="POST" action="?/withdraw" use:enhance>
+					{#if data.canApply}
+						<button>Withdraw and Edit</button>
 					{:else}
-						<button disabled={!rsvpSelectedValue} >Submit</button
-						>
+						<button disabled>Cannot edit because applications are closed.</button>
 					{/if}
 				</form>
 			{/if}
-		{:else if data.user.authUser.status === 'APPLIED'}
-			<form class = "status-form" method="POST" action="?/withdraw" use:enhance>
-				{#if data.canApply}
-					<button>Withdraw and Edit</button>
-				{:else}
-					<button disabled>Cannot edit because applications are closed.</button>
-				{/if}
-			</form>
-		{/if}
-		
 		{/if}
 	</div>
 
@@ -298,79 +309,78 @@
 		justify-content: space-between;
 		gap: 1rem;
 	}
-	#status-and-rsvp-sections{
+	#status-and-rsvp-sections {
 		border: 1px solid;
 		border-radius: 15px;
-		border-color: #BBBBBB;
+		border-color: #bbbbbb;
 		margin: 2rem 0;
 	}
-	.status-form{
+	.status-form {
 		flex-direction: row;
 		justify-content: end;
 	}
-	.status-form button{
+	.status-form button {
 		border-radius: 15px;
 		display: inline-block;
 		width: fit-content;
 	}
-	.ACCEPTED{
-		color:#7970FF;
+	.ACCEPTED {
+		color: #7970ff;
 	}
-	.CONFIRMED{
-		color:#7970FF;
+	.CONFIRMED {
+		color: #7970ff;
 	}
-	.DECLINED{
-		color:grey;
+	.DECLINED {
+		color: grey;
 	}
-	.APPLIED{
-		color:#0773A6
+	.APPLIED {
+		color: #0773a6;
 	}
 
-	.rsvp-deadline > *{
+	.rsvp-deadline > * {
 		color: grey;
-		margin:unset;
+		margin: unset;
 	}
-	.rsvp-deadline h5{
+	.rsvp-deadline h5 {
 		color: red;
 	}
 
-	.status-message{
+	.status-message {
 		margin: unset;
 		margin-bottom: 1rem;
 	}
-	
-	
-	#status-and-rsvp-sections > *{
+
+	#status-and-rsvp-sections > * {
 		margin: 0;
 	}
-	#status-and-rsvp-sections > * *{
+	#status-and-rsvp-sections > * * {
 		font-weight: 400;
 		margin: 1em 1.25em;
 	}
-	#application-section{
+	#application-section {
 		display: flex;
 		justify-content: space-between;
 	}
 
-	#application-status{
+	#application-status {
 		font-weight: bold;
 		text-transform: lowercase;
 	}
-	#application-status::first-letter{
+	#application-status::first-letter {
 		text-transform: uppercase;
 	}
 
-	#rsvp-section{
+	#rsvp-section {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
 	}
-	#rsvp-section select{
+	#rsvp-section select {
 		margin: 0 1em;
-		padding: .25em .5em;
-		font-size:medium;
+		padding: 0.25em 0.5em;
+		font-size: medium;
 		min-width: 7em;
-		color:black;
+		color: black;
 	}
 	form {
 		display: flex;
