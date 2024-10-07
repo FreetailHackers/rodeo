@@ -216,7 +216,6 @@ enum Status {
   ACCEPTED // User has been accepted but has not yet confirmed
   REJECTED // User has been rejected
   WAITLISTED // User has been waitlisted
-  RECEIVED // User has been sent the RSVP
   CONFIRMED // User has confirmed their attendance
   DECLINED // User has declined their attendance
 }

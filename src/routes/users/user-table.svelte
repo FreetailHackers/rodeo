@@ -120,7 +120,6 @@
 							<option value="APPLIED">Applied</option>
 							<option value="ACCEPTED">Accepted</option>
 							<option value="REJECTED">Rejected</option>
-							<option value="RECEIVED">Received</option>
 							<option value="WAITLISTED">Waitlisted</option>
 							<option value="CONFIRMED">Confirmed</option>
 							<option value="DECLINED">Declined</option>

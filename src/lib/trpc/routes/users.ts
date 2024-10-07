@@ -844,7 +844,7 @@ export const usersRouter = t.router({
 			where: {
 				authUser: {
 					status: {
-						in: ['APPLIED', 'CONFIRMED', 'RECEIVED'],
+						in: ['APPLIED', 'CONFIRMED'],
 					},
 				},
 			},

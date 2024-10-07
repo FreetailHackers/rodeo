@@ -197,7 +197,7 @@ function generateStatusFlow(
 			lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random()
 		);
 		statusChanges.push({
-			newStatus: randomElement(['RECEIVED', 'CONFIRMED', 'DECLINED'] as Status[]),
+			newStatus: randomElement(['CONFIRMED', 'DECLINED'] as Status[]),
 			timestamp: lastTimestamp,
 			userId: id,
 		});
