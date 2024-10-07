@@ -67,4 +67,9 @@ export const actions = {
 		await trpc(locals.auth).admissions.releaseAllDecisions();
 		return 'Released all decisions!';
 	},
+
+	updateMissedStatus: async ({ locals }) => {
+		await trpc(locals.auth).users.updateMissedStatus();
+		return 'Updated missed status!';
+	},
 };

@@ -110,6 +110,8 @@
 	<button type="submit">Save</button>
 </form>
 
+<form action="?/" />
+
 <h2>Pending Decisions</h2>
 <form method="POST" action="?/release" use:enhance>
 	<button

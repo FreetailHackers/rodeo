@@ -850,6 +850,28 @@ export const usersRouter = t.router({
 			},
 		});
 	}),
+
+	/**
+	 * Updates the status of all users who have missed the RSVP deadline.
+	 */
+	updateMissedStatus: t.procedure.use(authenticate(['ADMIN'])).mutation(async (): Promise<void> => {
+		const users = await prisma.user.findMany({
+			where: {
+				authUser: {
+					status: 'APPLIED',
+				},
+			},
+		});
+		for (const user of users) {
+			const deadline = await getRSVPDeadline(user);
+			if (deadline !== null && new Date() > deadline) {
+				await prisma.authUser.update({
+					where: { id: user.authUserId },
+					data: { status: 'MISSED' },
+				});
+			}
+		}
+	}),
 });
 
 async function getWhereCondition(

@@ -218,6 +218,7 @@ enum Status {
   WAITLISTED // User has been waitlisted
   CONFIRMED // User has confirmed their attendance
   DECLINED // User has declined their attendance
+  MISSED // User has missed their RSVP deadline
 }
 
 enum QuestionType {
