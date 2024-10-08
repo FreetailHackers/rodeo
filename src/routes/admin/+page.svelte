@@ -44,7 +44,8 @@
 
 	<status-container>
 		<label for="applicationLimit"
-			>Application will close after this many people with the status Applied, Accepted, or Confirmed</label
+			>Applications close when the total number of APPLIED, ACCEPTED, or CONFIRMED accounts reaches
+			this limit</label
 		>
 		<input
 			readonly={!applicationOpenStatus}
@@ -93,18 +94,20 @@
 </form>
 
 <h2>Pending Decisions</h2>
-<form method="POST" action="?/release" use:enhance>
-	<button
-		id="release"
-		use:confirmationDialog={{
-			text: 'Are you sure you want to release all pending decisions?',
-			cancel: 'Cancel',
-			ok: 'OK',
-		}}
-		>Release all {Object.values(data.decisions).reduce((sum, array) => sum + array.length, 0)} pending
-		decisions</button
-	>
-</form>
+<div class="button-wrap">
+	<form method="POST" action="?/release" use:enhance>
+		<button
+			id="release"
+			use:confirmationDialog={{
+				text: 'Are you sure you want to release all pending decisions?',
+				cancel: 'Cancel',
+				ok: 'OK',
+			}}
+			>Release all {Object.values(data.decisions).reduce((sum, array) => sum + array.length, 0)} pending
+			decisions</button
+		>
+	</form>
+</div>
 
 <style>
 	form {
@@ -123,16 +126,24 @@
 		margin-bottom: 1rem;
 	}
 
+	.button-wrap {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: flex-start;
+		width: 100%;
+		height: 100%;
+	}
+
 	#release {
 		font-weight: bold;
 		margin-top: 0;
-		margin: 0 auto;
 		margin-bottom: 1rem;
 		text-transform: uppercase;
 		background-color: #e53c09;
 		border-radius: 0.75rem;
-		max-width: 50%;
-		height: 3rem;
+		height: auto;
+		min-height: 3rem;
 	}
 
 	#release:hover {
