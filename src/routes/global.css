@@ -49,6 +49,8 @@ h1 {
 }
 h2 {
 	font-size: 2.22rem; /* 40pt */
+	font-family: var(--font-titles);
+	color: var(--accent);
 }
 h3 {
 	font-size: 1.56rem; /* 28pt */
