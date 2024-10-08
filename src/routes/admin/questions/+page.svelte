@@ -2,14 +2,7 @@
 	import { enhance } from '$app/forms';
 	import { confirmationDialog } from '$lib/actions.js';
 	import Toggle from '$lib/components/toggle.svelte';
-	import { QuestionType } from '@prisma/client';
 
-	let questionTypes: string[] = [];
-	Object.entries(QuestionType).forEach((keyValue) => {
-		if (keyValue[1]) {
-			questionTypes.push(keyValue[1]);
-		}
-	});
 	export let data;
 </script>
 
@@ -225,9 +218,13 @@
 
 	<form method="POST" id="addQuestion" action="?/create" use:enhance>
 		<select name="type" form="addQuestion">
-			{#each questionTypes as type}
-				<option>{type}</option>
-			{/each}
+			<option value="SENTENCE">Sentence</option>
+			<option value="PARAGRAPH">Paragraph</option>
+			<option value="NUMBER">Number</option>
+			<option value="DROPDOWN">Dropdown</option>
+			<option value="CHECKBOX">Checkbox</option>
+			<option value="RADIO">Radio</option>
+			<option value="FILE">File</option>
 		</select>
 		<button type="submit">Add Question</button>
 	</form>
