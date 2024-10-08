@@ -110,7 +110,9 @@
 	<button type="submit">Save</button>
 </form>
 
-<form action="?/" />
+<form action="?/updateMissedStatus">
+	<button type="submit">Update Missed Status</button>
+</form>
 
 <h2>Pending Decisions</h2>
 <form method="POST" action="?/release" use:enhance>
