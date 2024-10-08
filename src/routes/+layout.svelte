@@ -82,7 +82,7 @@
 				<li><a href="/scan" class:active={$page.url.pathname.startsWith('/scan')}>Scan</a></li>
 			{/if}
 			<li>
-				<a href="/account" class:active={$page.url.pathname.startsWith('/account')}>My Team</a>
+				<a href="/account" class:active={$page.url.pathname.startsWith('/account')}>Account</a>
 			</li>
 			<!-- <li>
 				<a href="/settings" class:active={$page.url.pathname.startsWith('/settings')}>Settings</a>

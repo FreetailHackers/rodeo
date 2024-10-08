@@ -2,22 +2,34 @@
 	export let name: string;
 	export let label: string;
 	export let checked: boolean;
+	export let isLeft: boolean = false;
 </script>
 
 <div>
-	<input type="checkbox" class="toggle" {name} bind:checked />
-	<label for={name}>{label}</label>
+	<div class="button-box" class:left={isLeft}>
+		<input type="checkbox" class="toggle" {name} bind:checked />
+		<label for={name}>{label}</label>
+	</div>
 </div>
 
 <style>
 	div {
 		display: flex;
 		align-items: center;
-		/* margin-bottom: 1rem; */
+	}
+
+	.button-box {
+		gap: 0.5rem;
+		display: flex;
+		align-items: center;
+		flex-direction: row;
+	}
+
+	.button-box.left {
+		flex-direction: row-reverse;
 	}
 
 	/* Adapted from https://danklammer.com/articles/simple-css-toggle-switch */
-
 	.toggle {
 		appearance: none;
 		width: 62px;
@@ -56,10 +68,6 @@
 
 	.toggle:checked:before {
 		left: 32px;
-	}
-
-	label {
-		margin: 0 0 0 0.5rem;
 	}
 
 	input {
