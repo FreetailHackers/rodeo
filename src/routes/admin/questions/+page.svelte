@@ -41,16 +41,12 @@
 				</div>
 				<div>
 					<label for={question.id + '_type'}>Question Type</label>
-					<select
+					<input
 						bind:value={question.type}
 						name={question.id + '_type'}
 						id={question.id + '_type'}
-						placeholder="What is your name?"
-					>
-						{#each questionTypes as type}
-							<option>{type}</option>
-						{/each}
-					</select>
+						disabled
+					/>
 				</div>
 			</div>
 			{#if question.type === 'SENTENCE' || question.type === 'PARAGRAPH'}
@@ -132,18 +128,6 @@
 						placeholder="Write one option per line, like this:&#13;OPTION 1&#13;OPTION 2&#13;OPTION 3"
 					/>
 				</div>
-				<div class="flex-row">
-					<Toggle
-						name={question.id + '_multiple'}
-						label="Allow multiple selections"
-						checked={Boolean(question.multiple)}
-					/>
-					<Toggle
-						name={question.id + '_custom'}
-						label="Allow custom response entry"
-						checked={Boolean(question.custom)}
-					/>
-				</div>
 			{:else if question.type === 'FILE'}
 				<div class="flex-row">
 					<div>
@@ -168,6 +152,21 @@
 					</div>
 				</div>
 			{/if}
+			<div class="flex-row">
+				<Toggle name={question.id + '_required'} label="Required" checked={question.required} />
+				{#if question.type === 'DROPDOWN' || question.type === 'RADIO'}
+					<Toggle
+						name={question.id + '_multiple'}
+						label="Allow multiple selections"
+						checked={Boolean(question.multiple)}
+					/>
+					<Toggle
+						name={question.id + '_custom'}
+						label="Allow custom response entry"
+						checked={Boolean(question.custom)}
+					/>
+				{/if}
+			</div>
 			<div class="flex-row checkboxes">
 				<label>
 					<input
@@ -190,7 +189,6 @@
 				</label>
 			</div>
 			<div class="flex-row">
-				<Toggle name={question.id + '_required'} label="Required" checked={question.required} />
 				<!-- Put a hidden disabled button before the these
 					 buttons to prevent enter from triggering them -->
 				<div class="flex-row actions">
