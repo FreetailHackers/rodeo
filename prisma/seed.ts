@@ -90,7 +90,7 @@ async function main() {
 	const maxSecondsBetweenStatusChanges = 60 * 60 * 24 * 7; // 1 week
 	const startingTime = new Date();
 	// We must allow enough time for 4 status changes
-	// (CREATED -> PPLIED -> ACCEPTED/REJECTED/WAITLISTED -> CONFIRMED/DECLINED)
+	// (CREATED -> APPLIED -> ACCEPTED/REJECTED/WAITLISTED -> CONFIRMED/DECLINED/MISSED)
 	startingTime.setSeconds(-maxSecondsBetweenStatusChanges * 5);
 
 	for (let i = 0; i < 1000; i++) {
@@ -197,7 +197,7 @@ function generateStatusFlow(
 			lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random()
 		);
 		statusChanges.push({
-			newStatus: randomElement(['CONFIRMED', 'DECLINED'] as Status[]),
+			newStatus: randomElement(['CONFIRMED', 'DECLINED', 'MISSED'] as Status[]),
 			timestamp: lastTimestamp,
 			userId: id,
 		});

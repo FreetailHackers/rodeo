@@ -34,6 +34,7 @@ const settingsSchema = z
 		declineIsHTML: z.boolean().optional(),
 		withdrawIsHTML: z.boolean().optional(),
 		byStatusIsHTML: z.boolean().optional(),
+		hackathonStartDate: z.date().nullable().optional(),
 	})
 	.strict();
 
@@ -53,6 +54,7 @@ export const settingsRouter = t.router({
 			scanActions: string[];
 			timezone: string;
 			applicationDeadline: Date | null;
+			hackathonStartDate: Date | null;
 			showAnnouncements: boolean;
 			showSchedule: boolean;
 			showFAQ: boolean;
@@ -75,6 +77,7 @@ export const settingsRouter = t.router({
 				scanActions: settings.scanActions,
 				timezone: settings.timezone,
 				applicationDeadline: settings.applicationDeadline,
+				hackathonStartDate: settings.hackathonStartDate,
 				showAnnouncements: settings.showAnnouncements,
 				showSchedule: settings.showSchedule,
 				showFAQ: settings.showFAQ,

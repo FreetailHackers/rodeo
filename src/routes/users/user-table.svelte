@@ -123,6 +123,7 @@
 							<option value="WAITLISTED">Waitlisted</option>
 							<option value="CONFIRMED">Confirmed</option>
 							<option value="DECLINED">Declined</option>
+							<option value="MISSED">Missed</option>
 						</select>
 					</div>
 					<div class="flex-align-center">

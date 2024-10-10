@@ -13,6 +13,8 @@ export const load = async ({ locals }) => {
 		decisions: await trpc(locals.auth).admissions.getDecisions(),
 		settings: await trpc(locals.auth).settings.getAll(),
 		graph: await trpc(locals.auth).users.getStatusChanges(),
+		allHackers: await trpc(locals.auth).users.getAllHackers(),
+		appliedHackers: await trpc(locals.auth).users.getAppliedHackers(),
 	};
 };
 
@@ -20,6 +22,8 @@ export const actions = {
 	settings: async ({ locals, request }) => {
 		const formData = await request.formData();
 		const timezone = formData.get('timezone') as string;
+
+		let hackathonStartDate: Date | null;
 		let applicationDeadline: Date | null;
 		try {
 			applicationDeadline = dayjs
@@ -27,6 +31,13 @@ export const actions = {
 				.toDate();
 		} catch (e) {
 			applicationDeadline = null;
+		}
+		try {
+			hackathonStartDate = dayjs
+				.tz(formData.get('hackathonStartDate') as string, timezone)
+				.toDate();
+		} catch (e) {
+			hackathonStartDate = null;
 		}
 		const applicationLimitRaw = formData.get('applicationLimit');
 		let applicationLimit: number | null = parseInt(applicationLimitRaw as string);
@@ -48,6 +59,7 @@ export const actions = {
 			timezone,
 			applicationDeadline,
 			applicationLimit,
+			hackathonStartDate,
 		});
 		return 'Saved settings!';
 	},
@@ -55,5 +67,10 @@ export const actions = {
 	release: async ({ locals }) => {
 		await trpc(locals.auth).admissions.releaseAllDecisions();
 		return 'Released all decisions!';
+	},
+
+	updateMissedStatus: async ({ locals }) => {
+		await trpc(locals.auth).users.updateMissedStatus();
+		return 'Updated missed status!';
 	},
 };

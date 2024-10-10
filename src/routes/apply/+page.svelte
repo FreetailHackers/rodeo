@@ -124,6 +124,12 @@
 		{:else if data.user.authUser.status === 'DECLINED'}
 			<h1>DECLINED</h1>
 			<p>We're sorry to hear that you will not be able to attend. We hope to see you next year!</p>
+		{:else if data.user.authUser.status === 'MISSED'}
+			<h1>MISSED</h1>
+			<p>
+				You have missed your RSVP deadline. You will need to come apply at the door the day of the
+				hackathon
+			</p>
 		{/if}
 	</div>
 

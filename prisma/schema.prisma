@@ -95,6 +95,7 @@ model Settings {
   scanActions         String[]
   timezone            String    @default("America/Chicago")
   applicationDeadline DateTime?
+  hackathonStartDate  DateTime?
   showAnnouncements   Boolean   @default(true)
   showSchedule        Boolean   @default(true)
   showFAQ             Boolean   @default(true)
@@ -217,6 +218,7 @@ enum Status {
   WAITLISTED // User has been waitlisted
   CONFIRMED // User has confirmed their attendance
   DECLINED // User has declined their attendance
+  MISSED // User has missed their RSVP deadline
 }
 
 enum QuestionType {

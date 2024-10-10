@@ -157,6 +157,7 @@
 					<option value="WAITLISTED">WAITLISTED</option>
 					<option value="CONFIRMED">CONFIRMED</option>
 					<option value="DECLINED">DECLINED</option>
+					<option value="MISSED">MISSED</option>
 				</select>
 			{:else if key === 'email'}
 				<input

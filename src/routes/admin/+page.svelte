@@ -6,6 +6,7 @@
 	export let data;
 
 	let applicationOpenStatus = data.settings.applicationOpen;
+	let hackersLeft = data.allHackers.length - data.appliedHackers.length;
 </script>
 
 <svelte:head>
@@ -31,6 +32,19 @@
 			isLeft={true}
 		/>
 	</div>
+
+	<status-container>
+		<label for="hackathonStartDate">Hackathon Start Date:</label>
+		<input
+			type="datetime-local"
+			name="hackathonStartDate"
+			id="hackathonStartDate"
+			value={data.settings.hackathonStartDate
+				?.toLocaleString('sv', { timeZone: data.settings.timezone })
+				.replace(' ', 'T')
+				.slice(0, -3)}
+		/>
+	</status-container>
 
 	<status-container>
 		<label for="applicationDeadline">Application will close on</label>
@@ -61,6 +75,8 @@
 			min="0"
 		/>
 	</status-container>
+	<p>Cans still accept this many applications: {hackersLeft}</p>
+	<status-container />
 
 	<label for="statusChangeText"><h2>User Status Over Time</h2></label>
 	<Graph statusChanges={data.graph} />
@@ -71,8 +87,7 @@
 			type="number"
 			id="daysToRSVP"
 			name="daysToRSVP"
-			placeholder="Leave empty to disable"
-			min="0"
+			placeholder="Leave empty to disable (min 0)"
 			value={data.settings.daysToRSVP}
 		/>
 	</status-container>
@@ -95,6 +110,10 @@
 	/>
 
 	<button type="submit">Save</button>
+</form>
+
+<form method="POST" action="?/updateMissedStatus" use:enhance>
+	<button type="submit">Update Missed Status</button>
 </form>
 
 <h2>Pending Decisions</h2>
