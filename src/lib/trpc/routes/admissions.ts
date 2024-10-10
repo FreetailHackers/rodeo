@@ -48,21 +48,19 @@ async function releaseDecisions(ids?: string[]): Promise<void> {
 		await prisma.$transaction([updateStatus, deleteDecision]);
 
 		let template = '';
+		let isHTML: boolean = false;
+
 		if (decision === 'ACCEPTED') {
 			template = (await getSettings()).acceptTemplate;
-		} else if (decision === 'REJECTED') {
-			template = (await getSettings()).rejectTemplate;
-		} else if (decision === 'WAITLISTED') {
-			template = (await getSettings()).waitlistTemplate;
-		}
-		let isHTML: boolean = false;
-		if (decision === 'ACCEPTED') {
 			isHTML = (await getSettings()).acceptIsHTML;
 		} else if (decision === 'REJECTED') {
+			template = (await getSettings()).rejectTemplate;
 			isHTML = (await getSettings()).rejectIsHTML;
 		} else if (decision === 'WAITLISTED') {
+			template = (await getSettings()).waitlistTemplate;
 			isHTML = (await getSettings()).waitlistIsHTML;
 		}
+
 		await sendEmails(
 			decisions.map((hacker) => hacker.authUser.email),
 			'Freetail Hackers status update',

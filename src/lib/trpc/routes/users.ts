@@ -856,11 +856,7 @@ export const usersRouter = t.router({
 	 */
 	updateMissedStatus: t.procedure.use(authenticate(['ADMIN'])).mutation(async (): Promise<void> => {
 		const users = await prisma.user.findMany({
-			where: {
-				authUser: {
-					status: 'APPLIED',
-				},
-			},
+			where: { authUser: { status: 'ACCEPTED' } },
 		});
 
 		for (const user of users) {
@@ -874,6 +870,34 @@ export const usersRouter = t.router({
 		}
 	}),
 });
+
+async function getRSVPDeadline(user: User) {
+	const daysToConfirmBy = (
+		await prisma.statusChange.findFirstOrThrow({
+			where: { userId: user.authUserId },
+			orderBy: { timestamp: 'desc' },
+		})
+	).timestamp;
+
+	const settings = await getSettings();
+	const daysToRSVP = settings.daysToRSVP;
+	const hackathonStartDate = settings.hackathonStartDate;
+
+	if (daysToRSVP !== null) {
+		const timeOfAcceptance = dayjs.utc(new Date(daysToConfirmBy)).tz(settings.timezone, false);
+		const calculatedTime = timeOfAcceptance.add(daysToRSVP, 'days').endOf('day').toDate();
+
+		if (hackathonStartDate !== null) {
+			if (calculatedTime.getTime() > hackathonStartDate.getTime()) {
+				return hackathonStartDate;
+			} else {
+				return calculatedTime;
+			}
+		}
+	}
+
+	return null;
+}
 
 async function getWhereCondition(
 	key: string,
@@ -1073,23 +1097,4 @@ async function getWhereConditionHelper(
 		}
 	}
 	return {};
-}
-
-async function getRSVPDeadline(user: User) {
-	const daysToConfirmBy = (
-		await prisma.statusChange.findFirstOrThrow({
-			where: { userId: user.authUserId },
-			orderBy: { timestamp: 'desc' },
-		})
-	).timestamp;
-
-	const settings = await getSettings();
-	const daysToRSVP = settings.daysToRSVP;
-
-	if (daysToRSVP !== null) {
-		const timeOfAcceptance = dayjs.utc(new Date(daysToConfirmBy)).tz(settings.timezone, false);
-		return timeOfAcceptance.add(daysToRSVP, 'days').endOf('day').toDate();
-	}
-
-	return null;
 }

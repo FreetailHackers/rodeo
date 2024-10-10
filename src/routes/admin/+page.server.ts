@@ -70,7 +70,9 @@ export const actions = {
 	},
 
 	updateMissedStatus: async ({ locals }) => {
+		console.log('updating missed status');
 		await trpc(locals.auth).users.updateMissedStatus();
+		console.log('done updating missed status');
 		return 'Updated missed status!';
 	},
 };

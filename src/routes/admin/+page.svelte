@@ -75,7 +75,7 @@
 			min="0"
 		/>
 	</status-container>
-	<p>Cans still accept this many applications: {hackersLeft}</p>
+	<p>Can still accept this many applications: {hackersLeft}</p>
 	<status-container />
 
 	<label for="statusChangeText"><h2>User Status Over Time</h2></label>
