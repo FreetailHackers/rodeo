@@ -5,8 +5,6 @@
 	export let statusChanges: StatusChange[];
 	const statuses: Status[] = Object.keys(Status) as Status[];
 	const statusColorMap = new Map<Status, string>([
-		// TODO: change these colors to be variables.
-		// TODO: add missed
 		['CREATED', 'lightgray'],
 		['APPLIED', 'rgb(63, 63, 63)'],
 		['ACCEPTED', 'rgb(93, 198, 93)'],
@@ -14,6 +12,7 @@
 		['WAITLISTED', 'orange'],
 		['CONFIRMED', 'darkgreen'],
 		['DECLINED', 'darkred'],
+		['MISSED', 'darkgray'],
 	]);
 
 	// Track statusChange for every timestamp in all status changes recorded

@@ -28,6 +28,16 @@ html {
 	/* Specify new rules only for special cases */
 	font-family: var(--font-standard);
 	font-weight: 400;
+
+	/* Status colors */
+	--accepted: rgb(93, 198, 93);
+	--rejected: rgb(255, 78, 78);
+	--waitlisted: orange;
+	--applied: rgb(63, 63, 63);
+	--created: lightgray;
+	--confirmed: darkgreen;
+	--declined: darkred;
+	--missed: black;
 }
 
 p {
