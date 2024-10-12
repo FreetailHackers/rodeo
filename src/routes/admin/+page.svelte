@@ -6,7 +6,6 @@
 	export let data;
 
 	let applicationOpenStatus = data.settings.applicationOpen;
-	let hackersLeft = data.allHackers.length - data.appliedHackers.length;
 </script>
 
 <svelte:head>
@@ -75,7 +74,7 @@
 			min="0"
 		/>
 	</status-container>
-	<p>Can still accept this many applications: {hackersLeft}</p>
+	<p>Can still accept this many applications: {data.remainingHackers}</p>
 	<status-container />
 
 	<label for="statusChangeText"><h2>User Status Over Time</h2></label>
@@ -87,8 +86,9 @@
 			type="number"
 			id="daysToRSVP"
 			name="daysToRSVP"
-			placeholder="Leave empty to disable (min 0)"
+			placeholder="Leave empty to disable"
 			value={data.settings.daysToRSVP}
+			min="0"
 		/>
 	</status-container>
 

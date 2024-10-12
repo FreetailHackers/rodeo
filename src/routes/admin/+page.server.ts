@@ -13,8 +13,7 @@ export const load = async ({ locals }) => {
 		decisions: await trpc(locals.auth).admissions.getDecisions(),
 		settings: await trpc(locals.auth).settings.getAll(),
 		graph: await trpc(locals.auth).users.getStatusChanges(),
-		allHackers: await trpc(locals.auth).users.getAllHackers(),
-		appliedHackers: await trpc(locals.auth).users.getAppliedHackers(),
+		remainingHackers: await trpc(locals.auth).users.getRemainingAcceptances(),
 	};
 };
 
