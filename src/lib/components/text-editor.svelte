@@ -46,11 +46,15 @@
 {/if}
 <div class="container">
 	<div class="toggle-container">
-		<Toggle name={toggleName} label="Use HTML (Default: Markdown)" bind:checked={isHTML} />
+		{#if isHTML}
+			<Toggle name={toggleName} isLeft={true} label="HTML" bind:checked={isHTML} />
+		{:else}
+			<Toggle name={toggleName} isLeft={true} label="Markdown" bind:checked={isHTML} />
+		{/if}
 	</div>
 	<label class="preview-label">
-		<input type="checkbox" bind:checked={previewing} />
 		<span>Preview</span>
+		<input type="checkbox" bind:checked={previewing} />
 	</label>
 </div>
 
@@ -76,11 +80,11 @@
 	}
 
 	input {
-		padding: 0 1rem;
 		background-color: #ddd;
 		color: black;
-		margin-right: -5px;
+		transform: translateY(2px);
 	}
+
 	textarea {
 		height: auto;
 		width: 100%;
