@@ -82,7 +82,7 @@
 	input {
 		background-color: #ddd;
 		color: black;
-		transform: translateY(3px);
+		transform: translateY(2px);
 	}
 
 	textarea {
