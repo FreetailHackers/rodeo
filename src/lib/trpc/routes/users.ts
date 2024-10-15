@@ -834,30 +834,6 @@ export const usersRouter = t.router({
 		}),
 
 	/**
-	 * Return number of hackers that can still be accepted based on the number of ACCEPTED,
-	 * CONFIRMED, and APPLIED hackers.
-	 */
-	getRemainingAcceptances: t.procedure
-		.use(authenticate(['ADMIN']))
-		.query(async (): Promise<number> => {
-			const allHackers = await prisma.user.count({
-				where: { authUser: { roles: { has: 'HACKER' } } },
-			});
-
-			const comingHackers = await prisma.user.count({
-				where: {
-					authUser: {
-						status: {
-							in: ['APPLIED', 'CONFIRMED', 'ACCEPTED'],
-						},
-					},
-				},
-			});
-
-			return allHackers - comingHackers;
-		}),
-
-	/**
 	 * Updates the status of all users who have missed the RSVP deadline.
 	 */
 	updateMissedStatus: t.procedure.use(authenticate(['ADMIN'])).mutation(async (): Promise<void> => {
