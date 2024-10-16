@@ -10,7 +10,7 @@ export const load = async ({ locals }) => {
 
 	return {
 		user: await trpc(locals.auth).users.get(),
-		latestUpdate: await trpc(locals.auth).users.getLatestUpdateDate(),
+		appliedDate: await trpc(locals.auth).users.getAppliedDate(),
 		rsvpDeadline: deadline,
 		questions: await trpc(locals.auth).questions.get(),
 		settings: settings,

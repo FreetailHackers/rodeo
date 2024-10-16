@@ -15,16 +15,6 @@
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 	let saveButton: HTMLButtonElement;
 	let rsvpSelectedValue: string = '';
-	$: colorClass =
-		data.user.authUser.status === 'APPLIED'
-			? 'APPLIED'
-			: data.user.authUser.status === 'ACCEPTED'
-			? 'ACCEPTED'
-			: data.user.authUser.status === 'CONFIRMED'
-			? 'CONFIRMED'
-			: data.user.authUser.status === 'DECLINED'
-			? 'DECLINED'
-			: '';
 </script>
 
 <svelte:head>
@@ -34,7 +24,6 @@
 <!-- Application status dialog -->
 <div class="main-content">
 	<div id="status">
-		<!-- <p>Your application status is:</p> -->
 		{#if data.user.authUser.status === 'CREATED'}
 			<h1>INCOMPLETE</h1>
 			{#if data.settings.applicationDeadline !== null}
@@ -58,15 +47,17 @@
 
 		{#if data.user.authUser.status === 'APPLIED'}
 			<h2 class="status-message">You've submitted your application!</h2>
-			<p>
-				Submitted on {data.latestUpdate.toLocaleDateString('en-US', {
-					month: 'numeric',
-					day: 'numeric',
-					year: 'numeric',
-					hour: 'numeric',
-					minute: 'numeric',
-				})}
-			</p>
+			{#if data.appliedDate !== null}
+				<p>
+					Submitted on {data.appliedDate.toLocaleDateString('en-US', {
+						month: 'numeric',
+						day: 'numeric',
+						year: 'numeric',
+						hour: 'numeric',
+						minute: 'numeric',
+					})}
+				</p>
+			{/if}
 		{:else if data.user.authUser.status === 'REJECTED'}
 			<h2 class="status-message">
 				Unfortunately, we do not have the space to offer you admission this year.
@@ -117,7 +108,9 @@
 					{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'CONFIRMED' || data.user.authUser.status === 'DECLINED'}
 						<h5 id="application-status" class="ACCEPTED">Accepted</h5>
 					{:else}
-						<h5 id="application-status" class={colorClass}>{data.user.authUser.status}</h5>
+						<h5 id="application-status" class={data.user.authUser.status}>
+							{data.user.authUser.status}
+						</h5>
 					{/if}
 				</div>
 				{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'CONFIRMED' || data.user.authUser.status === 'DECLINED'}
@@ -125,13 +118,15 @@
 					<div id="rsvp-section">
 						<h5>RSVP</h5>
 						{#if data.user.authUser.status === 'ACCEPTED'}
-							<select bind:value={rsvpSelectedValue}>
+							<select bind:value={rsvpSelectedValue} placeholder="xxx">
 								<option value="" disabled selected hidden>Select one</option>
 								<option value="confirm">Confirm</option>
 								<option value="decline">Decline</option>
 							</select>
 						{:else}
-							<h5 id="application-status" class={colorClass}>{data.user.authUser.status}</h5>
+							<h5 id="application-status" class={data.user.authUser.status}>
+								{data.user.authUser.status}
+							</h5>
 						{/if}
 					</div>
 				{/if}
@@ -333,6 +328,7 @@
 	.DECLINED {
 		color: grey;
 	}
+
 	.APPLIED {
 		color: var(--secondary-color-1);
 	}
@@ -404,10 +400,6 @@
 
 	input[type='checkbox'] {
 		order: -1;
-	}
-
-	#rsvp > * {
-		flex-grow: 1;
 	}
 
 	#status {
