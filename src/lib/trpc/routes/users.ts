@@ -61,6 +61,7 @@ export const usersRouter = t.router({
 			}
 		),
 	getLatestUpdateDate: t.procedure
+		.use(authenticate(['HACKER']))
 		.input(z.string().optional())
 		.query(async (req): Promise<Date> => {
 			const session = await req.ctx.validate();
@@ -78,9 +79,6 @@ export const usersRouter = t.router({
 
 				return result?.timestamp ?? new Date();
 			} else {
-				if (!user.roles.includes('ADMIN') && !user.roles.includes('ORGANIZER')) {
-					throw new Error('Forbidden');
-				}
 				const result = await prisma.statusChange.findFirst({
 					where: { userId: user.id },
 					orderBy: { id: 'desc' },

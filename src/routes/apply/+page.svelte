@@ -311,7 +311,7 @@
 	}
 	#status-and-rsvp-sections {
 		border: 1px solid;
-		border-radius: 15px;
+		border-radius: var(--border-radius);
 		border-color: #bbbbbb;
 		margin: 2rem 0;
 	}
@@ -320,21 +320,21 @@
 		justify-content: end;
 	}
 	.status-form button {
-		border-radius: 15px;
+		border-radius: var(--border-radius);
 		display: inline-block;
 		width: fit-content;
 	}
 	.ACCEPTED {
-		color: #7970ff;
+		color: var(--accent);
 	}
 	.CONFIRMED {
-		color: #7970ff;
+		color: var(--accent);
 	}
 	.DECLINED {
 		color: grey;
 	}
 	.APPLIED {
-		color: #0773a6;
+		color: var(--secondary-color-1);
 	}
 
 	.rsvp-deadline > * {
@@ -411,7 +411,6 @@
 	}
 
 	#status {
-		/* border: 2px solid var(--grey); */
 		padding: 1rem;
 		text-align: center;
 		margin-bottom: 1rem;
