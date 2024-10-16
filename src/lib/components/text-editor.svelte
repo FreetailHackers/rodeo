@@ -15,6 +15,7 @@
 
 	export let isHTML: boolean;
 	export let toggleName: string = '';
+	export let showToggle: boolean = true;
 
 	// HACK: This is a workaround for Svelte not updating input bindings a form is reset
 	onMount(() => {
@@ -46,10 +47,12 @@
 {/if}
 <div class="container">
 	<div class="toggle-container">
-		{#if isHTML}
-			<Toggle name={toggleName} isLeft={true} label="HTML" bind:checked={isHTML} />
-		{:else}
-			<Toggle name={toggleName} isLeft={true} label="Markdown" bind:checked={isHTML} />
+		{#if showToggle}
+			{#if isHTML}
+				<Toggle name={toggleName} isLeft={true} label="HTML" bind:checked={isHTML} />
+			{:else}
+				<Toggle name={toggleName} isLeft={true} label="Markdown" bind:checked={isHTML} />
+			{/if}
 		{/if}
 	</div>
 	<label class="preview-label">

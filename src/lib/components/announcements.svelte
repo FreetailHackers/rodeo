@@ -16,6 +16,7 @@
 			name="announcement"
 			placeholder="Make an announcement here..."
 			isHTML={false}
+			showToggle={false}
 			required
 		/>
 		<button class="announcement-button-label">Announce</button>
