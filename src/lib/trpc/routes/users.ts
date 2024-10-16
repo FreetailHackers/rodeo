@@ -849,6 +849,17 @@ export const usersRouter = t.router({
 					data: { status: 'MISSED' },
 				});
 			}
+			prisma.user.update({
+				where: { authUserId: user.authUserId },
+				data: {
+					statusChanges: {
+						create: {
+							newStatus: 'MISSED',
+							timestamp: new Date(),
+						},
+					},
+				},
+			});
 		}
 	}),
 });
@@ -869,13 +880,10 @@ async function getRSVPDeadline(user: User) {
 		const timeOfAcceptance = dayjs.utc(new Date(daysToConfirmBy)).tz(settings.timezone, false);
 		const calculatedTime = timeOfAcceptance.add(daysToRSVP, 'days').endOf('day').toDate();
 
-		if (hackathonStartDate !== null) {
-			if (calculatedTime.getTime() > hackathonStartDate.getTime()) {
-				return hackathonStartDate;
-			} else {
-				return calculatedTime;
-			}
+		if (hackathonStartDate !== null && calculatedTime.getTime() > hackathonStartDate.getTime()) {
+			return hackathonStartDate;
 		}
+		return calculatedTime;
 	}
 
 	return null;

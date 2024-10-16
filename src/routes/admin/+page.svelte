@@ -58,19 +58,21 @@
 				.slice(0, -3)}
 		/>
 	</status-container>
-	<label for="applicationLimit"
-		>Applications close when the total number of APPLIED, ACCEPTED, or CONFIRMED accounts reaches
-		this limit</label
-	>
-	<input
-		readonly={!applicationOpenStatus}
-		type="number"
-		name="applicationLimit"
-		id="applicationLimit"
-		value={data.settings.applicationLimit}
-		placeholder="Leave empty to disable"
-		min="0"
-	/>
+	<status-container>
+		<label for="applicationLimit"
+			>Applications close when the total number of APPLIED, ACCEPTED, or CONFIRMED accounts reaches
+			this limit</label
+		>
+		<input
+			readonly={!applicationOpenStatus}
+			type="number"
+			name="applicationLimit"
+			id="applicationLimit"
+			value={data.settings.applicationLimit}
+			placeholder="Leave empty to disable"
+			min="0"
+		/>
+	</status-container>
 	<status-container />
 
 	<label for="statusChangeText"><h2>User Status Over Time</h2></label>
@@ -106,10 +108,6 @@
 	/>
 
 	<button type="submit">Save</button>
-</form>
-
-<form method="POST" action="?/updateMissedStatus" use:enhance>
-	<button type="submit">Update Missed Status</button>
 </form>
 
 <h2>Pending Decisions</h2>

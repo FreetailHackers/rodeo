@@ -3,6 +3,7 @@ import { trpc } from '$lib/trpc/router';
 import type { Role, Status } from '@prisma/client';
 
 export const load = async ({ locals, url }) => {
+	await trpc(locals.auth).users.updateMissedStatus();
 	const user = await authenticate(locals.auth, ['ADMIN', 'SPONSOR']);
 	const results = await trpc(locals.auth).users.search({
 		page: Number(url.searchParams.get('page') ?? 1),

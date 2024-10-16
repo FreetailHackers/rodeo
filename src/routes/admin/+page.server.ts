@@ -9,6 +9,8 @@ dayjs.extend(timezone);
 
 export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['ADMIN']);
+	await trpc(locals.auth).users.updateMissedStatus();
+
 	return {
 		decisions: await trpc(locals.auth).admissions.getDecisions(),
 		settings: await trpc(locals.auth).settings.getAll(),
@@ -27,14 +29,11 @@ export const actions = {
 			applicationDeadline = dayjs
 				.tz(formData.get('applicationDeadline') as string, timezone)
 				.toDate();
-		} catch (e) {
-			applicationDeadline = null;
-		}
-		try {
 			hackathonStartDate = dayjs
 				.tz(formData.get('hackathonStartDate') as string, timezone)
 				.toDate();
 		} catch (e) {
+			applicationDeadline = null;
 			hackathonStartDate = null;
 		}
 		const applicationLimitRaw = formData.get('applicationLimit');
@@ -65,10 +64,5 @@ export const actions = {
 	release: async ({ locals }) => {
 		await trpc(locals.auth).admissions.releaseAllDecisions();
 		return 'Released all decisions!';
-	},
-
-	updateMissedStatus: async ({ locals }) => {
-		await trpc(locals.auth).users.updateMissedStatus();
-		return 'Updated missed status!';
 	},
 };

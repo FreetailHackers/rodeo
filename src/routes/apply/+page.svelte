@@ -127,8 +127,8 @@
 		{:else if data.user.authUser.status === 'MISSED'}
 			<h1>MISSED</h1>
 			<p>
-				You have missed your RSVP deadline. You will need to come apply at the door the day of the
-				hackathon
+				Unfortunately, you have missed your RSVP deadlinebut you're welcome to try attending as a
+				walk-in, though we can't guarantee a spot—we'll do our best to accommodate if possible!
 			</p>
 		{/if}
 	</div>

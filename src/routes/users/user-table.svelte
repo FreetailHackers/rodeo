@@ -312,34 +312,34 @@
 	}
 
 	.accepted {
-		background: var(--accepted);
+		background: rgb(93, 198, 93);
 	}
 
 	.rejected {
-		background: var(--rejected);
+		background: rgb(255, 78, 78);
 	}
 
 	.waitlisted {
-		background: var(--waitlisted);
+		background: orange;
 	}
 
 	.applied {
-		background: var(--applied);
+		background: rgb(63, 63, 63);
 	}
 
 	.created {
-		background: var(--created);
+		background: lightgray;
 	}
 
 	.confirmed {
-		background: var(--confirmed);
+		background: darkgreen;
 	}
 
 	.declined {
-		background: var(--declined);
+		background: darkred;
 	}
 
 	.missed {
-		background: var(--missed);
+		background: black;
 	}
 </style>
