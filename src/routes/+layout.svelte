@@ -38,14 +38,6 @@
 	});
 </script>
 
-{#if data.user?.roles.includes('ADMIN') || data.user?.roles.includes('SPONSOR')}
-	<li>
-		<!-- HACK: Tell SvelteKit to force refresh on /users since
-	IDK how to reset the filters on the users page otherwise -->
-		<a href="/users" data-sveltekit-reload>Users</a>
-	</li>
-{/if}
-
 {#if !noLayoutRoutes.some((route) => $page.url.pathname.startsWith(route))}
 	<div class="navbar">
 		<label for="hamburgerCheckbox"
@@ -90,7 +82,7 @@
 				<li><a href="/scan" class:active={$page.url.pathname.startsWith('/scan')}>Scan</a></li>
 			{/if}
 			<li>
-				<a href="/account" class:active={$page.url.pathname.startsWith('/account')}>My Team</a>
+				<a href="/account" class:active={$page.url.pathname.startsWith('/account')}>Account</a>
 			</li>
 			<!-- <li>
 				<a href="/settings" class:active={$page.url.pathname.startsWith('/settings')}>Settings</a>

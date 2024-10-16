@@ -7,7 +7,7 @@ html {
 
 :root {
 	/* Fonts */
-	--font-titles: 'Monsterrat', 'Inter';
+	--font-titles: 'Montserrat', 'Inter';
 	--font-standard: 'Inter', 'Geologica', 'Helvetica Neue', sans-serif;
 
 	/* Colors */
@@ -50,6 +50,8 @@ h1 {
 }
 h2 {
 	font-size: 2.22rem; /* 40pt */
+	font-family: var(--font-titles);
+	color: var(--accent);
 }
 h3 {
 	font-size: 1.56rem; /* 28pt */
