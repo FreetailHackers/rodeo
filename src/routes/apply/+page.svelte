@@ -43,9 +43,7 @@
 			{:else}
 				<p>You must complete your application to be considered for admission.</p>
 			{/if}
-		{/if}
-
-		{#if data.user.authUser.status === 'APPLIED'}
+		{:else if data.user.authUser.status === 'APPLIED'}
 			<h2 class="status-message">You've submitted your application!</h2>
 			{#if data.appliedDate !== null}
 				<p>
@@ -118,7 +116,7 @@
 					<div id="rsvp-section">
 						<h5>RSVP</h5>
 						{#if data.user.authUser.status === 'ACCEPTED'}
-							<select bind:value={rsvpSelectedValue} placeholder="xxx">
+							<select bind:value={rsvpSelectedValue}>
 								<option value="" disabled selected hidden>Select one</option>
 								<option value="confirm">Confirm</option>
 								<option value="decline">Decline</option>
