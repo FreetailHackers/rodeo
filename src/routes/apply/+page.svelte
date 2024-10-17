@@ -302,27 +302,30 @@
 		justify-content: space-between;
 		gap: 1rem;
 	}
+
 	#status-and-rsvp-sections {
 		border: 1px solid;
 		border-radius: var(--border-radius);
 		border-color: #bbbbbb;
 		margin: 2rem 0;
 	}
+
 	.status-form {
 		flex-direction: row;
 		justify-content: end;
 	}
+
 	.status-form button {
 		border-radius: var(--border-radius);
 		display: inline-block;
 		width: fit-content;
 	}
-	.ACCEPTED {
-		color: var(--accent);
-	}
+
+	.ACCEPTED,
 	.CONFIRMED {
 		color: var(--accent);
 	}
+
 	.DECLINED {
 		color: grey;
 	}
@@ -335,6 +338,7 @@
 		color: grey;
 		margin: unset;
 	}
+
 	.rsvp-deadline h5 {
 		color: red;
 	}
@@ -347,10 +351,12 @@
 	#status-and-rsvp-sections > * {
 		margin: 0;
 	}
+
 	#status-and-rsvp-sections > * * {
 		font-weight: 400;
 		margin: 1em 1.25em;
 	}
+
 	#application-section {
 		display: flex;
 		justify-content: space-between;
@@ -360,6 +366,7 @@
 		font-weight: bold;
 		text-transform: lowercase;
 	}
+
 	#application-status::first-letter {
 		text-transform: uppercase;
 	}
@@ -369,6 +376,7 @@
 		justify-content: space-between;
 		align-items: center;
 	}
+
 	#rsvp-section select {
 		margin: 0 1em;
 		padding: 0.25em 0.5em;
@@ -376,6 +384,7 @@
 		min-width: 7em;
 		color: black;
 	}
+
 	form {
 		display: flex;
 		flex-direction: column;
