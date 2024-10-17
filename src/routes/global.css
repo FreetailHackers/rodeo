@@ -390,7 +390,6 @@ dialog button {
 
 @media (max-width: 450px) {
 	dialog {
-		margin-block-end: 0;
 		width: 100%;
 	}
 
