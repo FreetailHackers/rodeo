@@ -23,7 +23,7 @@
 
 	<div class="flex-container">
 		<input class="textbox-margin" name="subject" placeholder="Type email subject here" required />
-		<select name="status" required>
+		<select class="select-margin" name="status" required>
 			{#each statuses as status}
 				<option value={status}>{status}</option>
 			{/each}
@@ -50,7 +50,6 @@
 	}}
 >
 	<label for="submitTemplate"><h2>Submit Application Email Template</h2></label>
-
 	<TextEditor
 		value={data.settings.submitTemplate}
 		name="submitTemplate"
@@ -128,6 +127,10 @@
 	.textbox-margin {
 		margin-bottom: 1%;
 		flex: 1;
+	}
+
+	.select-margin {
+		margin-bottom: 1%;
 	}
 
 	.flex-container {
