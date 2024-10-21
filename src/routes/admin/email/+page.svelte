@@ -23,7 +23,7 @@
 
 	<div class="flex-container">
 		<input class="textbox-margin" name="subject" placeholder="Type email subject here" required />
-		<select class="select-margin" name="status" required>
+		<select name="status" required>
 			{#each statuses as status}
 				<option value={status}>{status}</option>
 			{/each}
@@ -125,15 +125,11 @@
 	}
 
 	.textbox-margin {
-		margin-bottom: 1%;
 		flex: 1;
 	}
 
-	.select-margin {
-		margin-bottom: 1%;
-	}
-
 	.flex-container {
+		margin-bottom: 1%;
 		display: flex;
 	}
 
