@@ -5,6 +5,7 @@ import type { Prisma, Question } from '@prisma/client';
 
 export const GET = async ({ locals, url }) => {
 	await authenticate(locals.auth, ['ADMIN']);
+	await trpc(locals.auth).users.updateMissedStatus();
 	const results = await trpc(locals.auth).users.search({
 		page: 1,
 		key: url.searchParams.get('key') ?? '',
