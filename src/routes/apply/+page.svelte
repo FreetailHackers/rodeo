@@ -14,6 +14,7 @@
 
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 	let saveButton: HTMLButtonElement;
+	let rsvpSelectedValue: string = '';
 </script>
 
 <svelte:head>
@@ -23,7 +24,6 @@
 <!-- Application status dialog -->
 <div class="main-content">
 	<div id="status">
-		<p>Your application status is:</p>
 		{#if data.user.authUser.status === 'CREATED'}
 			<h1>INCOMPLETE</h1>
 			{#if data.settings.applicationDeadline !== null}
@@ -44,86 +44,129 @@
 				<p>You must complete your application to be considered for admission.</p>
 			{/if}
 		{:else if data.user.authUser.status === 'APPLIED'}
-			<h1>SUBMITTED</h1>
-			<p>Thanks for applying! The team will review your application soon.</p>
-			<form method="POST" action="?/withdraw" use:enhance>
-				{#if data.canApply}
-					<button>Withdraw and Edit</button>
-				{:else}
-					<button disabled>Cannot edit because applications are closed.</button>
-				{/if}
-			</form>
-		{:else if data.user.authUser.status === 'REJECTED'}
-			<h1>REJECTED</h1>
-			<p>Unfortunately, we do not have the space to offer you admission this year.</p>
-		{:else if data.user.authUser.status === 'WAITLISTED'}
-			<h1>WAITLISTED</h1>
-			<p>
-				Unfortunately, we do not have the space to offer you admission at this time. We will contact
-				you should this situation change.
-			</p>
-		{:else if data.user.authUser.status === 'ACCEPTED'}
-			<h1>{data.user.authUser.status}</h1>
-			<p>
-				Congratulations! We were impressed by your application and would like to invite you to
-				attend.
-			</p>
-
-			{#if data.rsvpDeadline === null || new Date() < data.rsvpDeadline}
-				{#if data.rsvpDeadline}
-					<p>
-						You must confirm your attendance by {data.rsvpDeadline.toLocaleDateString('en-US', {
-							weekday: 'long',
-							month: 'long',
-							day: 'numeric',
-							hour: 'numeric',
-							minute: 'numeric',
-						})} to secure your spot. If you know you will not be able to attend, please decline so we
-						can offer your spot to someone else.
-					</p>
-				{/if}
-				<form method="POST" id="rsvp" use:enhance>
-					<button
-						formaction="?/decline"
-						use:confirmationDialog={{
-							text: 'Are you sure you want to decline your attendance? This action cannot be undone!',
-							cancel: 'No, go back',
-							ok: 'Yes, I want to decline',
-						}}>Decline</button
-					>
-					<button
-						formaction="?/confirm"
-						use:confirmationDialog={{
-							text: 'Are you sure you want to confirm your attendance?',
-							cancel: 'No, go back',
-							ok: 'Yes, I want to confirm',
-						}}>Confirm</button
-					>
-				</form>
-			{:else}
+			<h2 class="status-message">You've submitted your application!</h2>
+			{#if data.appliedDate !== null}
 				<p>
-					Sorry, the deadline to confirm your attendance has passed. If space permits, you may sign
-					up as a walk-in at the doors the day of the event, but we cannot make any guarantees.
+					Submitted on {data.appliedDate.toLocaleDateString('en-US', {
+						month: 'numeric',
+						day: 'numeric',
+						year: 'numeric',
+						hour: 'numeric',
+						minute: 'numeric',
+					})}
+				</p>
+			{/if}
+		{:else if data.user.authUser.status === 'REJECTED'}
+			<h2 class="status-message">
+				Unfortunately, we do not have the space to offer you admission this year.
+			</h2>
+		{:else if data.user.authUser.status === 'WAITLISTED'}
+			<h2 class="status-message">
+				Unfortunately, we do not have the space to offer you admission at this time.
+			</h2>
+			<p>We will contact you should this situation change.</p>
+		{:else if data.user.authUser.status === 'ACCEPTED'}
+			{#if data.rsvpDeadline === null || new Date() < data.rsvpDeadline}
+				<h2 class="status-message">
+					You’ve been accepted!<br />
+					RSVP to confirm your attendance :)
+				</h2>
+				{#if data.rsvpDeadline}
+					<div class="rsvp-deadline">
+						<p>Please confirm your attendance by</p>
+						<h5>
+							{data.rsvpDeadline.toLocaleDateString('en-US', {
+								weekday: 'long',
+								month: 'long',
+								day: 'numeric',
+								hour: 'numeric',
+								minute: 'numeric',
+							})}
+						</h5>
+					</div>
+				{/if}
+			{:else}
+				<h2>Sorry, the deadline to confirm your attendance has passed.</h2>
+				<p>
+					If space permits, you may sign up as a walk-in at the doors the day of the event, but we
+					cannot make any guarantees.
 				</p>
 			{/if}
 		{:else if data.user.authUser.status === 'CONFIRMED'}
-			<h1>CONFIRMED</h1>
-			<p>
-				Glad you could make it! If you change your mind, please decline so we can offer your spot to
-				someone else. We look forward to seeing you at the event!
-			</p>
-			<form method="POST" use:enhance action="?/decline">
-				<button
-					use:confirmationDialog={{
-						text: 'Are you sure you want to decline your attendance? This action cannot be undone!',
-						cancel: 'No, go back',
-						ok: 'Yes, I want to decline',
-					}}>Decline</button
-				>
-			</form>
+			<h2 class="status-message">
+				Thanks for confirming your attendance!<br />Excited to see you :)
+			</h2>
 		{:else if data.user.authUser.status === 'DECLINED'}
-			<h1>DECLINED</h1>
-			<p>We're sorry to hear that you will not be able to attend. We hope to see you next year!</p>
+			<h2 class="status-message">Sorry to see you go :(<br />Hope to see you next year!</h2>
+		{/if}
+		{#if data.user.authUser.status !== 'CREATED'}
+			<div id="status-and-rsvp-sections">
+				<div id="application-section">
+					<h5>Application Status</h5>
+					{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'CONFIRMED' || data.user.authUser.status === 'DECLINED'}
+						<h5 id="application-status" class="ACCEPTED">Accepted</h5>
+					{:else}
+						<h5 id="application-status" class={data.user.authUser.status}>
+							{data.user.authUser.status}
+						</h5>
+					{/if}
+				</div>
+				{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'CONFIRMED' || data.user.authUser.status === 'DECLINED'}
+					<hr />
+					<div id="rsvp-section">
+						<h5>RSVP</h5>
+						{#if data.user.authUser.status === 'ACCEPTED'}
+							<select bind:value={rsvpSelectedValue}>
+								<option value="" disabled selected hidden>Select one</option>
+								<option value="confirm">Confirm</option>
+								<option value="decline">Decline</option>
+							</select>
+						{:else}
+							<h5 id="application-status" class={data.user.authUser.status}>
+								{data.user.authUser.status}
+							</h5>
+						{/if}
+					</div>
+				{/if}
+			</div>
+
+			{#if data.user.authUser.status === 'ACCEPTED'}
+				{#if data.rsvpDeadline === null || new Date() < data.rsvpDeadline}
+					<form class="status-form" method="POST" use:enhance>
+						{#if rsvpSelectedValue === 'confirm'}
+							<button
+								disabled={!rsvpSelectedValue}
+								formaction="?/confirm"
+								use:confirmationDialog={{
+									text: 'Are you sure you want to CONFIRM your attendance?',
+									cancel: 'No, go back',
+									ok: 'Yes, I want to CONFIRM',
+								}}>Submit</button
+							>
+						{:else if rsvpSelectedValue === 'decline'}
+							<button
+								disabled={!rsvpSelectedValue}
+								formaction="?/decline"
+								use:confirmationDialog={{
+									text: 'Are you sure you want to DECLINE your attendance?',
+									cancel: 'No, go back',
+									ok: 'Yes, I want to DECLINE',
+								}}>Submit</button
+							>
+						{:else}
+							<button disabled={!rsvpSelectedValue}>Submit</button>
+						{/if}
+					</form>
+				{/if}
+			{:else if data.user.authUser.status === 'APPLIED'}
+				<form class="status-form" method="POST" action="?/withdraw" use:enhance>
+					{#if data.canApply}
+						<button>Withdraw and Edit</button>
+					{:else}
+						<button disabled>Cannot edit because applications are closed.</button>
+					{/if}
+				</form>
+			{/if}
 		{/if}
 	</div>
 
@@ -260,6 +303,88 @@
 		gap: 1rem;
 	}
 
+	#status-and-rsvp-sections {
+		border: 1px solid;
+		border-radius: var(--border-radius);
+		border-color: #bbbbbb;
+		margin: 2rem 0;
+	}
+
+	.status-form {
+		flex-direction: row;
+		justify-content: end;
+	}
+
+	.status-form button {
+		border-radius: var(--border-radius);
+		display: inline-block;
+		width: fit-content;
+	}
+
+	.ACCEPTED,
+	.CONFIRMED {
+		color: var(--accent);
+	}
+
+	.DECLINED {
+		color: grey;
+	}
+
+	.APPLIED {
+		color: var(--secondary-color-1);
+	}
+
+	.rsvp-deadline > * {
+		color: grey;
+		margin: unset;
+	}
+
+	.rsvp-deadline h5 {
+		color: red;
+	}
+
+	.status-message {
+		margin: unset;
+		margin-bottom: 1rem;
+	}
+
+	#status-and-rsvp-sections > * {
+		margin: 0;
+	}
+
+	#status-and-rsvp-sections > * * {
+		font-weight: 400;
+		margin: 1em 1.25em;
+	}
+
+	#application-section {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	#application-status {
+		font-weight: bold;
+		text-transform: lowercase;
+	}
+
+	#application-status::first-letter {
+		text-transform: uppercase;
+	}
+
+	#rsvp-section {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	#rsvp-section select {
+		margin: 0 1em;
+		padding: 0.25em 0.5em;
+		font-size: medium;
+		min-width: 7em;
+		color: black;
+	}
+
 	form {
 		display: flex;
 		flex-direction: column;
@@ -284,12 +409,7 @@
 		order: -1;
 	}
 
-	#rsvp > * {
-		flex-grow: 1;
-	}
-
 	#status {
-		border: 2px solid var(--grey);
 		padding: 1rem;
 		text-align: center;
 		margin-bottom: 1rem;

@@ -61,6 +61,32 @@ export const usersRouter = t.router({
 			}
 		),
 
+	getAppliedDate: t.procedure
+		.use(authenticate(['HACKER']))
+		.query(async (req): Promise<Date | null> => {
+			const userId = (
+				await prisma.user.findUniqueOrThrow({
+					where: { authUserId: req.ctx.user.id },
+					select: { authUserId: true },
+				})
+			).authUserId;
+
+			const appliedDate = await prisma.statusChange.findFirst({
+				where: { userId: userId, newStatus: 'APPLIED' },
+				orderBy: { id: 'desc' },
+				select: { timestamp: true },
+			});
+
+			if (!appliedDate?.timestamp) {
+				return null;
+			}
+
+			return dayjs
+				.utc(new Date(appliedDate.timestamp))
+				.tz((await getSettings()).timezone, false)
+				.toDate();
+		}),
+
 	/**
 	 * Sets the logged in user to the given data. If the user has
 	 * finished their application, they will be un-applied.
