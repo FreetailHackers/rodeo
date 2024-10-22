@@ -66,12 +66,11 @@
 		display: flex;
 		justify-content: flex-end;
 		align-items: center;
-		margin-bottom: 10px;
-		margin-top: 5px;
+		margin: 1rem 0;
 	}
 
 	.toggle-container {
-		margin-right: 20px;
+		margin-right: 1rem;
 	}
 
 	.white-preview-background {

@@ -131,6 +131,7 @@
 	.flex-container {
 		margin-bottom: 1rem;
 		display: flex;
+		gap: 1rem;
 	}
 
 	button {
