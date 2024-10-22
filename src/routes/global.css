@@ -18,6 +18,7 @@ html {
 	--grey: #bbb;
 	--light-grey: #ebebeb;
 	--background-grey: #d9d9d9;
+	--secondary-color-1: #0773a6;
 
 	--border-radius: 15px;
 
@@ -389,7 +390,6 @@ dialog button {
 
 @media (max-width: 450px) {
 	dialog {
-		margin-block-end: 0;
 		width: 100%;
 	}
 
