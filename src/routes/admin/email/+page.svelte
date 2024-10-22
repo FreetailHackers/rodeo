@@ -129,7 +129,7 @@
 	}
 
 	.flex-container {
-		margin-bottom: 1%;
+		margin-bottom: 1rem;
 		display: flex;
 	}
 
