@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { prisma } from '../db';
 import { authenticate } from '../middleware';
 import { t } from '../t';
-import { sendEmails } from '../email';
+import { sendEmail } from '../email';
 import { inviteToTeamToken } from '$lib/lucia';
 
 type TeamWithMembers = {
@@ -237,7 +237,7 @@ export const teamRouter = t.router({
 			`;
 
 			try {
-				await sendEmails([email], 'You have been invited to a team', emailBody, true);
+				await sendEmail(email, 'You have been invited to a team', emailBody, true);
 				return 'Invited user!';
 			} catch (error) {
 				console.error('Error inviting user:', error);
