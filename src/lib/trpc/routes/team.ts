@@ -363,36 +363,29 @@ export const teamRouter = t.router({
 	getTeammatesAndAdmissionStatus: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(z.string())
-		.query(async (req): Promise<TeamWithAdmissionStatus[]> => {
-			const userId = req.input;
-			if (!userId) {
-				throw new Error('Valid user ID is required');
-			}
+		.query(async ({ input }): Promise<TeamWithAdmissionStatus[]> => {
+			const team = await getTeam(input);
+			if (!team?.members?.length) return [];
 
-			const team = await getTeam(userId.toString());
-			if (!team) {
-				return [];
-			}
+			const memberIds = team.members.map((m) => m.authUserId);
 
-			const memberIds = team.members.map((member) => member.authUserId);
-			if (memberIds.length === 0) {
-				return [];
-			}
-
-			try {
-				return await prisma.authUser.findMany({
-					where: { id: { in: memberIds } },
-					select: {
-						email: true,
-						status: true,
+			const teammates = await prisma.authUser.findMany({
+				where: { id: { in: memberIds } },
+				select: {
+					email: true,
+					user: {
+						select: {
+							decision: { select: { status: true } },
+						},
 					},
-				});
-			} catch (error) {
-				console.error('Error fetching teammates and admission statuses:', error);
-				throw new Error(
-					'Unable to fetch teammates and their admission statuses. Please try again.'
-				);
-			}
+					status: true,
+				},
+			});
+
+			return teammates.map(({ email, status, user }) => ({
+				email,
+				status: user?.decision?.status || status,
+			}));
 		}),
 });
 

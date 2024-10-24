@@ -158,7 +158,7 @@ export const admissionsRouter = t.router({
 		async (): Promise<Prisma.UserGetPayload<{
 			include: { authUser: true; decision: true };
 		}> | null> => {
-			const users = await prisma.user.findMany({
+			return await prisma.user.findFirst({
 				where: {
 					authUser: {
 						roles: { has: 'HACKER' },
@@ -168,12 +168,6 @@ export const admissionsRouter = t.router({
 				},
 				include: { authUser: true, decision: true },
 			});
-
-			if (users.length === 0) {
-				return null;
-			}
-
-			return users[Math.floor(Math.random() * users.length)];
 		}
 	),
 
