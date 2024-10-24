@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Admin - Email Templates</title>
+	<title>Rodeo | Admin - Email Templates</title>
 </svelte:head>
 
 <form
