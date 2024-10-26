@@ -22,16 +22,18 @@ export const sendEmail = async (
 	// Preface with warning if not in production
 	let warning = '';
 	message = isHTML ? message : marked.parse(message);
-	if (process.env.VERCEL_ENV === 'preview' && recipient.endsWith('@yopmail.com')) {
-		// Only allow emails to YOPmail on staging
-		if (recipient.endsWith('@yopmail.com')) {
-			return 'Only @yopmail.com addresses are allowed on staging.';
+	if (process.env.VERCEL_ENV !== 'production') {
+		if (process.env.VERCEL_ENV === 'preview' && recipient.endsWith('@yopmail.com')) {
+			// Only allow emails to YOPmail on staging
+			if (recipient.endsWith('@yopmail.com')) {
+				return 'Only @yopmail.com addresses are allowed on staging.';
+			}
+			warning = `<h1>
+				WARNING: This email was sent from a testing environment.
+				Be careful when opening any links or attachments!
+				This message cannot be guaranteed to come from Freetail Hackers.
+				</h1>`;
 		}
-		warning = `<h1>
-			WARNING: This email was sent from a testing environment.
-			Be careful when opening any links or attachments!
-			This message cannot be guaranteed to come from Freetail Hackers.
-			</h1>`;
 	}
 
 	try {

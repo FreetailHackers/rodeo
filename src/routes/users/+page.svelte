@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Statistics from './statistics.svelte';
+	import Toggle from '$lib/components/toggle.svelte';
 	import saveAs from 'file-saver';
 	import JSZip from 'jszip';
 	import { trpc } from '$lib/trpc/client';
@@ -19,27 +20,9 @@
 	let searchFilter = $page.url.searchParams.get('searchFilter') ?? '';
 	let emailBody: string;
 	let subject: string;
+	let isHTML = false;
 
 	async function sendEmailsByUsers() {
-		async function sendEmail(email: string) {
-			const successfulEmailRequest = await trpc().users.sendEmailHelper.mutate({
-				emails: email,
-				subject,
-				emailBody,
-			});
-
-			completed += successfulEmailRequest;
-
-			if (!successfulEmailRequest) {
-				rejectedEmails.push(email);
-				const message = `Could not send email to ${email}`;
-				toasts.notify(message);
-			}
-
-			toasts.update(toast, `Sent ${completed}/${userEmails.length} emails`);
-			return successfulEmailRequest;
-		}
-
 		if (!subject || !emailBody || subject.length === 0 || emailBody.length === 0) {
 			throw new Error('Subject or email body is empty');
 		}
@@ -58,6 +41,24 @@
 
 		if (rejectedEmails.length > 0) {
 			toasts.notify(`Could not send email(s) to ${rejectedEmails.join(', ')}`);
+		}
+		async function sendEmail(email: string) {
+			const successfulEmailRequest = await trpc().users.sendEmailHelper.mutate({
+				emails: email,
+				subject,
+				emailBody,
+				isHTML,
+			});
+
+			completed += successfulEmailRequest;
+
+			if (!successfulEmailRequest) {
+				rejectedEmails.push(email);
+				toasts.notify(`Could not send email to ${email}`);
+			}
+
+			toasts.update(toast, `Sent ${completed}/${userEmails.length} emails`);
+			return successfulEmailRequest;
 		}
 	}
 
@@ -340,6 +341,9 @@
 	{:else}
 		<div class="send-emails">
 			<label for="groupEmail"><h2>Group Email to Users</h2></label>
+			<div class="toggle-container">
+				<Toggle name="userEmailIsHTML" label="Use HTML (Default: Markdown)" bind:checked={isHTML} />
+			</div>
 			<form>
 				<div class="flex-container">
 					<input
