@@ -63,11 +63,16 @@ async function releaseDecisions(ids?: string[]): Promise<void> {
 		} else if (decision === 'WAITLISTED') {
 			isHTML = (await getSettings()).waitlistIsHTML;
 		}
-		await Promise.all(
-			decisions.map((hacker) =>
-				sendEmail(hacker.authUser.email, 'Freetail Hackers status update', template, isHTML)
-			)
-		);
+
+		for (let i = 0; i < decisions.length; i += 100) {
+			await Promise.all(
+				decisions
+					.slice(i, i + 100)
+					.map((hacker) =>
+						sendEmail(hacker.authUser.email, 'Freetail Hackers status update', template, isHTML)
+					)
+			);
+		}
 	}
 }
 
