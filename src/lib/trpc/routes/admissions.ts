@@ -36,7 +36,7 @@ async function releaseDecisions(ids?: string[]): Promise<void> {
 		.filter((hacker) => !['APPLIED', 'WAITLISTED'].includes(hacker.authUser.status))
 		.map((hacker) => hacker.authUserId);
 	await prisma.decision.deleteMany({ where: { userId: { in: invalid } } });
-	for (const decision of ['ACCEPTED', 'REJECTED' /*, 'WAITLISTED'*/]) {
+	for (const decision of ['ACCEPTED', 'REJECTED', 'WAITLISTED']) {
 		const decisions = hackers.filter((hacker) => hacker.decision?.status === decision);
 		const updateStatus = prisma.authUser.updateMany({
 			where: { id: { in: decisions.map((decision) => decision.authUserId) } },
