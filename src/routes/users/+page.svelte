@@ -33,7 +33,6 @@
 			if (!successfulEmailRequest) {
 				rejectedEmails.push(email);
 				const message = `Could not send email to ${email}`;
-				console.log(message);
 				toasts.notify(message);
 			}
 
