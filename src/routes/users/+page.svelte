@@ -349,7 +349,6 @@
 						bind:checked={isHTML}
 					/>
 				</div>
-				<button on:click={() => console.log(isHTML)}>Click me</button>
 				<form>
 					<div class="flex-container">
 						<input
