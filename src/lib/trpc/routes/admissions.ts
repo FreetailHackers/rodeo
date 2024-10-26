@@ -1,7 +1,7 @@
 import type { Prisma, Status } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
-import { sendEmails } from '../email';
+import { sendEmail } from '../email';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getSettings } from './settings';
@@ -63,11 +63,10 @@ async function releaseDecisions(ids?: string[]): Promise<void> {
 		} else if (decision === 'WAITLISTED') {
 			isHTML = (await getSettings()).waitlistIsHTML;
 		}
-		await sendEmails(
-			decisions.map((hacker) => hacker.authUser.email),
-			'Freetail Hackers status update',
-			template,
-			isHTML
+		await Promise.all(
+			decisions.map((hacker) =>
+				sendEmail(hacker.authUser.email, 'Freetail Hackers status update', template, isHTML)
+			)
 		);
 	}
 }
