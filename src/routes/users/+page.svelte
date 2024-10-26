@@ -339,31 +339,38 @@
 	{#if data.users.length === 0}
 		<p>No results found.</p>
 	{:else}
-		<div class="send-emails">
-			<label for="groupEmail"><h2>Group Email to Users</h2></label>
-			<div class="toggle-container">
-				<Toggle name="userEmailIsHTML" label="Use HTML (Default: Markdown)" bind:checked={isHTML} />
-			</div>
-			<form>
-				<div class="flex-container">
-					<input
-						bind:value={subject}
-						class="textbox-margin"
-						name="subject"
-						placeholder="Type email subject here"
-						required
+		{#if data.user.roles.includes('ADMIN')}
+			<div class="send-emails">
+				<label for="groupEmail"><h2>Group Email to Users</h2></label>
+				<div class="toggle-container">
+					<Toggle
+						name="userEmailIsHTML"
+						label="Use HTML (Default: Markdown)"
+						bind:checked={isHTML}
 					/>
 				</div>
-				<TextEditor
-					placeholder="Type email body here"
-					name="emailBody"
-					bind:value={emailBody}
-					isHTML={data.settings.submitIsHTML}
-					required
-				/>
-				<button class="email-by-users" on:click={sendEmailsByUsers}>Send</button>
-			</form>
-		</div>
+				<button on:click={() => console.log(isHTML)}>Click me</button>
+				<form>
+					<div class="flex-container">
+						<input
+							bind:value={subject}
+							class="textbox-margin"
+							name="subject"
+							placeholder="Type email subject here"
+							required
+						/>
+					</div>
+					<TextEditor
+						placeholder="Type email body here"
+						name="emailBody"
+						bind:value={emailBody}
+						isHTML={data.settings.submitIsHTML}
+						required
+					/>
+					<button class="email-by-users" on:click={sendEmailsByUsers}>Send</button>
+				</form>
+			</div>
+		{/if}
 
 		<Statistics questions={data.questions} count={data.count} />
 		<!-- User table -->
