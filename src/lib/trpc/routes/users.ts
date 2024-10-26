@@ -840,13 +840,12 @@ export const usersRouter = t.router({
 			})
 		)
 		.mutation(async (req): Promise<number> => {
-			const response = await sendEmail(
+			return await sendEmail(
 				req.input.emails,
 				req.input.subject,
 				req.input.emailBody,
 				req.input.isHTML
 			);
-			return response;
 		}),
 
 	emails: t.procedure

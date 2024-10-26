@@ -508,4 +508,8 @@
 		text-align: center;
 		margin-bottom: 10px;
 	}
+
+	.toggle-container {
+		margin-bottom: 1%;
+	}
 </style>
