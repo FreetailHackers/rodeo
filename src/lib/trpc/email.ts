@@ -28,12 +28,12 @@ export const sendEmail = async (
 			if (recipient.endsWith('@yopmail.com')) {
 				return 'Only @yopmail.com addresses are allowed on staging.';
 			}
-			warning = `<h1>
+		}
+		warning = `<h1>
 				WARNING: This email was sent from a testing environment.
 				Be careful when opening any links or attachments!
 				This message cannot be guaranteed to come from Freetail Hackers.
 				</h1>`;
-		}
 	}
 
 	try {

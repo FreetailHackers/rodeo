@@ -28,20 +28,11 @@
 		}
 
 		let rejectedEmails: string[] = [];
-
 		let userEmails = await trpc().users.emails.query({ key, search, searchFilter });
-
 		let completed = 0;
+
 		const toast = toasts.notify(`Sent 0/${userEmails.length} emails...`);
 
-		for (let i = 0; i < userEmails.length; i += 100) {
-			const emails = userEmails.slice(i, i + 100);
-			await Promise.all(emails.map((email) => sendEmail(email)));
-		}
-
-		if (rejectedEmails.length > 0) {
-			toasts.notify(`Could not send email(s) to ${rejectedEmails.join(', ')}`);
-		}
 		async function sendEmail(email: string) {
 			const successfulEmailRequest = await trpc().users.sendEmailHelper.mutate({
 				emails: email,
@@ -59,6 +50,15 @@
 
 			toasts.update(toast, `Sent ${completed}/${userEmails.length} emails`);
 			return successfulEmailRequest;
+		}
+
+		for (let i = 0; i < userEmails.length; i += 100) {
+			const emails = userEmails.slice(i, i + 100);
+			await Promise.all(emails.map((email) => sendEmail(email)));
+		}
+
+		if (rejectedEmails.length > 0) {
+			toasts.notify(`Could not send email(s) to ${rejectedEmails.join(', ')}`);
 		}
 	}
 
