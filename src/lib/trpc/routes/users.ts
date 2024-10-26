@@ -846,7 +846,7 @@ export const usersRouter = t.router({
 				req.input.emailBody,
 				req.input.isHTML
 			);
-			return response.includes('Email successfully sent to') ? 1 : 0;
+			return response;
 		}),
 
 	emails: t.procedure
