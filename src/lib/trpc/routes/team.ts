@@ -236,13 +236,10 @@ export const teamRouter = t.router({
 				<a href="${inviteLink}">Join Team</a>
 			`;
 
-			try {
-				await sendEmail(email, 'You have been invited to a team', emailBody, true);
+			if (await sendEmail(email, 'You have been invited to a team', emailBody, true)) {
 				return 'Invited user!';
-			} catch (error) {
-				console.error('Error inviting user:', error);
-				return 'Failed to send invitation email. Please try again later.';
 			}
+			return 'Failed to send invitation email. Please try again later.';
 		}),
 
 	acceptInvitation: t.procedure
