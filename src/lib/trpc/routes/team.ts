@@ -257,8 +257,7 @@ export const teamRouter = t.router({
 				throw new Error('Invalid or expired token');
 			}
 
-			const teamSize = await getTeamSize(teamId);
-			if (teamSize >= 4) {
+			if ((await getTeamSize(teamId)) >= 4) {
 				return 'Team is full';
 			}
 
@@ -343,19 +342,6 @@ export const teamRouter = t.router({
 			return 'Invitation has been rejected';
 		}),
 
-	getTeamSize: t.procedure.use(authenticate(['HACKER'])).query(async ({ ctx }): Promise<number> => {
-		const user = await prisma.user.findUniqueOrThrow({
-			where: { authUserId: ctx.user.id },
-			select: { teamId: true },
-		});
-
-		if (!user.teamId) {
-			return 0;
-		}
-
-		return getTeamSize(user.teamId);
-	}),
-
 	// Get teammates and admission status for the authenticated user
 	getTeammatesAndAdmissionStatus: t.procedure
 		.use(authenticate(['ADMIN']))
@@ -364,24 +350,17 @@ export const teamRouter = t.router({
 			const team = await getTeam(input);
 			if (!team?.members?.length) return [];
 
-			const memberIds = team.members.map((m) => m.authUserId);
-
-			const teammates = await prisma.authUser.findMany({
-				where: { id: { in: memberIds } },
+			const teammates = await prisma.user.findMany({
+				where: { teamId: team.id },
 				select: {
-					email: true,
-					user: {
-						select: {
-							decision: { select: { status: true } },
-						},
-					},
-					status: true,
+					authUser: { select: { email: true, status: true } },
+					decision: { select: { status: true } },
 				},
 			});
 
-			return teammates.map(({ email, status, user }) => ({
-				email,
-				status: user?.decision?.status || status,
+			return teammates.map(({ authUser, decision }) => ({
+				email: authUser.email,
+				status: decision?.status || authUser.status,
 			}));
 		}),
 });
