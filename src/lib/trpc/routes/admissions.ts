@@ -48,20 +48,17 @@ async function releaseDecisions(ids?: string[]): Promise<void> {
 		await prisma.$transaction([updateStatus, deleteDecision]);
 
 		let template = '';
-		if (decision === 'ACCEPTED') {
-			template = (await getSettings()).acceptTemplate;
-		} else if (decision === 'REJECTED') {
-			template = (await getSettings()).rejectTemplate;
-		} else if (decision === 'WAITLISTED') {
-			template = (await getSettings()).waitlistTemplate;
-		}
 		let isHTML: boolean = false;
+		const settings = await getSettings();
 		if (decision === 'ACCEPTED') {
-			isHTML = (await getSettings()).acceptIsHTML;
+			template = settings.acceptTemplate;
+			isHTML = settings.acceptIsHTML;
 		} else if (decision === 'REJECTED') {
-			isHTML = (await getSettings()).rejectIsHTML;
+			template = settings.rejectTemplate;
+			isHTML = settings.rejectIsHTML;
 		} else if (decision === 'WAITLISTED') {
-			isHTML = (await getSettings()).waitlistIsHTML;
+			template = settings.waitlistTemplate;
+			isHTML = settings.waitlistIsHTML;
 		}
 
 		for (let i = 0; i < decisions.length; i += 100) {
@@ -171,6 +168,7 @@ export const admissionsRouter = t.router({
 					decision: null,
 				},
 				include: { authUser: true, decision: true },
+				orderBy: [{ teamId: 'asc' }],
 			});
 		}
 	),
