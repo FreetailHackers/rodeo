@@ -2,7 +2,6 @@
 	import { enhance } from '$app/forms';
 	import { Status } from '@prisma/client';
 	import TextEditor from '$lib/components/text-editor.svelte';
-	const statuses: Status[] = Object.keys(Status) as Status[];
 	export let data;
 </script>
 

@@ -1,7 +1,7 @@
 import { Prisma, Role, Status, type StatusChange } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
-import { sendEmails } from '../email';
+import { sendEmail } from '../email';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getQuestions } from './questions';
@@ -60,6 +60,32 @@ export const usersRouter = t.router({
 				}
 			}
 		),
+
+	getAppliedDate: t.procedure
+		.use(authenticate(['HACKER']))
+		.query(async (req): Promise<Date | null> => {
+			const userId = (
+				await prisma.user.findUniqueOrThrow({
+					where: { authUserId: req.ctx.user.id },
+					select: { authUserId: true },
+				})
+			).authUserId;
+
+			const appliedDate = await prisma.statusChange.findFirst({
+				where: { userId: userId, newStatus: 'APPLIED' },
+				orderBy: { id: 'desc' },
+				select: { timestamp: true },
+			});
+
+			if (!appliedDate?.timestamp) {
+				return null;
+			}
+
+			return dayjs
+				.utc(new Date(appliedDate.timestamp))
+				.tz((await getSettings()).timezone, false)
+				.toDate();
+		}),
 
 	/**
 	 * Sets the logged in user to the given data. If the user has
@@ -207,15 +233,12 @@ export const usersRouter = t.router({
 				});
 				// notify user through their email on successful application submission
 				const subject = 'Thanks for submitting!';
-				await sendEmails(
-					[req.ctx.user.email],
+				const settings = await getSettings();
+				await sendEmail(
+					req.ctx.user.email,
 					subject,
-					(
-						await getSettings()
-					).submitTemplate,
-					(
-						await getSettings()
-					).submitIsHTML
+					settings.submitTemplate,
+					settings.submitIsHTML
 				);
 			}
 			return errors;
@@ -236,15 +259,12 @@ export const usersRouter = t.router({
 				data: { status: 'CREATED' },
 			});
 			const subject = 'Application Withdrawal Warning';
-			await sendEmails(
-				[req.ctx.user.email],
+			const settings = await getSettings();
+			await sendEmail(
+				req.ctx.user.email,
 				subject,
-				(
-					await getSettings()
-				).withdrawalWarningTemplate,
-				(
-					await getSettings()
-				).withdrawIsHTML
+				settings.withdrawalWarningTemplate,
+				settings.withdrawIsHTML
 			);
 		}),
 
@@ -265,37 +285,31 @@ export const usersRouter = t.router({
 			if (req.input === 'CONFIRMED') {
 				// Hackers should only be able to confirm before deadline
 				if (req.ctx.user.status === 'ACCEPTED' && (deadline === null || new Date() < deadline)) {
+					const settings = await getSettings();
 					await prisma.authUser.update({
 						where: { id: req.ctx.user.id },
 						data: { status: 'CONFIRMED' },
 					});
-					await sendEmails(
-						[req.ctx.user.email],
+					await sendEmail(
+						req.ctx.user.email,
 						'Thanks for your RSVP!',
-						(
-							await getSettings()
-						).confirmTemplate,
-						(
-							await getSettings()
-						).confirmIsHTML
+						settings.confirmTemplate,
+						settings.confirmIsHTML
 					);
 				}
 			} else {
 				// Hackers should be able to decline after accepting and/or the deadline
 				if (req.ctx.user.status === 'ACCEPTED' || req.ctx.user.status === 'CONFIRMED') {
+					const settings = await getSettings();
 					await prisma.authUser.update({
 						where: { id: req.ctx.user.id },
 						data: { status: 'DECLINED' },
 					});
-					await sendEmails(
-						[req.ctx.user.email],
+					await sendEmail(
+						req.ctx.user.email,
 						'Thanks for your RSVP!',
-						(
-							await getSettings()
-						).declineTemplate,
-						(
-							await getSettings()
-						).declineIsHTML
+						settings.declineTemplate,
+						settings.declineIsHTML
 					);
 				}
 			}
@@ -359,7 +373,7 @@ export const usersRouter = t.router({
 			'Click on the following link to verify your email address:<br><br>' +
 			link +
 			'<br><br>If you did not request this email, please ignore it.';
-		await sendEmails([req.ctx.user.email], 'Email Verification', body, false);
+		await sendEmail(req.ctx.user.email, 'Email Verification', body, true);
 	}),
 
 	/**
@@ -379,7 +393,7 @@ export const usersRouter = t.router({
 				const body =
 					'Click on the following link to reset your password (valid for 10 minutes):<br><br>' +
 					link;
-				await sendEmails([user.email], 'Password Reset', body, false);
+				await sendEmail(user.email, 'Password Reset', body, true);
 			}
 		}),
 
@@ -815,22 +829,47 @@ export const usersRouter = t.router({
 			});
 		}),
 
-	sendEmailByStatus: t.procedure
+	sendEmailHelper: t.procedure
 		.use(authenticate(['ADMIN']))
-		.input(z.object({ status: z.nativeEnum(Status), subject: z.string(), emailBody: z.string() }))
-		.mutation(async (req): Promise<string> => {
-			const emailArray = (
-				await prisma.authUser.findMany({
-					where: { status: req.input.status },
-					select: { email: true },
-				})
-			).map((user) => user.email);
-			return sendEmails(
-				emailArray,
+		.input(
+			z.object({
+				emails: z.string(),
+				subject: z.string(),
+				emailBody: z.string(),
+				isHTML: z.boolean(),
+			})
+		)
+		.mutation(async (req): Promise<number> => {
+			return await sendEmail(
+				req.input.emails,
 				req.input.subject,
 				req.input.emailBody,
-				(await getSettings()).byStatusIsHTML
+				req.input.isHTML
 			);
+		}),
+
+	emails: t.procedure
+		.use(authenticate(['ADMIN', 'SPONSOR']))
+		.input(
+			z.object({
+				key: z.string(),
+				search: z.string(),
+				searchFilter: z.string(),
+			})
+		)
+		.query(async (req): Promise<string[]> => {
+			const where = await getWhereCondition(
+				req.input.key,
+				req.input.searchFilter,
+				req.input.search,
+				req.ctx.user.roles
+			);
+			return await prisma.user
+				.findMany({
+					select: { authUser: { select: { email: true } } },
+					where,
+				})
+				.then((users) => users.map((user) => user.authUser.email));
 		}),
 });
 

@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { prisma } from '../db';
 import { authenticate } from '../middleware';
 import { t } from '../t';
-import { sendEmails } from '../email';
+import { sendEmail } from '../email';
 import { inviteToTeamToken } from '$lib/lucia';
 
 type TeamWithMembers = {
@@ -236,13 +236,10 @@ export const teamRouter = t.router({
 				<a href="${inviteLink}">Join Team</a>
 			`;
 
-			try {
-				await sendEmails([email], 'You have been invited to a team', emailBody, true);
+			if (await sendEmail(email, 'You have been invited to a team', emailBody, true)) {
 				return 'Invited user!';
-			} catch (error) {
-				console.error('Error inviting user:', error);
-				return 'Failed to send invitation email. Please try again later.';
 			}
+			return 'Failed to send invitation email. Please try again later.';
 		}),
 
 	acceptInvitation: t.procedure
@@ -260,8 +257,7 @@ export const teamRouter = t.router({
 				throw new Error('Invalid or expired token');
 			}
 
-			const teamSize = await getTeamSize(teamId);
-			if (teamSize >= 4) {
+			if ((await getTeamSize(teamId)) >= 4) {
 				return 'Team is full';
 			}
 
@@ -346,53 +342,26 @@ export const teamRouter = t.router({
 			return 'Invitation has been rejected';
 		}),
 
-	getTeamSize: t.procedure.use(authenticate(['HACKER'])).query(async ({ ctx }): Promise<number> => {
-		const user = await prisma.user.findUniqueOrThrow({
-			where: { authUserId: ctx.user.id },
-			select: { teamId: true },
-		});
-
-		if (!user.teamId) {
-			return 0;
-		}
-
-		return getTeamSize(user.teamId);
-	}),
-
 	// Get teammates and admission status for the authenticated user
 	getTeammatesAndAdmissionStatus: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(z.string())
-		.query(async (req): Promise<TeamWithAdmissionStatus[]> => {
-			const userId = req.input;
-			if (!userId) {
-				throw new Error('Valid user ID is required');
-			}
+		.query(async ({ input }): Promise<TeamWithAdmissionStatus[]> => {
+			const team = await getTeam(input);
+			if (!team?.members?.length) return [];
 
-			const team = await getTeam(userId.toString());
-			if (!team) {
-				return [];
-			}
+			const teammates = await prisma.user.findMany({
+				where: { teamId: team.id },
+				select: {
+					authUser: { select: { email: true, status: true } },
+					decision: { select: { status: true } },
+				},
+			});
 
-			const memberIds = team.members.map((member) => member.authUserId);
-			if (memberIds.length === 0) {
-				return [];
-			}
-
-			try {
-				return await prisma.authUser.findMany({
-					where: { id: { in: memberIds } },
-					select: {
-						email: true,
-						status: true,
-					},
-				});
-			} catch (error) {
-				console.error('Error fetching teammates and admission statuses:', error);
-				throw new Error(
-					'Unable to fetch teammates and their admission statuses. Please try again.'
-				);
-			}
+			return teammates.map(({ authUser, decision }) => ({
+				email: authUser.email,
+				status: decision?.status || authUser.status,
+			}));
 		}),
 });
 
