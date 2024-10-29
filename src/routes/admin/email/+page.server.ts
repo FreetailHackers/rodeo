@@ -40,6 +40,14 @@ export const actions = {
 		const waitlistTemplate = formData.get('waitlistTemplate') as string;
 		const confirmTemplate = formData.get('confirmTemplate') as string;
 		const declineTemplate = formData.get('declineTemplate') as string;
+		const withdrawalWarningTemplate = formData.get('withdrawalWarningTemplate') as string;
+		const submitIsHTML = formData.get('submitFormType') === 'on';
+		const acceptIsHTML = formData.get('acceptFormType') === 'on';
+		const rejectIsHTML = formData.get('rejectFormType') === 'on';
+		const waitlistIsHTML = formData.get('waitlistFormType') === 'on';
+		const confirmIsHTML = formData.get('confirmFormType') === 'on';
+		const declineIsHTML = formData.get('declineFormType') === 'on';
+		const withdrawIsHTML = formData.get('withdrawFormType') === 'on';
 		await trpc(locals.auth).settings.update({
 			submitTemplate,
 			acceptTemplate,
@@ -47,6 +55,14 @@ export const actions = {
 			waitlistTemplate,
 			confirmTemplate,
 			declineTemplate,
+			withdrawalWarningTemplate,
+			submitIsHTML,
+			acceptIsHTML,
+			rejectIsHTML,
+			waitlistIsHTML,
+			confirmIsHTML,
+			declineIsHTML,
+			withdrawIsHTML,
 		});
 		return 'Saved settings!';
 	},

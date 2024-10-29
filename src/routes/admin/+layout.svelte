@@ -8,16 +8,17 @@
 	<ul>
 		<li><a href="/admin" class:active={$page.url.pathname === '/admin'}>Admissions</a></li>
 		<li>
-			<a href="/admin/email" class:active={$page.url.pathname === '/admin/email'}>Email</a>
+			<a href="/admin/email" class:active={$page.url.pathname === '/admin/email'}>Email Templates</a
+			>
 		</li>
 		<li>
 			<a href="/admin/questions" class:active={$page.url.pathname === '/admin/questions'}
 				>Registration Questions</a
 			>
 		</li>
-		<li>
+		<!-- <li>
 			<a href="/admin/homepage" class:active={$page.url.pathname === '/admin/homepage'}>Homepage</a>
-		</li>
+		</li> -->
 	</ul>
 
 	<hr />

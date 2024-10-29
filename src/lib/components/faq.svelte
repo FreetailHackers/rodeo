@@ -13,7 +13,7 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | FAQ</title>
+	<title>Rodeo | FAQ</title>
 </svelte:head>
 
 <div class="background">
@@ -52,7 +52,7 @@
 
 <style>
 	.background {
-		background-color: var(--background-color);
+		background-color: var(--black);
 		display: flex;
 		justify-content: center;
 	}
@@ -82,13 +82,13 @@
 	.left-border-faq-2 {
 		font-family: 'Zen Dots', sans-serif;
 		font-size: 7rem;
-		color: var(--highlight-color);
+		color: var(--white);
 		writing-mode: vertical-rl;
 	}
 
 	.left-border-faq-2 {
 		color: transparent;
-		-webkit-text-stroke: 0.1rem var(--highlight-color);
+		-webkit-text-stroke: 0.1rem var(--white);
 	}
 
 	.faq-questions {
@@ -108,7 +108,7 @@
 
 	h1 {
 		font-family: 'Fugaz One';
-		color: var(--highlight-color);
+		color: var(--white);
 		text-align: center;
 		font-size: 36px;
 		margin: 0;

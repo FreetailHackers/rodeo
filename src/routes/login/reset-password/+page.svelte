@@ -6,29 +6,32 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Reset Password</title>
+	<title>Rodeo | Reset Password</title>
 </svelte:head>
-
-<div class="topographic-background">
-	{#if $page.url.search === ''}
-		<div class="header"><h1>Reset Password</h1></div>
-		<div class="form">
+<main class="vert-center">
+	<div class="auth-content">
+		<img class="bat" src="/auth-assets/bat.svg" alt="Freetail Bat" />
+		{#if $page.url.search === ''}
+			<h1>Reset Password</h1>
 			<form method="POST" action="?/email" use:enhance>
 				<label for="email">Enter the email you used to register:</label>
 				<input id="email" name="email" type="email" required autocomplete="username" />
-				<button>Continue</button>
+				<div class="button-wrapper"><button>Send Link</button></div>
 			</form>
-		</div>
-	{:else if $page.url.search === '?submitted'}
-		<p class="verify">
-			If there is an account at the address you entered, an email has been sent with a single-use
-			link to reset your password. It will expire in 10 minutes. Make sure to check your spam
-			folder. If you do not receive an email, it may be because you signed up with a different
-			address. <br /><br />
-			Already changed password? <a href="/login">Login here!</a>
-		</p>
-	{:else if $page.url.search.startsWith('?token')}
-		<div class="form">
+		{:else if $page.url.search === '?submitted'}
+			<h1>Check your inbox</h1>
+			<p class="verify">
+				If there is an account at the address you entered, an email has been sent with a single-use
+				link to reset your password. It will <b>expire in 10 minutes</b>. Make sure to check your
+				spam folder. If you do not receive an email, it may be because you signed up with a
+				different address. <br /><br />
+				Already changed password?
+			</p>
+			<div class="button-wrapper">
+				<a class="button" href="/login">Login here!</a>
+			</div>
+		{:else if $page.url.search.startsWith('?token')}
+			<h1>Resetting your password</h1>
 			<form method="POST" action="?/reset" use:enhance>
 				<label for="password">
 					<!-- svelte-ignore a11y-invalid-attribute -->
@@ -47,71 +50,41 @@
 				<input type="hidden" name="token" value={$page.url.searchParams.get('token')} />
 				<button type="submit">Reset</button>
 			</form>
-		</div>
-	{:else if $page.url.search === '?invalid'}
-		<p class="verify">
-			This password reset token either never existed or expired. You can <a
-				href="/login/reset-password">request a new one</a
-			>.
-		</p>
-	{/if}
-</div>
+		{:else if $page.url.search === '?invalid'}
+			<p class="verify">
+				This password reset token either never existed or expired. You can <a
+					href="/login/reset-password">request a new one</a
+				>.
+			</p>
+		{/if}
+	</div>
+</main>
 
 <style>
-	.topographic-background {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		background-color: #303030;
-		background-image: url('/Topographic Background.svg');
-		background-size: 110%;
-		min-height: calc(100vh - 159px);
+	p {
+		margin-bottom: 0;
 	}
 
-	.header {
-		color: #f2ebd9;
-		margin-top: 4vw;
-		width: 40%;
-		text-align: left;
-		font-size: 2vw;
+	h1 {
+		text-align: center;
+		margin: 15px 0px;
 	}
 
-	.form {
-		width: 40%;
-		padding-left: 0.5vw;
-		padding-right: 0.5vw;
-		padding-top: 0.5vw;
-		padding-bottom: 0.5vw;
-		margin-bottom: 10vw;
-		background-color: #f2ebd9;
+	form {
+		padding: 1em 1em 0 1em;
 	}
 
 	.verify {
-		width: 40%;
-		padding-left: 0.5vw;
-		padding-right: 0.5vw;
-		padding-top: 0.5vw;
-		padding-bottom: 0.5vw;
-		background-color: #f2ebd9;
-	}
-
-	button {
-		margin-bottom: 0.5vw;
+		padding: 1em;
 	}
 
 	label {
 		display: block;
-		margin-bottom: 0.5rem;
 	}
 
 	input {
+		color: grey;
 		display: block;
-		margin-bottom: 1rem;
-	}
-
-	@media (max-width: 768px) {
-		.topographic-background {
-			min-height: calc(100vh - 56px);
-		}
+		margin-top: 1em;
 	}
 </style>

@@ -3,19 +3,64 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import Statistics from './statistics.svelte';
+	import Toggle from '$lib/components/toggle.svelte';
 	import saveAs from 'file-saver';
 	import JSZip from 'jszip';
 	import { trpc } from '$lib/trpc/client';
 	import { toasts } from '$lib/stores';
 	import Dropdown from '$lib/components/dropdown.svelte';
+	import TextEditor from '$lib/components/text-editor.svelte';
 
 	export let data;
 
 	$: query = Object.fromEntries($page.url.searchParams);
 	let key = $page.url.searchParams.get('key') ?? 'email';
 	let search = $page.url.searchParams.get('search') ?? '';
-	let limit = $page.url.searchParams.get('limit') ?? '10';
+	let limit: string = $page.url.searchParams.get('limit') ?? '10';
 	let searchFilter = $page.url.searchParams.get('searchFilter') ?? '';
+	let emailBody: string;
+	let subject: string;
+	let isHTML = false;
+
+	async function sendEmailsByUsers() {
+		if (!subject || !emailBody || subject.length === 0 || emailBody.length === 0) {
+			throw new Error('Subject or email body is empty');
+		}
+
+		let rejectedEmails: string[] = [];
+		let userEmails = await trpc().users.emails.query({ key, search, searchFilter });
+		let completed = 0;
+
+		const toast = toasts.notify(`Sent 0/${userEmails.length} emails...`);
+
+		async function sendEmail(email: string) {
+			const successfulEmailRequest = await trpc().users.sendEmailHelper.mutate({
+				emails: email,
+				subject,
+				emailBody,
+				isHTML,
+			});
+
+			completed += successfulEmailRequest;
+
+			if (!successfulEmailRequest) {
+				rejectedEmails.push(email);
+				toasts.notify(`Could not send email to ${email}`);
+			}
+
+			toasts.update(toast, `Sent ${completed}/${userEmails.length} emails`);
+			return successfulEmailRequest;
+		}
+
+		for (let i = 0; i < userEmails.length; i += 100) {
+			const emails = userEmails.slice(i, i + 100);
+			await Promise.all(emails.map((email) => sendEmail(email)));
+		}
+
+		if (rejectedEmails.length > 0) {
+			toasts.notify(`Could not send email(s) to ${rejectedEmails.join(', ')}`);
+		}
+	}
 
 	// Download all files of current search filter
 	async function downloadAllFiles() {
@@ -60,7 +105,7 @@
 </script>
 
 <svelte:head>
-	<title>Formula Hacks | Users</title>
+	<title>Rodeo | Users</title>
 </svelte:head>
 
 <div class="main-content">
@@ -294,6 +339,38 @@
 	{#if data.users.length === 0}
 		<p>No results found.</p>
 	{:else}
+		{#if data.user.roles.includes('ADMIN')}
+			<div class="send-emails">
+				<label for="groupEmail"><h2>Group Email to Users</h2></label>
+				<div class="toggle-container">
+					<Toggle
+						name="userEmailIsHTML"
+						label="Use HTML (Default: Markdown)"
+						bind:checked={isHTML}
+					/>
+				</div>
+				<form>
+					<div class="flex-container">
+						<input
+							bind:value={subject}
+							class="textbox-margin"
+							name="subject"
+							placeholder="Type email subject here"
+							required
+						/>
+					</div>
+					<TextEditor
+						placeholder="Type email body here"
+						name="emailBody"
+						bind:value={emailBody}
+						isHTML={data.settings.submitIsHTML}
+						required
+					/>
+					<button class="email-by-users" on:click={sendEmailsByUsers}>Send</button>
+				</form>
+			</div>
+		{/if}
+
 		<Statistics questions={data.questions} count={data.count} />
 		<!-- User table -->
 		<div class="filter">
@@ -375,6 +452,7 @@
 		width: 100%;
 		min-width: 0;
 		flex-wrap: wrap;
+		margin: 1em 0;
 	}
 
 	.key {
@@ -420,5 +498,24 @@
 		width: 100%;
 		text-align: center;
 		margin-bottom: 10px;
+	}
+
+	.textbox-margin {
+		margin-bottom: 1%;
+		flex: 1;
+	}
+
+	.flex-container {
+		display: flex;
+	}
+
+	.email-by-users {
+		width: 100%;
+		text-align: center;
+		margin-bottom: 10px;
+	}
+
+	.toggle-container {
+		margin-bottom: 1%;
 	}
 </style>
