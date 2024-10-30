@@ -285,6 +285,7 @@ dialog button {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	padding: 1rem;
 }
 
 /* Login, Register, Reset Password */
