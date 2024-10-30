@@ -1085,8 +1085,23 @@ async function getRSVPDeadline(user: User) {
 	const daysToRSVP = settings.daysToRSVP;
 
 	if (daysToRSVP !== null) {
-		const timeOfAcceptance = dayjs.utc(new Date(daysToConfirmBy)).tz(settings.timezone, false);
-		return timeOfAcceptance.add(daysToRSVP, 'days').endOf('day').toDate();
+		const rsvpDeadline = dayjs
+			.utc(new Date(daysToConfirmBy))
+			.tz(settings.timezone, false)
+			.add(daysToRSVP, 'days')
+			.endOf('day')
+			.toDate();
+		if (settings.hackathonStartDate !== null) {
+			const hackathonStartDate = dayjs
+				.utc(new Date(settings.hackathonStartDate))
+				.tz(settings.timezone, false)
+				.toDate();
+
+			if (hackathonStartDate < rsvpDeadline) {
+				return hackathonStartDate;
+			}
+		}
+		return rsvpDeadline;
 	}
 
 	return null;

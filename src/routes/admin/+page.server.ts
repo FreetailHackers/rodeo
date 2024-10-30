@@ -16,18 +16,28 @@ export const load = async ({ locals }) => {
 	};
 };
 
+const parseDateWithTimezone = (dateString: string | null, timezone: string): Date | null => {
+	try {
+		return dateString ? dayjs.tz(dateString, timezone).toDate() : null;
+	} catch (e) {
+		return null;
+	}
+};
+
 export const actions = {
 	settings: async ({ locals, request }) => {
 		const formData = await request.formData();
 		const timezone = formData.get('timezone') as string;
-		let applicationDeadline: Date | null;
-		try {
-			applicationDeadline = dayjs
-				.tz(formData.get('applicationDeadline') as string, timezone)
-				.toDate();
-		} catch (e) {
-			applicationDeadline = null;
-		}
+
+		const applicationDeadline = parseDateWithTimezone(
+			formData.get('applicationDeadline') as string,
+			timezone
+		);
+		const hackathonStartDate = parseDateWithTimezone(
+			formData.get('hackathonStartDate') as string,
+			timezone
+		);
+
 		const applicationLimitRaw = formData.get('applicationLimit');
 		let applicationLimit: number | null = parseInt(applicationLimitRaw as string);
 		if (isNaN(applicationLimit)) {
@@ -48,6 +58,7 @@ export const actions = {
 			timezone,
 			applicationDeadline,
 			applicationLimit,
+			hackathonStartDate,
 		});
 		return 'Saved settings!';
 	},

@@ -95,6 +95,7 @@ model Settings {
   scanActions         String[]
   timezone            String    @default("America/Chicago")
   applicationDeadline DateTime?
+  hackathonStartDate  DateTime?
   showAnnouncements   Boolean   @default(true)
   showSchedule        Boolean   @default(true)
   showFAQ             Boolean   @default(true)
