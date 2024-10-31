@@ -34,67 +34,6 @@ export const usersRouter = t.router({
 	 * database query.
 	 */
 
-	splitGroups: t.procedure
-		.input(z.object({ numGroups: z.number().min(1) }))
-		.mutation(async ({ input }) => {
-			const { numGroups } = input;
-
-			// Step 1: Retrieve all confirmed users
-			const confirmedUsers = await prisma.user.findMany({
-				where: {
-					authUser: {
-						status: 'ACCEPTED',
-					},
-				},
-				include: { team: true, authUser: true }, // Include `authUser` to access `status`
-			});
-
-			// Step 2: Separate users into non-team and team categories
-			const teamDictionary: Record<string, User[]> = {};
-			const nonTeamUsers: User[] = [];
-
-			confirmedUsers.forEach((user) => {
-				if (user.teamId) {
-					// Add user to their team's list in the dictionary
-					if (!teamDictionary[user.teamId]) {
-						teamDictionary[user.teamId] = [];
-					}
-					teamDictionary[user.teamId].push(user);
-				} else {
-					// Add non-team users to nonTeamUsers list
-					nonTeamUsers.push(user);
-				}
-			});
-
-			// Step 3: Create K lunch groups
-			const lunchGroups: User[][] = Array.from({ length: numGroups }, () => []);
-
-			// Step 4: Round-robin assignment of non-team users into lunch groups
-			nonTeamUsers.forEach((user, index) => {
-				const groupIndex = index % numGroups;
-				lunchGroups[groupIndex].push(user);
-			});
-
-			// Step 5: Round-robin assignment of entire teams into lunch groups
-			Object.values(teamDictionary).forEach((teamMembers, index) => {
-				const groupIndex = index % numGroups;
-				lunchGroups[groupIndex].push(...teamMembers);
-			});
-
-			// Step 6: Update each user's lunch group in the database
-			const groupLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-			await prisma.$transaction(
-				lunchGroups.map((group, index) => {
-					const letter = groupLetters[index];
-					const userIds = group.map((user) => user.authUserId);
-					return prisma.user.updateMany({
-						where: { authUserId: { in: userIds } },
-						data: { lunchGroup: letter },
-					});
-				})
-			);
-		}),
-
 	get: t.procedure
 		.input(z.string().optional())
 		.query(
@@ -933,6 +872,49 @@ export const usersRouter = t.router({
 				})
 				.then((users) => users.map((user) => user.authUser.email));
 		}),
+
+	splitGroups: t.procedure.input(z.number().min(1).max(26)).mutation(async ({ input }) => {
+		const confirmedUsers = await prisma.user.findMany({
+			where: {
+				authUser: {
+					status: 'CONFIRMED',
+				},
+			},
+			include: { team: true, authUser: true },
+		});
+
+		const teamDictionary: Record<number, User[]> = {};
+		const nonTeamUsers: User[] = [];
+		confirmedUsers.forEach((user) => {
+			if (user.teamId) {
+				if (!teamDictionary[user.teamId]) {
+					teamDictionary[user.teamId] = [];
+				}
+				teamDictionary[user.teamId].push(user);
+			} else {
+				nonTeamUsers.push(user);
+			}
+		});
+
+		const lunchGroups: User[][] = Array.from({ length: input }, () => []);
+
+		nonTeamUsers.forEach((user, index) => {
+			lunchGroups[index % input].push(user);
+		});
+
+		Object.values(teamDictionary).forEach((teamMembers, index) => {
+			lunchGroups[index % input].push(...teamMembers);
+		});
+
+		await prisma.$transaction(
+			lunchGroups.map((group, index) => {
+				return prisma.user.updateMany({
+					where: { authUserId: { in: group.map((user) => user.authUserId) } },
+					data: { lunchGroup: String.fromCharCode(65 + index) }, // A, B, C, ...
+				});
+			})
+		);
+	}),
 });
 
 async function getWhereCondition(

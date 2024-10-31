@@ -99,7 +99,7 @@
 
 <h2>Split Hackers Into Lunch Groups</h2>
 <form method="POST" action="?/splitGroups" use:enhance>
-	<input type="number" id="splitLunchGroups" name="splitLunchGroups" min="0" />
+	<input type="number" id="splitLunchGroups" name="splitLunchGroups" min="0" max="26" />
 	<button type="submit">Submit Groups</button>
 </form>
 

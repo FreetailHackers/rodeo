@@ -60,12 +60,7 @@ export const actions = {
 	splitGroups: async ({ locals, request }) => {
 		const formData = await request.formData();
 		const numGroups = parseInt(formData.get('splitLunchGroups') as string, 10);
-
-		if (isNaN(numGroups) || numGroups <= 0) {
-			return 'Invalid number of lunch groups specified.';
-		}
-
-		await trpc(locals.auth).users.splitGroups({ numGroups });
+		await trpc(locals.auth).users.splitGroups(numGroups);
 		return 'Lunch groups successfully split and updated!';
 	},
 };
