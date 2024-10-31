@@ -128,7 +128,16 @@ async function main() {
 	// (must do this AFTER calling prisma.user.deleteMany() and prisma.statusChange.deleteMany())
 	await register('hacker@yopmail.com', '');
 	const adminId = await register('admin@yopmail.com', '');
+	const sponsorId = await register('sponsor@yopmail.com', '');
+	const judgeId = await register('judge@yopmail.com', '');
+	const volunteerId = await register('volunteer@yopmail.com', '');
+	const organizerId = await register('organizer@yopmail.com', '');
+
 	await prisma.authUser.update({ where: { id: adminId }, data: { roles: ['ADMIN'] } });
+	await prisma.authUser.update({ where: { id: sponsorId }, data: { roles: ['SPONSOR'] } });
+	await prisma.authUser.update({ where: { id: judgeId }, data: { roles: ['JUDGE'] } });
+	await prisma.authUser.update({ where: { id: volunteerId }, data: { roles: ['VOLUNTEER'] } });
+	await prisma.authUser.update({ where: { id: organizerId }, data: { roles: ['ORGANIZER'] } });
 
 	// Generate decisions for fake users
 	const decisions: Prisma.DecisionCreateManyInput[] = [];
