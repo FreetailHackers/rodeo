@@ -33,6 +33,19 @@
 	</div>
 
 	<status-container>
+		<label for="hackathonStartDate">Hackathon Start Date:</label>
+		<input
+			type="datetime-local"
+			name="hackathonStartDate"
+			id="hackathonStartDate"
+			value={data.settings.hackathonStartDate
+				?.toLocaleString('sv', { timeZone: data.settings.timezone })
+				.replace(' ', 'T')
+				.slice(0, -3)}
+		/>
+	</status-container>
+
+	<status-container>
 		<label for="applicationDeadline">Application will close on</label>
 		<input
 			readonly={!applicationOpenStatus}
