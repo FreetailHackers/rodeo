@@ -213,8 +213,8 @@
 	{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
 		<!-- Right Section with Hacker ID -->
 		<div class="right-section">
-			{#if data.user.lunchGroup}
-				<h3>Lunch Group {data.user.lunchGroup}</h3>
+			{#if data.lunchGroup}
+				<h2>Lunch Group {data.lunchGroup}</h2>
 			{/if}
 			<h3>My Hacker ID</h3>
 
