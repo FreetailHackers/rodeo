@@ -727,7 +727,7 @@ export const usersRouter = t.router({
 		}),
 
 	getLunchGroup: t.procedure
-		.use(authenticate(['HACKER', 'ADMIN', 'ORGANIZER', 'SPONSOR', 'JUDGE', 'VOLUNTEER']))
+		.use(authenticate(['HACKER']))
 		.query(async (req): Promise<string | null> => {
 			return (
 				(
@@ -737,16 +737,6 @@ export const usersRouter = t.router({
 					})
 				)?.lunchGroup || null
 			);
-		}),
-
-	updateLunchGroup: t.procedure
-		.use(authenticate(['HACKER', 'ADMIN', 'ORGANIZER', 'SPONSOR', 'JUDGE', 'VOLUNTEER']))
-		.input(z.string().max(1))
-		.mutation(async (req): Promise<void> => {
-			await prisma.user.update({
-				where: { authUserId: req.ctx.user.id },
-				data: { lunchGroup: req.input },
-			});
 		}),
 
 	doesEmailExist: t.procedure

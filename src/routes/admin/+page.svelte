@@ -105,7 +105,7 @@
 		name="splitLunchGroups"
 		min="1"
 		max="26"
-		placeholder="Enter a number between 1 and 26"
+		placeholder="Enter a number of groups between 1 and 26"
 	/>
 	<button type="submit">Submit Groups</button>
 </form>

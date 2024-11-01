@@ -214,7 +214,7 @@
 		<!-- Right Section with Hacker ID -->
 		<div class="right-section">
 			{#if data.lunchGroup}
-				<h2>Lunch Group {data.lunchGroup}</h2>
+				<h2>Lunch Group: {data.lunchGroup}</h2>
 			{/if}
 			<h3>My Hacker ID</h3>
 
