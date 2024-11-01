@@ -1,12 +1,9 @@
-// import { trpc } from '$lib/trpc/router';
-import { authenticate } from '$lib/authenticate';
+// import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import { redirect } from '@sveltejs/kit';
 
-export const load = async ({ locals, url }) => {
-	await authenticate(locals.auth);
+export const load = async ({ url }) => {
 	console.log(url);
-
 	const token = url.searchParams.get('token');
 	// const token = formData.get('token') as string;
 
@@ -25,14 +22,16 @@ export const actions = {
 		const formData = await request.formData();
 
 		try {
+			console.log('started creating account');
 			const session = await trpc(locals.auth).users.createAccount({
 				token: formData.get('token') as string,
 				password: formData.get('password') as string,
 			});
+			console.log('finished creating account');
 			locals.auth.setSession(session);
+			console.log('finished creating session');
 		} catch (e) {
 			throw redirect(302, url.pathname + '?invalid');
 		}
-		throw redirect(302, '/');
 	},
 };

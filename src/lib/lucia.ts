@@ -74,6 +74,8 @@ class TokenType {
 			this.purpose = email + ' ' + role;
 		}
 
+		console.log('purpose', this.purpose);
+
 		await prisma.singleUseKey.deleteMany({
 			where: { user_id, purpose: this.purpose },
 		});

@@ -530,7 +530,6 @@ export const usersRouter = t.router({
 		}),
 
 	createAccount: t.procedure
-		.use(authenticate(['VOLUNTEER', 'ORGANIZER', 'SPONSOR', 'JUDGE', 'ADMIN', 'HACKER']))
 		.input(
 			z.object({
 				token: z.string(),
@@ -538,22 +537,24 @@ export const usersRouter = t.router({
 			})
 		)
 		.mutation(async ({ input }): Promise<Session> => {
-			const userId = await inviteToRodeoToken.validate(input.token);
-			const user = await auth.getUser(userId);
-			await auth.invalidateAllUserSessions(user.id);
+			console.log('start the process of creating account');
 			try {
+				const userId = await inviteToRodeoToken.validate(input.token);
+				const user = await auth.getUser(userId);
+
+				await auth.invalidateAllUserSessions(user.id);
+
 				await auth.updateKeyPassword('email', user.email, input.password);
-			} catch (e) {
-				// If the user doesn't have a password (because they
-				// signed up through a third-party provider), create one
-				await auth.createKey({
-					userId: user.id,
-					providerId: 'email',
-					providerUserId: user.email,
-					password: input.password,
-				});
+				console.log('password updated successfully');
+				// Create a new session for the user
+
+				const session = await auth.createSession({ userId: user.id, attributes: {} });
+				console.log('session created successfully');
+				return session;
+			} catch (error) {
+				console.error('Error creating account:', error);
+				throw new Error('Failed to create account');
 			}
-			return await auth.createSession({ userId: user.id, attributes: {} });
 		}),
 
 	/**
