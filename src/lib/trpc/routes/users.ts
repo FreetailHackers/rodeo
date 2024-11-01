@@ -416,6 +416,7 @@ export const usersRouter = t.router({
 	 * sessions and password reset tokens. Returns a new session. Throws
 	 * an error if the token is invalid or expired.
 	 */
+
 	resetPassword: t.procedure
 		.input(z.object({ token: z.string(), password: z.string().min(8) }))
 		.mutation(async (req): Promise<Session> => {
@@ -437,6 +438,9 @@ export const usersRouter = t.router({
 			return await auth.createSession({ userId: user.id, attributes: {} });
 		}),
 
+	/**
+	 * Send emails to users who we want to invite to Rodeo based on a pre-selected status
+	 */
 	inviteUsersForRoles: t.procedure
 		.input(
 			z.object({
@@ -447,126 +451,110 @@ export const usersRouter = t.router({
 		)
 		.use(authenticate(['ADMIN']))
 		.mutation(async (req): Promise<string> => {
-			// for each user in emails, create a user with the given role
 			let successfulEmails = 0;
 			const unsuccessfulEmails = [];
+
 			for (const email of req.input.emailsToInvite) {
-				const generatedPassword = generatePassword();
-
-				await auth.createUser({
-					key: {
-						providerId: 'email',
-						providerUserId: email,
-						password: generatePassword(),
-					},
-					attributes: {
-						email,
-						roles: [req.input.role],
-						status: 'INVITED',
-					},
-				});
-
-				// create user id for that email
-				const invitedUser = await prisma.authUser.findUnique({
+				// Check if user already exists
+				let invitedUser = await prisma.authUser.findUnique({
 					where: { email },
 				});
 
-				if (!invitedUser) {
-					return 'The provided email is not associated with any account.';
-				}
+				if (invitedUser) {
+					return 'Please reset your password if you are unable to log in.';
+				} else {
+					// create id for invited user
 
-				await prisma.invitation.deleteMany({ where: { email } });
-				if (!invitedUser) {
-					return 'The provided email is not associated with any account.';
-				}
+					await auth.createUser({
+						key: {
+							providerId: 'email',
+							providerUserId: email,
+							password: null,
+						},
+						attributes: {
+							email,
+							roles: [req.input.role],
+							status: 'INVITED',
+						},
+					});
 
-				await prisma.invitation.create({
-					data: {
-						email: invitedUser.email,
-						userId: invitedUser.id,
-						status: 'PENDING',
-					},
-				});
+					invitedUser = await prisma.authUser.findUnique({
+						where: { email },
+					});
+					if (!invitedUser) {
+						unsuccessfulEmails.push(email);
+						continue; // Skip to the next email if user creation failed
+					}
 
-				const inviteToken = await inviteToRodeoToken.issue(invitedUser.id);
-				const inviteLink = `${process.env.DOMAIN_NAME}/invite/token?=${inviteToken}`;
-				const emailBody =
-					`
-					Thank you for taking the time to help us our during HackTX 24! Your time and support truly means a lot to us.
-					We are excited to have you join us as a ${req.input.role}.
-					Please note that this link will expire in one week.
-					\n\nYour temporary password is ` +
-					{ generatedPassword } +
-					`Click the following link to accept the invitation: 
-					<a href="${inviteLink}">Join Rodeo</a>
-				`;
+					// Delete any existing invitations for the user to avoid duplicates
+					await prisma.invitation.deleteMany({ where: { email } });
 
-				if (
-					await sendEmail(
+					// Create a new invitation
+					await prisma.invitation.create({
+						data: {
+							email: email,
+							userId: invitedUser.id,
+							status: 'PENDING',
+						},
+					});
+
+					const inviteToken = await inviteToRodeoToken.issue(invitedUser.id, email, req.input.role);
+					const inviteLink = `${process.env.DOMAIN_NAME}/account/invite-to-rodeo?token=${inviteToken}`;
+					const emailBody = `
+	Thank you for helping us during HackTX 24! Your support truly means a lot.
+	We are excited to have you join us as a ${req.input.role}.
+	Please note that this link will expire in one week.
+
+	\n\nClick the following link to accept the invitation: 
+	<a href="${inviteLink}">Join Rodeo</a>
+`;
+
+					// Send the invitation email
+					const emailSent = await sendEmail(
 						email,
 						'You have been invited to Rodeo',
 						emailBody,
 						req.input.inviteUsersIsHTML
-					)
-				) {
-					successfulEmails++;
-				} else {
-					unsuccessfulEmails.push(email);
+					);
+
+					if (emailSent) {
+						successfulEmails++;
+					} else {
+						unsuccessfulEmails.push(email);
+					}
 				}
 			}
-			console.log('Could not invite the following emails: ', unsuccessfulEmails);
+
+			console.log('Could not invite the following emails:', unsuccessfulEmails);
 			return `Invited ${successfulEmails} users!`;
 		}),
 
-	// acceptInvitation: t.procedure
-	// 	.use(authenticate(['HACKER']))
-	// 	.input(
-	// 		z.object({
-	// 			token: z.string(),
-	// 			teamId: z.number(),
-	// 		})
-	// 	)
-	// 	.mutation(async ({ input }): Promise<string> => {
-	// 		const { token, teamId } = input;
-	// 		const userId = await inviteToRodeoToken.validate(token);
-	// 		if (!userId) {
-	// 			throw new Error('Invalid or expired token');
-	// 		}
-
-	// 		const invitation = await prisma.invitation.findFirst({
-	// 			where: {
-	// 				userId,
-	// 				status: 'PENDING',
-	// 			},
-	// 		});
-	// 		if (!invitation) {
-	// 			return 'No valid invitation found for the specified team';
-	// 		}
-
-	// 		const user = await prisma.authUser.findUnique({
-	// 			where: { id: userId },
-	// 			select: { status: true, user: true },
-	// 		});
-
-	// 		if (
-	// 			!user ||
-	// 			!['CREATED', 'APPLIED', 'ACCEPTED', 'CONFIRMED'].includes(user?.status) ||
-	// 			user.user?.teamId !== null
-	// 		) {
-	// 			return 'User is not eligible to join a team';
-	// 		}
-
-	// 		await prisma.user.update({
-	// 			where: { authUserId: userId },
-	// 			data: { teamId },
-	// 		});
-
-	// 		await prisma.invitation.update({
-	// 			where: { id: invitation.id },
-	// 			data: { status: 'ACCEPTED' },
-	// 		});
-	// 		return 'User is now added to Rodeo';
-	// 	}),
+	createAccount: t.procedure
+		.use(authenticate(['VOLUNTEER', 'ORGANIZER', 'SPONSOR', 'JUDGE', 'ADMIN', 'HACKER']))
+		.input(
+			z.object({
+				token: z.string(),
+				password: z.string(),
+			})
+		)
+		.mutation(async ({ input }): Promise<Session> => {
+			const userId = await inviteToRodeoToken.validate(input.token);
+			const user = await auth.getUser(userId);
+			await auth.invalidateAllUserSessions(user.id);
+			try {
+				await auth.updateKeyPassword('email', user.email, input.password);
+			} catch (e) {
+				// If the user doesn't have a password (because they
+				// signed up through a third-party provider), create one
+				await auth.createKey({
+					userId: user.id,
+					providerId: 'email',
+					providerUserId: user.email,
+					password: input.password,
+				});
+			}
+			return await auth.createSession({ userId: user.id, attributes: {} });
+		}),
 
 	/**
 	 * Logs out the logged in user by invalidating their session.
@@ -1004,10 +992,6 @@ export const usersRouter = t.router({
 				.then((users) => users.map((user) => user.authUser.email));
 		}),
 });
-
-function generatePassword() {
-	return Math.random().toString(36).slice(2) + Math.random().toString(36).toUpperCase().slice(2);
-}
 
 async function getWhereCondition(
 	key: string,
