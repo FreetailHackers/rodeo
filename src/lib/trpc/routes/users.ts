@@ -33,7 +33,6 @@ export const usersRouter = t.router({
 	 * `locals.auth.validateUser()` instead. This will save you a
 	 * database query.
 	 */
-
 	get: t.procedure
 		.input(z.string().optional())
 		.query(
