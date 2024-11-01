@@ -109,6 +109,7 @@ model Settings {
   declineIsHTML       Boolean   @default(false)
   withdrawIsHTML      Boolean   @default(false)
   byStatusIsHTML      Boolean   @default(false)
+  inviteUsersIsHTML   Boolean   @default(false)
 
   // PRIVATE SETTINGS (settings that non-admins do not need)
   rollingAdmissions         Boolean @default(false)
@@ -188,11 +189,11 @@ model Team {
 
 model Invitation {
   id        Int              @id @default(autoincrement())
-  teamId    Int
+  teamId    Int?
   email     String
   userId    String
   status    InvitationStatus @default(PENDING)
-  team      Team             @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  team      Team?            @relation(fields: [teamId], references: [id], onDelete: Cascade)
 }
 
 enum InvitationStatus {
@@ -211,6 +212,7 @@ enum Role {
 }
 
 enum Status {
+  INVITED // User has been invited to Rodeo
   CREATED // User has created account but not finished application
   APPLIED // User has finished application
   ACCEPTED // User has been accepted but has not yet confirmed

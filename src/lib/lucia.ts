@@ -69,10 +69,15 @@ class TokenType {
 	 * Invalidates all previously issued tokens for a given user and
 	 * issues a new one.
 	 */
-	async issue(user_id: string): Promise<string> {
+	async issue(user_id: string, email?: string, role?: string): Promise<string> {
+		if (email && role) {
+			this.purpose = email + ' ' + role;
+		}
+
 		await prisma.singleUseKey.deleteMany({
 			where: { user_id, purpose: this.purpose },
 		});
+
 		const token = generateRandomString(32);
 		await prisma.singleUseKey.create({
 			data: {
@@ -111,5 +116,6 @@ class TokenType {
 export const emailVerificationToken = new TokenType('email-verification', 7 * 24 * 60 * 60);
 export const resetPasswordToken = new TokenType('reset-password', 10 * 60);
 export const inviteToTeamToken = new TokenType('invite-to-team', 7 * 24 * 60 * 60);
+export const inviteToRodeoToken = new TokenType('invite-to-rodeo', 7 * 24 * 60 * 60);
 
 export type Auth = typeof auth;

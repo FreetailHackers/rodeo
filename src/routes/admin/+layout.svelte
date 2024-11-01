@@ -16,9 +16,11 @@
 				>Registration Questions</a
 			>
 		</li>
-		<!-- <li>
-			<a href="/admin/homepage" class:active={$page.url.pathname === '/admin/homepage'}>Homepage</a>
-		</li> -->
+		<li>
+			<a href="/admin/invites" class:active={$page.url.pathname === '/admin/invites'}
+				>Send Invitations</a
+			>
+		</li>
 	</ul>
 
 	<hr />

@@ -17,6 +17,7 @@ import { removeStopwords } from 'stopword';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import { inviteToRodeoToken } from '$lib/lucia';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -435,6 +436,137 @@ export const usersRouter = t.router({
 			}
 			return await auth.createSession({ userId: user.id, attributes: {} });
 		}),
+
+	inviteUsersForRoles: t.procedure
+		.input(
+			z.object({
+				emailsToInvite: z.array(z.string().email()),
+				role: z.nativeEnum(Role),
+				inviteUsersIsHTML: z.boolean(),
+			})
+		)
+		.use(authenticate(['ADMIN']))
+		.mutation(async (req): Promise<string> => {
+			// for each user in emails, create a user with the given role
+			let successfulEmails = 0;
+			const unsuccessfulEmails = [];
+			for (const email of req.input.emailsToInvite) {
+				const generatedPassword = generatePassword();
+
+				await auth.createUser({
+					key: {
+						providerId: 'email',
+						providerUserId: email,
+						password: generatePassword(),
+					},
+					attributes: {
+						email,
+						roles: [req.input.role],
+						status: 'INVITED',
+					},
+				});
+
+				// create user id for that email
+				const invitedUser = await prisma.authUser.findUnique({
+					where: { email },
+				});
+
+				if (!invitedUser) {
+					return 'The provided email is not associated with any account.';
+				}
+
+				await prisma.invitation.deleteMany({ where: { email } });
+				if (!invitedUser) {
+					return 'The provided email is not associated with any account.';
+				}
+
+				await prisma.invitation.create({
+					data: {
+						email: invitedUser.email,
+						userId: invitedUser.id,
+						status: 'PENDING',
+					},
+				});
+
+				const inviteToken = await inviteToRodeoToken.issue(invitedUser.id);
+				const inviteLink = `${process.env.DOMAIN_NAME}/invite/token?=${inviteToken}`;
+				const emailBody =
+					`
+					Thank you for taking the time to help us our during HackTX 24! Your time and support truly means a lot to us.
+					We are excited to have you join us as a ${req.input.role}.
+					Please note that this link will expire in one week.
+					\n\nYour temporary password is ` +
+					{ generatedPassword } +
+					`Click the following link to accept the invitation: 
+					<a href="${inviteLink}">Join Rodeo</a>
+				`;
+
+				if (
+					await sendEmail(
+						email,
+						'You have been invited to Rodeo',
+						emailBody,
+						req.input.inviteUsersIsHTML
+					)
+				) {
+					successfulEmails++;
+				} else {
+					unsuccessfulEmails.push(email);
+				}
+			}
+			console.log('Could not invite the following emails: ', unsuccessfulEmails);
+			return `Invited ${successfulEmails} users!`;
+		}),
+
+	// acceptInvitation: t.procedure
+	// 	.use(authenticate(['HACKER']))
+	// 	.input(
+	// 		z.object({
+	// 			token: z.string(),
+	// 			teamId: z.number(),
+	// 		})
+	// 	)
+	// 	.mutation(async ({ input }): Promise<string> => {
+	// 		const { token, teamId } = input;
+	// 		const userId = await inviteToRodeoToken.validate(token);
+	// 		if (!userId) {
+	// 			throw new Error('Invalid or expired token');
+	// 		}
+
+	// 		const invitation = await prisma.invitation.findFirst({
+	// 			where: {
+	// 				userId,
+	// 				status: 'PENDING',
+	// 			},
+	// 		});
+	// 		if (!invitation) {
+	// 			return 'No valid invitation found for the specified team';
+	// 		}
+
+	// 		const user = await prisma.authUser.findUnique({
+	// 			where: { id: userId },
+	// 			select: { status: true, user: true },
+	// 		});
+
+	// 		if (
+	// 			!user ||
+	// 			!['CREATED', 'APPLIED', 'ACCEPTED', 'CONFIRMED'].includes(user?.status) ||
+	// 			user.user?.teamId !== null
+	// 		) {
+	// 			return 'User is not eligible to join a team';
+	// 		}
+
+	// 		await prisma.user.update({
+	// 			where: { authUserId: userId },
+	// 			data: { teamId },
+	// 		});
+
+	// 		await prisma.invitation.update({
+	// 			where: { id: invitation.id },
+	// 			data: { status: 'ACCEPTED' },
+	// 		});
+	// 		return 'User is now added to Rodeo';
+	// 	}),
 
 	/**
 	 * Logs out the logged in user by invalidating their session.
@@ -872,6 +1004,10 @@ export const usersRouter = t.router({
 				.then((users) => users.map((user) => user.authUser.email));
 		}),
 });
+
+function generatePassword() {
+	return Math.random().toString(36).slice(2) + Math.random().toString(36).toUpperCase().slice(2);
+}
 
 async function getWhereCondition(
 	key: string,
