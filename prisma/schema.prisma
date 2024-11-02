@@ -68,6 +68,7 @@ model User {
   team          Team?          @relation(name: "membersRelation", fields: [teamId], references: [id]) // Relation to the team as a member
   teamId        Int?
   name          String?
+  lunchGroup    String?        @db.Char(1)
 }
 
 model Announcement {
