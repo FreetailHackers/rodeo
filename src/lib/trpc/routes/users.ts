@@ -726,6 +726,19 @@ export const usersRouter = t.router({
 			});
 		}),
 
+	getLunchGroup: t.procedure
+		.use(authenticate(['HACKER']))
+		.query(async (req): Promise<string | null> => {
+			return (
+				(
+					await prisma.user.findUnique({
+						where: { authUserId: req.ctx.user.id },
+						select: { lunchGroup: true },
+					})
+				)?.lunchGroup || null
+			);
+		}),
+
 	doesEmailExist: t.procedure
 		.use(authenticate(['ADMIN', 'HACKER']))
 		.input(z.string())
@@ -870,6 +883,57 @@ export const usersRouter = t.router({
 					where,
 				})
 				.then((users) => users.map((user) => user.authUser.email));
+		}),
+
+	/*
+	 * Splits up users into different lunch groups
+	 */
+	splitGroups: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(z.number().min(1).max(26))
+		.mutation(async ({ input }) => {
+			const confirmedUsers = await prisma.user.findMany({
+				where: {
+					authUser: {
+						status: 'CONFIRMED',
+					},
+				},
+				include: { team: true, authUser: true },
+			});
+
+			const teamDictionary: Record<number, User[]> = {};
+			const nonTeamUsers: User[] = [];
+			confirmedUsers.forEach((user) => {
+				if (user.teamId) {
+					if (!teamDictionary[user.teamId]) {
+						teamDictionary[user.teamId] = [];
+					}
+					teamDictionary[user.teamId].push(user);
+				} else {
+					nonTeamUsers.push(user);
+				}
+			});
+
+			const lunchGroups: User[][] = Array.from({ length: input }, () => []);
+
+			nonTeamUsers.forEach((user, index) => {
+				lunchGroups[index % input].push(user);
+			});
+
+			Object.values(teamDictionary)
+				.sort((a, b) => b.length - a.length)
+				.forEach((teamMembers, index) => {
+					lunchGroups[index % input].push(...teamMembers);
+				});
+
+			await prisma.$transaction(
+				lunchGroups.map((group, index) => {
+					return prisma.user.updateMany({
+						where: { authUserId: { in: group.map((user) => user.authUserId) } },
+						data: { lunchGroup: String.fromCharCode(65 + index) }, // A, B, C, ...
+					});
+				})
+			);
 		}),
 });
 
