@@ -920,9 +920,11 @@ export const usersRouter = t.router({
 				lunchGroups[index % input].push(user);
 			});
 
-			Object.values(teamDictionary).forEach((teamMembers, index) => {
-				lunchGroups[index % input].push(...teamMembers);
-			});
+			Object.values(teamDictionary)
+				.sort((a, b) => b.length - a.length)
+				.forEach((teamMembers, index) => {
+					lunchGroups[index % input].push(...teamMembers);
+				});
 
 			await prisma.$transaction(
 				lunchGroups.map((group, index) => {
