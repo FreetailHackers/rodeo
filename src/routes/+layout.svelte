@@ -114,6 +114,15 @@
 {/if}
 
 <style>
+	.overlay {
+		position: fixed;
+		top: 0;
+		width: 100vw;
+		height: 100vh;
+		backdrop-filter: blur(2px) brightness(0.9);
+		z-index: 200;
+	}
+
 	.container {
 		margin-left: 16rem;
 	}
