@@ -183,7 +183,6 @@ model Team {
   createdAt   DateTime     @default(now())
   members     User[]       @relation(name: "membersRelation")
   tracks      String[]
-  devpostUrl  String?
   invitations Invitation[]
 }
 

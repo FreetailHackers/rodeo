@@ -11,7 +11,6 @@ type TeamWithMembers = {
 	name: string;
 	createdAt: Date;
 	tracks: string[];
-	devpostUrl: string | null;
 	members: {
 		name: string;
 		email: string;
@@ -45,7 +44,6 @@ export const teamRouter = t.router({
 				name: team.name,
 				createdAt: team.createdAt,
 				tracks: team.tracks,
-				devpostUrl: team.devpostUrl,
 				members: members.map((member) => ({
 					name: member.name || 'Hacker',
 					email: member.authUser.email,
@@ -122,35 +120,6 @@ export const teamRouter = t.router({
 			data: { teamId: null },
 		});
 	}),
-
-	// Update the devpost URL of the team of the authenticated user, false if the URL is invalid
-	uploadDevpost: t.procedure
-		.input(z.string())
-		.use(authenticate(['HACKER']))
-		.mutation(async ({ ctx, input }): Promise<boolean> => {
-			const userId = ctx.user.id;
-
-			const devpostRegex = /^https:\/\/(www\.)?devpost\.com\/software\/[a-zA-Z0-9_-]+$/;
-			if (!devpostRegex.test(input)) {
-				return false;
-			}
-
-			const user = await prisma.user.findUniqueOrThrow({
-				where: { authUserId: userId },
-				select: { teamId: true },
-			});
-
-			if (!user.teamId) {
-				throw new Error('User is not on a team');
-			}
-
-			await prisma.team.update({
-				where: { id: user.teamId },
-				data: { devpostUrl: input },
-			});
-
-			return true;
-		}),
 
 	getTeamInvitations: t.procedure
 		.use(authenticate(['HACKER']))

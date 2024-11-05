@@ -116,28 +116,6 @@
 					<button class="user-button" type="submit">Create Team</button>
 				</form>
 			{:else}
-				{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.status === 'CONFIRMED')}
-					<h3>My Project</h3>
-
-					<form method="POST" action="?/updateDevpost" use:enhance>
-						<label for="teamDevpost">Devpost Link:</label>
-
-						<input
-							type="text"
-							id="devpostUrl"
-							name="devpostUrl"
-							value={data.team.devpostUrl}
-							placeholder="Paste the project link here"
-						/>
-
-						<div class="cancel-save">
-							<button class="user-button negative-button" type="reset">Cancel</button>
-							<button class="user-button" type="submit">Save</button>
-						</div>
-					</form>
-					<hr />
-				{/if}
-
 				<h3 class="label-and-button">
 					My Team: {data.team.name}
 					<Modal button={false} close={closeModal}>
@@ -309,14 +287,6 @@
 
 	.modal form {
 		margin: unset;
-	}
-
-	/* select, */
-	.cancel-save {
-		display: flex;
-		justify-content: end;
-		align-items: center;
-		gap: 1em;
 	}
 
 	.member {
