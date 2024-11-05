@@ -1,21 +1,20 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import type { Prisma, Question } from '@prisma/client';
-	import type { TeamWithAdmissionStatus } from '../trpc/routes/team';
 	import SvelteMarkdown from 'svelte-markdown';
 
 	export let user: Partial<Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>>;
 	export let questions: Question[];
-	export let teamAndAdmissionStatus: TeamWithAdmissionStatus[] = [];
+	export let teammates: { email: string; status: string }[] = [];
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	$: application = user.application as Record<string, any>;
 </script>
 
-{#if teamAndAdmissionStatus.length > 1}
+{#if teammates.length > 1}
 	<p><b>Teammates</b></p>
 	<ul class="teammates-list">
-		{#each teamAndAdmissionStatus as { email, status }}
+		{#each teammates as { email, status }}
 			{#if user.authUser?.email !== email}
 				<li>
 					<span class="email">{email}</span>

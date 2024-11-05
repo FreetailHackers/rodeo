@@ -34,72 +34,10 @@
 	<!-- Left Section with Forms -->
 	{#if data.user.roles.includes('HACKER')}
 		<div class="left-section">
-			<div class="name-and-edit">
-				{#if data.name !== null}
-					<h3>{data.name}</h3>
-					<Modal button={false} close={closeModal}>
-						<Content>
-							<div class="modal">
-								<h2 class="modal-header">Change Name</h2>
-								<img
-									class="close-button"
-									src="/close-button.png"
-									alt="close edit name"
-									draggable="false"
-									on:click={() => (closeModal = true)}
-									on:keypress={() => (closeModal = true)}
-								/>
-								<form
-									method="POST"
-									action="?/updateName"
-									use:enhance
-									on:submit={() => {
-										closeModal = true;
-									}}
-								>
-									<div class="user-info">
-										<input
-											type="text"
-											id="name"
-											name="name"
-											placeholder="Insert your name"
-											pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\s'.-]+$"
-											maxlength="70"
-											value={data.name || ''}
-											required
-										/>
-									</div>
-									<button class="user-button" type="submit">Submit</button>
-								</form>
-							</div>
-						</Content>
-						<Trigger>
-							<img
-								id="edit-button"
-								src="/edit-button.png"
-								alt="edit-name"
-								draggable="false"
-								on:click={() => (closeModal = false)}
-								on:keypress={() => (closeModal = false)}
-							/>
-						</Trigger>
-					</Modal>
-				{:else}
-					<form class="new-name" method="POST" action="?/updateName" use:enhance>
-						<input
-							type="text"
-							id="name"
-							name="name"
-							placeholder="Insert your name"
-							pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\s'.-]+$"
-							maxlength="70"
-							required
-						/>
-						<button class="user-button" type="submit">Submit</button>
-					</form>
-				{/if}
-			</div>
-			<p>{data.user.email}</p>
+			{#if data.lunchGroup}
+				<p><b>Lunch Group</b>: {data.lunchGroup}</p>
+			{/if}
+			<p><b>Email</b>: {data.user.email}</p>
 			<hr />
 			{#if !data.team}
 				<form method="POST" action="?/createTeam" use:enhance>
@@ -117,7 +55,7 @@
 				</form>
 			{:else}
 				<h3 class="label-and-button">
-					My Team: {data.team.name}
+					Team: {data.team.name}
 					<Modal button={false} close={closeModal}>
 						<Content>
 							<div class="modal">
@@ -163,8 +101,7 @@
 				{#each data.team.members as member}
 					<div class="member">
 						<div class="member-info">
-							<p>{member.name}</p>
-							<p>{member.email}</p>
+							<p>{member.authUser.email}</p>
 						</div>
 					</div>
 				{/each}
@@ -173,7 +110,6 @@
 						{#if invite.status !== 'ACCEPTED'}
 							<div class="member">
 								<div class="member-info">
-									<p>{invite.name}</p>
 									<p>{invite.email}</p>
 								</div>
 								<p><b>{invite.status}</b></p>
@@ -191,9 +127,6 @@
 	{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
 		<!-- Right Section with Hacker ID -->
 		<div class="right-section">
-			{#if data.lunchGroup}
-				<h2>Lunch Group: {data.lunchGroup}</h2>
-			{/if}
 			<h3>My Hacker ID</h3>
 
 			<div class="id-card">
@@ -233,22 +166,6 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-	}
-
-	.name-and-edit {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-	}
-
-	.new-name {
-		display: flex;
-		flex-direction: row;
-		flex-grow: 1;
-	}
-
-	.new-name button {
-		min-width: fit-content;
 	}
 
 	.id-card {

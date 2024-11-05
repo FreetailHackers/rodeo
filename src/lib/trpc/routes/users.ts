@@ -705,40 +705,6 @@ export const usersRouter = t.router({
 			return responses;
 		}),
 
-	getName: t.procedure
-		.use(authenticate(['HACKER', 'ADMIN', 'ORGANIZER', 'SPONSOR', 'JUDGE', 'VOLUNTEER']))
-		.query(async (req): Promise<string> => {
-			return (
-				await prisma.user.findUnique({
-					where: { authUserId: req.ctx.user.id },
-					select: { name: true },
-				})
-			)?.name as string;
-		}),
-
-	updateName: t.procedure
-		.use(authenticate(['HACKER', 'ADMIN', 'ORGANIZER', 'SPONSOR', 'JUDGE', 'VOLUNTEER']))
-		.input(z.string())
-		.mutation(async (req): Promise<void> => {
-			await prisma.user.update({
-				where: { authUserId: req.ctx.user.id },
-				data: { name: req.input },
-			});
-		}),
-
-	getLunchGroup: t.procedure
-		.use(authenticate(['HACKER']))
-		.query(async (req): Promise<string | null> => {
-			return (
-				(
-					await prisma.user.findUnique({
-						where: { authUserId: req.ctx.user.id },
-						select: { lunchGroup: true },
-					})
-				)?.lunchGroup || null
-			);
-		}),
-
 	doesEmailExist: t.procedure
 		.use(authenticate(['ADMIN', 'HACKER']))
 		.input(z.string())
@@ -933,6 +899,20 @@ export const usersRouter = t.router({
 						data: { lunchGroup: String.fromCharCode(65 + index) }, // A, B, C, ...
 					});
 				})
+			);
+		}),
+
+	// Returns the lunch group of the logged in user
+	getLunchGroup: t.procedure
+		.use(authenticate(['HACKER']))
+		.query(async (req): Promise<string | null> => {
+			return (
+				(
+					await prisma.user.findUnique({
+						where: { authUserId: req.ctx.user.id },
+						select: { lunchGroup: true },
+					})
+				)?.lunchGroup || null
 			);
 		}),
 });
