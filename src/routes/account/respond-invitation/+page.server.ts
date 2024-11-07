@@ -1,6 +1,5 @@
 import { trpc } from '$lib/trpc/router';
 import { authenticate } from '$lib/authenticate';
-import { goto } from '$app/navigation';
 
 export const load = async ({ locals, url }) => {
 	await authenticate(locals.auth);
@@ -30,8 +29,7 @@ export const actions = {
 
 		try {
 			if (accept) {
-				await trpc(locals.auth).team.acceptInvitation({ token, teamId });
-				goto('/account');
+				return await trpc(locals.auth).team.acceptInvitation({ token, teamId });
 			} else {
 				return await trpc(locals.auth).team.rejectInvitation({ token, teamId });
 			}

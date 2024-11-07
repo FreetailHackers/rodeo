@@ -57,47 +57,50 @@
 			{:else}
 				<h3 class="label-and-button">
 					Team: {data.team.name}
-					<Modal button={false} close={closeModal}>
-						<Content>
-							<div class="modal">
-								<form method="POST" action="?/inviteUser">
-									<h3 class="modal-header">
-										Invite a new member
-										<img
-											class="close-button"
-											src="/close-button.png"
-											alt="close add team member"
-											draggable="false"
-											on:click={() => (closeModal = true)}
-											on:keypress={() => (closeModal = true)}
+					{#if data.team.members.length < 4}
+						<Modal button={false} close={closeModal}>
+							<Content>
+								<div class="modal">
+									<form method="POST" action="?/inviteUser">
+										<h3 class="modal-header">
+											Invite a new member
+											<img
+												class="close-button"
+												src="/close-button.png"
+												alt="close add team member"
+												draggable="false"
+												on:click={() => (closeModal = true)}
+												on:keypress={() => (closeModal = true)}
+											/>
+										</h3>
+										<input
+											type="email"
+											id="inviteEmail"
+											name="inviteEmail"
+											placeholder="Enter email"
+											required
 										/>
-									</h3>
-									<input
-										type="email"
-										id="inviteEmail"
-										name="inviteEmail"
-										placeholder="Enter email"
-										required
-									/>
-									<p>
-										You can only invite users who have a Rodeo account and are not already part of a
-										team.
-									</p>
-									<button id="modalSubmit" class="user-button" type="submit">Send Invitation</button
-									>
-								</form>
-							</div>
-						</Content>
-						<Trigger>
-							<img
-								src="/add-button.png"
-								alt="add team member"
-								draggable="false"
-								on:click={() => (closeModal = false)}
-								on:keypress={() => (closeModal = false)}
-							/>
-						</Trigger>
-					</Modal>
+										<p>
+											You can only invite users who have a Rodeo account and are not already part of
+											a team.
+										</p>
+										<button id="modalSubmit" class="user-button" type="submit"
+											>Send Invitation</button
+										>
+									</form>
+								</div>
+							</Content>
+							<Trigger>
+								<img
+									src="/add-button.png"
+									alt="add team member"
+									draggable="false"
+									on:click={() => (closeModal = false)}
+									on:keypress={() => (closeModal = false)}
+								/>
+							</Trigger>
+						</Modal>
+					{/if}
 				</h3>
 				{#each data.team.members as member}
 					<div class="member">

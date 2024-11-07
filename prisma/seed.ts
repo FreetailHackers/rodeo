@@ -128,6 +128,7 @@ async function main() {
 	// Create test hacker and admin
 	// (must do this AFTER calling prisma.user.deleteMany() and prisma.statusChange.deleteMany())
 	await register('hacker@yopmail.com', '');
+	await register('hacker2@yopmail.com', '');
 	const adminId = await register('admin@yopmail.com', '');
 	const sponsorId = await register('sponsor@yopmail.com', '');
 	const judgeId = await register('judge@yopmail.com', '');
@@ -221,14 +222,14 @@ function generateStatusFlow(
  */
 async function generateHackerTeams(): Promise<void> {
 	const teamNames = ['Red', 'Green', 'Blue', 'Yellow'];
-	const teamSize = 4;
+	const teamSize = 3;
 	const teamCount = teamNames.length;
 
 	const hackers = await prisma.authUser.findMany({
 		where: {
 			roles: { has: 'HACKER' },
 			status: { notIn: ['DECLINED', 'REJECTED'] },
-			email: { not: 'hacker@yopmail.com' },
+			email: { notIn: ['hacker@yopmail.com', 'hacker2@yopmail.com'] },
 		},
 		take: teamSize * teamCount - 1,
 	});

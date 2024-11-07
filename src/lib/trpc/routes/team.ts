@@ -153,7 +153,7 @@ export const teamRouter = t.router({
 		)
 		.mutation(async ({ input }): Promise<string> => {
 			const userId = await inviteToTeamToken.validate(input.token);
-			if (!userId) throw new Error('Invalid or expired token');
+			if (!userId) return 'Invalid or expired token. Please request a new invitation.';
 
 			if ((await getTeamSize(input.teamId)) >= 4) return 'Team is full';
 
@@ -164,6 +164,7 @@ export const teamRouter = t.router({
 					status: 'PENDING',
 				},
 			});
+
 			if (!invitation) return 'No valid invitation found for the specified team';
 
 			const userStatus = await prisma.authUser.findUnique({
