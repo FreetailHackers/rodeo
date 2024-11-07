@@ -7,10 +7,12 @@ import { sendEmail } from '../email';
 import { inviteToTeamToken } from '$lib/lucia';
 
 export const teamRouter = t.router({
-	// Get the team of the authenticated user, if no team is found, return null
 	getTeam: t.procedure.use(authenticate(['HACKER'])).query(async (req) => {
+		const teamId = (await prisma.user.findUnique({ where: { authUserId: req.ctx.user.id } }))
+			?.teamId;
+		if (!teamId) return null;
 		const team = await prisma.team.findUnique({
-			where: { id: req.ctx.user.id },
+			where: { id: teamId },
 			include: {
 				members: {
 					select: {
@@ -24,7 +26,6 @@ export const teamRouter = t.router({
 		return team;
 	}),
 
-	// Create a new team with the authenticated user as the only member
 	createTeam: t.procedure
 		.use(authenticate(['HACKER']))
 		.input(
@@ -53,7 +54,6 @@ export const teamRouter = t.router({
 			});
 		}),
 
-	// Leave the team of the authenticated user
 	leaveTeam: t.procedure.use(authenticate(['HACKER'])).mutation(async (req): Promise<void> => {
 		const userId = req.ctx.user.id;
 		const teamData = await prisma.user.findUnique({
@@ -68,25 +68,18 @@ export const teamRouter = t.router({
 		}
 
 		const { id: teamId, members } = teamData.team;
-		if (members.length === 1) {
-			await prisma.$transaction([
-				prisma.invitation.deleteMany({ where: { teamId } }),
-				prisma.team.delete({ where: { id: teamId } }),
-			]);
-		} else {
-			await prisma.team.update({
-				where: { id: teamId },
-				data: { members: { disconnect: { authUserId: userId } } },
-			});
-		}
 
 		await prisma.user.update({
 			where: { authUserId: userId },
 			data: { teamId: null },
 		});
+
+		// If the user was the only member, delete the team
+		if (members.length === 1) {
+			await prisma.team.delete({ where: { id: teamId } });
+		}
 	}),
 
-	// Get the invitations for the team of the authenticated user
 	getTeamInvitations: t.procedure
 		.use(authenticate(['HACKER']))
 		.query(async ({ ctx }): Promise<Invitation[]> => {
@@ -103,7 +96,6 @@ export const teamRouter = t.router({
 			});
 		}),
 
-	// Invite a user to the team of the authenticated user
 	inviteUser: t.procedure
 		.input(z.string().email())
 		.use(authenticate(['HACKER']))
@@ -136,7 +128,6 @@ export const teamRouter = t.router({
 					email: invitedUser.email,
 					teamId,
 					userId: invitedUser.id,
-					status: 'PENDING',
 				},
 			});
 
@@ -154,7 +145,6 @@ export const teamRouter = t.router({
 				: 'Failed to send invitation email. Please try again later.';
 		}),
 
-	// Accept an invitation to join the team of the authenticated user
 	acceptInvitation: t.procedure
 		.use(authenticate(['HACKER']))
 		.input(
@@ -212,7 +202,6 @@ export const teamRouter = t.router({
 			return 'User has been added to the team';
 		}),
 
-	// Reject an invitation to join the team of the authenticated user
 	rejectInvitation: t.procedure
 		.use(authenticate(['HACKER']))
 		.input(
@@ -243,7 +232,6 @@ export const teamRouter = t.router({
 			return 'Invitation has been rejected';
 		}),
 
-	// Get teammates and admission status for the authenticated user
 	getTeammates: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(z.string())
@@ -319,7 +307,6 @@ async function removeTeamMembers(teamId: number): Promise<void> {
 }
 */
 
-// Get the size of the team, ensuring that rejected or declined members are removed first
 async function getTeamSize(teamId: number): Promise<number> {
 	const team = await prisma.team.findUnique({
 		where: { id: teamId },

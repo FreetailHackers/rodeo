@@ -48,6 +48,7 @@
 						name="teamName"
 						placeholder="Enter Team Name"
 						pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\s'.-]+$"
+						minlength="1"
 						maxlength="50"
 						required
 					/>
