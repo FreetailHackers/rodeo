@@ -28,9 +28,7 @@ export const teamRouter = t.router({
 
 	createTeam: t.procedure
 		.use(authenticate(['HACKER']))
-		.input(
-			z.string().trim().min(1, { message: 'Team name cannot be empty or just whitespace' }).max(50)
-		)
+		.input(z.string().trim())
 		.mutation(async (req) => {
 			const userId = req.ctx.user.id;
 			const existingUser = await prisma.user.findUniqueOrThrow({
@@ -185,10 +183,6 @@ export const teamRouter = t.router({
 			}
 
 			await prisma.$transaction([
-				prisma.team.update({
-					where: { id: input.teamId },
-					data: { members: { connect: { authUserId: userId } } },
-				}),
 				prisma.user.update({
 					where: { authUserId: userId },
 					data: { teamId: input.teamId },
@@ -286,18 +280,8 @@ async function removeTeamMembers(teamId: number): Promise<void> {
 
 	await prisma.$transaction(async (prisma) => {
 		if (remainingMembers === 0) {
-			await prisma.invitation.deleteMany({ where: { teamId } });
 			await prisma.team.delete({ where: { id: teamId } });
-		} else {
-			await prisma.team.update({
-				where: { id: teamId },
-				data: {
-					members: {
-						disconnect: usersToRemove.map((id) => ({ authUserId: id })),
-					},
-				},
-			});
-		}
+		} 
 
 		await prisma.user.updateMany({
 			where: { authUserId: { in: usersToRemove } },

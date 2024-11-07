@@ -56,6 +56,7 @@ async function main() {
 	await prisma.authSession.deleteMany();
 	await prisma.authKey.deleteMany();
 	await prisma.infoBox.deleteMany();
+	await prisma.team.deleteMany();
 
 	// Create example announcement
 	await prisma.announcement.create({
@@ -158,6 +159,7 @@ async function main() {
 		}
 	}
 	await prisma.decision.createMany({ data: decisions });
+	await generateHackerTeams();
 }
 
 /**
@@ -212,6 +214,55 @@ function generateStatusFlow(
 		});
 	}
 	return statusChanges;
+}
+
+/**
+ * Generates teams of hackers, with each team having 4 members.
+ */
+async function generateHackerTeams(): Promise<void> {
+	const teamNames = ['Red', 'Green', 'Blue', 'Yellow'];
+	const teamSize = 4;
+	const teamCount = teamNames.length;
+
+	const hackers = await prisma.authUser.findMany({
+		where: {
+			roles: { has: 'HACKER' },
+			status: { notIn: ['DECLINED', 'REJECTED'] },
+			email: { not: 'hacker@yopmail.com' },
+		},
+		take: teamSize * teamCount - 1,
+	});
+
+	const cherryPickedHacker = await prisma.authUser.findUnique({
+		where: { email: 'hacker@yopmail.com' },
+	});
+
+	if (cherryPickedHacker) {
+		hackers.push(cherryPickedHacker);
+	}
+
+	const teams: Prisma.TeamCreateManyInput[] = [];
+	for (const name of teamNames) {
+		const team = await prisma.team.create({
+			data: {
+				name,
+			},
+		});
+		teams.push(team);
+	}
+
+	// Assign hackers to teams in a round-robin manner
+	let teamIndex = 0;
+	for (let i = 0; i < hackers.length; i++) {
+		await prisma.user.update({
+			where: { authUserId: hackers[i].id },
+			data: { teamId: teams[teamIndex].id },
+		});
+
+		if ((i + 1) % teamSize === 0) {
+			teamIndex = (teamIndex + 1) % teamCount;
+		}
+	}
 }
 
 // Quick and dirty seedable random number generator taken from https://stackoverflow.com/a/19303725/16458492

@@ -181,7 +181,6 @@ model Team {
   name        String
   createdAt   DateTime      @default(now())
   members     User[]
-  tracks      String[]
   invitations Invitation[]
 }
 
