@@ -859,10 +859,11 @@ export const usersRouter = t.router({
 		.use(authenticate(['ADMIN']))
 		.input(z.number().min(1).max(26))
 		.mutation(async ({ input }) => {
-			// Update all teams prior to group assignments
-			const teams = await prisma.team.findMany();
+			// Update all teams before group assignments, as all statuses have been finalized.
 			await Promise.all(
-				teams.map(async (team) => {
+				(
+					await prisma.team.findMany()
+				).map(async (team) => {
 					const members = await prisma.user.findMany({
 						where: { teamId: team.id },
 						include: { authUser: true },
@@ -880,25 +881,20 @@ export const usersRouter = t.router({
 				include: { team: true, authUser: true },
 			});
 
+			const groups: User[][] = Array.from({ length: input }, () => []);
 			const teamDictionary: Record<number, User[]> = {};
 			const nonTeamUsers: User[] = [];
+
 			confirmedUsers.forEach((user) => {
 				if (user.teamId) {
-					if (!teamDictionary[user.teamId]) {
-						teamDictionary[user.teamId] = [];
-					}
-					teamDictionary[user.teamId].push(user);
+					(teamDictionary[user.teamId] ||= []).push(user);
 				} else {
 					nonTeamUsers.push(user);
 				}
 			});
 
-			const groups: User[][] = Array.from({ length: input }, () => []);
-
-			nonTeamUsers.forEach((user, index) => {
-				groups[index % input].push(user);
-			});
-
+			// Distribute non-team users across groups, then distribute team members
+			nonTeamUsers.forEach((user, index) => groups[index % input].push(user));
 			Object.values(teamDictionary)
 				.sort((a, b) => b.length - a.length)
 				.forEach((teamMembers, index) => {
@@ -906,12 +902,12 @@ export const usersRouter = t.router({
 				});
 
 			await prisma.$transaction(
-				groups.map((group, index) => {
-					return prisma.user.updateMany({
+				groups.map((group, index) =>
+					prisma.user.updateMany({
 						where: { authUserId: { in: group.map((user) => user.authUserId) } },
 						data: { group: String.fromCharCode(65 + index) }, // A, B, C, ...
-					});
-				})
+					})
+				)
 			);
 		}),
 

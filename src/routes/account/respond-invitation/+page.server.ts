@@ -34,7 +34,7 @@ export const actions = {
 				? await trpc(locals.auth).team.acceptInvitation({ token, teamId })
 				: await trpc(locals.auth).team.rejectInvitation({ token, teamId });
 		} catch (error) {
-			return { error: 'Invalid request' };
+			return 'Invalid request';
 		}
 
 		if (response === 'SUCCESS') {

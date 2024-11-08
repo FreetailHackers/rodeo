@@ -11,6 +11,7 @@
 	$: application = user.application as Record<string, any>;
 </script>
 
+<!-- Ensures the teammate list is only displayed if the user is not the only person on the team -->
 {#if teammates.length > 1}
 	<p><b>Teammates</b></p>
 	<ul class="teammates-list">
