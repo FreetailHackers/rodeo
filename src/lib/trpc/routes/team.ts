@@ -231,10 +231,12 @@ export const teamRouter = t.router({
 		.use(authenticate(['ADMIN']))
 		.input(z.string())
 		.query(async ({ input }) => {
-			const team = await prisma.team.findUnique({
-				where: { id: parseInt(input, 10) },
-				include: { members: true },
-			});
+			const team = (
+				await prisma.user.findUnique({
+					where: { authUserId: input },
+					select: { team: { include: { members: true } } },
+				})
+			)?.team;
 
 			if (!team || team.members.length === 0) return [];
 
