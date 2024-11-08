@@ -104,11 +104,17 @@
 					{/if}
 				</h3>
 				{#each data.team.members as member}
-					<div class="member">
-						<div class="member-info">
-							<p>{member.authUser.email}</p>
+					<form method="POST" action="?/removeTeammate">
+						<input type="hidden" name="memberId" value={member.authUser.id} />
+						<div class="member">
+							<div class="member-info">
+								<p>{member.authUser.email}</p>
+							</div>
+							{#if member.authUser.id !== data.user.id}
+								<button type="submit">X</button>
+							{/if}
 						</div>
-					</div>
+					</form>
 				{/each}
 				{#if data.invitations.length > 0}
 					{#each data.invitations as invite}

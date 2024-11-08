@@ -34,4 +34,9 @@ export const actions = {
 		const email = (await request.formData()).get('inviteEmail') as string;
 		return await trpc(locals.auth).team.inviteUser(email);
 	},
+
+	removeTeammate: async ({ locals, request }) => {
+		const id = (await request.formData()).get('memberId') as string;
+		return await trpc(locals.auth).team.removeTeammate(id);
+	},
 };

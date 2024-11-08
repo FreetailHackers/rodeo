@@ -17,7 +17,7 @@ export const teamRouter = t.router({
 				members: {
 					select: {
 						authUser: {
-							select: { email: true },
+							select: { id: true, email: true },
 						},
 					},
 				},
@@ -252,6 +252,34 @@ export const teamRouter = t.router({
 				email: authUser.email,
 				status: decision?.status || authUser.status,
 			}));
+		}),
+
+	// Given a teammate ID, remove them from the team
+	removeTeammate: t.procedure
+		.use(authenticate(['HACKER']))
+		.input(z.string())
+		.mutation(async ({ ctx, input }) => {
+			if (ctx.user.id === input) {
+				throw new Error('You cannot remove yourself from the team');
+			}
+			const removee = await prisma.user.findFirstOrThrow({
+				where: {
+					authUserId: input,
+					team: { members: { some: { authUserId: ctx.user.id } } }, // Ensure the user is on the team
+				},
+				select: {
+					authUser: {
+						select: { email: true },
+					},
+				},
+			});
+
+			await prisma.user.update({
+				where: { authUserId: input },
+				data: { teamId: null },
+			});
+
+			return `${removee.authUser.email} removed`;
 		}),
 });
 
