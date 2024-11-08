@@ -9,7 +9,7 @@ export const load = async ({ locals }) => {
 			user: user,
 			team: await trpc(locals.auth).team.getTeam(),
 			invitations: await trpc(locals.auth).team.getTeamInvitations(),
-			lunchGroup: await trpc(locals.auth).users.getLunchGroup(),
+			group: await trpc(locals.auth).users.getGroup(),
 		};
 	}
 

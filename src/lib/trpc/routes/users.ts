@@ -11,6 +11,7 @@ import type { Session, User } from 'lucia';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { canApply } from './admissions';
+import { removeInvalidTeamMembers } from './team';
 import natural from 'natural';
 const { WordTokenizer } = natural;
 import { removeStopwords } from 'stopword';
@@ -852,12 +853,24 @@ export const usersRouter = t.router({
 		}),
 
 	/*
-	 * Splits up users into different lunch groups
+	 * Splits up users into different groups
 	 */
 	splitGroups: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(z.number().min(1).max(26))
 		.mutation(async ({ input }) => {
+			// Update all teams prior to group assignments
+			const teams = await prisma.team.findMany();
+			await Promise.all(
+				teams.map(async (team) => {
+					const members = await prisma.user.findMany({
+						where: { teamId: team.id },
+						include: { authUser: true },
+					});
+					await removeInvalidTeamMembers({ ...team, members });
+				})
+			);
+
 			const confirmedUsers = await prisma.user.findMany({
 				where: {
 					authUser: {
@@ -880,41 +893,39 @@ export const usersRouter = t.router({
 				}
 			});
 
-			const lunchGroups: User[][] = Array.from({ length: input }, () => []);
+			const groups: User[][] = Array.from({ length: input }, () => []);
 
 			nonTeamUsers.forEach((user, index) => {
-				lunchGroups[index % input].push(user);
+				groups[index % input].push(user);
 			});
 
 			Object.values(teamDictionary)
 				.sort((a, b) => b.length - a.length)
 				.forEach((teamMembers, index) => {
-					lunchGroups[index % input].push(...teamMembers);
+					groups[index % input].push(...teamMembers);
 				});
 
 			await prisma.$transaction(
-				lunchGroups.map((group, index) => {
+				groups.map((group, index) => {
 					return prisma.user.updateMany({
 						where: { authUserId: { in: group.map((user) => user.authUserId) } },
-						data: { lunchGroup: String.fromCharCode(65 + index) }, // A, B, C, ...
+						data: { group: String.fromCharCode(65 + index) }, // A, B, C, ...
 					});
 				})
 			);
 		}),
 
-	// Returns the lunch group of the logged in user
-	getLunchGroup: t.procedure
-		.use(authenticate(['HACKER']))
-		.query(async (req): Promise<string | null> => {
-			return (
-				(
-					await prisma.user.findUnique({
-						where: { authUserId: req.ctx.user.id },
-						select: { lunchGroup: true },
-					})
-				)?.lunchGroup || null
-			);
-		}),
+	// Returns the group of the user
+	getGroup: t.procedure.use(authenticate(['HACKER'])).query(async (req): Promise<string | null> => {
+		return (
+			(
+				await prisma.user.findUnique({
+					where: { authUserId: req.ctx.user.id },
+					select: { group: true },
+				})
+			)?.group ?? null
+		);
+	}),
 });
 
 async function getWhereCondition(

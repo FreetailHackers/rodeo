@@ -34,8 +34,9 @@
 	<!-- Left Section with Forms -->
 	{#if data.user.roles.includes('HACKER')}
 		<div class="left-section">
-			{#if data.lunchGroup}
-				<p><b>Lunch Group</b>: {data.lunchGroup}</p>
+			<h3>My Details</h3>
+			{#if data.group}
+				<p><b>Group</b>: {data.group}</p>
 			{/if}
 			<p><b>Email</b>: {data.user.email}</p>
 			<hr />

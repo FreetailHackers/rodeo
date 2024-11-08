@@ -1,4 +1,4 @@
-import type { Invitation } from '@prisma/client';
+import type { Invitation, Team } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
 import { authenticate } from '../middleware';
@@ -135,7 +135,7 @@ export const teamRouter = t.router({
 				You have been invited to join a team. 
 				Please note that this link will expire in one week.
 				Click the following link to accept the invitation:
-				<a href="${inviteLink}">Join Team</a>
+				<a href="${inviteLink}" target="_blank">Join Team</a>
 			`;
 
 			return (await sendEmail(email, 'You have been invited to a team', emailBody, true))
@@ -255,44 +255,30 @@ export const teamRouter = t.router({
 		}),
 });
 
-/*
-// Removes team members who have been rejected or declined the hackathon
-async function removeTeamMembers(teamId: number): Promise<void> {
-	const team = await prisma.team.findUnique({
-		where: { id: teamId },
-		include: {
-			members: {
-				select: {
-					authUserId: true,
-					authUser: { select: { status: true } },
-				},
-			},
-		},
-	});
-
-	if (!team) return;
-
-	// Filter for members with 'REJECTED' or 'DECLINED' status
+// Used in split groups as we assume that confirmed statuses are finalised by then
+export const removeInvalidTeamMembers = async function removeInvalidTeamMembers(
+	team: Team & {
+		members: { authUserId: string; authUser: { status: string } }[];
+	}
+): Promise<void> {
+	// Filter out members who are not confirmed
 	const usersToRemove = team.members
-		.filter(({ authUser }) => authUser?.status === 'REJECTED' || authUser?.status === 'DECLINED')
+		.filter(({ authUser }) => authUser?.status !== 'CONFIRMED')
 		.map(({ authUserId }) => authUserId);
 
-	if (usersToRemove.length === 0) return;
+	if (usersToRemove.length > 0) {
+		await prisma.$transaction(async (prisma) => {
+			if (team.members.length - usersToRemove.length === 0) {
+				await prisma.team.delete({ where: { id: team.id } });
+			}
 
-	const remainingMembers = team.members.length - usersToRemove.length;
-
-	await prisma.$transaction(async (prisma) => {
-		if (remainingMembers === 0) {
-			await prisma.team.delete({ where: { id: teamId } });
-		} 
-
-		await prisma.user.updateMany({
-			where: { authUserId: { in: usersToRemove } },
-			data: { teamId: null },
+			await prisma.user.updateMany({
+				where: { authUserId: { in: usersToRemove } },
+				data: { teamId: null },
+			});
 		});
-	});
-}
-*/
+	}
+};
 
 async function getTeamSize(teamId: number): Promise<number> {
 	const team = await prisma.team.findUnique({

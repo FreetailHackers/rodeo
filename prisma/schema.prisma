@@ -67,7 +67,7 @@ model User {
   scans         Scan[]
   team          Team?          @relation(fields: [teamId], references: [id])
   teamId        Int?
-  lunchGroup    String?        @db.Char(1)
+  group         String?        @db.Char(1)
 }
 
 model Announcement {

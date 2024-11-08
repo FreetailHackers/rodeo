@@ -10,9 +10,19 @@ dayjs.extend(timezone);
 // Optional: change to where your development team is located so the schedule times make sense for your event
 export const MY_TIMEZONE = 'America/Chicago';
 
-export const firstNames = ['Aditya', 'Christina', 'Daniel', 'Jeongwoo', 'Linh', 'Luis', 'Nikshita'];
+export const firstNames = [
+	'Aditya',
+	'Christina',
+	'Daniel',
+	'Jeongwoo',
+	'Linh',
+	'Luis',
+	'Nikshita',
+	'Khang',
+	'Nathan',
+];
 
-export const lastNames = ['Agrawal', 'Go', 'Ting', 'Choi', 'Vu', 'Pabon', 'Kurva'];
+export const lastNames = ['Agrawal', 'Go', 'Ting', 'Choi', 'Vu', 'Pabon', 'Kurva', 'Tran', 'Cheng'];
 
 export const majors = [
 	'Accounting',
