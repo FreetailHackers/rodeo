@@ -194,7 +194,7 @@ export const teamRouter = t.router({
 				}),
 			]);
 
-			return 'User has been added to the team';
+			return 'SUCCESS';
 		}),
 
 	rejectInvitation: t.procedure
@@ -224,7 +224,7 @@ export const teamRouter = t.router({
 				data: { status: 'REJECTED' },
 			});
 
-			return 'Invitation has been rejected';
+			return 'SUCCESS';
 		}),
 
 	getTeammates: t.procedure
