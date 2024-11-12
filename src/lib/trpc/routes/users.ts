@@ -11,6 +11,7 @@ import type { Session, User } from 'lucia';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { canApply } from './admissions';
+import { removeInvalidTeamMembers } from './team';
 import natural from 'natural';
 const { WordTokenizer } = natural;
 import { removeStopwords } from 'stopword';
@@ -705,40 +706,6 @@ export const usersRouter = t.router({
 			return responses;
 		}),
 
-	getName: t.procedure
-		.use(authenticate(['HACKER', 'ADMIN', 'ORGANIZER', 'SPONSOR', 'JUDGE', 'VOLUNTEER']))
-		.query(async (req): Promise<string> => {
-			return (
-				await prisma.user.findUnique({
-					where: { authUserId: req.ctx.user.id },
-					select: { name: true },
-				})
-			)?.name as string;
-		}),
-
-	updateName: t.procedure
-		.use(authenticate(['HACKER', 'ADMIN', 'ORGANIZER', 'SPONSOR', 'JUDGE', 'VOLUNTEER']))
-		.input(z.string())
-		.mutation(async (req): Promise<void> => {
-			await prisma.user.update({
-				where: { authUserId: req.ctx.user.id },
-				data: { name: req.input },
-			});
-		}),
-
-	getLunchGroup: t.procedure
-		.use(authenticate(['HACKER']))
-		.query(async (req): Promise<string | null> => {
-			return (
-				(
-					await prisma.user.findUnique({
-						where: { authUserId: req.ctx.user.id },
-						select: { lunchGroup: true },
-					})
-				)?.lunchGroup || null
-			);
-		}),
-
 	doesEmailExist: t.procedure
 		.use(authenticate(['ADMIN', 'HACKER']))
 		.input(z.string())
@@ -886,12 +853,25 @@ export const usersRouter = t.router({
 		}),
 
 	/*
-	 * Splits up users into different lunch groups
+	 * Splits up users into different groups
 	 */
 	splitGroups: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(z.number().min(1).max(26))
 		.mutation(async ({ input }) => {
+			// Update all teams before group assignments, as all statuses have been finalized.
+			await Promise.all(
+				(
+					await prisma.team.findMany()
+				).map(async (team) => {
+					const members = await prisma.user.findMany({
+						where: { teamId: team.id },
+						include: { authUser: true },
+					});
+					await removeInvalidTeamMembers({ ...team, members });
+				})
+			);
+
 			const confirmedUsers = await prisma.user.findMany({
 				where: {
 					authUser: {
@@ -901,40 +881,47 @@ export const usersRouter = t.router({
 				include: { team: true, authUser: true },
 			});
 
+			const groups: User[][] = Array.from({ length: input }, () => []);
 			const teamDictionary: Record<number, User[]> = {};
 			const nonTeamUsers: User[] = [];
+
 			confirmedUsers.forEach((user) => {
 				if (user.teamId) {
-					if (!teamDictionary[user.teamId]) {
-						teamDictionary[user.teamId] = [];
-					}
-					teamDictionary[user.teamId].push(user);
+					(teamDictionary[user.teamId] ||= []).push(user);
 				} else {
 					nonTeamUsers.push(user);
 				}
 			});
 
-			const lunchGroups: User[][] = Array.from({ length: input }, () => []);
-
-			nonTeamUsers.forEach((user, index) => {
-				lunchGroups[index % input].push(user);
-			});
-
+			// Distribute non-team users across groups, then distribute team members
+			nonTeamUsers.forEach((user, index) => groups[index % input].push(user));
 			Object.values(teamDictionary)
 				.sort((a, b) => b.length - a.length)
 				.forEach((teamMembers, index) => {
-					lunchGroups[index % input].push(...teamMembers);
+					groups[index % input].push(...teamMembers);
 				});
 
 			await prisma.$transaction(
-				lunchGroups.map((group, index) => {
-					return prisma.user.updateMany({
+				groups.map((group, index) =>
+					prisma.user.updateMany({
 						where: { authUserId: { in: group.map((user) => user.authUserId) } },
-						data: { lunchGroup: String.fromCharCode(65 + index) }, // A, B, C, ...
-					});
-				})
+						data: { group: String.fromCharCode(65 + index) }, // A, B, C, ...
+					})
+				)
 			);
 		}),
+
+	// Returns the group of the user
+	getGroup: t.procedure.use(authenticate(['HACKER'])).query(async (req): Promise<string | null> => {
+		return (
+			(
+				await prisma.user.findUnique({
+					where: { authUserId: req.ctx.user.id },
+					select: { group: true },
+				})
+			)?.group ?? null
+		);
+	}),
 });
 
 async function getWhereCondition(

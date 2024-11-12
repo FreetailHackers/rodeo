@@ -110,17 +110,18 @@
 	<button type="submit">Save</button>
 </form>
 
-<h2>Split Hackers Into Lunch Groups</h2>
+<h2>Split Hackers Into Groups</h2>
 <form method="POST" action="?/splitGroups" use:enhance>
 	<input
 		type="number"
-		id="splitLunchGroups"
-		name="splitLunchGroups"
+		id="splitGroups"
+		name="splitGroups"
 		min="1"
 		max="26"
 		placeholder="Enter a number of groups between 1 and 26"
+		required
 	/>
-	<button type="submit">Submit Groups</button>
+	<button type="submit">Split Groups</button>
 </form>
 
 <h2>Pending Decisions</h2>

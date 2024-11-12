@@ -65,10 +65,9 @@ model User {
   scanCount     Json           @default("{}")
   statusChanges StatusChange[]
   scans         Scan[]
-  team          Team?          @relation(name: "membersRelation", fields: [teamId], references: [id]) // Relation to the team as a member
+  team          Team?          @relation(fields: [teamId], references: [id])
   teamId        Int?
-  name          String?
-  lunchGroup    String?        @db.Char(1)
+  group         String?        @db.Char(1)
 }
 
 model Announcement {
@@ -178,12 +177,10 @@ model Scan {
 }
 
 model Team {
-  id          Int          @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   name        String
-  createdAt   DateTime     @default(now())
-  members     User[]       @relation(name: "membersRelation")
-  tracks      String[]
-  devpostUrl  String?
+  createdAt   DateTime      @default(now())
+  members     User[]
   invitations Invitation[]
 }
 

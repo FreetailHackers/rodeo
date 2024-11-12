@@ -1,5 +1,6 @@
 import { trpc } from '$lib/trpc/router';
 import { authenticate } from '$lib/authenticate';
+import { redirect } from '@sveltejs/kit';
 
 export const load = async ({ locals, url }) => {
 	await authenticate(locals.auth);
@@ -27,14 +28,19 @@ export const actions = {
 			return { error: 'Invalid request' };
 		}
 
+		let response;
 		try {
-			if (accept) {
-				return await trpc(locals.auth).team.acceptInvitation({ token, teamId });
-			} else {
-				return await trpc(locals.auth).team.rejectInvitation({ token, teamId });
-			}
+			response = accept
+				? await trpc(locals.auth).team.acceptInvitation({ token, teamId })
+				: await trpc(locals.auth).team.rejectInvitation({ token, teamId });
 		} catch (error) {
-			return 'Invalid request.';
+			return 'Invalid request';
 		}
+
+		if (response === 'SUCCESS') {
+			throw redirect(302, '/account/');
+		}
+
+		return response;
 	},
 };
