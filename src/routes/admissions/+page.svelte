@@ -13,11 +13,7 @@
 		<p>Congratulations! You've read every application.</p>
 	{:else}
 		<h1>{data.user.authUser.email}</h1>
-		<UserCard
-			user={data.user}
-			questions={data.questions}
-			teamAndAdmissionStatus={data.teamAndAdmissionStatus}
-		/>
+		<UserCard user={data.user} questions={data.questions} teammates={data.teammates} />
 		<div id="form">
 			<div id="padding" />
 			<form method="POST" use:enhance>

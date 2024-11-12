@@ -29,8 +29,7 @@
 
 		<p>
 			<b>Note:</b> You cannot accept the invite if you're already on a team, the team has 4 members,
-			or the link has expired. Teams are in beta, and any issues won't affect your Devpost submission.
-			Make sure that your application status is Confirmed.
+			or the link has expired.
 		</p>
 	</form>
 </div>

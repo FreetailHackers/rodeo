@@ -70,8 +70,8 @@ export const actions = {
 
 	splitGroups: async ({ locals, request }) => {
 		const formData = await request.formData();
-		const numGroups = parseInt(formData.get('splitLunchGroups') as string, 10);
+		const numGroups = parseInt(formData.get('splitGroups') as string, 10);
 		await trpc(locals.auth).users.splitGroups(numGroups);
-		return 'Lunch groups successfully split and updated!';
+		return 'Groups successfully split and updated!';
 	},
 };
