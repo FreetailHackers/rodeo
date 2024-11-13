@@ -13,8 +13,8 @@
 		<p>
 			Thank you for your incredible support of HackTX 2024! We truly appreciate the time and effort
 			you've dedicated this weekend to making this event a success. To ensure you can easily log in
-			later, please take a moment to set up your password here. We look forward to meeting you this
-			weekend!
+			later, please take a moment to set up your password here. An email will be sent to you after
+			you create your password to verify your account. We look forward to meeting you this weekend!
 		</p>
 
 		<label for="password">

@@ -27,6 +27,10 @@ export const actions = {
 		const inviteUsersIsHTML = formData.get('inviteUsersIsHTML') === 'on';
 
 		await trpc(locals.auth).settings.update({ inviteUsersIsHTML });
-		await trpc(locals.auth).users.inviteUsersForRoles({ emailsToInvite, role, inviteUsersIsHTML });
+		return await trpc(locals.auth).users.inviteUsersForRoles({
+			emailsToInvite,
+			role,
+			inviteUsersIsHTML,
+		});
 	},
 };

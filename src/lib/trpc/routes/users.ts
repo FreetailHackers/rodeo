@@ -461,6 +461,7 @@ export const usersRouter = t.router({
 				});
 
 				if (invitedUser) {
+					// TODO: don't return here because there could be multiple users.
 					return 'Please reset your password if you are unable to log in.';
 				} else {
 					// create id for invited user
@@ -501,13 +502,13 @@ export const usersRouter = t.router({
 					const inviteToken = await inviteToRodeoToken.issue(invitedUser.id, email, req.input.role);
 					const inviteLink = `${process.env.DOMAIN_NAME}/account/invite-to-rodeo?token=${inviteToken}`;
 					const emailBody = `
-	Thank you for helping us during HackTX 24! Your support truly means a lot.
-	We are excited to have you join us as a ${req.input.role}.
-	Please note that this link will expire in one week.
+						Thank you for helping us during HackTX 24! Your support truly means a lot.
+						We are excited to have you join us as a ${req.input.role}.
+						Please note that this link will expire in one week.
 
-	\n\nClick the following link to accept the invitation: 
-	<a href="${inviteLink}">Join Rodeo</a>
-`;
+						\n\nClick the following link to accept the invitation: 
+						<a href="${inviteLink}">Join Rodeo</a>
+					`;
 
 					// Send the invitation email
 					const emailSent = await sendEmail(
@@ -519,6 +520,10 @@ export const usersRouter = t.router({
 
 					if (emailSent) {
 						successfulEmails++;
+						await prisma.authUser.update({
+							where: { id: invitedUser.id },
+							data: { verifiedEmail: true },
+						});
 					} else {
 						unsuccessfulEmails.push(email);
 					}
