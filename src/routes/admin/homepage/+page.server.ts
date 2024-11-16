@@ -12,6 +12,7 @@ export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['ADMIN']);
 	return {
 		settings: await trpc(locals.auth).settings.getPublic(),
+		events: await trpc(locals.auth).events.getAll(),
 	};
 };
 
@@ -41,12 +42,14 @@ export const actions = {
 		return 'Saved displayed sections!';
 	},
 
+	// Event Functions
 	createEvent: async ({ locals, request }) => {
 		const timezone = (await trpc(locals.auth).settings.getPublic()).timezone;
 		const formData = await request.formData();
-		const fixedStartTime = dayjs.tz(formData.get('start') as string, timezone).toDate();
-		const fixedEndTime = dayjs.tz(formData.get('end') as string, timezone).toDate();
-
+		const start = formData.get('start') as string;
+		const end = formData.get('end') as string;
+		const fixedStartTime = start ? dayjs.tz(start, timezone).toDate() : null;
+		const fixedEndTime = end ? dayjs.tz(end, timezone).toDate() : null;
 		await trpc(locals.auth).events.create({
 			name: formData.get('name') as string,
 			description: formData.get('description') as string,
@@ -56,6 +59,35 @@ export const actions = {
 			type: formData.get('type') as string,
 		});
 		return 'Created event!';
+	},
+
+	edit: async ({ locals, request }) => {
+		const timezone = (await trpc(locals.auth).settings.getPublic()).timezone;
+		const formData = await request.formData();
+		const start = formData.get('start') as string;
+		const end = formData.get('end') as string;
+		const fixedStartTime = start ? dayjs.tz(start, timezone).toDate() : null;
+		const fixedEndTime = end ? dayjs.tz(end, timezone).toDate() : null;
+
+		await trpc(locals.auth).events.update({
+			id: Number(formData.get('id') as string),
+			name: formData.get('name') as string,
+			description: formData.get('description') as string,
+			start: fixedStartTime,
+			end: fixedEndTime,
+			location: formData.get('location') as string,
+			type: formData.get('type') as string,
+		});
+		return 'Saved event!';
+	},
+
+	deleteEvent: async ({ locals, request }) => {
+		const eventId = parseInt((await request.formData()).get('id') as string, 10);
+		if (isNaN(eventId)) {
+			throw new Error('Invalid event ID');
+		}
+		await trpc(locals.auth).events.delete(eventId);
+		return 'Deleted event!';
 	},
 
 	createFAQ: async ({ locals, request }) => {

@@ -3,6 +3,7 @@
 	import { toasts } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import Announcements from '$lib/components/announcements.svelte';
+	import Schedule from '$lib/components/schedule.svelte';
 
 	export let data;
 
@@ -43,6 +44,12 @@
 					<Announcements announcements={data.announcements} admin={false} />
 				</section>
 			{/if}
+		{/if}
+
+		{#if data.settings.showSchedule && data.events.length > 0}
+			<section id="Schedule">
+				<Schedule schedule={data.events} settingsTimezone={data.settings.timezone} />
+			</section>
 		{/if}
 	</div>
 </div>

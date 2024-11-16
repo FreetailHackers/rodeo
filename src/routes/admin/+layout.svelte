@@ -16,9 +16,9 @@
 				>Registration Questions</a
 			>
 		</li>
-		<!-- <li>
+		<li>
 			<a href="/admin/homepage" class:active={$page.url.pathname === '/admin/homepage'}>Homepage</a>
-		</li> -->
+		</li>
 	</ul>
 
 	<hr />

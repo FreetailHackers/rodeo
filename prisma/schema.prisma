@@ -147,8 +147,8 @@ model Event {
   id          Int      @id @default(autoincrement())
   name        String
   description String
-  start       DateTime
-  end         DateTime
+  start       DateTime?
+  end         DateTime?
   location    String
   type        String
 }
@@ -158,6 +158,12 @@ model InfoBox {
   title    String
   response String
   category CategoryType
+}
+
+model FAQ {
+  id          Int     @id @default(autoincrement())
+  question    String
+  answer      String
 }
 
 model StatusChange {

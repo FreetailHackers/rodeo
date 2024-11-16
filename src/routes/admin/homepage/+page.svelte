@@ -5,6 +5,7 @@
 	import TextEditor from '$lib/components/text-editor.svelte';
 	export let data;
 	import { toasts } from '$lib/stores';
+	import EventManager from './event-manager.svelte';
 
 	let selected: string;
 
@@ -80,34 +81,28 @@
 	<button id="save-show-sections" type="submit">Save</button>
 </form>
 
-<form method="POST" action="?/createEvent" use:enhance>
-	<label for="createNewEvent"><h2>Create New Event</h2></label>
-	<label for="name">Name</label>
-	<input type="text" id="name" name="name" required />
+<!-- Events -->
+<section>
+	<h2>Schedule</h2>
+	<EventManager event={null} />
+	<details>
+		<summary>View Event Info</summary>
+		<hr />
 
-	<label for="description">Description</label>
-	<textarea id="description" name="description" required />
-
-	<label for="start">Start Time</label>
-	<input type="datetime-local" id="start" name="start" required />
-
-	<label for="end">End Time</label>
-	<input type="datetime-local" id="end" name="end" required />
-
-	<label for="location">Location</label>
-	<input type="text" id="location" name="location" required />
-
-	<label for="type">Event Type</label>
-	<select name="type" required>
-		<option value="Regular-Event">Regular Event</option>
-		<option value="Key-Event">Key Event</option>
-		<option value="Speaker-Event">Speaker Event</option>
-		<option value="Fun-Event">Fun Event</option>
-		<option value="Workshop">Workshop</option>
-	</select>
-
-	<button type="submit">Save</button>
-</form>
+		{#each data.events as event}
+			<h3>{event.name}</h3>
+			<p>{event.start} - {event.end} | {event.location}</p>
+			<p>Type: {event.type}</p>
+			<p>{event.description}</p>
+			<EventManager {event} />
+			<form method="POST" action="?/deleteEvent" use:enhance>
+				<input type="hidden" name="id" value={event.id} />
+				<button type="submit">Delete</button>
+			</form>
+			<hr />
+		{/each}
+	</details>
+</section>
 
 <form method="POST" action="?/createFAQ" use:enhance>
 	<label for="createNewFAQ"><h2>Create New FAQ</h2></label>

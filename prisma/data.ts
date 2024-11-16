@@ -246,7 +246,6 @@ export const events: Prisma.EventCreateInput[] = [
 	{
 		name: 'Hacking Begins',
 		start: dayjs.tz('2021-09-24T10:00:00', MY_TIMEZONE).toDate(),
-		end: dayjs.tz('2021-09-24T10:00:00', MY_TIMEZONE).toDate(),
 		location: 'GDC',
 		description: 'Start hacking!',
 		type: 'Key-Event',
@@ -294,7 +293,6 @@ export const events: Prisma.EventCreateInput[] = [
 	},
 	{
 		name: 'Hacking Ends',
-		start: dayjs.tz('2021-09-25T10:00:00', MY_TIMEZONE).toDate(),
 		end: dayjs.tz('2021-09-25T10:00:00', MY_TIMEZONE).toDate(),
 		location: 'GDC',
 		description: 'Stop hacking!',
