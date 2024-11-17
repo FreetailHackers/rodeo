@@ -13,6 +13,7 @@ export const load = async ({ locals }) => {
 	return {
 		settings: await trpc(locals.auth).settings.getPublic(),
 		events: await trpc(locals.auth).events.getAll(),
+		faqs: await trpc(locals.auth).faq.getAll(),
 	};
 };
 
@@ -42,43 +43,37 @@ export const actions = {
 		return 'Saved displayed sections!';
 	},
 
-	// Event Functions
-	createEvent: async ({ locals, request }) => {
+	handleEvent: async ({ locals, request }) => {
 		const timezone = (await trpc(locals.auth).settings.getPublic()).timezone;
 		const formData = await request.formData();
+
+		const id = formData.get('id'); // Check for id to determine create or update
 		const start = formData.get('start') as string;
 		const end = formData.get('end') as string;
 		const fixedStartTime = start ? dayjs.tz(start, timezone).toDate() : null;
 		const fixedEndTime = end ? dayjs.tz(end, timezone).toDate() : null;
-		await trpc(locals.auth).events.create({
+
+		const eventData = {
 			name: formData.get('name') as string,
 			description: formData.get('description') as string,
 			start: fixedStartTime,
 			end: fixedEndTime,
 			location: formData.get('location') as string,
 			type: formData.get('type') as string,
-		});
-		return 'Created event!';
-	},
+		};
 
-	edit: async ({ locals, request }) => {
-		const timezone = (await trpc(locals.auth).settings.getPublic()).timezone;
-		const formData = await request.formData();
-		const start = formData.get('start') as string;
-		const end = formData.get('end') as string;
-		const fixedStartTime = start ? dayjs.tz(start, timezone).toDate() : null;
-		const fixedEndTime = end ? dayjs.tz(end, timezone).toDate() : null;
-
-		await trpc(locals.auth).events.update({
-			id: Number(formData.get('id') as string),
-			name: formData.get('name') as string,
-			description: formData.get('description') as string,
-			start: fixedStartTime,
-			end: fixedEndTime,
-			location: formData.get('location') as string,
-			type: formData.get('type') as string,
-		});
-		return 'Saved event!';
+		if (id) {
+			// Update existing event
+			await trpc(locals.auth).events.update({
+				id: Number(id),
+				...eventData,
+			});
+			return 'Saved event!';
+		} else {
+			// Create new event
+			await trpc(locals.auth).events.create(eventData);
+			return 'Created event!';
+		}
 	},
 
 	deleteEvent: async ({ locals, request }) => {
@@ -90,28 +85,40 @@ export const actions = {
 		return 'Deleted event!';
 	},
 
-	createFAQ: async ({ locals, request }) => {
+	// FAQ Functions
+	handleFAQ: async ({ locals, request }) => {
 		const formData = await request.formData();
+		const id = formData.get('id'); // Check for id to determine create or update
+		const question = formData.get('question') as string;
+		const answer = formData.get('answer') as string;
 
-		await trpc(locals.auth).infoBox.create({
-			title: formData.get('question') as string,
-			response: formData.get('answer') as string,
-			category: 'FAQ',
-		});
-		return 'Created FAQ!';
+		const FAQData = {
+			question: question,
+			answer: answer,
+		};
+
+		if (id) {
+			await trpc(locals.auth).faq.update({
+				id: Number(id),
+				...FAQData,
+			});
+			return 'Saved FAQ!';
+		} else {
+			await trpc(locals.auth).faq.create(FAQData);
+			return 'Created FAQ!';
+		}
 	},
 
-	createChallenge: async ({ locals, request }) => {
-		const formData = await request.formData();
-
-		await trpc(locals.auth).infoBox.create({
-			title: formData.get('category') as string,
-			response: formData.get('challenge') as string,
-			category: 'CHALLENGE',
-		});
-		return 'Created challenge!';
+	deleteFAQ: async ({ locals, request }) => {
+		const id = parseInt((await request.formData()).get('id') as string, 10);
+		if (isNaN(id)) {
+			throw new Error('Invalid FAQ ID');
+		}
+		await trpc(locals.auth).faq.delete(id);
+		return 'Deleted FAQ!';
 	},
 
+	// Sponsor Functions
 	createSponsor: async ({ locals, request }) => {
 		const formData = await request.formData();
 

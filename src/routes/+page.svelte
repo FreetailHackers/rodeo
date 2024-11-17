@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import Announcements from '$lib/components/announcements.svelte';
 	import Schedule from '$lib/components/schedule.svelte';
+	import FAQ from '$lib/components/faq.svelte';
 
 	export let data;
 
@@ -49,6 +50,12 @@
 		{#if data.settings.showSchedule && data.events.length > 0}
 			<section id="Schedule">
 				<Schedule schedule={data.events} settingsTimezone={data.settings.timezone} />
+			</section>
+		{/if}
+
+		{#if data.settings.showFAQ && data.faq.length > 0}
+			<section id="FAQ">
+				<FAQ faqs={data.faq} />
 			</section>
 		{/if}
 	</div>

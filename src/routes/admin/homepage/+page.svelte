@@ -6,6 +6,7 @@
 	export let data;
 	import { toasts } from '$lib/stores';
 	import EventManager from './event-manager.svelte';
+	import FAQManager from './faq-manager.svelte';
 
 	let selected: string;
 
@@ -84,7 +85,7 @@
 <!-- Events -->
 <section>
 	<h2>Schedule</h2>
-	<EventManager event={null} />
+	<EventManager scheduleEvent={null} />
 	<details>
 		<summary>View Event Info</summary>
 		<hr />
@@ -94,7 +95,7 @@
 			<p>{event.start} - {event.end} | {event.location}</p>
 			<p>Type: {event.type}</p>
 			<p>{event.description}</p>
-			<EventManager {event} />
+			<EventManager scheduleEvent={event} />
 			<form method="POST" action="?/deleteEvent" use:enhance>
 				<input type="hidden" name="id" value={event.id} />
 				<button type="submit">Delete</button>
@@ -104,17 +105,26 @@
 	</details>
 </section>
 
-<form method="POST" action="?/createFAQ" use:enhance>
-	<label for="createNewFAQ"><h2>Create New FAQ</h2></label>
+<!-- FAQs -->
+<section>
+	<h2>FAQs</h2>
+	<FAQManager faq={null} />
+	<details>
+		<summary>View FAQ Info</summary>
+		<hr />
 
-	<label for="question">Question</label>
-	<input type="text" id="question" name="question" required />
-
-	<label for="answer">Answer</label>
-	<TextEditor id="answer" name="answer" isHTML={false} required />
-
-	<button class="submit" type="submit">Save</button>
-</form>
+		{#each data.faqs as faq}
+			<h3>{faq.question}</h3>
+			<p>{faq.answer}</p>
+			<FAQManager {faq} />
+			<form method="POST" action="?/deleteFAQ" use:enhance>
+				<input type="hidden" name="id" value={faq.id} />
+				<button type="submit">Delete</button>
+			</form>
+			<hr />
+		{/each}
+	</details>
+</section>
 
 <form method="POST" action="?/createChallenge" use:enhance>
 	<label for="createNewChallenge"><h2>Create New Challenge</h2></label>

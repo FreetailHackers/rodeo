@@ -79,7 +79,7 @@ async function main() {
 	await prisma.settings.create({ data: { timezone: MY_TIMEZONE } });
 
 	// Create example FAQ and Challenges
-	await prisma.infoBox.createMany({ data: faq });
+	await prisma.fAQ.createMany({ data: faq });
 
 	// Generate fake users and status changes
 	// NOTE: By "fake", I mean the fact that there is no way to sign in
