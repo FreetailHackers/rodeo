@@ -3,6 +3,7 @@ import { admissionsRouter } from './routes/admissions';
 import { announcementsRouter } from './routes/announcements';
 import { eventsRouter } from './routes/events';
 import { faqRouter } from './routes/faq';
+import { challengesRouter } from './routes/challenges';
 import { questionsRouter } from './routes/questions';
 import { settingsRouter } from './routes/settings';
 import { usersRouter } from './routes/users';
@@ -16,6 +17,7 @@ const routes = {
 	announcements: announcementsRouter,
 	events: eventsRouter,
 	faq: faqRouter,
+	challenges: challengesRouter,
 	infoBox: infoBoxRouter,
 	questions: questionsRouter,
 	settings: settingsRouter,

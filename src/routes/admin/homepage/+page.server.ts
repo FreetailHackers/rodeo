@@ -1,6 +1,6 @@
 import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
-import { s3Delete, s3Upload } from '$lib/s3Handler';
+import { s3Upload } from '$lib/s3Handler';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -14,6 +14,7 @@ export const load = async ({ locals }) => {
 		settings: await trpc(locals.auth).settings.getPublic(),
 		events: await trpc(locals.auth).events.getAll(),
 		faqs: await trpc(locals.auth).faq.getAll(),
+		challenges: await trpc(locals.auth).challenges.getAll(),
 	};
 };
 
@@ -85,6 +86,11 @@ export const actions = {
 		return 'Deleted event!';
 	},
 
+	deleteAllEvents: async ({ locals }) => {
+		await trpc(locals.auth).events.deleteAll();
+		return 'Deleted all events!';
+	},
+
 	// FAQ Functions
 	handleFAQ: async ({ locals, request }) => {
 		const formData = await request.formData();
@@ -118,6 +124,51 @@ export const actions = {
 		return 'Deleted FAQ!';
 	},
 
+	deleteAllFAQs: async ({ locals }) => {
+		await trpc(locals.auth).faq.deleteAll();
+		return 'Deleted all FAQ!';
+	},
+
+	// Challenge Functions
+	handleChallenge: async ({ locals, request }) => {
+		const formData = await request.formData();
+		const id = formData.get('id'); // Check for id to determine create or update
+		const title = formData.get('title') as string;
+		const prize = formData.get('prize') as string;
+		const description = formData.get('description') as string;
+
+		const challengeData = {
+			title: title,
+			prize: prize,
+			description: description,
+		};
+
+		if (id) {
+			await trpc(locals.auth).challenges.update({
+				id: Number(id),
+				...challengeData,
+			});
+			return 'Saved challenge!';
+		} else {
+			await trpc(locals.auth).challenges.create(challengeData);
+			return 'Created challenge!';
+		}
+	},
+
+	deleteChallenge: async ({ locals, request }) => {
+		const id = parseInt((await request.formData()).get('id') as string, 10);
+		if (isNaN(id)) {
+			throw new Error('Invalid challenge ID');
+		}
+		await trpc(locals.auth).challenges.delete(id);
+		return 'Deleted challenge!';
+	},
+
+	deleteAllChallenges: async ({ locals }) => {
+		await trpc(locals.auth).challenges.deleteAll();
+		return 'Deleted all challenges!';
+	},
+
 	// Sponsor Functions
 	createSponsor: async ({ locals, request }) => {
 		const formData = await request.formData();
@@ -139,32 +190,6 @@ export const actions = {
 			return 'Created sponsor!';
 		} else {
 			return 'Error in creating sponsor! Please check file input!';
-		}
-	},
-
-	deleteAll: async ({ locals, request }) => {
-		const deleteAllValue = (await request.formData()).get('deleteAll') as string;
-
-		if (deleteAllValue === 'events') {
-			await trpc(locals.auth).events.deleteAll();
-			return 'Deleted all Events!';
-		} else if (deleteAllValue === 'FAQs') {
-			await trpc(locals.auth).infoBox.deleteAllOfCategory('FAQ');
-			return 'Deleted all FAQ!';
-		} else if (deleteAllValue === 'challenges') {
-			await trpc(locals.auth).infoBox.deleteAllOfCategory('CHALLENGE');
-			return 'Deleted all challenges!';
-		} else if (deleteAllValue === 'sponsors') {
-			const sponsors = await trpc(locals.auth).infoBox.getAllOfCategory('SPONSOR');
-
-			for (const sponsor of sponsors) {
-				s3Delete(sponsor.title);
-			}
-
-			await trpc(locals.auth).infoBox.deleteAllOfCategory('SPONSOR');
-			return 'Deleted all sponsors!';
-		} else {
-			return 'Invalid element to delete';
 		}
 	},
 };

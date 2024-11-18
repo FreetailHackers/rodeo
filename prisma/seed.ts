@@ -12,7 +12,7 @@
 
 import { lucia } from 'lucia';
 import 'lucia/polyfill/node';
-import { MY_TIMEZONE, events, questions, faq } from './data.ts';
+import { MY_TIMEZONE, events, questions, faq, challenges } from './data.ts';
 import { PrismaClient, Status, Prisma } from '@prisma/client';
 import { prisma as prismaAdapter } from '@lucia-auth/adapter-prisma';
 
@@ -56,6 +56,8 @@ async function main() {
 	await prisma.authSession.deleteMany();
 	await prisma.authKey.deleteMany();
 	await prisma.infoBox.deleteMany();
+	await prisma.fAQ.deleteMany();
+	await prisma.challenge.deleteMany();
 	await prisma.team.deleteMany();
 
 	// Create example announcement
@@ -80,6 +82,7 @@ async function main() {
 
 	// Create example FAQ and Challenges
 	await prisma.fAQ.createMany({ data: faq });
+	await prisma.challenge.createMany({ data: challenges });
 
 	// Generate fake users and status changes
 	// NOTE: By "fake", I mean the fact that there is no way to sign in

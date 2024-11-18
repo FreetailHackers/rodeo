@@ -29,8 +29,7 @@ export const faqRouter = t.router({
 	}),
 
 	/**
-	 * Adds an record to the page. User must be an admin. Category type assigned
-	 * when created.
+	 * Adds an record to the page. User must be an admin.
 	 */
 	create: t.procedure
 		.use(authenticate(['ADMIN']))

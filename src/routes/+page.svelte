@@ -5,6 +5,7 @@
 	import Announcements from '$lib/components/announcements.svelte';
 	import Schedule from '$lib/components/schedule.svelte';
 	import FAQ from '$lib/components/faq.svelte';
+	import Challenges from '$lib/components/challenges.svelte';
 
 	export let data;
 
@@ -56,6 +57,12 @@
 		{#if data.settings.showFAQ && data.faq.length > 0}
 			<section id="FAQ">
 				<FAQ faqs={data.faq} />
+			</section>
+		{/if}
+
+		{#if data.settings.showChallenges && data.challenges.length > 0}
+			<section id="Challenges">
+				<Challenges challenges={data.challenges} />
 			</section>
 		{/if}
 	</div>

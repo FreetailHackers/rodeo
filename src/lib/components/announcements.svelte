@@ -2,10 +2,10 @@
 	import '../../routes/global.css';
 	import type { Announcement } from '@prisma/client';
 	import { enhance } from '$app/forms';
+	import { confirmationDialog } from '$lib/actions';
 	import TextEditor from './text-editor.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
 	export let admin: boolean;
-
 	export let announcements: Announcement[];
 </script>
 
@@ -20,9 +20,26 @@
 		/>
 		<button class="announcement-button-label">Announce</button>
 	</form>
+
+	<form method="POST" action="?/clearAnnouncements" use:enhance>
+		<button
+			class="delete-button-label"
+			use:confirmationDialog={{
+				text: 'Are you sure you want to delete all announcements? This cannot be undone!',
+				cancel: 'Cancel',
+				ok: 'Delete',
+			}}>Clear All Announcements</button
+		>
+	</form>
 {/if}
 <ul>
 	{#each announcements as announcement}
+		{#if admin}
+			<form method="POST" action="?/unannounce" use:enhance>
+				<input type="hidden" name="id" value={announcement.id} />
+				<button class="delete-button-label">Delete</button>
+			</form>
+		{/if}
 		<li class="card text">
 			<span class="date">
 				<p class="month-day">

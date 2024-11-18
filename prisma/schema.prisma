@@ -166,6 +166,13 @@ model FAQ {
   answer      String
 }
 
+model Challenge {
+  id            Int     @id @default(autoincrement())
+  title         String
+  prize         String?
+  description   String
+}
+
 model StatusChange {
   id        Int      @id @default(autoincrement())
   newStatus Status

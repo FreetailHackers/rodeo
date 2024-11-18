@@ -7,8 +7,7 @@
 	import { toasts } from '$lib/stores';
 	import EventManager from './event-manager.svelte';
 	import FAQManager from './faq-manager.svelte';
-
-	let selected: string;
+	import ChallengeManager from './challenge-manager.svelte';
 
 	function handleFileChange(event: Event) {
 		const input = event.target as HTMLInputElement;
@@ -85,6 +84,17 @@
 <!-- Events -->
 <section>
 	<h2>Schedule</h2>
+	<form method="POST" action="?/deleteAllEvents" use:enhance>
+		<button
+			type="submit"
+			use:confirmationDialog={{
+				text: 'Are you sure you want to delete all events? This cannot be undone!',
+				cancel: 'Cancel',
+				ok: 'Delete',
+			}}>Delete All Events</button
+		>
+	</form>
+
 	<EventManager scheduleEvent={null} />
 	<details>
 		<summary>View Event Info</summary>
@@ -108,35 +118,67 @@
 <!-- FAQs -->
 <section>
 	<h2>FAQs</h2>
-	<FAQManager faq={null} />
-	<details>
-		<summary>View FAQ Info</summary>
-		<hr />
-
-		{#each data.faqs as faq}
-			<h3>{faq.question}</h3>
-			<p>{faq.answer}</p>
-			<FAQManager {faq} />
-			<form method="POST" action="?/deleteFAQ" use:enhance>
-				<input type="hidden" name="id" value={faq.id} />
-				<button type="submit">Delete</button>
-			</form>
+	<form method="POST" action="?/deleteAllFAQs" use:enhance>
+		<button
+			type="submit"
+			use:confirmationDialog={{
+				text: 'Are you sure you want to delete all FAQs? This cannot be undone!',
+				cancel: 'Cancel',
+				ok: 'Delete',
+			}}>Delete All FAQs</button
+		>
+		<FAQManager faq={null} />
+		<details>
+			<summary>View FAQ Info</summary>
 			<hr />
-		{/each}
-	</details>
+
+			{#each data.faqs as faq}
+				<h3>{faq.question}</h3>
+				<p>{faq.answer}</p>
+				<FAQManager {faq} />
+				<form method="POST" action="?/deleteFAQ" use:enhance>
+					<input type="hidden" name="id" value={faq.id} />
+					<button type="submit">Delete</button>
+				</form>
+				<hr />
+			{/each}
+		</details>
+	</form>
 </section>
 
-<form method="POST" action="?/createChallenge" use:enhance>
-	<label for="createNewChallenge"><h2>Create New Challenge</h2></label>
+<!-- Challenges -->
+<section>
+	<h2>Challenges</h2>
+	<ChallengeManager challenge={null} />
+	<form method="POST" action="?/deleteAllChallenges" use:enhance>
+		<button
+			type="submit"
+			use:confirmationDialog={{
+				text: 'Are you sure you want to delete all challenges? This cannot be undone!',
+				cancel: 'Cancel',
+				ok: 'Delete',
+			}}>Delete All Challenges</button
+		>
+		<details>
+			<summary>View Challenge Info</summary>
+			<hr />
 
-	<label for="category">Category</label>
-	<input type="text" id="category" name="category" required />
-
-	<label for="challenge">Challenge</label>
-	<textarea id="challenge" name="challenge" required />
-
-	<button type="submit">Save</button>
-</form>
+			{#each data.challenges as challenge}
+				<h3>{challenge.title}</h3>
+				{#if challenge.prize}
+					<p>Prize: {challenge.prize}</p>
+				{/if}
+				<p>{challenge.description}</p>
+				<ChallengeManager {challenge} />
+				<form method="POST" action="?/deleteChallenge" use:enhance>
+					<input type="hidden" name="id" value={challenge.id} />
+					<button type="submit">Delete</button>
+				</form>
+				<hr />
+			{/each}
+		</details>
+	</form>
+</section>
 
 <form method="POST" action="?/createSponsor" use:enhance enctype="multipart/form-data">
 	<label for="createNewSponsor"><h2>Create New Sponsor</h2></label>
@@ -155,18 +197,6 @@
 	<input type="url" id="sponsorLink" name="sponsorLink" required />
 
 	<button type="submit">Save</button>
-</form>
-
-<form method="POST" action="?/deleteAll" use:enhance>
-	<label for="deleteAll"><h2>Delete All</h2></label>
-	<select name="deleteAll" id="deleteAll" bind:value={selected}>
-		<option value="" disabled selected>Select an element</option>
-		<option value="events"> Schedule Events</option>
-		<option value="FAQs"> FAQs </option>
-		<option value="challenges"> Challenges </option>
-		<option value="sponsors"> Sponsors </option>
-	</select>
-	<button disabled={selected === ''} use:confirmationDialog>Delete</button>
 </form>
 
 <style>
