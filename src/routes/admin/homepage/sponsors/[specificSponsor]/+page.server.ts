@@ -8,7 +8,9 @@ export const load = async ({ locals, params }) => {
 	if (Number.isNaN(Number(params.specificSponsor))) {
 		throw error(404, 'Sponsor not found');
 	}
-	const sponsor = await trpc(locals.auth).infoBox.get(Number(params.specificSponsor));
+	const sponsor = await trpc(locals.auth).sponsors.getSponsorWithImageValue(
+		Number(params.specificSponsor)
+	);
 	if (sponsor !== null) {
 		return sponsor;
 	}
@@ -25,27 +27,27 @@ export const actions = {
 		if (sponsorLogo && sponsorLogo.size <= 1024 * 1024) {
 			let key: string = '';
 
-			const existingSponsor = await trpc(locals.auth).infoBox.get(
+			const existingSponsor = await trpc(locals.auth).sponsors.get(
 				Number(formData.get('id') as string)
 			);
 
 			// If no file was specified, use pre existing logo
 			if (sponsorLogo?.size === 0 && existingSponsor) {
-				key = existingSponsor.title;
+				key = existingSponsor.imageKey;
 			} else {
 				// Deleting previous logo
-				s3Delete(existingSponsor?.title);
+				s3Delete(existingSponsor?.imageKey);
 				// Removes all characters that are not alphanumeric, periods, or hyphens
 				key = `sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
 				// Uploading new logo
 				s3Upload(key, sponsorLogo);
 			}
 
-			await trpc(locals.auth).infoBox.update({
+			await trpc(locals.auth).sponsors.update({
 				id: Number(formData.get('id') as string),
-				title: key,
-				response: sponsorLink,
-				category: 'SPONSOR',
+				name: formData.get('name') as string,
+				imageKey: key,
+				url: sponsorLink,
 			});
 			return 'Saved sponsor!';
 		} else {
@@ -57,12 +59,12 @@ export const actions = {
 		const formData = await request.formData();
 		const id = Number(formData.get('id') as string);
 
-		const existingSponsor = await trpc(locals.auth).infoBox.get(id);
+		const existingSponsor = await trpc(locals.auth).sponsors.get(id);
 
 		// Deleting uploaded image
-		s3Delete(existingSponsor?.title);
+		s3Delete(existingSponsor?.imageKey);
 
-		await trpc(locals.auth).infoBox.delete(id);
+		await trpc(locals.auth).sponsors.delete(id);
 		throw redirect(303, '/');
 	},
 };

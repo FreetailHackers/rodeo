@@ -12,6 +12,7 @@ export const load = async ({ locals }) => {
 		events: await trpc(locals.auth).events.getAll(),
 		faq: await trpc(locals.auth).faq.getAll(),
 		challenges: await trpc(locals.auth).challenges.getAll(),
+		sponsors: await trpc(locals.auth).sponsors.getSponsorsWithImageValues(),
 		// Check whether various OAuth providers are set up in
 		// environment variables so we can show/hide buttons.
 		providers: {

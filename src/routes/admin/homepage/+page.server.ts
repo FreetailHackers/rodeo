@@ -182,11 +182,12 @@ export const actions = {
 
 			s3Upload(key, sponsorLogo);
 
-			await trpc(locals.auth).infoBox.create({
-				title: key,
-				response: sponsorLink,
-				category: 'SPONSOR',
+			await trpc(locals.auth).sponsors.create({
+				name: formData.get('sponsorName') as string,
+				imageKey: key,
+				url: sponsorLink,
 			});
+
 			return 'Created sponsor!';
 		} else {
 			return 'Error in creating sponsor! Please check file input!';

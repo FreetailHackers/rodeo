@@ -55,9 +55,9 @@ async function main() {
 	await prisma.authUser.deleteMany();
 	await prisma.authSession.deleteMany();
 	await prisma.authKey.deleteMany();
-	await prisma.infoBox.deleteMany();
 	await prisma.fAQ.deleteMany();
 	await prisma.challenge.deleteMany();
+	await prisma.sponsor.deleteMany();
 	await prisma.team.deleteMany();
 
 	// Create example announcement

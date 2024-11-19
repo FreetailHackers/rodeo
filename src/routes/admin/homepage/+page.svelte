@@ -182,8 +182,9 @@
 
 <form method="POST" action="?/createSponsor" use:enhance enctype="multipart/form-data">
 	<label for="createNewSponsor"><h2>Create New Sponsor</h2></label>
-
-	<label for="sponsorLogo">Sponsor Logo</label>
+	<label for="sponsorName">Name</label>
+	<input type="text" id="sponsorName" name="sponsorName" required />
+	<label for="sponsorLogo">Logo</label>
 	<input
 		type="file"
 		id="sponsorLogo"
@@ -193,7 +194,7 @@
 		on:change={handleFileChange}
 	/>
 
-	<label for="sponsorLink">Sponsor Link</label>
+	<label for="sponsorLink">Image Link</label>
 	<input type="url" id="sponsorLink" name="sponsorLink" required />
 
 	<button type="submit">Save</button>

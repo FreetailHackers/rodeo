@@ -153,13 +153,6 @@ model Event {
   type        String
 }
 
-model InfoBox {
-  id       Int          @id @default(autoincrement())
-  title    String
-  response String
-  category CategoryType
-}
-
 model FAQ {
   id          Int     @id @default(autoincrement())
   question    String
@@ -171,6 +164,13 @@ model Challenge {
   title         String
   prize         String?
   description   String
+}
+
+model Sponsor {
+  id          Int     @id @default(autoincrement())
+  name        String
+  imageKey    String
+  url         String?
 }
 
 model StatusChange {
