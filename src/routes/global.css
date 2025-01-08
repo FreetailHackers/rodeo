@@ -267,8 +267,7 @@ dialog button {
 }
 
 .main-content {
-	min-height: calc(100vh - (159px + 60px));
-	max-width: 50rem;
+	max-width: 75rem;
 	margin: 0 auto;
 	margin-top: 60px;
 	padding: 0 1rem;
