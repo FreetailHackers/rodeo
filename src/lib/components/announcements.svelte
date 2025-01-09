@@ -79,7 +79,7 @@
 		list-style: none;
 		padding: 1em;
 		margin: 0;
-		height: 70vh;
+		height: 80vh;
 		overflow-y: scroll;
 		scroll-snap-type: y mandatory;
 		mask-image: linear-gradient(to bottom, black calc(100% - 5em), transparent 100%);

@@ -55,15 +55,15 @@
 			</section>
 		{/if}
 
-		{#if data.settings.showFAQ && data.faq.length > 0}
-			<section id="FAQ">
-				<FAQ faqs={data.faq} />
-			</section>
-		{/if}
-
 		{#if data.settings.showChallenges && data.challenges.length > 0}
 			<section id="Challenges">
 				<Challenges challenges={data.challenges} />
+			</section>
+		{/if}
+
+		{#if data.settings.showFAQ && data.faq.length > 0}
+			<section id="FAQ">
+				<FAQ faqs={data.faq} />
 			</section>
 		{/if}
 

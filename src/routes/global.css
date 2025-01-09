@@ -47,7 +47,7 @@ h1 {
 	font-weight: 800;
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
-	margin: 1rem;
+	margin: 2rem;
 }
 h2 {
 	font-size: 2.22rem; /* 40pt */
@@ -82,6 +82,10 @@ html {
 body {
 	margin: 0 auto;
 	overflow-wrap: anywhere;
+}
+
+section {
+	margin-bottom: 8em;
 }
 
 nav {

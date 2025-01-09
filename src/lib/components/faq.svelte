@@ -14,7 +14,7 @@
 </script>
 
 <div class="home-content">
-	<h2>Any Questions?</h2>
+	<h1>Any Questions?</h1>
 	<div class="questions">
 		{#each [columnOne, columnTwo] as column}
 			<div class="questions-col">
@@ -39,11 +39,17 @@
 		margin-top: 1em;
 		cursor: default;
 		user-select: none;
+		font-weight: bold;
+	}
+
+	.question-title {
+		cursor: pointer;
 	}
 
 	.question-answer {
 		padding-left: 1rem;
 		user-select: text;
+		font-weight: normal;
 	}
 
 	@media (max-width: 768px) {
