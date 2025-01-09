@@ -85,7 +85,7 @@
 </script>
 
 <div class="home-content">
-	<h2>What's Next?</h2>
+	<h1>What's Next?</h1>
 	<div class="button-container">
 		{#each filters as filter, index}
 			<div class="schedule-button schedule-button-filters">
@@ -148,10 +148,15 @@
 	.date {
 		align-self: flex-start;
 		flex-basis: 5em;
+		font-weight: bold;
 	}
 
 	.separator {
 		border: 1px solid black;
+	}
+
+	.name {
+		font-weight: bold;
 	}
 
 	.details {
@@ -162,16 +167,29 @@
 		margin: 0;
 	}
 
+	.location {
+		color: var(--dark-grey);
+		padding-top: 5px;
+		padding-bottom: 8px;
+	}
+
+	.description {
+		color: var(--dark-grey);
+	}
+
 	.column {
 		flex: 1 1;
-		border: 2px solid black;
+		border: 3px solid black;
 		border-radius: 15px;
+	}
+
+	.button-container {
+		gap: 10px;
+		margin-bottom: 20px;
 	}
 
 	.schedule-button-filters {
 		display: inline-flex;
-		/*justify-content: space-between;*/
-		margin-bottom: 20px;
 		padding: 5px;
 	}
 
@@ -180,47 +198,46 @@
 		margin-right: 0.25em;
 	}
 
+	/* Active filter */
 	.schedule-button button {
-		cursor: pointer;
-		/*font-size: var(--font-size-l);*/
 		align-items: center;
-		border: 3px solid transparent;
-		background: transparent;
+		border: 3px solid var(--color);
+		background: var(--color);
 		border-radius: 100px;
 		display: inline-flex;
 		flex: 0 0 auto;
-		justify-content: center;
-		padding: 5px 10px;
-		position: relative;
+		padding: 0px 10px 3px 10px;
 
-		color: var(--color);
-		font-style: normal;
-		font-weight: 500;
+		color: var(--white);
 	}
 
-	/* Clicked Button*/
+	/* Inactive filter */
 	.schedule-button button:not(.selected) {
-		background-color: var(--color); /* Apply background color from the array */
-		color: white; /* Text turns white */
-		border-color: transparent; /* Remove border when active */
+		background-color: transparent;
+		color: var(--color);
+		border-color: transparent;
 	}
 
-	/* Hover over an unclicked button*/
-	.schedule-button button.selected:hover {
-		border-color: var(--color); /* Border turns into the color from the array */
-		color: var(--color); /* Text color changes to the same color */
+	/* Hover over inactive filter */
+	.schedule-button button:not(.selected):hover {
+		border-color: var(--color);
+		color: var(--color);
 	}
 
-	.day,
+	.day {
+		margin: 1em 1.5em;
+		color: var(--black);
+	}
+
 	.card {
-		padding: 0.75rem;
+		padding: 1.5rem 1rem 1rem 1rem;
 	}
 
 	.card {
 		opacity: 0.5;
 		display: flex;
 		flex-direction: column;
-		border-top: 2px solid black;
+		border-top: 3px solid black;
 	}
 
 	.card.selected {
