@@ -37,3 +37,23 @@
 		<button type="submit">Create Account</button>
 	</form>
 </div>
+
+<style>
+	.main-content {
+		margin: 0 auto;
+		padding: 1rem;
+	}
+
+	label {
+		display: block;
+		margin-top: 1rem;
+	}
+
+	input {
+		width: 100%;
+	}
+
+	button {
+		margin-top: 1rem;
+	}
+</style>

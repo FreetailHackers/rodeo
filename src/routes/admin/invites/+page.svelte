@@ -45,4 +45,22 @@
 </form>
 
 <style>
+	.toggle-container {
+		margin-bottom: 1rem;
+	}
+
+	.role {
+		width: 100%;
+		margin-bottom: 1rem;
+	}
+
+	textarea {
+		width: 100%;
+		height: 10rem;
+		margin-bottom: 1rem;
+	}
+
+	button {
+		width: 100%;
+	}
 </style>

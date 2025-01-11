@@ -455,83 +455,73 @@ export const usersRouter = t.router({
 			const unsuccessfulEmails = [];
 
 			for (const email of req.input.emailsToInvite) {
-				// Check if user already exists
 				let invitedUser = await prisma.authUser.findUnique({
 					where: { email },
 				});
 
-				if (invitedUser) {
-					// TODO: don't return here because there could be multiple users.
-					return 'Please reset your password if you are unable to log in.';
-				} else {
-					// create id for invited user
-
-					await auth.createUser({
-						key: {
-							providerId: 'email',
-							providerUserId: email,
-							password: null,
-						},
-						attributes: {
-							email,
-							roles: [req.input.role],
-							status: 'INVITED',
-						},
-					});
-
-					invitedUser = await prisma.authUser.findUnique({
-						where: { email },
-					});
-					if (!invitedUser) {
-						unsuccessfulEmails.push(email);
-						continue; // Skip to the next email if user creation failed
-					}
-
-					// Delete any existing invitations for the user to avoid duplicates
-					await prisma.invitation.deleteMany({ where: { email } });
-
-					// Create a new invitation
-					await prisma.invitation.create({
-						data: {
-							email: email,
-							userId: invitedUser.id,
-							status: 'PENDING',
-						},
-					});
-
-					const inviteToken = await inviteToRodeoToken.issue(invitedUser.id, email, req.input.role);
-					const inviteLink = `${process.env.DOMAIN_NAME}/account/invite-to-rodeo?token=${inviteToken}`;
-					const emailBody = `
-						Thank you for helping us during HackTX 24! Your support truly means a lot.
-						We are excited to have you join us as a ${req.input.role}.
-						Please note that this link will expire in one week.
-
-						\n\nClick the following link to accept the invitation: 
-						<a href="${inviteLink}">Join Rodeo</a>
-					`;
-
-					// Send the invitation email
-					const emailSent = await sendEmail(
+				await auth.createUser({
+					key: {
+						providerId: 'email',
+						providerUserId: email,
+						password: null,
+					},
+					attributes: {
 						email,
-						'You have been invited to Rodeo',
-						emailBody,
-						req.input.inviteUsersIsHTML
-					);
+						roles: [req.input.role],
+						status: 'INVITED',
+					},
+				});
 
-					if (emailSent) {
-						successfulEmails++;
-						await prisma.authUser.update({
-							where: { id: invitedUser.id },
-							data: { verifiedEmail: true },
-						});
-					} else {
-						unsuccessfulEmails.push(email);
-					}
+				invitedUser = await prisma.authUser.findUnique({
+					where: { email },
+				});
+				if (!invitedUser) {
+					unsuccessfulEmails.push(email);
+					continue;
+				}
+
+				await prisma.invitation.deleteMany({ where: { email } });
+
+				await prisma.invitation.create({
+					data: {
+						email: email,
+						userId: invitedUser.id,
+						status: 'PENDING',
+					},
+				});
+
+				const inviteToken = await inviteToRodeoToken.issue(invitedUser.id, email, req.input.role);
+				const inviteLink = `${process.env.DOMAIN_NAME}/account/invite-to-rodeo?token=${inviteToken}`;
+				const emailBody = `
+					Thank you for helping us during HackTX 24! Your support truly means a lot.
+					We are excited to have you join us as a ${req.input.role}.
+					Please note that this link will expire in one week.
+
+					\n\nClick the following link to accept the invitation: 
+					<a href="${inviteLink}">Join Rodeo</a>
+				`;
+
+				// Send the invitation email
+				const emailSent = await sendEmail(
+					email,
+					'You have been invited to Rodeo',
+					emailBody,
+					req.input.inviteUsersIsHTML
+				);
+
+				if (emailSent) {
+					successfulEmails++;
+					await prisma.authUser.update({
+						where: { id: invitedUser.id },
+						data: { verifiedEmail: true },
+					});
+				} else {
+					unsuccessfulEmails.push(email);
 				}
 			}
 
 			console.log('Could not invite the following emails:', unsuccessfulEmails);
-			return `Invited ${successfulEmails} users!`;
+			return `Invited ${successfulEmails} user${successfulEmails === 1 ? '' : 's'}!`;
 		}),
 
 	createAccount: t.procedure
