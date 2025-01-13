@@ -34,12 +34,6 @@
 {/if}
 <ul>
 	{#each announcements as announcement}
-		{#if admin}
-			<form method="POST" action="?/unannounce" use:enhance>
-				<input type="hidden" name="id" value={announcement.id} />
-				<button class="delete-button-label">Delete</button>
-			</form>
-		{/if}
 		<li class="card text">
 			<span class="date">
 				<p class="month-day">
@@ -57,6 +51,12 @@
 			</span>
 
 			<SvelteMarkdown source={announcement.body} />
+			{#if admin}
+				<form class="delete-message" method="POST" action="?/unannounce" use:enhance>
+					<input type="hidden" name="id" value={announcement.id} />
+					<button class="delete-button-label">X</button>
+				</form>
+			{/if}
 		</li>
 	{/each}
 </ul>
@@ -95,15 +95,32 @@
 		margin-bottom: 5em;
 	}
 
-	p {
-		margin: 0;
-	}
-
 	.card {
 		background-color: var(--light-grey);
 		border-radius: 50px;
 		position: relative;
 		padding: 1rem 1.5em;
+	}
+
+	.delete-message {
+		position: absolute;
+		right: 1em;
+		top: -1em;
+	}
+
+	.delete-message button {
+		padding: 0.4em 0.6em;
+		border-radius: var(--border-radius);
+		background: var(--red);
+	}
+
+	.delete-message button:hover {
+		background: red;
+		color: var(--white);
+	}
+
+	.date p {
+		margin: 0;
 	}
 
 	.date {

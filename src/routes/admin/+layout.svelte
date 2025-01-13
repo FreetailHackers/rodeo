@@ -21,8 +21,6 @@
 		</li>
 	</ul>
 
-	<hr />
-
 	<slot />
 </div>
 
@@ -33,19 +31,21 @@
 
 	ul {
 		list-style: none;
-		margin: 0;
+		margin: 0.5em 0;
 		padding: 0;
+
+		display: flex;
+		flex-direction: row;
+		gap: 1em;
 	}
 
-	ul li {
-		padding-top: 15px;
-	}
-
-	hr {
-		margin: 1rem 0;
+	a {
+		text-decoration: none;
+		color: var(--black);
 	}
 
 	.active {
 		font-weight: bold;
+		text-decoration: underline;
 	}
 </style>

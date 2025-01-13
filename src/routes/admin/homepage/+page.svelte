@@ -83,7 +83,32 @@
 
 <!-- Events -->
 <section>
-	<h2>Schedule</h2>
+	<div class="flex-row">
+		<h2>Schedule</h2>
+		<EventManager scheduleEvent={null} />
+	</div>
+	<details>
+		<summary>View Event Info</summary>
+		<hr />
+
+		{#each data.events as event}
+			<div class="flex-row">
+				<h3>{event.name}</h3>
+				<div class="flex-row">
+					<EventManager scheduleEvent={event} />
+					<form method="POST" action="?/deleteEvent" use:enhance>
+						<input type="hidden" name="id" value={event.id} />
+						<button type="submit">Delete</button>
+					</form>
+				</div>
+			</div>
+
+			<p>{event.start} - {event.end} | {event.location}</p>
+			<p>Type: {event.type}</p>
+			<p>{event.description}</p>
+			<hr />
+		{/each}
+	</details>
 	<form method="POST" action="?/deleteAllEvents" use:enhance>
 		<button
 			type="submit"
@@ -94,30 +119,33 @@
 			}}>Delete All Events</button
 		>
 	</form>
-
-	<EventManager scheduleEvent={null} />
-	<details>
-		<summary>View Event Info</summary>
-		<hr />
-
-		{#each data.events as event}
-			<h3>{event.name}</h3>
-			<p>{event.start} - {event.end} | {event.location}</p>
-			<p>Type: {event.type}</p>
-			<p>{event.description}</p>
-			<EventManager scheduleEvent={event} />
-			<form method="POST" action="?/deleteEvent" use:enhance>
-				<input type="hidden" name="id" value={event.id} />
-				<button type="submit">Delete</button>
-			</form>
-			<hr />
-		{/each}
-	</details>
 </section>
 
 <!-- FAQs -->
 <section>
-	<h2>FAQs</h2>
+	<div class="flex-row">
+		<h2>FAQs</h2>
+		<FAQManager faq={null} />
+	</div>
+	<details>
+		<summary>View FAQ Info</summary>
+		<hr />
+
+		{#each data.faqs as faq}
+			<div class="flex-row">
+				<h3>{faq.question}</h3>
+				<div class="flex-row">
+					<FAQManager {faq} />
+					<form method="POST" action="?/deleteFAQ" use:enhance>
+						<input type="hidden" name="id" value={faq.id} />
+						<button type="submit">Delete</button>
+					</form>
+				</div>
+			</div>
+			<p>{faq.answer}</p>
+			<hr />
+		{/each}
+	</details>
 	<form method="POST" action="?/deleteAllFAQs" use:enhance>
 		<button
 			type="submit"
@@ -127,29 +155,37 @@
 				ok: 'Delete',
 			}}>Delete All FAQs</button
 		>
-		<FAQManager faq={null} />
-		<details>
-			<summary>View FAQ Info</summary>
-			<hr />
-
-			{#each data.faqs as faq}
-				<h3>{faq.question}</h3>
-				<p>{faq.answer}</p>
-				<FAQManager {faq} />
-				<form method="POST" action="?/deleteFAQ" use:enhance>
-					<input type="hidden" name="id" value={faq.id} />
-					<button type="submit">Delete</button>
-				</form>
-				<hr />
-			{/each}
-		</details>
 	</form>
 </section>
 
 <!-- Challenges -->
 <section>
-	<h2>Challenges</h2>
-	<ChallengeManager challenge={null} />
+	<div class="flex-row">
+		<h2>Challenges</h2>
+		<ChallengeManager challenge={null} />
+	</div>
+	<details>
+		<summary>View Challenges</summary>
+		<hr />
+
+		{#each data.challenges as challenge}
+			<div class="flex-row">
+				<h3>{challenge.title}</h3>
+				<div class="flex-row">
+					<ChallengeManager {challenge} />
+					<form method="POST" action="?/deleteChallenge" use:enhance>
+						<input type="hidden" name="id" value={challenge.id} />
+						<button type="submit">Delete</button>
+					</form>
+				</div>
+			</div>
+			{#if challenge.prize}
+				<p>Prize: {challenge.prize}</p>
+			{/if}
+			<p>{challenge.description}</p>
+			<hr />
+		{/each}
+	</details>
 	<form method="POST" action="?/deleteAllChallenges" use:enhance>
 		<button
 			type="submit"
@@ -159,24 +195,6 @@
 				ok: 'Delete',
 			}}>Delete All Challenges</button
 		>
-		<details>
-			<summary>View Challenge Info</summary>
-			<hr />
-
-			{#each data.challenges as challenge}
-				<h3>{challenge.title}</h3>
-				{#if challenge.prize}
-					<p>Prize: {challenge.prize}</p>
-				{/if}
-				<p>{challenge.description}</p>
-				<ChallengeManager {challenge} />
-				<form method="POST" action="?/deleteChallenge" use:enhance>
-					<input type="hidden" name="id" value={challenge.id} />
-					<button type="submit">Delete</button>
-				</form>
-				<hr />
-			{/each}
-		</details>
 	</form>
 </section>
 
@@ -202,7 +220,7 @@
 
 <style>
 	button {
-		margin-top: 20px;
+		margin: 1rem 0;
 	}
 
 	label {
@@ -210,14 +228,22 @@
 	}
 
 	#save-homepage-text {
-		margin-top: 20px;
-	}
-
-	button {
-		margin-bottom: 1rem;
+		margin-top: 1rem;
 	}
 
 	.toggle-container {
 		margin-bottom: 1rem;
+	}
+
+	.flex-row {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+		gap: 1em;
+	}
+
+	details {
+		margin: 1em;
 	}
 </style>

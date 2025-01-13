@@ -52,7 +52,7 @@
 		{#if faq}
 			<p>Edit FAQ</p>
 		{:else}
-			<img src="/add-button.png" alt="Add" draggable="false" />
+			<button>+ New</button>
 		{/if}
 	</Trigger>
 </Modal>
