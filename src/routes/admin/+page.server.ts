@@ -28,7 +28,7 @@ export const actions = {
 	settings: async ({ locals, request }) => {
 		const formData = await request.formData();
 		const timezone = formData.get('timezone') as string;
-		
+
 		const applicationDeadline = parseDateWithTimezone(
 			formData.get('applicationDeadline') as string,
 			timezone
@@ -60,7 +60,7 @@ export const actions = {
 			applicationDeadline,
 			applicationLimit,
 			hackathonStartDate,
-			spongebobCase
+			spongebobCase,
 		});
 		return 'Saved settings!';
 	},

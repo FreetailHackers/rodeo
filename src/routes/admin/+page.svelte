@@ -108,9 +108,9 @@
 	/>
 
 	<Toggle
-	name="spongebobCase"
-	label="Turn SpongeBob Case On!"
-	bind:checked={data.settings.spongebobCase}
+		name="spongebobCase"
+		label="Turn SpongeBob Case On!"
+		bind:checked={data.settings.spongebobCase}
 	/>
 
 	<button type="submit">Save</button>
