@@ -107,6 +107,12 @@
 		placeholder="Write one option per line, like this:&#13;OPTION 1&#13;OPTION 2&#13;OPTION 3"
 	/>
 
+	<Toggle
+	name="spongebobCase"
+	label="Turn SpongeBob Case On!"
+	bind:checked={data.settings.spongebobCase}
+	/>
+
 	<button type="submit">Save</button>
 </form>
 

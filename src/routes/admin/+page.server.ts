@@ -28,7 +28,7 @@ export const actions = {
 	settings: async ({ locals, request }) => {
 		const formData = await request.formData();
 		const timezone = formData.get('timezone') as string;
-
+		
 		const applicationDeadline = parseDateWithTimezone(
 			formData.get('applicationDeadline') as string,
 			timezone
@@ -44,6 +44,7 @@ export const actions = {
 			applicationLimit = null;
 		}
 		const applicationOpen = formData.get('applicationOpen') === 'on';
+		const spongebobCase = formData.get('spongebobCase') === 'on';
 		const parsedDaysToRSVP = parseInt(formData.get('daysToRSVP') as string, 10);
 		const daysToRSVP: number | null = isNaN(parsedDaysToRSVP) ? null : parsedDaysToRSVP;
 
@@ -59,6 +60,7 @@ export const actions = {
 			applicationDeadline,
 			applicationLimit,
 			hackathonStartDate,
+			spongebobCase
 		});
 		return 'Saved settings!';
 	},
