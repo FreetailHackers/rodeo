@@ -5,7 +5,7 @@
 </script>
 
 <div class="content-container">
-	<h1>Sponsors</h1>
+	<h1>Thank you to our Sponsors!</h1>
 
 	<div class="sponsor-container">
 		{#each sponsors as sponsor}
@@ -26,6 +26,10 @@
 </div>
 
 <style>
+	.content-container {
+		text-align: center;
+	}
+
 	.format-edit-and-sponsor {
 		display: flex;
 		flex-direction: column;
