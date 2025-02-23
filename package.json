@@ -4,8 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
-		"deploy:migrate": "npx prisma migrate deploy",
-		"build": "npx prisma migrate deploy && vite build",
+		"build": "vite build",
 		"postinstall": "npx prisma generate",
 		"preview": "vite preview",
 		"test": "playwright test",
@@ -23,7 +22,7 @@
 		"test:unit:run"
 	],
 	"prisma": {
-		"seed": "npx tsx@3.14.0 prisma/seed.ts"
+		"seed": "npx --import tsx@3.14.0 prisma/seed.ts"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
