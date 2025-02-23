@@ -86,7 +86,6 @@ deploy-preview-job:
     on_stop: stop-preview-job
   script:
     - npm ci
-    - nvm install
     # Get environment variables from Vercel
     - npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
 
