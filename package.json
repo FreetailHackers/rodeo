@@ -22,7 +22,7 @@
 		"test:unit:run"
 	],
 	"prisma": {
-		"seed": "npx --import tsx@3.14.0 prisma/seed.ts"
+		"seed": "npx tsx@3.14.0 prisma/seed.ts"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
