@@ -4,7 +4,8 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build",
+		"deploy:migrate": "npx prisma migrate deploy",
+		"build": "npx prisma migrate deploy && vite build",
 		"postinstall": "npx prisma generate",
 		"preview": "vite preview",
 		"test": "playwright test",
