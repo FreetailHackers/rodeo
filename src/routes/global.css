@@ -15,10 +15,12 @@ html {
 	--black: #000;
 	--accent: #7970ff;
 	--light-accent: #d8d5ff;
+	--dark-grey: #757575;
 	--grey: #bbb;
 	--light-grey: #ebebeb;
 	--background-grey: #d9d9d9;
 	--secondary-color-1: #0773a6;
+	--red: #e53c09;
 
 	--border-radius: 15px;
 
@@ -46,7 +48,7 @@ h1 {
 	font-weight: 800;
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
-	margin: 1rem;
+	margin: 2rem;
 }
 h2 {
 	font-size: 2.22rem; /* 40pt */
@@ -83,6 +85,10 @@ body {
 	overflow-wrap: anywhere;
 }
 
+section {
+	margin-bottom: 8em;
+}
+
 nav {
 	margin: 1rem 0;
 }
@@ -96,6 +102,7 @@ a.button {
 	text-decoration: none;
 	cursor: pointer;
 	transition: all 0.1s;
+	text-wrap: nowrap;
 }
 
 button:not(:disabled):hover,
@@ -136,17 +143,21 @@ a.button[disabled] {
 	border-radius: 0px;
 }
 
+label {
+	margin: 0.5em 0;
+}
+
 input {
 	padding: 1rem;
 	border: 1px solid var(--grey);
 	border-radius: var(--border-radius);
+	margin-bottom: 0.5em;
 }
 
 input[type='checkbox'],
 input[type='radio'] {
 	width: 1.5rem;
 	min-width: 1.5rem;
-	margin: 0;
 	margin-right: 1rem;
 }
 
@@ -267,8 +278,7 @@ dialog button {
 }
 
 .main-content {
-	min-height: calc(100vh - (159px + 60px));
-	max-width: 50rem;
+	max-width: 75rem;
 	margin: 0 auto;
 	margin-top: 60px;
 	padding: 0 1rem;

@@ -33,4 +33,11 @@ export const announcementsRouter = t.router({
 		.mutation(async (req): Promise<void> => {
 			await prisma.announcement.deleteMany({ where: { id: req.input } });
 		}),
+
+	/**
+	 * Deletes all announcements. User must be an admin.
+	 */
+	deleteAll: t.procedure.use(authenticate(['ADMIN'])).mutation(async (): Promise<void> => {
+		await prisma.announcement.deleteMany({});
+	}),
 });

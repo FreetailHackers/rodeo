@@ -231,10 +231,6 @@
 		width: 100%;
 	}
 
-	fieldset button {
-		width: 2.5rem;
-	}
-
 	#addQuestion {
 		display: flex;
 		flex-direction: row;
