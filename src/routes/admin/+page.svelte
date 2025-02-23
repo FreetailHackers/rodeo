@@ -161,7 +161,7 @@
 		margin-top: 0;
 		margin-bottom: 1rem;
 		text-transform: uppercase;
-		background-color: var(--red);
+		background-color: #e53c09;
 		height: auto;
 		min-height: 3rem;
 	}

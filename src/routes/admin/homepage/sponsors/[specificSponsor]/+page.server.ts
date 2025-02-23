@@ -8,9 +8,7 @@ export const load = async ({ locals, params }) => {
 	if (Number.isNaN(Number(params.specificSponsor))) {
 		throw error(404, 'Sponsor not found');
 	}
-	const sponsor = await trpc(locals.auth).sponsors.getSponsorWithImageValue(
-		Number(params.specificSponsor)
-	);
+	const sponsor = await trpc(locals.auth).infoBox.get(Number(params.specificSponsor));
 	if (sponsor !== null) {
 		return sponsor;
 	}
@@ -27,27 +25,27 @@ export const actions = {
 		if (sponsorLogo && sponsorLogo.size <= 1024 * 1024) {
 			let key: string = '';
 
-			const existingSponsor = await trpc(locals.auth).sponsors.get(
+			const existingSponsor = await trpc(locals.auth).infoBox.get(
 				Number(formData.get('id') as string)
 			);
 
 			// If no file was specified, use pre existing logo
 			if (sponsorLogo?.size === 0 && existingSponsor) {
-				key = existingSponsor.imageKey;
+				key = existingSponsor.title;
 			} else {
 				// Deleting previous logo
-				s3Delete(existingSponsor?.imageKey);
+				s3Delete(existingSponsor?.title);
 				// Removes all characters that are not alphanumeric, periods, or hyphens
 				key = `sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
 				// Uploading new logo
 				s3Upload(key, sponsorLogo);
 			}
 
-			await trpc(locals.auth).sponsors.update({
+			await trpc(locals.auth).infoBox.update({
 				id: Number(formData.get('id') as string),
-				name: formData.get('name') as string,
-				imageKey: key,
-				url: sponsorLink,
+				title: key,
+				response: sponsorLink,
+				category: 'SPONSOR',
 			});
 			return 'Saved sponsor!';
 		} else {
@@ -59,12 +57,12 @@ export const actions = {
 		const formData = await request.formData();
 		const id = Number(formData.get('id') as string);
 
-		const existingSponsor = await trpc(locals.auth).sponsors.get(id);
+		const existingSponsor = await trpc(locals.auth).infoBox.get(id);
 
 		// Deleting uploaded image
-		s3Delete(existingSponsor?.imageKey);
+		s3Delete(existingSponsor?.title);
 
-		await trpc(locals.auth).sponsors.delete(id);
+		await trpc(locals.auth).infoBox.delete(id);
 		throw redirect(303, '/');
 	},
 };

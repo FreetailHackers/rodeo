@@ -29,6 +29,7 @@
 <style>
 	.accordion {
 		margin-bottom: 2rem;
+		color: var(--white);
 	}
 
 	.header {
@@ -43,5 +44,6 @@
 
 	.details {
 		padding: 0.5rem;
+		color: #7d7a72;
 	}
 </style>

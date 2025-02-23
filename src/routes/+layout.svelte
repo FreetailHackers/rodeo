@@ -51,7 +51,8 @@
 			style="display: none"
 		/>
 		<menu id="menu" bind:this={menu}>
-			<li><a href="/">Home</a></li>
+			<li><a href="https://hacktx.com/">Homepage</a></li>
+			<li><a href="/">Announcements</a></li>
 			{#if data.user?.roles.includes('HACKER')}
 				<li>
 					<a href="/apply" class:active={$page.url.pathname.startsWith('/apply')}> Application</a>
@@ -83,6 +84,9 @@
 			<li>
 				<a href="/account" class:active={$page.url.pathname.startsWith('/account')}>Account</a>
 			</li>
+			<!-- <li>
+				<a href="/settings" class:active={$page.url.pathname.startsWith('/settings')}>Settings</a>
+			</li> -->
 			<li>
 				<form method="POST" action="/logout">
 					<button type="submit">Logout</button>

@@ -246,6 +246,7 @@ export const events: Prisma.EventCreateInput[] = [
 	{
 		name: 'Hacking Begins',
 		start: dayjs.tz('2021-09-24T10:00:00', MY_TIMEZONE).toDate(),
+		end: dayjs.tz('2021-09-24T10:00:00', MY_TIMEZONE).toDate(),
 		location: 'GDC',
 		description: 'Start hacking!',
 		type: 'Key-Event',
@@ -293,6 +294,7 @@ export const events: Prisma.EventCreateInput[] = [
 	},
 	{
 		name: 'Hacking Ends',
+		start: dayjs.tz('2021-09-25T10:00:00', MY_TIMEZONE).toDate(),
 		end: dayjs.tz('2021-09-25T10:00:00', MY_TIMEZONE).toDate(),
 		location: 'GDC',
 		description: 'Stop hacking!',
@@ -325,116 +327,130 @@ export const events: Prisma.EventCreateInput[] = [
 	},
 ];
 
-export const faq: Prisma.FAQCreateInput[] = [
+export const faq: Prisma.InfoBoxCreateInput[] = [
 	{
-		question: 'What is HackTX?',
-		answer:
+		title: 'What is HackTX?',
+		response:
 			'HackTX is our beginner friendly spring hackathon only open to the University of Texas at Austin and Austin Community College students. No prior experience required and all majors welcome!',
+		category: 'FAQ',
 	},
 	{
-		question: 'Where is HackTX?',
-		answer:
+		title: 'Where is HackTX?',
+		response:
 			'HackTX will take place on the University of Texas at Austin campus! Hacking, judging, mini-events, and more will occur fully in-person!',
+		category: 'FAQ',
 	},
 	{
-		question: 'When is HackTX?',
-		answer: 'HackTX starts on March 22st, 2024 and ends on March 23rd, 2024.',
+		title: 'When is HackTX?',
+		response: 'HackTX starts on March 22st, 2024 and ends on March 23rd, 2024.',
+		category: 'FAQ',
 	},
 	{
-		question: 'When is the application deadline?',
-		answer:
+		title: 'When is the application deadline?',
+		response:
 			'Applications will close on March 18th 11:59PM CDT. However, please apply early since we will be releasing decisions in waves!',
+		category: 'FAQ',
 	},
 	{
-		question: 'What can I do if I missed the application deadline or got rejected?',
-		answer:
+		title: 'What can I do if I missed the application deadline or got rejected?',
+		response:
 			'We will have walk-in registration on Friday, March 22nd. The specific closing time for walk-in registration will be announced on our website during the event week, so be on the lookout! This is first come, first serve until we hit capacity. Admission to the event is not guaranteed so we advise non-Austin attendees to not travel for walk-in registration.',
+		category: 'FAQ',
 	},
 	{
-		question: 'How much money will this cost me?',
-		answer:
+		title: 'How much money will this cost me?',
+		response:
 			"Zero. Zip. Zilch. Nada. Nothing. Gratis. It's free. Freetail Hackers provides students with Wi-Fi, meals, swag, workspace, and prizes for all of our events!",
+		category: 'FAQ',
 	},
 	{
-		question: 'What’s the schedule?',
-		answer:
+		title: 'What’s the schedule?',
+		response:
 			'We’ll release a more detailed schedule in the coming weeks, but our event will start roughly around 9am on Friday, March 22nd and end around 6-7pm on March 23rd.',
+		category: 'FAQ',
 	},
 	{
-		question: 'Will there be prizes?',
-		answer:
+		title: 'Will there be prizes?',
+		response:
 			'Yes! We will have prizes for our challenges as well as smaller activities and mini-events! Specific details will be revealed at the opening ceremony!',
+		category: 'FAQ',
 	},
 	{
-		question: 'What do I wear?',
-		answer:
+		title: 'What do I wear?',
+		response:
 			'Wear whatever you are most comfortable in! No need to wear anything professional. However, we do require you to be within the MLH Code of Conduct.',
+		category: 'FAQ',
 	},
 	{
-		question: 'Any rules?',
-		answer:
+		title: 'Any rules?',
+		response:
 			"All work must be done at the event. You can't demo something you didn't build. Don't talk about Fight Club. All attendees (hackers, supporters, mentors, volunteers, etc.) must abide by the MLH Code of Conduct.",
+		category: 'FAQ',
 	},
 	{
-		question: 'How do teams work?',
-		answer:
+		title: 'How do teams work?',
+		response:
 			"Teams can be up to 4 members. If you don't have a team, don't worry! Joining a team of new friends is the best part of a hackathon. We will have team matching available for everyone on the day of the event, but if you would like to create a team beforehand, that works too!",
+		category: 'FAQ',
 	},
 	{
-		question: 'What should I bring?',
-		answer:
+		title: 'What should I bring?',
+		response:
 			'Yourself, your valid university ID, a form of ID proving you are over 18 years old, a laptop, chargers, or anything else you might need within the 24 hours. Firearms, weapons, alcohol, illegal drugs, and power tools are not allowed. Smiles and high-fives are welcome.',
+		category: 'FAQ',
 	},
 	{
-		question: 'How do I volunteer?',
-		answer:
+		title: 'How do I volunteer?',
+		response:
 			'We are always looking for mentors to answer student questions or workshop suggestions, as well as general volunteers to help run our event. If you want to help out at our event, shoot us an email at hello@freetailhackers.com!',
+		category: 'FAQ',
 	},
 	{
-		question: "Do y'all give travel reimbursements?",
-		answer:
+		title: "Do y'all give travel reimbursements?",
+		response:
 			'Unfortunately, we will not be able to provide travel reimbursements this year. We encourage you to look at low-cost transportation methods such as Amtrak, Flixbus, and Redcoach.',
+		category: 'FAQ',
 	},
 	{
-		question: 'I have more questions. Who do I contact?',
-		answer:
+		title: 'I have more questions. Who do I contact?',
+		response:
 			"If you have further questions for us, don't hesitate to reach out to hello@freetailhackers.com",
+		category: 'FAQ',
 	},
-];
-
-export const challenges: Prisma.ChallengeCreateInput[] = [
 	{
 		title: 'Sustainability Challenge',
-		prize: 'iPhone 16',
-		description:
+		response:
 			'Explore ways to promote sustainable practices and reduce environmental impact through innovative solutions. Address issues such as waste management, renewable energy, and conservation efforts to create a more sustainable future.',
+		category: 'CHALLENGE',
 	},
 	{
 		title: 'Health & Safety Challenge',
-		description:
+		response:
 			'Focus on improving health and safety standards in various environments, including workplaces, communities, and public spaces. Develop strategies to prevent accidents, mitigate risks, and enhance overall well-being for individuals and society.',
+		category: 'CHALLENGE',
 	},
 	{
 		title: 'Blockchain & Security Challenge',
-		prize: 'Apple Watch Series 10',
-		description:
+		response:
 			'Dive into the world of blockchain technology and cybersecurity to tackle emerging threats and vulnerabilities. Explore encryption methods, decentralized systems, and secure data storage to ensure the integrity and confidentiality of digital transactions and information.',
+		category: 'CHALLENGE',
 	},
 	{
 		title: 'Human Computer Interaction Challenge',
-		prize: 'Macbook Pro',
-		description:
+		response:
 			'Enhance user experiences and interactions with technology by designing intuitive interfaces and user-friendly applications. Explore human-centered design principles to create engaging and accessible digital experiences for diverse audiences.',
+		category: 'CHALLENGE',
 	},
 	{
 		title: 'Efficiency Challenge',
-		description:
+		response:
 			"#Efficiency fuels progress in our fast-paced world. If you're a problem solver with a passion for streamlining processes and maximizing productivity, then the Efficiency Boosters Hackathon is the perfect platform for you. Join forces with like-minded individuals to develop innovative solutions that optimize workflows, enhance resource management, and boost overall efficiency across various domains. Your ingenuity could revolutionize industries, so let's hack for a more efficient future!",
+		category: 'CHALLENGE',
 	},
 	{
 		title: 'Earth & Space Challenge',
-		prize: 'SpaceX Starship Ticket',
-		description:
+		response:
 			"Embark on a journey beyond our planet and explore the vastness of both Earth and Space in this hackathon track. From addressing environmental challenges on our home planet to pioneering new frontiers in space exploration, this track welcomes visionaries and problem solvers who are eager to make a significant impact on our world, both near and far. Whether you're interested in climate solutions, space technology, or protecting our planet, this hackathon is your launchpad to innovation.",
+		category: 'CHALLENGE',
 	},
 ];

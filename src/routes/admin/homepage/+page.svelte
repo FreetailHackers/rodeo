@@ -5,9 +5,8 @@
 	import TextEditor from '$lib/components/text-editor.svelte';
 	export let data;
 	import { toasts } from '$lib/stores';
-	import EventManager from './event-manager.svelte';
-	import FAQManager from './faq-manager.svelte';
-	import ChallengeManager from './challenge-manager.svelte';
+
+	let selected: string;
 
 	function handleFileChange(event: Event) {
 		const input = event.target as HTMLInputElement;
@@ -81,128 +80,63 @@
 	<button id="save-show-sections" type="submit">Save</button>
 </form>
 
-<!-- Events -->
-<section>
-	<div class="flex-row">
-		<h2>Schedule</h2>
-		<EventManager scheduleEvent={null} />
-	</div>
-	<details>
-		<summary>View Event Info</summary>
-		<hr />
+<form method="POST" action="?/createEvent" use:enhance>
+	<label for="createNewEvent"><h2>Create New Event</h2></label>
+	<label for="name">Name</label>
+	<input type="text" id="name" name="name" required />
 
-		{#each data.events as event}
-			<div class="flex-row">
-				<h3>{event.name}</h3>
-				<div class="flex-row">
-					<EventManager scheduleEvent={event} />
-					<form method="POST" action="?/deleteEvent" use:enhance>
-						<input type="hidden" name="id" value={event.id} />
-						<button type="submit">Delete</button>
-					</form>
-				</div>
-			</div>
+	<label for="description">Description</label>
+	<textarea id="description" name="description" required />
 
-			<p>{event.start} - {event.end} | {event.location}</p>
-			<p>Type: {event.type}</p>
-			<p>{event.description}</p>
-			<hr />
-		{/each}
-	</details>
-	<form method="POST" action="?/deleteAllEvents" use:enhance>
-		<button
-			type="submit"
-			use:confirmationDialog={{
-				text: 'Are you sure you want to delete all events? This cannot be undone!',
-				cancel: 'Cancel',
-				ok: 'Delete',
-			}}>Delete All Events</button
-		>
-	</form>
-</section>
+	<label for="start">Start Time</label>
+	<input type="datetime-local" id="start" name="start" required />
 
-<!-- FAQs -->
-<section>
-	<div class="flex-row">
-		<h2>FAQs</h2>
-		<FAQManager faq={null} />
-	</div>
-	<details>
-		<summary>View FAQ Info</summary>
-		<hr />
+	<label for="end">End Time</label>
+	<input type="datetime-local" id="end" name="end" required />
 
-		{#each data.faqs as faq}
-			<div class="flex-row">
-				<h3>{faq.question}</h3>
-				<div class="flex-row">
-					<FAQManager {faq} />
-					<form method="POST" action="?/deleteFAQ" use:enhance>
-						<input type="hidden" name="id" value={faq.id} />
-						<button type="submit">Delete</button>
-					</form>
-				</div>
-			</div>
-			<p>{faq.answer}</p>
-			<hr />
-		{/each}
-	</details>
-	<form method="POST" action="?/deleteAllFAQs" use:enhance>
-		<button
-			type="submit"
-			use:confirmationDialog={{
-				text: 'Are you sure you want to delete all FAQs? This cannot be undone!',
-				cancel: 'Cancel',
-				ok: 'Delete',
-			}}>Delete All FAQs</button
-		>
-	</form>
-</section>
+	<label for="location">Location</label>
+	<input type="text" id="location" name="location" required />
 
-<!-- Challenges -->
-<section>
-	<div class="flex-row">
-		<h2>Challenges</h2>
-		<ChallengeManager challenge={null} />
-	</div>
-	<details>
-		<summary>View Challenges</summary>
-		<hr />
+	<label for="type">Event Type</label>
+	<select name="type" required>
+		<option value="Regular-Event">Regular Event</option>
+		<option value="Key-Event">Key Event</option>
+		<option value="Speaker-Event">Speaker Event</option>
+		<option value="Fun-Event">Fun Event</option>
+		<option value="Workshop">Workshop</option>
+	</select>
 
-		{#each data.challenges as challenge}
-			<div class="flex-row">
-				<h3>{challenge.title}</h3>
-				<div class="flex-row">
-					<ChallengeManager {challenge} />
-					<form method="POST" action="?/deleteChallenge" use:enhance>
-						<input type="hidden" name="id" value={challenge.id} />
-						<button type="submit">Delete</button>
-					</form>
-				</div>
-			</div>
-			{#if challenge.prize}
-				<p>Prize: {challenge.prize}</p>
-			{/if}
-			<p>{challenge.description}</p>
-			<hr />
-		{/each}
-	</details>
-	<form method="POST" action="?/deleteAllChallenges" use:enhance>
-		<button
-			type="submit"
-			use:confirmationDialog={{
-				text: 'Are you sure you want to delete all challenges? This cannot be undone!',
-				cancel: 'Cancel',
-				ok: 'Delete',
-			}}>Delete All Challenges</button
-		>
-	</form>
-</section>
+	<button type="submit">Save</button>
+</form>
+
+<form method="POST" action="?/createFAQ" use:enhance>
+	<label for="createNewFAQ"><h2>Create New FAQ</h2></label>
+
+	<label for="question">Question</label>
+	<input type="text" id="question" name="question" required />
+
+	<label for="answer">Answer</label>
+	<TextEditor id="answer" name="answer" isHTML={false} required />
+
+	<button class="submit" type="submit">Save</button>
+</form>
+
+<form method="POST" action="?/createChallenge" use:enhance>
+	<label for="createNewChallenge"><h2>Create New Challenge</h2></label>
+
+	<label for="category">Category</label>
+	<input type="text" id="category" name="category" required />
+
+	<label for="challenge">Challenge</label>
+	<textarea id="challenge" name="challenge" required />
+
+	<button type="submit">Save</button>
+</form>
 
 <form method="POST" action="?/createSponsor" use:enhance enctype="multipart/form-data">
 	<label for="createNewSponsor"><h2>Create New Sponsor</h2></label>
-	<label for="sponsorName">Name</label>
-	<input type="text" id="sponsorName" name="sponsorName" required />
-	<label for="sponsorLogo">Logo</label>
+
+	<label for="sponsorLogo">Sponsor Logo</label>
 	<input
 		type="file"
 		id="sponsorLogo"
@@ -212,15 +146,27 @@
 		on:change={handleFileChange}
 	/>
 
-	<label for="sponsorLink">Image Link</label>
+	<label for="sponsorLink">Sponsor Link</label>
 	<input type="url" id="sponsorLink" name="sponsorLink" required />
 
 	<button type="submit">Save</button>
 </form>
 
+<form method="POST" action="?/deleteAll" use:enhance>
+	<label for="deleteAll"><h2>Delete All</h2></label>
+	<select name="deleteAll" id="deleteAll" bind:value={selected}>
+		<option value="" disabled selected>Select an element</option>
+		<option value="events"> Schedule Events</option>
+		<option value="FAQs"> FAQs </option>
+		<option value="challenges"> Challenges </option>
+		<option value="sponsors"> Sponsors </option>
+	</select>
+	<button disabled={selected === ''} use:confirmationDialog>Delete</button>
+</form>
+
 <style>
 	button {
-		margin: 1rem 0;
+		margin-top: 20px;
 	}
 
 	label {
@@ -228,22 +174,14 @@
 	}
 
 	#save-homepage-text {
-		margin-top: 1rem;
+		margin-top: 20px;
+	}
+
+	button {
+		margin-bottom: 1rem;
 	}
 
 	.toggle-container {
 		margin-bottom: 1rem;
-	}
-
-	.flex-row {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		align-items: center;
-		gap: 1em;
-	}
-
-	details {
-		margin: 1em;
 	}
 </style>

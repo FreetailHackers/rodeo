@@ -25,6 +25,20 @@
 	});
 </script>
 
+<div>
+	<button
+		class:announcement-font={useAnnouncementFont}
+		type="button"
+		class:selected={!previewing}
+		on:click={() => (previewing = false)}>Write</button
+	>
+	<button
+		class:announcement-font={useAnnouncementFont}
+		type="button"
+		class:selected={previewing}
+		on:click={() => (previewing = true)}>Preview</button
+	>
+</div>
 {#if previewing}
 	<div class="border white-preview-background">
 		{#if value === ''}
@@ -60,50 +74,38 @@
 	/>
 {/if}
 
-<div id="preview-button">
-	<button
-		class:announcement-font={useAnnouncementFont}
-		type="button"
-		class:selected={previewing}
-		on:click={() => (previewing = !previewing)}>Preview</button
-	>
-</div>
-
 <style>
 	.white-preview-background {
 		background: white;
 	}
-
+	button {
+		padding: 0 1rem;
+		background-color: #ddd;
+		color: black;
+	}
 	textarea {
 		height: auto;
 		width: 100%;
 	}
 
 	.border {
-		border: 1px solid var(--grey);
-		border-radius: var(--border-radius);
+		border: 2px solid gray;
 		padding: 0 1rem;
 		min-height: 3rem;
 	}
 
-	#preview-button {
-		display: flex;
-		justify-content: flex-end;
-		margin: 0.5em 0;
-	}
-
-	button {
-		background-color: var(--light-grey);
-		color: var(--black);
-	}
-
 	.selected {
-		background-color: var(--accent);
-		color: var(--white);
+		text-decoration: underline;
 	}
 
 	.empty-preview {
 		color: gray;
 		font-style: italic;
+	}
+
+	.announcement-font {
+		font-family: 'Fugaz One';
+		font-weight: 400;
+		color: #000000;
 	}
 </style>
