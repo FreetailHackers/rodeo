@@ -909,7 +909,47 @@ export const usersRouter = t.router({
 					})
 				)
 			);
+
+			return groups;
 		}),
+
+	getAllGroups: t.procedure.use(authenticate(['ADMIN'])).query(async () => {
+		const groupsWithMembers = await prisma.user.groupBy({
+			by: ['group'],
+			where: {
+				group: { not: null },
+				authUser: { status: 'CONFIRMED' },
+			},
+			_count: true,
+			orderBy: { group: 'asc' },
+		});
+
+		const groupDetails = await Promise.all(
+			groupsWithMembers.map(async (group) => {
+				const members = await prisma.user.findMany({
+					where: {
+						group: group.group,
+						authUser: { status: 'CONFIRMED' },
+					},
+					include: {
+						authUser: true,
+						team: true,
+					},
+				});
+
+				return {
+					group: group.group,
+					memberCount: group._count,
+					members: members.map((member) => ({
+						id: member.teamId,
+						email: member.authUser.email,
+					})),
+				};
+			})
+		);
+
+		return groupDetails;
+	}),
 
 	// Returns the group of the user
 	getGroup: t.procedure.use(authenticate(['HACKER'])).query(async (req): Promise<string | null> => {
