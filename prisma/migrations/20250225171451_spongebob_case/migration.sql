@@ -8,6 +8,9 @@
 ALTER TABLE "Event" ALTER COLUMN "start" DROP NOT NULL,
 ALTER COLUMN "end" DROP NOT NULL;
 
+-- AlterTable
+ALTER TABLE "Settings" ADD COLUMN     "spongebobCase" BOOLEAN NOT NULL DEFAULT false;
+
 -- DropTable
 DROP TABLE "InfoBox";
 
