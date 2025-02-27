@@ -913,6 +913,64 @@ export const usersRouter = t.router({
 			return groups;
 		}),
 
+	splitGroupsN: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(z.array(z.string()))
+		.mutation(async ({ input }) => {
+			// Update all teams before group assignments, as all statuses have been finalized.
+			await Promise.all(
+				(
+					await prisma.team.findMany()
+				).map(async (team) => {
+					const members = await prisma.user.findMany({
+						where: { teamId: team.id },
+						include: { authUser: true },
+					});
+					await removeInvalidTeamMembers({ ...team, members });
+				})
+			);
+
+			const confirmedUsers = await prisma.user.findMany({
+				where: {
+					authUser: {
+						status: 'CONFIRMED',
+					},
+				},
+				include: { team: true, authUser: true },
+			});
+
+			const groups: User[][] = Array.from({ length: input.length }, () => []);
+			const teamDictionary: Record<number, User[]> = {};
+			const nonTeamUsers: User[] = [];
+
+			confirmedUsers.forEach((user) => {
+				if (user.teamId) {
+					(teamDictionary[user.teamId] ||= []).push(user);
+				} else {
+					nonTeamUsers.push(user);
+				}
+			});
+
+			// Distribute non-team users across groups, then distribute team members
+			nonTeamUsers.forEach((user, index) => groups[index % input.length].push(user));
+			Object.values(teamDictionary)
+				.sort((a, b) => b.length - a.length)
+				.forEach((teamMembers, index) => {
+					groups[index % input.length].push(...teamMembers);
+				});
+
+			await prisma.$transaction(
+				groups.map((group, index) =>
+					prisma.user.updateMany({
+						where: { authUserId: { in: group.map((user) => user.authUserId) } },
+						data: { group: input[index] }, // A, B, C, ...
+					})
+				)
+			);
+
+			return groups;
+		}),
+
 	getAllGroups: t.procedure.use(authenticate(['ADMIN'])).query(async () => {
 		const groupsWithMembers = await prisma.user.groupBy({
 			by: ['group'],
@@ -942,6 +1000,7 @@ export const usersRouter = t.router({
 					memberCount: group._count,
 					members: members.map((member) => ({
 						id: member.teamId,
+						team: member.team,
 						email: member.authUser.email,
 					})),
 				};

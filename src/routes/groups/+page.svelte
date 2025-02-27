@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Scan</title>
+	<title>Rodeo | Groups</title>
 </svelte:head>
 
 <div class="main-content">
@@ -23,6 +23,7 @@
 							<div class="member-row">
 								<span>Team ID: {member.id}</span>
 								<span>Email: {member.email}</span>
+								<span> Team: {member.team}</span>
 							</div>
 						{/each}
 					</div>
