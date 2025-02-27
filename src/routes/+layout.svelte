@@ -79,12 +79,6 @@
 			{/if}
 
 			{#if data.user?.roles.includes('ORGANIZER') || data.user?.roles.includes('ADMIN')}
-				<li>
-					<a href="/groups" class:active={$page.url.pathname.startsWith('/groups')}>Groups</a>
-				</li>
-			{/if}
-
-			{#if data.user?.roles.includes('ORGANIZER') || data.user?.roles.includes('ADMIN')}
 				<li><a href="/scan" class:active={$page.url.pathname.startsWith('/scan')}>Scan</a></li>
 			{/if}
 			<li>
