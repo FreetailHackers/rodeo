@@ -6,9 +6,23 @@
 	import { Modal, Content, Trigger } from 'sv-popup';
 	export let data;
 
+	function downloadPass() {
+		if (data.pass === undefined) return;
+		const uint8Array = new Uint8Array(data.pass.data);
+		const blob = new Blob([uint8Array], { type: data.pass.mimeType });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'ticket.pkpass';
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+		URL.revokeObjectURL(url);
+	}
+
 	let canvas: HTMLCanvasElement;
 
-	onMount(() => {
+	onMount(async () => {
 		QRCode.toCanvas(canvas, data.user.id, {
 			scale: 10,
 		});
@@ -127,6 +141,9 @@
 							</div>
 						{/if}
 					{/each}
+				{/if}
+				{#if data.pass}
+					<button class="user-button" on:click={downloadPass}>Download Pass</button>
 				{/if}
 
 				<form method="POST" action="?/leaveTeam">

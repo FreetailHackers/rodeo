@@ -10,6 +10,7 @@ export const load = async ({ locals }) => {
 			team: await trpc(locals.auth).team.getTeam(),
 			invitations: await trpc(locals.auth).team.getTeamInvitations(),
 			group: await trpc(locals.auth).users.getGroup(),
+			pass: await trpc(locals.auth).pass.getPass({ uid: user.id }),
 		};
 	}
 

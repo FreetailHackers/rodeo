@@ -9,6 +9,7 @@ import { teamRouter } from './routes/team';
 import { infoBoxRouter } from './routes/infoBox';
 import { createContext, createContextTest, t, tTest } from './t';
 import type { AuthRequest } from 'lucia';
+import { passRouter } from './routes/pass';
 
 const routes = {
 	admissions: admissionsRouter,
@@ -19,6 +20,7 @@ const routes = {
 	settings: settingsRouter,
 	users: usersRouter,
 	team: teamRouter,
+	pass: passRouter,
 };
 
 export const router = t.router(routes);
