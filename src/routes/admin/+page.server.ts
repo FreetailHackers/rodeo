@@ -80,7 +80,7 @@ export const actions = {
 			return;
 		}
 
-		await trpc(locals.auth).users.splitGroupsN(groupNames);
+		await trpc(locals.auth).users.splitGroups(groupNames);
 		return 'Groups successfully split and updated!';
 	},
 };

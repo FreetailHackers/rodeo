@@ -852,83 +852,24 @@ export const usersRouter = t.router({
 				.then((users) => users.map((user) => user.authUser.email));
 		}),
 
-	/*
-	 * Splits up users into different groups
-	 */
 	splitGroups: t.procedure
 		.use(authenticate(['ADMIN']))
-		.input(z.number().min(1).max(26))
-		.mutation(async ({ input }) => {
-			// Update all teams before group assignments, as all statuses have been finalized.
-			await Promise.all(
-				(
-					await prisma.team.findMany()
-				).map(async (team) => {
-					const members = await prisma.user.findMany({
-						where: { teamId: team.id },
-						include: { authUser: true },
-					});
-					await removeInvalidTeamMembers({ ...team, members });
-				})
-			);
+		.input(z.array(z.string()))
+		.mutation(async (req): Promise<User[][]> => {
+			const { input } = req;
 
-			const confirmedUsers = await prisma.user.findMany({
-				where: {
-					authUser: {
-						status: 'CONFIRMED',
+			// Update all teams before group assignments, as all statuses have been finalized.
+			const teams = await prisma.team.findMany({
+				include: {
+					members: {
+						include: { authUser: true },
 					},
 				},
-				include: { team: true, authUser: true },
 			});
 
-			const groups: User[][] = Array.from({ length: input }, () => []);
-			const teamDictionary: Record<number, User[]> = {};
-			const nonTeamUsers: User[] = [];
-
-			confirmedUsers.forEach((user) => {
-				if (user.teamId) {
-					(teamDictionary[user.teamId] ||= []).push(user);
-				} else {
-					nonTeamUsers.push(user);
-				}
-			});
-
-			// Distribute non-team users across groups, then distribute team members
-			nonTeamUsers.forEach((user, index) => groups[index % input].push(user));
-			Object.values(teamDictionary)
-				.sort((a, b) => b.length - a.length)
-				.forEach((teamMembers, index) => {
-					groups[index % input].push(...teamMembers);
-				});
-
-			await prisma.$transaction(
-				groups.map((group, index) =>
-					prisma.user.updateMany({
-						where: { authUserId: { in: group.map((user) => user.authUserId) } },
-						data: { group: String.fromCharCode(65 + index) }, // A, B, C, ...
-					})
-				)
-			);
-
-			return groups;
-		}),
-
-	splitGroupsN: t.procedure
-		.use(authenticate(['ADMIN']))
-		.input(z.array(z.string()))
-		.mutation(async ({ input }) => {
-			// Update all teams before group assignments, as all statuses have been finalized.
-			await Promise.all(
-				(
-					await prisma.team.findMany()
-				).map(async (team) => {
-					const members = await prisma.user.findMany({
-						where: { teamId: team.id },
-						include: { authUser: true },
-					});
-					await removeInvalidTeamMembers({ ...team, members });
-				})
-			);
+			for (const team of teams) {
+				await removeInvalidTeamMembers(team);
+			}
 
 			const confirmedUsers = await prisma.user.findMany({
 				where: {
@@ -983,26 +924,27 @@ export const usersRouter = t.router({
 		});
 
 		const groupDetails = await Promise.all(
-			groupsWithMembers.map(async (group) => {
+			groupsWithMembers.map(async (lunchGroup) => {
 				const members = await prisma.user.findMany({
 					where: {
-						group: group.group,
+						group: lunchGroup.group,
 						authUser: { status: 'CONFIRMED' },
 					},
-					include: {
-						authUser: true,
+					select: {
+						teamId: true,
 						team: true,
+						authUser: {
+							select: {
+								email: true,
+							},
+						},
 					},
 				});
 
 				return {
-					group: group.group,
-					memberCount: group._count,
-					members: members.map((member) => ({
-						id: member.teamId,
-						team: member.team,
-						email: member.authUser.email,
-					})),
+					group: lunchGroup.group,
+					memberCount: lunchGroup._count,
+					members: members,
 				};
 			})
 		);
