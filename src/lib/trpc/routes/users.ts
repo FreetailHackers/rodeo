@@ -904,7 +904,7 @@ export const usersRouter = t.router({
 				groups.map((group, index) =>
 					prisma.user.updateMany({
 						where: { authUserId: { in: group.map((user) => user.authUserId) } },
-						data: { group: input[index] }, // A, B, C, ...
+						data: { group: input[index] },
 					})
 				)
 			);
