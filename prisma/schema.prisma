@@ -90,7 +90,6 @@ model Settings {
 
   // PUBLIC SETTINGS (all users must be able to see these)
   applicationOpen     Boolean   @default(true)
-  spongebobCase       Boolean   @default(false)
   daysToRSVP          Int?
   homepageText        String    @default("This text can be edited from the admin panel. You can put deadlines, logistics, or other important information here.")
   scanActions         String[]

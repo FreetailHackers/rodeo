@@ -35,7 +35,6 @@ const settingsSchema = z
 		declineIsHTML: z.boolean().optional(),
 		withdrawIsHTML: z.boolean().optional(),
 		byStatusIsHTML: z.boolean().optional(),
-		spongebobCase: z.boolean().optional(),
 	})
 	.strict();
 

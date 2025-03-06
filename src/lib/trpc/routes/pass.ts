@@ -7,6 +7,11 @@ import { z } from 'zod';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+/**
+ * method to get the certificates needed to create the pass
+ *
+ * @returns the signer certificates and the passphrase
+ */
 const getCertificates = async () => {
 	const [signerCert, signerKer, wwdr, signerKeyPassphrase] = await Promise.all([
 		fs.readFile(path.resolve(__dirname, '../../../../certificates/signerCert.pem'), 'utf-8'),
@@ -124,7 +129,7 @@ export const passRouter = t.router({
 	getPass: t.procedure
 		.input(
 			z.object({
-				uid: z.string().min(1),
+				uid: z.string().min(1), // UID used for pass QR code
 			})
 		)
 		.mutation(async ({ input }) => {

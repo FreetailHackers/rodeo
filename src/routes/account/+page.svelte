@@ -6,6 +6,7 @@
 	import { Modal, Content, Trigger } from 'sv-popup';
 	export let data;
 
+	// all the download logic for the apple wallet pass
 	function downloadPass() {
 		if (data.pass === undefined) return;
 		const uint8Array = new Uint8Array(data.pass.data);
@@ -142,13 +143,14 @@
 						{/if}
 					{/each}
 				{/if}
-				{#if data.pass}
-					<button class="user-button" on:click={downloadPass}>Download Pass</button>
-				{/if}
-
 				<form method="POST" action="?/leaveTeam">
 					<button class="user-button" type="submit">Leave Team</button>
 				</form>
+			{/if}
+			{#if data.pass}
+				<button class="wallet-download-button" on:click={downloadPass}>
+					<img src="appleWalletDownload.png" alt="apple wallet download" />
+				</button>
 			{/if}
 		</div>
 	{/if}
@@ -169,7 +171,18 @@
 	h3 {
 		margin-bottom: 0.5em;
 	}
-
+	.wallet-download-button {
+		border: none;
+		padding: 0 0;
+		text-decoration: none;
+		cursor: pointer;
+		transition: all 0.1s;
+		background-color: #fff;
+		margin-top: 1.5rem;
+	}
+	.wallet-download-button img {
+		width: 10rem;
+	}
 	.container {
 		display: flex;
 		justify-content: space-between;
