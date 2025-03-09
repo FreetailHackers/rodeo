@@ -4,6 +4,14 @@
 	import type { Prisma, Question } from '@prisma/client';
 	import type { UserSchema } from 'lucia';
 
+	//ADDED
+	//from my understanding these lines are importing these components from the smelte library
+	//and then importing the writable function to store and update values
+
+	//THIS LINE IS GIVING ME AN ERROR SO I HAD TO COMMENT IT OUT BUT I NEED IT FOR THE CHIP
+	//import { Button, Chip, Select } from "smelte";
+	import { writable } from 'svelte/store';
+
 	export let users: (Prisma.UserGetPayload<{
 		include: { authUser: true; decision: true };
 	}> & {
@@ -21,6 +29,57 @@
 			selected.filter(Boolean).length > 0 && selected.filter(Boolean).length < users.length;
 		selectAll.checked = selected.filter(Boolean).length === users.length;
 	}
+
+	//ADDED
+	//from my understanding this function is creating a store in Svelte that maps
+	//status names to color values
+	//keeps track of the colors associated with each status
+	let statusColors = writable<Record<string, string>>({
+		CREATED: 'gray',
+		APPLIED: 'blue',
+		ACCEPTED: 'green',
+		REJECTED: 'red',
+		WAITLISTED: 'yellow',
+		CONFIRMED: 'teal',
+		DECLINED: 'orange',
+	});
+
+	//ADDED
+	//from my understanding this function is creating a store in Svelte that maps
+	//role names to color values
+	//keeps track of the colors associated with each role
+	let roleColors = writable<Record<string, string>>({
+		ADMIN: 'purple',
+		ORGANIZER: 'indigo',
+		JUDGE: 'brown',
+		VOLUNTEER: 'pink',
+		SPONSOR: 'cyan',
+		HACKER: 'lime',
+	});
+
+	//ADDED
+	//from my understanding this function takes a role and returns its corresponding color
+	// import { get } from 'svelte/store';
+	// function getRoleColor(role: string) {
+	// 	return get(roleColors)[role] || 'gray';
+	// }
+
+	// //ADDED
+	// //from my understanding this function takes a status and returns its corresponding color
+	// function getStatusColor(status: string) {
+	// 	return get(statusColors)[status] || 'gray';
+	// }
+
+	// //ADDED
+	// //this based on my understanding gives you the option to change status or role color
+	// function updateColor(type: 'status' | 'role', key: string, newColor: string) {
+	// 	if (type === 'status') {
+	// 		statusColors.update((colors) => ({ ...colors, [key]: newColor }));
+	// 	} else {
+	// 		roleColors.update((colors) => ({ ...colors, [key]: newColor }));
+	// 	}
+	// 	// TODO: Send update request to backend API
+	// }
 
 	// Validate that the selected action can be applied to the selected users
 	// Throws an error if the action is invalid, otherwise returns a string
@@ -211,10 +270,7 @@
 						{/if}
 						<a href="mailto:{user.authUser.email}">{user.authUser.email}</a>
 						<span class="grow" />
-						<span
-							class="{user.authUser.status.toLowerCase()} dot"
-							title={user.decision?.status ?? user.authUser.status}
-						/>
+						<span />
 					</summary>
 					<div class="user">
 						<UserCard {user} {questions} teammates={user.teammates} />
@@ -224,6 +280,80 @@
 		{/each}
 	</ul>
 </form>
+
+<!-- ADDED -->
+<main class="p-4">
+	<!-- Status Legend -->
+	<section class="mb-4">
+		<h3 class="text-lg font-bold mb-2">Status Legend</h3>
+		<div class="flex flex-wrap">
+			{#each Object.entries($statusColors) as [status, color]}
+				<!-- HAD TO COMMENT THIS LINE OUT BECAUSE IT GAVE ME AN ERROR AFTER I COMMENTED OUT THE IMPORT SMELTE -->
+				<!-- <Chip class="m-2" color="{color}">{status}</Chip> -->
+			{/each}
+		</div>
+	</section>
+
+	<!-- Role Legend -->
+	<section class="mb-4">
+		<h3 class="text-lg font-bold mb-2">Role Legend</h3>
+		<div class="flex flex-wrap">
+			{#each Object.entries($roleColors) as [role, color]}
+				<!-- HAD TO COMMENT THIS LINE OUT BECAUSE IT GAVE ME AN ERROR AFTER I COMMENTED OUT THE IMPORT SMELTE -->
+				<!-- <Chip class="m-2" color="{color}">{role}</Chip> -->
+			{/each}
+		</div>
+	</section>
+
+	<!-- Admin Panel for Changing Colors -->
+	{#if self.roles.includes('ADMIN')}
+		<section class="mb-4 p-4 border rounded">
+			<h3 class="text-lg font-bold mb-2">Modify Colors</h3>
+			<div class="grid grid-cols-2 gap-4">
+				<!-- Status Color Modifications -->
+				{#each Object.entries($statusColors) as [status, color]}
+					<div class="flex items-center">
+						<span class="mr-2">{status}</span>
+						<!-- HAD TO COMMENT THIS LINE OUT BECAUSE IT GAVE ME AN ERROR AFTER I COMMENTED OUT THE IMPORT SMELTE -->
+						<!-- <Select options={["gray", "blue", "green", "red", "yellow", "teal", "orange", "purple"]}
+							bind:value={$statusColors[status]}
+							on:change={(e) => updateColor("status", status, e.detail.value)} /> -->
+					</div>
+				{/each}
+
+				<!-- Role Color Modifications -->
+				{#each Object.entries($roleColors) as [role, color]}
+					<div class="flex items-center">
+						<span class="mr-2">{role}</span>
+						<!-- HAD TO COMMENT THIS LINE OUT BECAUSE IT GAVE ME AN ERROR AFTER I COMMENTED OUT THE IMPORT SMELTE -->
+						<!-- <Select options={["gray", "blue", "green", "red", "yellow", "teal", "orange", "purple"]}
+							bind:value={$roleColors[role]}
+							on:change={(e) => updateColor("role", role, e.detail.value)} /> -->
+					</div>
+				{/each}
+			</div>
+		</section>
+	{/if}
+
+	<!-- Users List -->
+	<ul>
+		{#each users as user}
+			<li class="p-2 border-b">
+				<div class="flex justify-between">
+					<span>{user.authUser.email}</span>
+					<!-- HAD TO COMMENT THIS LINE OUT BECAUSE IT GAVE ME AN ERROR AFTER I COMMENTED OUT THE IMPORT SMELTE -->
+					<!-- <Chip color="{getStatusColor(user.authUser.status)}">{user.authUser.status}</Chip> -->
+				</div>
+				<div class="mt-1">
+					{#each user.authUser.roles as role}
+						<!-- HAD TO COMMENT THIS LINE OUT BECAUSE IT GAVE ME AN ERROR AFTER I COMMENTED OUT THE IMPORT SMELTE -->
+						<!-- <Chip color="{getRoleColor(role)}">{role}</Chip> -->
+					{/each}
+				</div>
+			</li>
+		{/each}
+	</ul>
+</main>
 
 <style>
 	ul {
