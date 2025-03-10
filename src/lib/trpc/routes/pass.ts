@@ -13,18 +13,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
  * @returns the signer certificates and the passphrase
  */
 const getCertificates = async () => {
-	const [signerCert, signerKer, wwdr, signerKeyPassphrase] = await Promise.all([
-		fs.readFile(path.resolve(__dirname, '../../../../certificates/signerCert.pem'), 'utf-8'),
-		fs.readFile(path.resolve(__dirname, '../../../../certificates/signerKey.pem'), 'utf-8'),
-		fs.readFile(path.resolve(__dirname, '../../../../certificates/wwdr.pem'), 'utf-8'),
-		Promise.resolve('freetailPassphrase'),
-	]);
 	const certificates = {
-		signerCert,
-		signerKer,
-		wwdr,
-		signerKeyPassphrase,
+		signerCert: (process.env.SIGNER_CERT || '').replace(/\\n/g, '\n'),
+		signerKer: (process.env.SIGNER_KEY || '').replace(/\\n/g, '\n'),
+		wwdr: (process.env.WWDR || '').replace(/\\n/g, '\n'),
+		signerKeyPassphrase: 'freetailPassphrase'
 	};
+
+	if (!certificates.signerCert || !certificates.signerKer || !certificates.wwdr) {
+		throw new Error('Missing required certificate environment variables');
+	}
 
 	return certificates;
 };
