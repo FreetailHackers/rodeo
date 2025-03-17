@@ -35,6 +35,8 @@ const settingsSchema = z
 		declineIsHTML: z.boolean().optional(),
 		withdrawIsHTML: z.boolean().optional(),
 		byStatusIsHTML: z.boolean().optional(),
+
+		blacklist: z.array(z.string()).optional(), //added
 	})
 	.strict();
 
@@ -68,6 +70,7 @@ export const settingsRouter = t.router({
 			declineIsHTML: boolean;
 			withdrawIsHTML: boolean;
 			byStatusIsHTML: boolean;
+			blacklist: string[]; //added
 		}> => {
 			const settings = await getSettings();
 			return {
@@ -91,6 +94,7 @@ export const settingsRouter = t.router({
 				declineIsHTML: settings.declineIsHTML,
 				withdrawIsHTML: settings.withdrawIsHTML,
 				byStatusIsHTML: settings.byStatusIsHTML,
+				blacklist: settings.blacklist || [], //added
 			};
 		}
 	),
@@ -101,6 +105,30 @@ export const settingsRouter = t.router({
 	getAll: t.procedure.use(authenticate(['ADMIN'])).query(async (): Promise<Settings> => {
 		return await getSettings();
 	}),
+
+	/**
+	 * Get the blacklist. User must be an admin.
+	 */
+	getBlacklist: t.procedure.use(authenticate(['ADMIN'])).query(async () => {
+		const settings = await prisma.settings.findUnique({
+			where: { id: 0 },
+			select: { blacklist: true },
+		});
+		return settings?.blacklist || [];
+	}),
+
+	/**
+	 * Update the blacklist. User must be an admin.
+	 */
+	updateBlacklist: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(z.object({ blacklist: z.array(z.string()) }))
+		.mutation(async ({ input }) => {
+			await prisma.settings.update({
+				where: { id: 0 },
+				data: { blacklist: input.blacklist },
+			});
+		}),
 
 	/**
 	 * Sets the given settings to the given values. User must be an

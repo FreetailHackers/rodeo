@@ -6,6 +6,16 @@
 	export let data;
 
 	let applicationOpenStatus = data.settings.applicationOpen;
+
+	// Helper function to extract email safely
+	function getUserEmail(decision: any) {
+		if (decision?.user?.authUser?.email) {
+			return decision.user.authUser.email;
+		} else if (decision?.user?.email) {
+			return decision.user.email;
+		}
+		return 'Unknown';
+	}
 </script>
 
 <svelte:head>
@@ -124,7 +134,33 @@
 	<button type="submit">Split Groups</button>
 </form>
 
+<h2>Manage Blacklist</h2>
+<form method="POST" action="?/settings" use:enhance>
+	<input type="email" name="newBlacklistEmail" placeholder="Enter email to blacklist" required />
+	<button type="submit">Add to Blacklist</button>
+</form>
+
+<h2>Blacklisted Users</h2>
+<ul>
+	{#each data.settings.blacklist as email}
+		<li>{email}</li>
+	{/each}
+</ul>
+
 <h2>Pending Decisions</h2>
+<ul>
+	{#each Object.values(data.decisions).flat() as decision}
+		<li>
+			{#if getUserEmail(decision) !== 'Unknown'}
+				<strong>{getUserEmail(decision)}</strong>
+				{#if data.settings.blacklist.includes(getUserEmail(decision))}
+					<span class="warning">⚠️ Blacklisted</span>
+				{/if}
+			{/if}
+		</li>
+	{/each}
+</ul>
+
 <form method="POST" action="?/release" use:enhance>
 	<button
 		id="release"
@@ -133,9 +169,10 @@
 			cancel: 'Cancel',
 			ok: 'OK',
 		}}
-		>Release all {Object.values(data.decisions).reduce((sum, array) => sum + array.length, 0)} pending
-		decisions</button
 	>
+		Release all {Object.values(data.decisions).reduce((sum, array) => sum + array.length, 0)} pending
+		decisions
+	</button>
 </form>
 
 <style>
@@ -191,5 +228,10 @@
 
 	input[readonly] {
 		background-color: rgb(182, 182, 182);
+	}
+
+	.warning {
+		color: red;
+		font-weight: bold;
 	}
 </style>

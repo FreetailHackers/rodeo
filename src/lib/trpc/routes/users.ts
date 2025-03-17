@@ -45,8 +45,9 @@ export const usersRouter = t.router({
 					throw new Error('Unauthorized');
 				}
 				const user = session.user;
+				let targetUser; //added field
 				if (req.input === undefined) {
-					return await prisma.user.findUniqueOrThrow({
+					targetUser = await prisma.user.findUniqueOrThrow({
 						where: { authUserId: user.id },
 						include: { authUser: true, decision: true },
 					});
@@ -54,11 +55,26 @@ export const usersRouter = t.router({
 					if (!user.roles.includes('ADMIN') && !user.roles.includes('ORGANIZER')) {
 						throw new Error('Forbidden');
 					}
-					return await prisma.user.findUniqueOrThrow({
+					targetUser = await prisma.user.findUniqueOrThrow({
 						where: { authUserId: req.input },
 						include: { authUser: true, decision: true },
 					});
 				}
+
+				// Check if the user is blacklisted
+				const settings = await getSettings();
+				const isBlacklisted = settings.blacklist.includes(targetUser.authUser.email);
+
+				// Return user data along with blacklist flag
+				//return { ...targetUser, isBlacklisted } as Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }> & { isBlacklisted: boolean };
+
+				type UserWithBlacklist = Prisma.UserGetPayload<{
+					include: { authUser: true; decision: true };
+				}> & { isBlacklisted: boolean };
+
+				const userWithBlacklist: UserWithBlacklist = { ...targetUser, isBlacklisted };
+
+				return userWithBlacklist;
 			}
 		),
 
@@ -157,6 +173,16 @@ export const usersRouter = t.router({
 	submitApplication: t.procedure
 		.use(authenticate(['HACKER']))
 		.mutation(async (req): Promise<Record<string, string>> => {
+			// Fetch user email
+			const userEmail = req.ctx.user.email;
+
+			const settings = await getSettings();
+			const isBlacklisted = settings.blacklist.includes(userEmail);
+
+			if (isBlacklisted) {
+				throw new Error('You are on the blacklist and cannot apply.');
+			}
+
 			// Ensure applications are open and the user has not received a decision yet
 			if (!(await canApply()) || req.ctx.user.status !== 'CREATED') {
 				return {};

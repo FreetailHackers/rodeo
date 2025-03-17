@@ -110,6 +110,8 @@ model Settings {
   withdrawIsHTML      Boolean   @default(false)
   byStatusIsHTML      Boolean   @default(false)
 
+  blacklist           String[]  @default([])
+
   // PRIVATE SETTINGS (settings that non-admins do not need)
   rollingAdmissions         Boolean @default(false)
   submitTemplate            String  @default("We have received your application to our hackathon!")
