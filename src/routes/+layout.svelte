@@ -51,7 +51,8 @@
 			style="display: none"
 		/>
 		<menu id="menu" bind:this={menu}>
-			<li><a href="/">Home</a></li>
+			<li><a href="https://hacktx.com/">Homepage</a></li>
+			<li><a href="/">Announcements</a></li>
 			{#if data.user?.roles.includes('HACKER')}
 				<li>
 					<a href="/apply" class:active={$page.url.pathname.startsWith('/apply')}> Application</a>
