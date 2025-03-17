@@ -880,7 +880,8 @@ export const usersRouter = t.router({
 				include: { team: true, authUser: true },
 			});
 
-			const groups: User[][] = Array.from({ length: input.length }, () => []);
+			const numGroups = input.length;
+			const groups: User[][] = Array.from({ length: numGroups }, () => []);
 			const teamDictionary: Record<number, User[]> = {};
 			const nonTeamUsers: User[] = [];
 
@@ -893,11 +894,11 @@ export const usersRouter = t.router({
 			});
 
 			// Distribute non-team users across groups, then distribute team members
-			nonTeamUsers.forEach((user, index) => groups[index % input.length].push(user));
+			nonTeamUsers.forEach((user, index) => groups[index % numGroups].push(user));
 			Object.values(teamDictionary)
 				.sort((a, b) => b.length - a.length)
 				.forEach((teamMembers, index) => {
-					groups[index % input.length].push(...teamMembers);
+					groups[index % numGroups].push(...teamMembers);
 				});
 
 			await prisma.$transaction(
