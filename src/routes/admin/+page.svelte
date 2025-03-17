@@ -110,15 +110,16 @@
 	<button type="submit">Save</button>
 </form>
 
-<h2>Split Hackers Into Groups</h2>
+<h2>Split Hackers Into Lunch Groups</h2>
+
 <form method="POST" action="?/splitGroups" use:enhance>
 	<input
-		type="number"
+		type="text"
 		id="splitGroups"
 		name="splitGroups"
-		min="1"
-		max="26"
-		placeholder="Enter a number of groups between 1 and 26"
+		placeholder="Group A, Group B, Group C, ..."
+		pattern="^[A-Za-z0-9\s]+(,\s*[A-Za-z0-9\s]+)*$"
+		title="Names must be alphanumeric in the form: 'Group 1', 'Group 2', 'Group 3', ..."
 		required
 	/>
 	<button type="submit">Split Groups</button>
