@@ -2,10 +2,10 @@
 	import '../../routes/global.css';
 	import type { Announcement } from '@prisma/client';
 	import { enhance } from '$app/forms';
+	import { confirmationDialog } from '$lib/actions';
 	import TextEditor from './text-editor.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
 	export let admin: boolean;
-
 	export let announcements: Announcement[];
 </script>
 
@@ -19,6 +19,17 @@
 			required
 		/>
 		<button class="announcement-button-label">Announce</button>
+	</form>
+
+	<form method="POST" action="?/clearAnnouncements" use:enhance>
+		<button
+			class="delete-button-label"
+			use:confirmationDialog={{
+				text: 'Are you sure you want to delete all announcements? This cannot be undone!',
+				cancel: 'Cancel',
+				ok: 'Delete',
+			}}>Clear All Announcements</button
+		>
 	</form>
 {/if}
 <ul>
@@ -40,6 +51,12 @@
 			</span>
 
 			<SvelteMarkdown source={announcement.body} />
+			{#if admin}
+				<form class="delete-message" method="POST" action="?/unannounce" use:enhance>
+					<input type="hidden" name="id" value={announcement.id} />
+					<button class="delete-button-label">X</button>
+				</form>
+			{/if}
 		</li>
 	{/each}
 </ul>
@@ -62,7 +79,7 @@
 		list-style: none;
 		padding: 1em;
 		margin: 0;
-		height: 70vh;
+		height: 80vh;
 		overflow-y: scroll;
 		scroll-snap-type: y mandatory;
 		mask-image: linear-gradient(to bottom, black calc(100% - 5em), transparent 100%);
@@ -78,15 +95,32 @@
 		margin-bottom: 5em;
 	}
 
-	p {
-		margin: 0;
-	}
-
 	.card {
 		background-color: var(--light-grey);
 		border-radius: 50px;
 		position: relative;
 		padding: 1rem 1.5em;
+	}
+
+	.delete-message {
+		position: absolute;
+		right: 1em;
+		top: -1em;
+	}
+
+	.delete-message button {
+		padding: 0.4em 0.6em;
+		border-radius: var(--border-radius);
+		background: var(--red);
+	}
+
+	.delete-message button:hover {
+		background: red;
+		color: var(--white);
+	}
+
+	.date p {
+		margin: 0;
 	}
 
 	.date {

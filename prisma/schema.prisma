@@ -67,7 +67,7 @@ model User {
   scans         Scan[]
   team          Team?          @relation(fields: [teamId], references: [id])
   teamId        Int?
-  group         String?        @db.Char(1)
+  group         String?        
 }
 
 model Announcement {
@@ -147,17 +147,30 @@ model Event {
   id          Int      @id @default(autoincrement())
   name        String
   description String
-  start       DateTime
-  end         DateTime
+  start       DateTime?
+  end         DateTime?
   location    String
   type        String
 }
 
-model InfoBox {
-  id       Int          @id @default(autoincrement())
-  title    String
-  response String
-  category CategoryType
+model FAQ {
+  id          Int     @id @default(autoincrement())
+  question    String
+  answer      String
+}
+
+model Challenge {
+  id            Int     @id @default(autoincrement())
+  title         String
+  prize         String?
+  description   String
+}
+
+model Sponsor {
+  id          Int     @id @default(autoincrement())
+  name        String
+  imageKey    String
+  url         String?
 }
 
 model StatusChange {

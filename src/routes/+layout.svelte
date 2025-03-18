@@ -84,9 +84,6 @@
 			<li>
 				<a href="/account" class:active={$page.url.pathname.startsWith('/account')}>Account</a>
 			</li>
-			<!-- <li>
-				<a href="/settings" class:active={$page.url.pathname.startsWith('/settings')}>Settings</a>
-			</li> -->
 			<li>
 				<form method="POST" action="/logout">
 					<button type="submit">Logout</button>
