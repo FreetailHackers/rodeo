@@ -17,7 +17,7 @@ const getCertificates = async () => {
 		signerCert: (process.env.SIGNER_CERT || '').replace(/\\n/g, '\n'),
 		signerKer: (process.env.SIGNER_KEY || '').replace(/\\n/g, '\n'),
 		wwdr: (process.env.WWDR || '').replace(/\\n/g, '\n'),
-		signerKeyPassphrase: 'freetailPassphrase'
+		signerKeyPassphrase: (process.env.SIGNER_KEY_PASSPHRASE || '').replace(/\\n/g, '\n'),
 	};
 
 	if (!certificates.signerCert || !certificates.signerKer || !certificates.wwdr) {
@@ -90,7 +90,7 @@ async function readFileOrDirectory(filePath: string) {
  * @returns Promise<PKPass>
  */
 const createPassTemplate = async () => {
-	const modelPath = path.resolve(__dirname, '../../../routes/account/wallet/ticket.pass');
+	const modelPath = path.resolve(__dirname, '../../../routes/account/ticket.pass');
 	const [modelFilesList, certificates] = await Promise.all([
 		fs.readdir(modelPath),
 		getCertificates(),
@@ -128,6 +128,8 @@ export const passRouter = t.router({
 		.input(
 			z.object({
 				uid: z.string().min(1), // UID used for pass QR code
+				group: z.string().min(1).optional(),
+				name: z.string().min(1).optional(),
 			})
 		)
 		.mutation(async ({ input }) => {
@@ -137,6 +139,18 @@ export const passRouter = t.router({
 				format: 'PKBarcodeFormatQR',
 				messageEncoding: 'iso-8859-1',
 			});
+			pass.secondaryFields.push(
+				{
+					key: 'Name',
+					label: 'Name',
+					value: input.name ? input.name : 'No Name',
+				},
+				{
+					key: 'Group',
+					label: 'Group',
+					value: input.group ? input.group : 'No Group',
+				}
+			);
 			const buffer = pass.getAsBuffer();
 			return {
 				data: Array.from(buffer),

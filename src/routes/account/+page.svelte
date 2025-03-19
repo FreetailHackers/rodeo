@@ -9,12 +9,11 @@
 	// all the download logic for the apple wallet pass
 	function downloadPass() {
 		if (data.pass === undefined) return;
-		const uint8Array = new Uint8Array(data.pass.data);
-		const blob = new Blob([uint8Array], { type: data.pass.mimeType });
+		const blob = new Blob([new Uint8Array(data.pass.data)], { type: data.pass.mimeType });
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
 		a.href = url;
-		a.download = 'ticket.pkpass';
+		a.download = data.user.name ? `${data.user.name}.pkpass` : 'ticket.pkpass';
 		document.body.appendChild(a);
 		a.click();
 		document.body.removeChild(a);
