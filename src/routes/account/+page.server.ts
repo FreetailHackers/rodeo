@@ -3,17 +3,17 @@ import { trpc } from '$lib/trpc/router';
 
 export const load = async ({ locals }) => {
 	const user = await authenticate(locals.auth);
+	const group = await trpc(locals.auth).users.getGroup();
 
 	if (user.roles.includes('HACKER')) {
 		return {
 			user: user,
 			team: await trpc(locals.auth).team.getTeam(),
 			invitations: await trpc(locals.auth).team.getTeamInvitations(),
-			group: await trpc(locals.auth).users.getGroup(),
+			group: group ? group : 'No Group',
 			pass: await trpc(locals.auth).pass.getPass({
 				uid: user.id,
-				group: user.group,
-				name: user.name,
+				group: group ? group : 'No Group',
 			}),
 		};
 	}

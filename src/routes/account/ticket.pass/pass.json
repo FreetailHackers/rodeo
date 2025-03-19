@@ -32,7 +32,7 @@
 				"textAlignment": "PKTextAlignmentRight"
 			}
 		],
-		"auxiliaryFields": [
+		"secondaryFields": [
 			{
 				"key": "location",
 				"value": "UT Austin Gates Dell Complex (GDC)",

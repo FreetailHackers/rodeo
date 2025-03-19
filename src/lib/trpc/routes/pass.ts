@@ -127,9 +127,8 @@ export const passRouter = t.router({
 	getPass: t.procedure
 		.input(
 			z.object({
-				uid: z.string().min(1), // UID used for pass QR code
-				group: z.string().min(1).optional(),
-				name: z.string().min(1).optional(),
+				uid: z.string().min(1),
+				group: z.string().min(1),
 			})
 		)
 		.mutation(async ({ input }) => {
@@ -139,18 +138,11 @@ export const passRouter = t.router({
 				format: 'PKBarcodeFormatQR',
 				messageEncoding: 'iso-8859-1',
 			});
-			pass.secondaryFields.push(
-				{
-					key: 'Name',
-					label: 'Name',
-					value: input.name ? input.name : 'No Name',
-				},
-				{
-					key: 'Group',
-					label: 'Group',
-					value: input.group ? input.group : 'No Group',
-				}
-			);
+			pass.secondaryFields.push({
+				key: 'Group',
+				label: 'Group',
+				value: input.group,
+			});
 			const buffer = pass.getAsBuffer();
 			return {
 				data: Array.from(buffer),
