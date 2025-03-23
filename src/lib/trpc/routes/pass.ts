@@ -89,7 +89,7 @@ async function readFileOrDirectory(filePath: string) {
  *
  * @returns Promise<PKPass>
  */
-const createPassTemplate = async () => {
+const createPass = async (uid: string, group: string) => {
 	const modelPath = path.resolve(__dirname, '../../../routes/account/ticket.pass');
 	const [modelFilesList, certificates] = await Promise.all([
 		fs.readdir(modelPath),
@@ -100,7 +100,6 @@ const createPassTemplate = async () => {
 		await Promise.all(
 			modelFilesList.map((fileOrDirectoryPath) => {
 				const fullPath = path.resolve(modelPath, fileOrDirectoryPath);
-
 				return readFileOrDirectory(fullPath);
 			})
 		)
@@ -108,15 +107,27 @@ const createPassTemplate = async () => {
 		.flat(1)
 		.reduce((acc, current) => ({ ...acc, ...current }), {});
 
-	return new PKPass(modelRecords, {
+	const pass = new PKPass(modelRecords, {
 		wwdr: certificates.wwdr,
 		signerCert: certificates.signerCert,
 		signerKey: certificates.signerKer,
 		signerKeyPassphrase: certificates.signerKeyPassphrase,
 	});
-};
 
-const passTemplate = createPassTemplate();
+	pass.setBarcodes({
+		message: uid,
+		format: 'PKBarcodeFormatQR',
+		messageEncoding: 'iso-8859-1',
+	});
+
+	pass.secondaryFields.push({
+		key: 'Group',
+		label: 'Group',
+		value: group,
+	});
+
+	return pass;
+};
 
 /**
  * Router that returns a the PKPass object using the provided UID
@@ -132,17 +143,7 @@ export const passRouter = t.router({
 			})
 		)
 		.mutation(async ({ input }) => {
-			const pass = await passTemplate;
-			pass.setBarcodes({
-				message: input.uid,
-				format: 'PKBarcodeFormatQR',
-				messageEncoding: 'iso-8859-1',
-			});
-			pass.secondaryFields.push({
-				key: 'Group',
-				label: 'Group',
-				value: input.group,
-			});
+			const pass = await createPass(input.uid, input.group);
 			const buffer = pass.getAsBuffer();
 			return {
 				data: Array.from(buffer),

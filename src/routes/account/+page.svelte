@@ -146,11 +146,6 @@
 					<button class="user-button" type="submit">Leave Team</button>
 				</form>
 			{/if}
-			{#if data.pass}
-				<button class="wallet-download-button" on:click={downloadPass}>
-					<img src="appleWalletDownload.png" alt="apple wallet download" />
-				</button>
-			{/if}
 		</div>
 	{/if}
 	{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
@@ -162,6 +157,11 @@
 				<canvas bind:this={canvas} id="qrcode" />
 				<img src="hacker-id/background.png" alt="hacker id-card" />
 			</div>
+			{#if data.pass}
+				<button class="wallet-download-button" on:click={downloadPass}>
+					<img src="appleWalletDownload.png" alt="apple wallet download" />
+				</button>
+			{/if}
 		</div>
 	{/if}
 </div>
