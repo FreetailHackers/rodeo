@@ -54,37 +54,6 @@ function getObjectFromModelFile(filePath: string, content: Buffer, depthFromEnd:
 }
 
 /**
- * Reads a directory and returns all the files in it
- * as an Array<Promise>
- *
- * @param filePath
- * @returns Promise<Array<Promise>>
- */
-async function readDirectory(filePath: string) {
-	const dirContent = await fs.readdir(filePath).then(removeHidden);
-
-	return dirContent.map(async (fileName) => {
-		const content = await fs.readFile(path.resolve(filePath, fileName));
-		return getObjectFromModelFile(path.resolve(filePath, fileName), content, 2);
-	});
-}
-
-/**
- * Reads a file or a directory and returns its content
- * as an Object.
- *
- * @param filePath
- * @returns Promise<Object>
- */
-async function readFileOrDirectory(filePath: string) {
-	if ((await fs.lstat(filePath)).isDirectory()) {
-		return Promise.all(await readDirectory(filePath));
-	} else {
-		return fs.readFile(filePath).then((content) => getObjectFromModelFile(filePath, content, 1));
-	}
-}
-
-/**
  * Returns a PKPass object based off of the model files.
  *
  * @returns Promise<PKPass>
@@ -100,7 +69,9 @@ const createPass = async (uid: string, group: string) => {
 		await Promise.all(
 			modelFilesList.map((fileOrDirectoryPath) => {
 				const fullPath = path.resolve(modelPath, fileOrDirectoryPath);
-				return readFileOrDirectory(fullPath);
+				return fs
+					.readFile(fullPath)
+					.then((content) => getObjectFromModelFile(fullPath, content, 1));
 			})
 		)
 	)

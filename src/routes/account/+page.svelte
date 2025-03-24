@@ -227,7 +227,7 @@
 		position: absolute;
 		object-fit: contain;
 		margin: 18%;
-		margin-top: 23%;
+		margin-top: 58%;
 		border-radius: 10%;
 	}
 

@@ -11,7 +11,7 @@ import { usersRouter } from './routes/users';
 import { teamRouter } from './routes/team';
 import { createContext, createContextTest, t, tTest } from './t';
 import type { AuthRequest } from 'lucia';
-import { passRouter } from './routes/pass';
+import { passRouter } from './routes/applePass';
 
 const routes = {
 	admissions: admissionsRouter,
