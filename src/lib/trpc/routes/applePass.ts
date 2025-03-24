@@ -15,27 +15,17 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const getCertificates = async () => {
 	const certificates = {
 		signerCert: (process.env.SIGNER_CERT || '').replace(/\\n/g, '\n'),
-		signerKer: (process.env.SIGNER_KEY || '').replace(/\\n/g, '\n'),
+		signerKey: (process.env.SIGNER_KEY || '').replace(/\\n/g, '\n'),
 		wwdr: (process.env.WWDR || '').replace(/\\n/g, '\n'),
 		signerKeyPassphrase: (process.env.SIGNER_KEY_PASSPHRASE || '').replace(/\\n/g, '\n'),
 	};
 
-	if (!certificates.signerCert || !certificates.signerKer || !certificates.wwdr) {
+	if (!certificates.signerCert || !certificates.signerKey || !certificates.wwdr) {
 		throw new Error('Missing required certificate environment variables');
 	}
 
 	return certificates;
 };
-
-/**
- * Removes hidden files from a list (those starting with dot)
- *
- * @params from - list of file names
- * @return
- */
-export function removeHidden(from: Array<string>): Array<string> {
-	return from.filter((e) => e.charAt(0) !== '.');
-}
 
 /**
  * Returns an object containing the parsed fileName
@@ -74,14 +64,12 @@ const createPass = async (uid: string, group: string) => {
 					.then((content) => getObjectFromModelFile(fullPath, content, 1));
 			})
 		)
-	)
-		.flat(1)
-		.reduce((acc, current) => ({ ...acc, ...current }), {});
+	).reduce((acc, current) => ({ ...acc, ...current }), {});
 
 	const pass = new PKPass(modelRecords, {
 		wwdr: certificates.wwdr,
 		signerCert: certificates.signerCert,
-		signerKey: certificates.signerKer,
+		signerKey: certificates.signerKey,
 		signerKeyPassphrase: certificates.signerKeyPassphrase,
 	});
 

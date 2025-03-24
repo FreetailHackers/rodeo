@@ -6,7 +6,6 @@
 	import { Modal, Content, Trigger } from 'sv-popup';
 	export let data;
 
-	// all the download logic for the apple wallet pass
 	function downloadPass() {
 		if (data.pass === undefined) return;
 		const blob = new Blob([new Uint8Array(data.pass.data)], { type: data.pass.mimeType });
