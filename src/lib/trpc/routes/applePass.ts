@@ -14,9 +14,9 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
  */
 const getCertificates = async () => {
 	const certificates = {
-		signerCert: (process.env.SIGNER_CERT || '').replace(/\\n/g, '\n'),
-		signerKey: (process.env.SIGNER_KEY || '').replace(/\\n/g, '\n'),
-		wwdr: (process.env.WWDR || '').replace(/\\n/g, '\n'),
+		signerCert: (process.env.SIGNER_CERT || '').replace(/\\n/g, '\n').replace(/_/g, ' '),
+		signerKey: (process.env.SIGNER_KEY || '').replace(/\\n/g, '\n').replace(/_/g, ' '),
+		wwdr: (process.env.WWDR || '').replace(/\\n/g, '\n').replace(/_/g, ' '),
 		signerKeyPassphrase: (process.env.SIGNER_KEY_PASSPHRASE || '').replace(/\\n/g, '\n'),
 	};
 
