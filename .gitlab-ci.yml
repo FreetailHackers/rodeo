@@ -70,6 +70,10 @@ stages:
 test-job:
   stage: test
   script:
+    - export WWDR=$WWDR
+    - export SIGNER_CERT=$SIGNER_CERT
+    - export SIGNER_KEY=$SIGNER_KEY
+    - export SIGNER_KEY_PASSPHRASE=$SIGNER_KEY_PASSPHRASE
     - npm ci
     - npm run build
     - npm run check
@@ -85,6 +89,10 @@ deploy-preview-job:
     url: $DOMAIN_NAME
     on_stop: stop-preview-job
   script:
+    - export WWDR=$WWDR
+    - export SIGNER_CERT=$SIGNER_CERT
+    - export SIGNER_KEY=$SIGNER_KEY
+    - export SIGNER_KEY_PASSPHRASE=$SIGNER_KEY_PASSPHRASE
     - npm ci
     # Get environment variables from Vercel
     - npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
