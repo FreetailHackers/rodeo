@@ -49,7 +49,7 @@ function getObjectFromModelFile(filePath: string, content: Buffer, depthFromEnd:
  * @returns Promise<PKPass>
  */
 const createPass = async (uid: string, group: string) => {
-	const modelPath = path.resolve(__dirname, '../../../routes/account/ticket.pass');
+	const modelPath = path.resolve(__dirname, '../../ticket.pass');
 	const [modelFilesList, certificates] = await Promise.all([
 		fs.readdir(modelPath),
 		getCertificates(),
