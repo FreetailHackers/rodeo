@@ -1,11 +1,8 @@
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import fs from 'node:fs/promises';
 import { PKPass } from 'passkit-generator';
 import { t } from '../t';
 import { z } from 'zod';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**
  * method to get the certificates needed to create the pass
@@ -49,7 +46,7 @@ function getObjectFromModelFile(filePath: string, content: Buffer, depthFromEnd:
  * @returns Promise<PKPass>
  */
 const createPass = async (uid: string, group: string) => {
-	const modelPath = path.resolve(__dirname, '../../../lib/ticket.pass');
+	const modelPath = path.resolve(process.cwd() + '/src/lib/ticket.pass');
 	const [modelFilesList, certificates] = await Promise.all([
 		fs.readdir(modelPath),
 		getCertificates(),
@@ -57,7 +54,7 @@ const createPass = async (uid: string, group: string) => {
 
 	const modelRecords = (
 		await Promise.all(
-			modelFilesList.map((fileOrDirectoryPath) => {
+			modelFilesList.map(async (fileOrDirectoryPath) => {
 				const fullPath = path.resolve(modelPath, fileOrDirectoryPath);
 				return fs
 					.readFile(fullPath)
