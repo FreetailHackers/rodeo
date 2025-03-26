@@ -47,7 +47,10 @@ function getObjectFromModelFile(filePath: string, content: Buffer, depthFromEnd:
  */
 const createPass = async (uid: string, group: string) => {
 	console.log(process.cwd());
-	console.log(process.cwd() + '/src/lib/ticket.pass');
+	const test = fs.readdir(process.cwd());
+	test.then((files) => {
+		console.log(files);
+	});
 	const modelPath = path.resolve(process.cwd() + '/src/lib/ticket.pass');
 	const [modelFilesList, certificates] = await Promise.all([
 		fs.readdir(modelPath),
