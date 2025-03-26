@@ -47,11 +47,11 @@ function getObjectFromModelFile(filePath: string, content: Buffer, depthFromEnd:
  */
 const createPass = async (uid: string, group: string) => {
 	console.log(process.cwd());
-	const test = fs.readdir(process.cwd());
+	const test = fs.readdir(process.cwd() + '/vercel');
 	test.then((files) => {
 		console.log(files);
 	});
-	const modelPath = path.resolve(process.cwd() + '/src/lib/ticket.pass');
+	const modelPath = path.resolve(process.cwd() + '/vercel/src/lib/ticket.pass');
 	const [modelFilesList, certificates] = await Promise.all([
 		fs.readdir(modelPath),
 		getCertificates(),
