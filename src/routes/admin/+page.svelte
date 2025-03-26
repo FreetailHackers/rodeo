@@ -6,9 +6,18 @@
 	export let data;
 
 	let applicationOpenStatus = data.settings.applicationOpen;
+	type Decision = {
+		user?: {
+			authUser?: {
+				email?: string;
+			};
+			email?: string;
+			[key: string]: unknown;
+		};
+		[key: string]: unknown;
+	};
 
-	// Helper function to extract email safely
-	function getUserEmail(decision: any) {
+	function getUserEmail(decision: Decision): string {
 		if (decision?.user?.authUser?.email) {
 			return decision.user.authUser.email;
 		} else if (decision?.user?.email) {
