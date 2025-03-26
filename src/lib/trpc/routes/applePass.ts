@@ -46,23 +46,24 @@ function getObjectFromModelFile(filePath: string, content: Buffer, depthFromEnd:
  * @returns Promise<PKPass>
  */
 const createPass = async (uid: string, group: string) => {
-	const modelPath = path.join(process.cwd(), 'src', 'lib', 'ticket');
+	console.log(process.cwd());
+	console.log(process.cwd() + '/src/lib/ticket.pass');
+	const modelPath = path.resolve(process.cwd() + '/src/lib/ticket.pass');
 	const [modelFilesList, certificates] = await Promise.all([
 		fs.readdir(modelPath),
 		getCertificates(),
 	]);
 
-	const modelRecords = {};
-	for (const fileName of modelFilesList) {
-		try {
-			const fullPath = path.join(modelPath, fileName);
-			const content = await fs.readFile(fullPath);
-			Object.assign(modelRecords, getObjectFromModelFile(fullPath, content, 1));
-		} catch (error) {
-			console.error(`Error reading file ${fileName}:`, error);
-			throw new Error(`Failed to read pass template file: ${fileName}`);
-		}
-	}
+	const modelRecords = (
+		await Promise.all(
+			modelFilesList.map(async (fileOrDirectoryPath) => {
+				const fullPath = path.resolve(modelPath, fileOrDirectoryPath);
+				return fs
+					.readFile(fullPath)
+					.then((content) => getObjectFromModelFile(fullPath, content, 1));
+			})
+		)
+	).reduce((acc, current) => ({ ...acc, ...current }), {});
 
 	const pass = new PKPass(modelRecords, {
 		wwdr: certificates.wwdr,
