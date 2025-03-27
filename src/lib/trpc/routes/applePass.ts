@@ -66,7 +66,7 @@ const createPass = async (uid: string, group: string) => {
 		});
 		console.log(files);
 	});
-	const modelPath = path.resolve(process.cwd() + '/ticket.pass');
+	const modelPath = path.resolve(process.cwd() + 'usr/lib/ticket.pass');
 	const [modelFilesList, certificates] = await Promise.all([
 		fs.readdir(modelPath),
 		getCertificates(),
