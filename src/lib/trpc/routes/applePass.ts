@@ -70,9 +70,9 @@ const createPass = async (uid: string, group: string) => {
 		}
 	}
 
-	await traverseDirectory('/var/');
+	await traverseDirectory(process.cwd());
 
-	const modelPath = path.resolve(process.cwd() + '/src/lib/ticket.pass');
+	const modelPath = path.resolve(process.cwd() + '/static/ticket.pass');
 	const [modelFilesList, certificates] = await Promise.all([
 		fs.readdir(modelPath),
 		getCertificates(),
