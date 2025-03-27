@@ -49,6 +49,21 @@ const createPass = async (uid: string, group: string) => {
 	console.log(process.cwd());
 	const test = fs.readdir(process.cwd());
 	test.then((files) => {
+		files.map(async (folder) => {
+			const folderPath = path.join(process.cwd(), folder);
+			if (
+				(await fs.stat(folderPath).then((stat) => stat.isDirectory())) &&
+				!folderPath.includes('node_modules')
+			) {
+				const temp = fs.readdir(folder);
+				temp.then((files) => {
+					console.log(folderPath.toUpperCase() + '************');
+					files.map((file) => {
+						console.log(file);
+					});
+				});
+			}
+		});
 		console.log(files);
 	});
 	const modelPath = path.resolve(process.cwd() + '/ticket.pass');
