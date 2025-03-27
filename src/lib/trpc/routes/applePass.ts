@@ -47,26 +47,32 @@ function getObjectFromModelFile(filePath: string, content: Buffer, depthFromEnd:
  */
 const createPass = async (uid: string, group: string) => {
 	console.log(process.cwd());
-	const test = fs.readdir(process.cwd());
-	test.then((files) => {
-		files.map(async (folder) => {
-			const folderPath = path.join(process.cwd(), folder);
-			if (
-				(await fs.stat(folderPath).then((stat) => stat.isDirectory())) &&
-				!folderPath.includes('node_modules')
-			) {
-				const temp = fs.readdir(folder);
-				temp.then((files) => {
-					console.log(folderPath.toUpperCase() + '************');
-					files.map((file) => {
-						console.log(file);
-					});
-				});
+
+	async function traverseDirectory(dirPath: string, depth = 0) {
+		try {
+			const files = await fs.readdir(dirPath);
+			for (const file of files) {
+				const fullPath = path.join(dirPath, file);
+				try {
+					const stat = await fs.stat(fullPath);
+					if (stat.isDirectory() && !file.includes('node_modules') && !file.startsWith('.')) {
+						console.log(''.padStart(depth * 2) + '📁 ' + file);
+						await traverseDirectory(fullPath, depth + 1);
+					} else if (stat.isFile()) {
+						console.log(''.padStart(depth * 2) + '📄 ' + file);
+					}
+				} catch (error) {
+					console.error(`Error accessing ${fullPath}:`, error);
+				}
 			}
-		});
-		console.log(files);
-	});
-	const modelPath = path.resolve(process.cwd() + 'usr/lib/ticket.pass');
+		} catch (error) {
+			console.error(`Error reading directory ${dirPath}:`, error);
+		}
+	}
+
+	await traverseDirectory(process.cwd());
+
+	const modelPath = path.resolve(process.cwd() + '/src/lib/ticket.pass');
 	const [modelFilesList, certificates] = await Promise.all([
 		fs.readdir(modelPath),
 		getCertificates(),
