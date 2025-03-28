@@ -1,5 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Farro:wght@300;400;500;700&family=Grandstander:ital,wght@0,100..900;1,100..900&display=swap');
+@font-face {
+	font-family: 'Lugoj Demo';
+	src: url('fonts/Lugoj_Demo.otf');
+}
 
 html {
 	scroll-behavior: smooth;
@@ -7,19 +10,19 @@ html {
 
 :root {
 	/* Fonts */
-	--font-titles: 'Montserrat', 'Inter';
-	--font-standard: 'Inter', 'Geologica', 'Helvetica Neue', sans-serif;
+	--font-titles: 'Lugoj Demo', 'Inter';
+	--font-standard: 'Grandstander', 'Geologica', 'Helvetica Neue', sans-serif;
 
 	/* Colors */
-	--white: #fff;
+	--white: #fcfaf1;
 	--black: #000;
-	--accent: #7970ff;
+	--accent: #fa8620;
 	--light-accent: #d8d5ff;
 	--dark-grey: #757575;
 	--grey: #bbb;
 	--light-grey: #ebebeb;
-	--background-grey: #d9d9d9;
-	--secondary-color-1: #0773a6;
+	--background-pink: #e3bcd2;
+	--secondary-color-1: #e3bcd2;
 	--red: #e53c09;
 
 	--border-radius: 15px;
@@ -29,7 +32,7 @@ html {
 
 	/* All standard fonts inherit these rules */
 	/* Specify new rules only for special cases */
-	font-family: var(--font-standard);
+	font-family: var(--font-standard), serif;
 	font-weight: 400;
 }
 
@@ -83,6 +86,7 @@ html {
 body {
 	margin: 0 auto;
 	overflow-wrap: anywhere;
+	background-color: var(--white);
 }
 
 section {
@@ -302,7 +306,7 @@ dialog button {
 	max-width: 30rem;
 }
 
-.auth-content .bat {
+.auth-content .mascot {
 	display: block;
 	margin-left: auto;
 	margin-right: auto;
