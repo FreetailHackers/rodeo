@@ -1,8 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Farro:wght@300;400;500;700&family=Grandstander:ital,wght@0,100..900;1,100..900&display=swap');
-@font-face {
-	font-family: 'Lugoj Demo';
-	src: url('fonts/Lugoj_Demo.otf');
-}
 
 html {
 	scroll-behavior: smooth;
@@ -10,8 +6,8 @@ html {
 
 :root {
 	/* Fonts */
-	--font-titles: 'Lugoj Demo', 'Inter';
-	--font-standard: 'Grandstander', 'Geologica', 'Helvetica Neue', sans-serif;
+	--font-titles: 'Grandstander', 'Inter';
+	--font-standard: 'Farro', 'Geologica', 'Helvetica Neue', sans-serif;
 
 	/* Colors */
 	--white: #fcfaf1;

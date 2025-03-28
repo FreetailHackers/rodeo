@@ -4,20 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="210810a8-f1e8-40f1-959a-6924a178e4b6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/fonts/Lugoj_Demo.otf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/auth-assets/recordhacks-mascot.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lib/components/loader.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/components/loader.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/+layout.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/+layout.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/account/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/account/+page.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/global.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/global.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/login/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/login/+page.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/login/reset-password/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/login/reset-password/+page.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/login/verify-email/[token]/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/login/verify-email/[token]/+page.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/routes/register/+page.svelte" beforeDir="false" afterPath="$PROJECT_DIR$/src/routes/register/+page.svelte" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/static/hacker-id/background.png" beforeDir="false" afterPath="$PROJECT_DIR$/static/hacker-id/background.png" afterDir="false" />
-    </list>
+    <list default="true" id="210810a8-f1e8-40f1-959a-6924a178e4b6" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -85,7 +72,7 @@
       <workItem from="1742677992638" duration="8163000" />
       <workItem from="1742787502743" duration="3067000" />
       <workItem from="1742848780784" duration="9707000" />
-      <workItem from="1743167556209" duration="2947000" />
+      <workItem from="1743167556209" duration="3065000" />
     </task>
     <servers />
   </component>
