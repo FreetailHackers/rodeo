@@ -881,6 +881,7 @@ export const usersRouter = t.router({
 			});
 
 			const numGroups = input.length;
+
 			const groups: User[][] = Array.from({ length: numGroups }, () => []);
 			const teamDictionary: Record<number, User[]> = {};
 			const nonTeamUsers: User[] = [];
@@ -894,21 +895,30 @@ export const usersRouter = t.router({
 			});
 
 			// Distribute non-team users across groups, then distribute team members
-			nonTeamUsers.forEach((user, index) => groups[index % numGroups].push(user));
-			Object.values(teamDictionary)
-				.sort((a, b) => b.length - a.length)
-				.forEach((teamMembers, index) => {
-					groups[index % numGroups].push(...teamMembers);
-				});
+			try {
+				nonTeamUsers.forEach((user, index) => groups[index % numGroups].push(user));
+				Object.values(teamDictionary)
+					.sort((a, b) => b.length - a.length)
+					.forEach((teamMembers, index) => {
+						groups[index % numGroups].push(...teamMembers);
+					});
+			} catch (e) {
+				console.error('first');
+				console.error(e);
+			}
 
-			await prisma.$transaction(
-				groups.map((group, index) =>
-					prisma.user.updateMany({
-						where: { authUserId: { in: group.map((user) => user.authUserId) } },
-						data: { group: input[index] },
-					})
-				)
-			);
+			try {
+				await prisma.$transaction(
+					groups.map((group, index) =>
+						prisma.user.updateMany({
+							where: { authUserId: { in: group.map((user) => user.authUserId) } },
+							data: { group: input[index] },
+						})
+					)
+				);
+			} catch (e) {
+				console.error(e);
+			}
 
 			return groups;
 		}),
