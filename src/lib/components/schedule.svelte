@@ -45,7 +45,7 @@
 			});
 		}
 		if (startDate !== null && endDate !== null) {
-			const startHour = getHour(startDate, false);
+			const startHour = getHour(startDate, true);
 			const endHour = getHour(endDate, true);
 			return startHour + ' -\n' + endHour;
 		} else if (startDate !== null) {
