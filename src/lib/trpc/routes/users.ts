@@ -855,21 +855,19 @@ export const usersRouter = t.router({
 	splitGroups: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(z.array(z.string()))
-		.mutation(async (req): Promise<User[][]> => {
-			const { input } = req;
-
+		.mutation(async ({ input }): Promise<User[][]> => {
 			// Update all teams before group assignments, as all statuses have been finalized.
-			const teams = await prisma.team.findMany({
-				include: {
-					members: {
+			await Promise.all(
+				(
+					await prisma.team.findMany()
+				).map(async (team) => {
+					const members = await prisma.user.findMany({
+						where: { teamId: team.id },
 						include: { authUser: true },
-					},
-				},
-			});
-
-			for (const team of teams) {
-				await removeInvalidTeamMembers(team);
-			}
+					});
+					await removeInvalidTeamMembers({ ...team, members });
+				})
+			);
 
 			const confirmedUsers = await prisma.user.findMany({
 				where: {
@@ -905,30 +903,32 @@ export const usersRouter = t.router({
 				groups.map((group, index) =>
 					prisma.user.updateMany({
 						where: { authUserId: { in: group.map((user) => user.authUserId) } },
-						data: { group: input[index] },
+						data: { mealGroup: input[index] },
 					})
 				)
 			);
+
+			console.log(input);
 
 			return groups;
 		}),
 
 	getAllGroups: t.procedure.use(authenticate(['ADMIN'])).query(async () => {
 		const groupsWithMembers = await prisma.user.groupBy({
-			by: ['group'],
+			by: ['mealGroup'],
 			where: {
-				group: { not: null },
+				mealGroup: { not: null },
 				authUser: { status: 'CONFIRMED' },
 			},
 			_count: true,
-			orderBy: { group: 'asc' },
+			orderBy: { mealGroup: 'asc' },
 		});
 
 		const groupDetails = await Promise.all(
 			groupsWithMembers.map(async (lunchGroup) => {
 				const members = await prisma.user.findMany({
 					where: {
-						group: lunchGroup.group,
+						mealGroup: lunchGroup.mealGroup,
 						authUser: { status: 'CONFIRMED' },
 					},
 					select: {
@@ -943,7 +943,7 @@ export const usersRouter = t.router({
 				});
 
 				return {
-					group: lunchGroup.group,
+					mealGroup: lunchGroup.mealGroup,
 					memberCount: lunchGroup._count,
 					members: members,
 				};
@@ -959,9 +959,9 @@ export const usersRouter = t.router({
 			(
 				await prisma.user.findUnique({
 					where: { authUserId: req.ctx.user.id },
-					select: { group: true },
+					select: { mealGroup: true },
 				})
-			)?.group ?? null
+			)?.mealGroup ?? null
 		);
 	}),
 });
