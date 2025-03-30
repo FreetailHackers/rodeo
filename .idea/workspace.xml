@@ -5,8 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="210810a8-f1e8-40f1-959a-6924a178e4b6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/prisma/migrations/20250329230759_groups_to_meal_group/migration.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/prisma/schema.prisma" beforeDir="false" afterPath="$PROJECT_DIR$/prisma/schema.prisma" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/lucia.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/lucia.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/lib/trpc/routes/users.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/trpc/routes/users.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -39,7 +40,7 @@
     "JavaScript Debug.localhost:5174.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "Merging master",
+    "git-widget-placeholder": "master",
     "js.last.introduce.type": "CONST",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",

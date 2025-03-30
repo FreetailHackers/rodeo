@@ -909,8 +909,6 @@ export const usersRouter = t.router({
 				)
 			);
 
-			console.log(input);
-
 			return groups;
 		}),
 
