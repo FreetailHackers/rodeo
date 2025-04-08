@@ -9,7 +9,10 @@ export const load = async ({ locals }) => {
 		user: (await locals.auth.validate())?.user,
 		announcements: await trpc(locals.auth).announcements.getAll(),
 		settings: await trpc(locals.auth).settings.getPublic(),
-
+		events: await trpc(locals.auth).events.getAll(),
+		faq: await trpc(locals.auth).faq.getAll(),
+		challenges: await trpc(locals.auth).challenges.getAll(),
+		sponsors: await trpc(locals.auth).sponsors.getSponsorsWithImageValues(),
 		// Check whether various OAuth providers are set up in
 		// environment variables so we can show/hide buttons.
 		providers: {
@@ -31,5 +34,9 @@ export const actions = {
 		const formData = await request.formData();
 		const id = formData.get('id') as string;
 		await trpc(locals.auth).announcements.delete(Number(id));
+	},
+
+	clearAnnouncements: async ({ locals }) => {
+		await trpc(locals.auth).announcements.deleteAll();
 	},
 };

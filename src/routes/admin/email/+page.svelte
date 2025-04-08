@@ -1,52 +1,13 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { Status } from '@prisma/client';
 	import Toggle from '$lib/components/toggle.svelte';
 	import TextEditor from '$lib/components/text-editor.svelte';
-	const statuses: Status[] = Object.keys(Status) as Status[];
 	export let data;
 </script>
 
 <svelte:head>
 	<title>Rodeo | Admin - Email Templates</title>
 </svelte:head>
-
-<form
-	method="POST"
-	action="?/emailByStatus"
-	use:enhance={() => {
-		return async ({ update }) => {
-			update({ reset: false });
-		};
-	}}
->
-	<label for="groupEmail"><h2>Group Email to Specific Status</h2></label>
-
-	<div class="toggle-container">
-		<Toggle
-			name="byStatusFormType"
-			label="Use HTML (Default: Markdown)"
-			bind:checked={data.settings.byStatusIsHTML}
-		/>
-	</div>
-
-	<div class="flex-container">
-		<input class="textbox-margin" name="subject" placeholder="Type email subject here" required />
-		<select name="status" required>
-			{#each statuses as status}
-				<option value={status}>{status}</option>
-			{/each}
-		</select>
-	</div>
-	<TextEditor
-		placeholder="Type email body here"
-		name="emailBody"
-		isHTML={data.settings.byStatusIsHTML}
-		required
-	/>
-
-	<button id="email-by-status" type="submit">Send</button>
-</form>
 
 <form
 	method="POST"
@@ -172,15 +133,6 @@
 
 	#save-templates {
 		margin-top: 20px;
-	}
-
-	.textbox-margin {
-		margin-bottom: 1%;
-		flex: 1;
-	}
-
-	.flex-container {
-		display: flex;
 	}
 
 	.toggle-container {

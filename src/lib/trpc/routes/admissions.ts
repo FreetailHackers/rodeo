@@ -1,7 +1,7 @@
 import type { Prisma, Status } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
-import { sendEmails } from '../email';
+import { sendEmail } from '../email';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getSettings } from './settings';
@@ -48,27 +48,28 @@ async function releaseDecisions(ids?: string[]): Promise<void> {
 		await prisma.$transaction([updateStatus, deleteDecision]);
 
 		let template = '';
-		if (decision === 'ACCEPTED') {
-			template = (await getSettings()).acceptTemplate;
-		} else if (decision === 'REJECTED') {
-			template = (await getSettings()).rejectTemplate;
-		} else if (decision === 'WAITLISTED') {
-			template = (await getSettings()).waitlistTemplate;
-		}
 		let isHTML: boolean = false;
+		const settings = await getSettings();
 		if (decision === 'ACCEPTED') {
-			isHTML = (await getSettings()).acceptIsHTML;
+			template = settings.acceptTemplate;
+			isHTML = settings.acceptIsHTML;
 		} else if (decision === 'REJECTED') {
-			isHTML = (await getSettings()).rejectIsHTML;
+			template = settings.rejectTemplate;
+			isHTML = settings.rejectIsHTML;
 		} else if (decision === 'WAITLISTED') {
-			isHTML = (await getSettings()).waitlistIsHTML;
+			template = settings.waitlistTemplate;
+			isHTML = settings.waitlistIsHTML;
 		}
-		await sendEmails(
-			decisions.map((hacker) => hacker.authUser.email),
-			'Freetail Hackers status update',
-			template,
-			isHTML
-		);
+
+		for (let i = 0; i < decisions.length; i += 100) {
+			await Promise.all(
+				decisions
+					.slice(i, i + 100)
+					.map((hacker) =>
+						sendEmail(hacker.authUser.email, 'Freetail Hackers status update', template, isHTML)
+					)
+			);
+		}
 	}
 }
 
@@ -167,6 +168,7 @@ export const admissionsRouter = t.router({
 					decision: null,
 				},
 				include: { authUser: true, decision: true },
+				orderBy: [{ teamId: 'asc' }],
 			});
 		}
 	),

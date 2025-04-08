@@ -4,7 +4,12 @@
 	import type { Prisma, Question } from '@prisma/client';
 	import type { UserSchema } from 'lucia';
 
-	export let users: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>[];
+	export let users: (Prisma.UserGetPayload<{
+		include: { authUser: true; decision: true };
+	}> & {
+		teammates: { email: string; status: string }[];
+	})[];
+
 	export let self: UserSchema;
 	export let questions: Question[];
 
@@ -212,7 +217,7 @@
 						/>
 					</summary>
 					<div class="user">
-						<UserCard {user} {questions} />
+						<UserCard {user} {questions} teammates={user.teammates} />
 					</div>
 				</details>
 			</li>
