@@ -44,20 +44,24 @@
 		}}
 	>
 		<input type="hidden" name="id" value={data.id} />
+		<label for="name">Name</label>
+		<input type="text" id="name" name="name" value={data.name} />
 
-		<label for="sponsorLogo">Sponsor Logo</label>
+		<img src={data.imageUrl} alt={data.name} />
+
+		<label for="logo">Logo</label>
 		<input
 			type="file"
-			id="sponsorLogo"
-			name="sponsorLogo"
+			id="logo"
+			name="logo"
 			accept=".jpg, .jpeg, .png, .webp"
 			on:change={handleFileChange}
 		/>
 
-		<label for="sponsorLink">Sponsor Link</label>
-		<input type="url" id="sponsorLink" name="sponsorLink" value={data.response} />
+		<label for="link">Link</label>
+		<input type="url" id="link" name="link" value={data.url} />
 
-		<button type="submit" style="margin-top: 1rem;">Save</button>
+		<button type="submit">Save</button>
 	</form>
 </div>
 
@@ -71,5 +75,9 @@
 	input,
 	form {
 		margin-bottom: 0.5rem;
+	}
+
+	button {
+		margin-top: 1rem;
 	}
 </style>

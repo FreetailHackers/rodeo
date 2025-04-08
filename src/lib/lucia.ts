@@ -22,6 +22,7 @@ export const auth = lucia({
 		status: user.status,
 		verifiedEmail: user.verifiedEmail,
 		name: user.name,
+		mealGroup: user.mealGoup,
 	}),
 });
 

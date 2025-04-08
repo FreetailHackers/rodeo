@@ -191,14 +191,13 @@
 		left: 0;
 		object-fit: cover;
 		width: 100%;
-		height: 60vh;
 	}
 
 	.id-card #qrcode {
 		position: absolute;
 		object-fit: contain;
 		margin: 18%;
-		margin-top: 23%;
+		margin-top: 55%;
 		border-radius: 10%;
 	}
 

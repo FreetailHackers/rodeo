@@ -852,13 +852,10 @@ export const usersRouter = t.router({
 				.then((users) => users.map((user) => user.authUser.email));
 		}),
 
-	/*
-	 * Splits up users into different groups
-	 */
 	splitGroups: t.procedure
 		.use(authenticate(['ADMIN']))
-		.input(z.number().min(1).max(26))
-		.mutation(async ({ input }) => {
+		.input(z.array(z.string()))
+		.mutation(async ({ input }): Promise<User[][]> => {
 			// Update all teams before group assignments, as all statuses have been finalized.
 			await Promise.all(
 				(
@@ -881,7 +878,9 @@ export const usersRouter = t.router({
 				include: { team: true, authUser: true },
 			});
 
-			const groups: User[][] = Array.from({ length: input }, () => []);
+			const numGroups = input.length;
+
+			const groups: User[][] = Array.from({ length: numGroups }, () => []);
 			const teamDictionary: Record<number, User[]> = {};
 			const nonTeamUsers: User[] = [];
 
@@ -894,22 +893,64 @@ export const usersRouter = t.router({
 			});
 
 			// Distribute non-team users across groups, then distribute team members
-			nonTeamUsers.forEach((user, index) => groups[index % input].push(user));
+			nonTeamUsers.forEach((user, index) => groups[index % numGroups].push(user));
 			Object.values(teamDictionary)
 				.sort((a, b) => b.length - a.length)
 				.forEach((teamMembers, index) => {
-					groups[index % input].push(...teamMembers);
+					groups[index % numGroups].push(...teamMembers);
 				});
 
 			await prisma.$transaction(
 				groups.map((group, index) =>
 					prisma.user.updateMany({
 						where: { authUserId: { in: group.map((user) => user.authUserId) } },
-						data: { group: String.fromCharCode(65 + index) }, // A, B, C, ...
+						data: { mealGroup: input[index] },
 					})
 				)
 			);
+
+			return groups;
 		}),
+
+	getAllGroups: t.procedure.use(authenticate(['ADMIN'])).query(async () => {
+		const groupsWithMembers = await prisma.user.groupBy({
+			by: ['mealGroup'],
+			where: {
+				mealGroup: { not: null },
+				authUser: { status: 'CONFIRMED' },
+			},
+			_count: true,
+			orderBy: { mealGroup: 'asc' },
+		});
+
+		const groupDetails = await Promise.all(
+			groupsWithMembers.map(async (lunchGroup) => {
+				const members = await prisma.user.findMany({
+					where: {
+						mealGroup: lunchGroup.mealGroup,
+						authUser: { status: 'CONFIRMED' },
+					},
+					select: {
+						teamId: true,
+						team: true,
+						authUser: {
+							select: {
+								email: true,
+							},
+						},
+					},
+				});
+
+				return {
+					mealGroup: lunchGroup.mealGroup,
+					memberCount: lunchGroup._count,
+					members: members,
+				};
+			})
+		);
+
+		return groupDetails;
+	}),
 
 	// Returns the group of the user
 	getGroup: t.procedure.use(authenticate(['HACKER'])).query(async (req): Promise<string | null> => {
@@ -917,9 +958,9 @@ export const usersRouter = t.router({
 			(
 				await prisma.user.findUnique({
 					where: { authUserId: req.ctx.user.id },
-					select: { group: true },
+					select: { mealGroup: true },
 				})
-			)?.group ?? null
+			)?.mealGroup ?? null
 		);
 	}),
 });
