@@ -65,7 +65,7 @@ export async function _upsert(providerUserAuth: ProviderUserAuth, email: string)
 		const newUser = await providerUserAuth.createUser({
 			attributes: {
 				email,
-				roles: ['HACKER'],
+				roles: ['UNDECLARED'],
 				status: 'CREATED',
 				verifiedEmail: true,
 			},

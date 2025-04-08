@@ -63,7 +63,7 @@ export const usersRouter = t.router({
 		),
 
 	getAppliedDate: t.procedure
-		.use(authenticate(['HACKER']))
+		.use(authenticate(['UNDECLARED']))
 		.query(async (req): Promise<Date | null> => {
 			const userId = (
 				await prisma.user.findUniqueOrThrow({
@@ -96,7 +96,7 @@ export const usersRouter = t.router({
 	 * Maybe it should?
 	 */
 	update: t.procedure
-		.use(authenticate(['HACKER']))
+		.use(authenticate(['HACKER','UNDECLARED']))
 		.input(z.record(z.any()))
 		.mutation(async (req): Promise<void> => {
 			if (!(await canApply()) || req.ctx.user.status !== 'CREATED') {
@@ -155,7 +155,8 @@ export const usersRouter = t.router({
 	 * containing questions with validation errors, if any.
 	 */
 	submitApplication: t.procedure
-		.use(authenticate(['HACKER']))
+		.use(authenticate(['HACKER','UNDECLARED']))
+		.input(z.enum(['ORGANIZER', 'HACKER','JUDGE','VOLUNTEER']))
 		.mutation(async (req): Promise<Record<string, string>> => {
 			// Ensure applications are open and the user has not received a decision yet
 			if (!(await canApply()) || req.ctx.user.status !== 'CREATED') {
@@ -175,7 +176,7 @@ export const usersRouter = t.router({
 			for (const question of questions) {
 				const answer = application[question.id];
 				if (answer === undefined || answer === null || answer === false || answer === '') {
-					if (question.required) {
+					if (question.required && question.targetGroup.includes(req.input)) {
 						errors[question.id] = 'This field is required.';
 					}
 					// Must skip validation for unanswered questions, not only to avoid type errors,
@@ -230,7 +231,9 @@ export const usersRouter = t.router({
 			if (Object.keys(errors).length === 0) {
 				await prisma.authUser.update({
 					where: { id: req.ctx.user.id },
-					data: { status: 'APPLIED' },
+					data: { status: 'APPLIED',
+						roles: [req.input]
+					},
 				});
 				// notify user through their email on successful application submission
 				const subject = 'Thanks for submitting!';
@@ -250,7 +253,7 @@ export const usersRouter = t.router({
 	 * user has not submitted their application yet.
 	 */
 	withdrawApplication: t.procedure
-		.use(authenticate(['HACKER']))
+		.use(authenticate(['UNDECLARED']))
 		.mutation(async (req): Promise<void> => {
 			if (!(await canApply()) || req.ctx.user.status !== 'APPLIED') {
 				return;
@@ -270,7 +273,7 @@ export const usersRouter = t.router({
 		}),
 
 	getRSVPDeadline: t.procedure
-		.use(authenticate(['HACKER']))
+		.use(authenticate(['HACKER','UNDECLARED']))
 		.query(async (req): Promise<Date | null> => {
 			return await getRSVPDeadline(req.ctx.user);
 		}),
@@ -279,7 +282,7 @@ export const usersRouter = t.router({
 	 * Confirms or declines the logged in user's acceptance.
 	 */
 	rsvp: t.procedure
-		.use(authenticate(['HACKER']))
+		.use(authenticate(['HACKER','UNDECLARED']))
 		.input(z.enum(['CONFIRMED', 'DECLINED']))
 		.mutation(async (req): Promise<void> => {
 			const deadline = await getRSVPDeadline(req.ctx.user);
@@ -332,7 +335,7 @@ export const usersRouter = t.router({
 					},
 					attributes: {
 						email: req.input.email,
-						roles: ['HACKER'],
+						roles: ['UNDECLARED'],
 						status: 'CREATED',
 					},
 				});
@@ -707,7 +710,7 @@ export const usersRouter = t.router({
 		}),
 
 	doesEmailExist: t.procedure
-		.use(authenticate(['ADMIN', 'HACKER']))
+		.use(authenticate(['ADMIN', 'HACKER','UNDECLARED']))
 		.input(z.string())
 		.query(async (req): Promise<boolean> => {
 			return (

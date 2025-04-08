@@ -21,7 +21,7 @@ model AuthUser {
   // Custom attributes required for authentication/authorization flows
   email          String         @unique
   verifiedEmail  Boolean        @default(false)
-  roles          Role[]         @default([HACKER])
+  roles          Role[]         @default([UNDECLARED])
   status         Status         @default(CREATED)
   user           User?
 }
@@ -127,6 +127,7 @@ model Question {
   label         String
   type          QuestionType
   required      Boolean      @default(false)
+  targetGroup   String[]
   order         Int          @unique
   placeholder   String       @default("") // For sentences, paragraphs, and numbers
   multiple      Boolean? // For dropdowns to allow multiple selections
@@ -206,6 +207,7 @@ enum Role {
   JUDGE // Should have access to judging
   VOLUNTEER // Miscenalleous volunteer; only has access to Hacker ID
   SPONSOR // Should have access to resumes
+  UNDECLARED
 }
 
 enum Status {

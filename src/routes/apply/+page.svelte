@@ -15,6 +15,12 @@
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
 	let saveButton: HTMLButtonElement;
 	let rsvpSelectedValue: string = '';
+
+	let selectedRole = 'Hacker';
+
+	function applyAs(role: string) {
+		selectedRole = role;
+	}
 </script>
 
 <svelte:head>
@@ -40,9 +46,14 @@
 					</bold>
 					to be considered for admission.
 				</p>
+
 			{:else}
 				<p>You must complete your application to be considered for admission.</p>
 			{/if}
+			<button on:click={() => applyAs('Hacker')}>Apply as Hacker</button>
+			<button on:click={() => applyAs('Judge')}>Apply as Judge</button>
+			<button on:click={() => applyAs('Mentor')}>Apply as Mentor</button>
+			<button on:click={() => applyAs('Volunteer')}>Apply as Volunteer</button>
 		{:else if data.user.authUser.status === 'APPLIED'}
 			<h2 class="status-message">You've submitted your application!</h2>
 			{#if data.appliedDate !== null}
@@ -200,7 +211,15 @@
 				}}
 				autocomplete="off"
 			>
+				<!-- Hidden input to send the role to the server -->
+				<input type="hidden" name="group_applied" id="group_applied" value={selectedRole.toUpperCase()} />
+
+				<!-- Display the selected role -->
+				{#if selectedRole}
+					<p>You are applying as: <strong>{selectedRole}</strong></p>
+				{/if}
 				{#each data.questions as question}
+					{#if question.targetGroup?.includes(selectedRole) || !question.targetGroup}
 					<div class={'question ' + question.type.toLowerCase()}>
 						<label for={question.id}>
 							<SvelteMarkdown source={question.label} isInline />
@@ -271,6 +290,7 @@
 							/>
 						{/if}
 					</div>
+					{/if}
 				{/each}
 
 				<div id="actions-container">

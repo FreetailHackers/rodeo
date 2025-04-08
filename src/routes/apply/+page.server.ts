@@ -4,7 +4,7 @@ import type { Question } from '@prisma/client';
 import { redirect } from '@sveltejs/kit';
 
 export const load = async ({ locals }) => {
-	await authenticate(locals.auth, ['HACKER']);
+	await authenticate(locals.auth, ['UNDECLARED']);
 	const settings = await trpc(locals.auth).settings.getPublic();
 	const deadline = await trpc(locals.auth).users.getRSVPDeadline();
 
@@ -20,6 +20,7 @@ export const load = async ({ locals }) => {
 
 function formToApplication(questions: Question[], formData: FormData) {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	//console.log(formData);
 	const application: Record<string, any> = {};
 	for (const question of questions) {
 		if (
@@ -59,10 +60,13 @@ export const actions = {
 		if (!(await trpc(locals.auth).admissions.canApply())) {
 			throw redirect(301, '/apply');
 		}
+		const formData = await request.formData();
 		await trpc(locals.auth).users.update(
-			formToApplication(await trpc(locals.auth).questions.get(), await request.formData())
+			formToApplication(await trpc(locals.auth).questions.get(), formData)
 		);
-		return await trpc(locals.auth).users.submitApplication();
+		const selectedRole = formData.get("group_applied");
+
+		return await trpc(locals.auth).users.submitApplication(selectedRole);
 	},
 
 	withdraw: async ({ locals }) => {

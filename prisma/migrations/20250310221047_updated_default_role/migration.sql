@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "AuthUser" ALTER COLUMN "roles" SET DEFAULT ARRAY['UNDECLARED']::"Role"[];
