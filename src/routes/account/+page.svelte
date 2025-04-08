@@ -34,72 +34,11 @@
 	<!-- Left Section with Forms -->
 	{#if data.user.roles.includes('HACKER')}
 		<div class="left-section">
-			<div class="name-and-edit">
-				{#if data.name !== null}
-					<h3>{data.name}</h3>
-					<Modal button={false} close={closeModal}>
-						<Content>
-							<div class="modal">
-								<h2 class="modal-header">Change Name</h2>
-								<img
-									class="close-button"
-									src="/close-button.png"
-									alt="close edit name"
-									draggable="false"
-									on:click={() => (closeModal = true)}
-									on:keypress={() => (closeModal = true)}
-								/>
-								<form
-									method="POST"
-									action="?/updateName"
-									use:enhance
-									on:submit={() => {
-										closeModal = true;
-									}}
-								>
-									<div class="user-info">
-										<input
-											type="text"
-											id="name"
-											name="name"
-											placeholder="Insert your name"
-											pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\s'.-]+$"
-											maxlength="70"
-											value={data.name || ''}
-											required
-										/>
-									</div>
-									<button class="user-button" type="submit">Submit</button>
-								</form>
-							</div>
-						</Content>
-						<Trigger>
-							<img
-								id="edit-button"
-								src="/edit-button.png"
-								alt="edit-name"
-								draggable="false"
-								on:click={() => (closeModal = false)}
-								on:keypress={() => (closeModal = false)}
-							/>
-						</Trigger>
-					</Modal>
-				{:else}
-					<form class="new-name" method="POST" action="?/updateName" use:enhance>
-						<input
-							type="text"
-							id="name"
-							name="name"
-							placeholder="Insert your name"
-							pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\s'.-]+$"
-							maxlength="70"
-							required
-						/>
-						<button class="user-button" type="submit">Submit</button>
-					</form>
-				{/if}
-			</div>
-			<p>{data.user.email}</p>
+			<h3>My Details</h3>
+			{#if data.group}
+				<p><b>Group</b>: {data.group}</p>
+			{/if}
+			<p><b>Email</b>: {data.user.email}</p>
 			<hr />
 			{#if !data.team}
 				<form method="POST" action="?/createTeam" use:enhance>
@@ -110,92 +49,78 @@
 						name="teamName"
 						placeholder="Enter Team Name"
 						pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\s'.-]+$"
+						minlength="1"
 						maxlength="50"
 						required
 					/>
 					<button class="user-button" type="submit">Create Team</button>
 				</form>
 			{:else}
-				{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.status === 'CONFIRMED')}
-					<h3>My Project</h3>
-
-					<form method="POST" action="?/updateDevpost" use:enhance>
-						<label for="teamDevpost">Devpost Link:</label>
-
-						<input
-							type="text"
-							id="devpostUrl"
-							name="devpostUrl"
-							value={data.team.devpostUrl}
-							placeholder="Paste the project link here"
-						/>
-
-						<div class="cancel-save">
-							<button class="user-button negative-button" type="reset">Cancel</button>
-							<button class="user-button" type="submit">Save</button>
-						</div>
-					</form>
-					<hr />
-				{/if}
-
 				<h3 class="label-and-button">
-					My Team: {data.team.name}
-					<Modal button={false} close={closeModal}>
-						<Content>
-							<div class="modal">
-								<form method="POST" action="?/inviteUser">
-									<h3 class="modal-header">
-										Invite a new member
-										<img
-											class="close-button"
-											src="/close-button.png"
-											alt="close add team member"
-											draggable="false"
-											on:click={() => (closeModal = true)}
-											on:keypress={() => (closeModal = true)}
+					Team: {data.team.name}
+					{#if data.team.members.length < 4}
+						<Modal button={false} close={closeModal}>
+							<Content>
+								<div class="modal">
+									<form method="POST" action="?/inviteUser">
+										<h3 class="modal-header">
+											Invite a new member
+											<img
+												class="close-button"
+												src="/close-button.png"
+												alt="close add team member"
+												draggable="false"
+												on:click={() => (closeModal = true)}
+												on:keypress={() => (closeModal = true)}
+											/>
+										</h3>
+										<input
+											type="email"
+											id="inviteEmail"
+											name="inviteEmail"
+											placeholder="Enter email"
+											required
 										/>
-									</h3>
-									<input
-										type="email"
-										id="inviteEmail"
-										name="inviteEmail"
-										placeholder="Enter email"
-										required
-									/>
-									<p>
-										You can only invite users who have a Rodeo account and are not already part of a
-										team.
-									</p>
-									<button id="modalSubmit" class="user-button" type="submit">Send Invitation</button
-									>
-								</form>
-							</div>
-						</Content>
-						<Trigger>
-							<img
-								src="/add-button.png"
-								alt="add team member"
-								draggable="false"
-								on:click={() => (closeModal = false)}
-								on:keypress={() => (closeModal = false)}
-							/>
-						</Trigger>
-					</Modal>
+										<p>
+											You can only invite users who have a Rodeo account and are not already part of
+											a team.
+										</p>
+										<button id="modalSubmit" class="user-button" type="submit"
+											>Send Invitation</button
+										>
+									</form>
+								</div>
+							</Content>
+							<Trigger>
+								<img
+									src="/add-button.png"
+									alt="add team member"
+									draggable="false"
+									on:click={() => (closeModal = false)}
+									on:keypress={() => (closeModal = false)}
+								/>
+							</Trigger>
+						</Modal>
+					{/if}
 				</h3>
 				{#each data.team.members as member}
-					<div class="member">
-						<div class="member-info">
-							<p>{member.name}</p>
-							<p>{member.email}</p>
+					<form method="POST" action="?/removeTeammate">
+						<input type="hidden" name="memberId" value={member.authUser.id} />
+						<div class="member">
+							<div class="member-info">
+								<p>{member.authUser.email}</p>
+							</div>
+							{#if member.authUser.id !== data.user.id}
+								<button type="submit">X</button>
+							{/if}
 						</div>
-					</div>
+					</form>
 				{/each}
 				{#if data.invitations.length > 0}
 					{#each data.invitations as invite}
 						{#if invite.status !== 'ACCEPTED'}
 							<div class="member">
 								<div class="member-info">
-									<p>{invite.name}</p>
 									<p>{invite.email}</p>
 								</div>
 								<p><b>{invite.status}</b></p>
@@ -254,22 +179,6 @@
 		align-items: center;
 	}
 
-	.name-and-edit {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-	}
-
-	.new-name {
-		display: flex;
-		flex-direction: row;
-		flex-grow: 1;
-	}
-
-	.new-name button {
-		min-width: fit-content;
-	}
-
 	.id-card {
 		position: relative;
 		box-shadow: 4px 4px 16px 0px #00000040;
@@ -282,14 +191,13 @@
 		left: 0;
 		object-fit: cover;
 		width: 100%;
-		height: 60vh;
 	}
 
 	.id-card #qrcode {
 		position: absolute;
 		object-fit: contain;
 		margin: 18%;
-		margin-top: 23%;
+		margin-top: 55%;
 		border-radius: 10%;
 	}
 
@@ -306,14 +214,6 @@
 
 	.modal form {
 		margin: unset;
-	}
-
-	/* select, */
-	.cancel-save {
-		display: flex;
-		justify-content: end;
-		align-items: center;
-		gap: 1em;
 	}
 
 	.member {

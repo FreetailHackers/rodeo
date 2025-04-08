@@ -9,10 +9,7 @@ export const load = async ({ locals }) => {
 	return {
 		user: user,
 		questions: admissionRelevantQuestions,
-		teamAndAdmissionStatus:
-			user !== null
-				? await trpc(locals.auth).team.getTeammatesAndAdmissionStatus(user.authUserId)
-				: [],
+		teammates: user !== null ? await trpc(locals.auth).team.getTeammates(user.authUserId) : [],
 	};
 };
 

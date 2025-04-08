@@ -11,6 +11,7 @@ import type { Session, User } from 'lucia';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { canApply } from './admissions';
+import { removeInvalidTeamMembers } from './team';
 import natural from 'natural';
 const { WordTokenizer } = natural;
 import { removeStopwords } from 'stopword';
@@ -705,27 +706,6 @@ export const usersRouter = t.router({
 			return responses;
 		}),
 
-	getName: t.procedure
-		.use(authenticate(['HACKER', 'ADMIN', 'ORGANIZER', 'SPONSOR', 'JUDGE', 'VOLUNTEER']))
-		.query(async (req): Promise<string> => {
-			return (
-				await prisma.user.findUnique({
-					where: { authUserId: req.ctx.user.id },
-					select: { name: true },
-				})
-			)?.name as string;
-		}),
-
-	updateName: t.procedure
-		.use(authenticate(['HACKER', 'ADMIN', 'ORGANIZER', 'SPONSOR', 'JUDGE', 'VOLUNTEER']))
-		.input(z.string())
-		.mutation(async (req): Promise<void> => {
-			await prisma.user.update({
-				where: { authUserId: req.ctx.user.id },
-				data: { name: req.input },
-			});
-		}),
-
 	doesEmailExist: t.procedure
 		.use(authenticate(['ADMIN', 'HACKER']))
 		.input(z.string())
@@ -871,6 +851,118 @@ export const usersRouter = t.router({
 				})
 				.then((users) => users.map((user) => user.authUser.email));
 		}),
+
+	splitGroups: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(z.array(z.string()))
+		.mutation(async ({ input }): Promise<User[][]> => {
+			// Update all teams before group assignments, as all statuses have been finalized.
+			await Promise.all(
+				(
+					await prisma.team.findMany()
+				).map(async (team) => {
+					const members = await prisma.user.findMany({
+						where: { teamId: team.id },
+						include: { authUser: true },
+					});
+					await removeInvalidTeamMembers({ ...team, members });
+				})
+			);
+
+			const confirmedUsers = await prisma.user.findMany({
+				where: {
+					authUser: {
+						status: 'CONFIRMED',
+					},
+				},
+				include: { team: true, authUser: true },
+			});
+
+			const numGroups = input.length;
+
+			const groups: User[][] = Array.from({ length: numGroups }, () => []);
+			const teamDictionary: Record<number, User[]> = {};
+			const nonTeamUsers: User[] = [];
+
+			confirmedUsers.forEach((user) => {
+				if (user.teamId) {
+					(teamDictionary[user.teamId] ||= []).push(user);
+				} else {
+					nonTeamUsers.push(user);
+				}
+			});
+
+			// Distribute non-team users across groups, then distribute team members
+			nonTeamUsers.forEach((user, index) => groups[index % numGroups].push(user));
+			Object.values(teamDictionary)
+				.sort((a, b) => b.length - a.length)
+				.forEach((teamMembers, index) => {
+					groups[index % numGroups].push(...teamMembers);
+				});
+
+			await prisma.$transaction(
+				groups.map((group, index) =>
+					prisma.user.updateMany({
+						where: { authUserId: { in: group.map((user) => user.authUserId) } },
+						data: { mealGroup: input[index] },
+					})
+				)
+			);
+
+			return groups;
+		}),
+
+	getAllGroups: t.procedure.use(authenticate(['ADMIN'])).query(async () => {
+		const groupsWithMembers = await prisma.user.groupBy({
+			by: ['mealGroup'],
+			where: {
+				mealGroup: { not: null },
+				authUser: { status: 'CONFIRMED' },
+			},
+			_count: true,
+			orderBy: { mealGroup: 'asc' },
+		});
+
+		const groupDetails = await Promise.all(
+			groupsWithMembers.map(async (lunchGroup) => {
+				const members = await prisma.user.findMany({
+					where: {
+						mealGroup: lunchGroup.mealGroup,
+						authUser: { status: 'CONFIRMED' },
+					},
+					select: {
+						teamId: true,
+						team: true,
+						authUser: {
+							select: {
+								email: true,
+							},
+						},
+					},
+				});
+
+				return {
+					mealGroup: lunchGroup.mealGroup,
+					memberCount: lunchGroup._count,
+					members: members,
+				};
+			})
+		);
+
+		return groupDetails;
+	}),
+
+	// Returns the group of the user
+	getGroup: t.procedure.use(authenticate(['HACKER'])).query(async (req): Promise<string | null> => {
+		return (
+			(
+				await prisma.user.findUnique({
+					where: { authUserId: req.ctx.user.id },
+					select: { mealGroup: true },
+				})
+			)?.mealGroup ?? null
+		);
+	}),
 });
 
 async function getWhereCondition(

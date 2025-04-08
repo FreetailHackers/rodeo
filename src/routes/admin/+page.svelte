@@ -110,6 +110,21 @@
 	<button type="submit">Save</button>
 </form>
 
+<h2>Split Hackers Into Lunch Groups</h2>
+
+<form method="POST" action="?/splitGroups" use:enhance>
+	<input
+		type="text"
+		id="splitGroups"
+		name="splitGroups"
+		placeholder="Group A, Group B, Group C, ..."
+		pattern="^[A-Za-z0-9\s]+(,\s*[A-Za-z0-9\s]+)*$"
+		title="Names must be alphanumeric in the form: 'Group 1', 'Group 2', 'Group 3', ..."
+		required
+	/>
+	<button type="submit">Split Groups</button>
+</form>
+
 <h2>Pending Decisions</h2>
 <form method="POST" action="?/release" use:enhance>
 	<button
@@ -147,7 +162,7 @@
 		margin-top: 0;
 		margin-bottom: 1rem;
 		text-transform: uppercase;
-		background-color: #e53c09;
+		background-color: var(--red);
 		height: auto;
 		min-height: 3rem;
 	}

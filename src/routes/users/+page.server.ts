@@ -12,12 +12,21 @@ export const load = async ({ locals, url }) => {
 		searchFilter: url.searchParams.get('searchFilter') ?? '',
 	});
 	const questions = await trpc(locals.auth).questions.get();
+	const users = await Promise.all(
+		results.users.map(async (hacker) => ({
+			...hacker,
+			teammates: user.roles.includes('ADMIN')
+				? await trpc(locals.auth).team.getTeammates(hacker.authUserId)
+				: [],
+		}))
+	);
+
 	return {
 		settings: await trpc(locals.auth).settings.getPublic(),
 		questions: user.roles.includes('ADMIN')
 			? questions
 			: questions.filter((question) => question.sponsorView),
-		users: results.users,
+		users: users,
 		pages: results.pages,
 		start: results.start,
 		count: results.count,

@@ -67,4 +67,19 @@ export const actions = {
 		await trpc(locals.auth).admissions.releaseAllDecisions();
 		return 'Released all decisions!';
 	},
+
+	splitGroups: async ({ locals, request }) => {
+		const formData = await request.formData();
+		const groups = formData.get('splitGroups') as string;
+		const groupNames = groups.split(',').map((name) => name.trim());
+
+		const isValid = groupNames.every((group) => group.trim().length > 0);
+
+		if (!isValid) {
+			return 'Please enter valid group names separated by commas.';
+		}
+
+		await trpc(locals.auth).users.splitGroups(groupNames);
+		return 'Groups successfully split and updated!';
+	},
 };
