@@ -21,7 +21,7 @@
 </svelte:head>
 <main class="vert-center">
 	<div class="auth-content">
-		<img class="bat" src="/auth-assets/bat.svg" alt="Freetail Bat" />
+		<img class="mascot" src="/auth-assets/recordhacks-mascot.png" alt="RecordHacks Mascot" />
 		<h1>Login</h1>
 		<div class="socials">
 			<SocialLogin providers={data.providers} />

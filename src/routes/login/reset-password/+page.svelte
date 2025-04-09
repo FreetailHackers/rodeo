@@ -10,7 +10,7 @@
 </svelte:head>
 <main class="vert-center">
 	<div class="auth-content">
-		<img class="bat" src="/auth-assets/bat.svg" alt="Freetail Bat" />
+		<img class="mascot" src="/auth-assets/recordhacks-mascot.png" alt="RecordHacks Mascot" />
 		{#if $page.url.search === ''}
 			<h1>Reset Password</h1>
 			<form method="POST" action="?/email" use:enhance>

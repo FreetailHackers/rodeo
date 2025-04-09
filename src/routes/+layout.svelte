@@ -41,7 +41,12 @@
 {#if !noLayoutRoutes.some((route) => $page.url.pathname.startsWith(route))}
 	<div class="navbar">
 		<label for="hamburgerCheckbox"
-			><img draggable="false" src="/auth-assets/bat.svg" alt="burger-menu" id="hamburger-logo" />
+			><img
+				draggable="false"
+				src="/auth-assets/recordhacks-mascot.png"
+				alt="burger-menu"
+				id="hamburger-logo"
+			/>
 			<img draggable="false" src="/burger_Menu.png" alt="burger-menu" id="hamburger-logo" /></label
 		>
 		<input
@@ -51,7 +56,7 @@
 			style="display: none"
 		/>
 		<menu id="menu" bind:this={menu}>
-			<li><a href="https://hacktx.com/">Homepage</a></li>
+			<li><a href="https://recordhacks.freetailhackers.com/">Homepage</a></li>
 			<li><a href="/">Announcements</a></li>
 			{#if data.user?.roles.includes('HACKER')}
 				<li>
@@ -118,6 +123,7 @@
 		height: 100vh;
 		backdrop-filter: blur(2px) brightness(0.9);
 		z-index: 200;
+		background-color: var(--white);
 	}
 
 	.container {
@@ -130,7 +136,7 @@
 		position: fixed;
 		top: 0;
 		margin: 0;
-		background-color: var(--background-grey);
+		background-color: var(--background-pink);
 		z-index: 10;
 	}
 
