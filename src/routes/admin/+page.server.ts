@@ -81,6 +81,7 @@ export const actions = {
 		}
 
 		await trpc(locals.auth).users.splitGroups(groupNames);
+		await trpc(locals.auth).users.getAllGroups();
 		return 'Groups successfully split and updated!';
 	},
 };
