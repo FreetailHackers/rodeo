@@ -60,7 +60,7 @@ Here are some tutorials to each key component in our stack, which is roughly ord
 
 # Workflow
 
-To get acquainted with the codebase, here's how to add a silly Easter egg setting to convert the homepage into sPoNgEbOb cAsE.
+To get acquainted with the codebase, here's how to add a silly Easter egg setting to convert the homepage into sPoNgEbOb cAsE.gi
 
 1. Clone the repository and make a new branch with `git checkout -b spongebob-text`.
 2. **Update the schema**: add a boolean field named something descriptive like spongebobCase to the Settings model in [`prisma/schema.prisma`](prisma/schema.prisma) and give it a default value of false.
