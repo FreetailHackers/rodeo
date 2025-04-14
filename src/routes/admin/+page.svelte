@@ -6,6 +6,7 @@
 	export let data;
 
 	let applicationOpenStatus = data.settings.applicationOpen;
+	let customLunchGroups = true;
 </script>
 
 <svelte:head>
@@ -110,20 +111,41 @@
 	<button type="submit">Save</button>
 </form>
 
-<h2>Split Hackers Into Lunch Groups</h2>
-
-<form method="POST" action="?/splitGroups" use:enhance>
-	<input
-		type="text"
-		id="splitGroups"
-		name="splitGroups"
-		placeholder="Group A, Group B, Group C, ..."
-		pattern="^[A-Za-z0-9\s]+(,\s*[A-Za-z0-9\s]+)*$"
-		title="Names must be alphanumeric in the form: 'Group 1', 'Group 2', 'Group 3', ..."
-		required
+<div class="flex-row-space-between">
+	<h2>Split Hackers Into Lunch Groups</h2>
+	<Toggle
+		name="Custom Lunch Group names"
+		label="Set Custom Lunch Group"
+		bind:checked={customLunchGroups}
 	/>
-	<button type="submit">Split Groups</button>
-</form>
+</div>
+
+{#if customLunchGroups}
+	<form method="POST" action="?/splitCustomGroups" use:enhance>
+		<input
+			type="text"
+			id="splitGroups"
+			name="splitGroups"
+			placeholder="Group A, Group B, Group C, ..."
+			pattern="^[A-Za-z0-9\s]+(,\s*[A-Za-z0-9\s]+)*$"
+			title="Names must be alphanumeric in the form: 'Group 1', 'Group 2', 'Group 3', ..."
+			required
+		/>
+		<button type="submit">Split Groups</button>
+	</form>
+{:else}
+	<form method="POST" action="?/splitGroups" use:enhance>
+		<input
+			type="number"
+			id="maxGroups"
+			name="maxGroups"
+			placeholder="Set Max Number of Groups"
+			min="1"
+			max="10"
+		/>
+		<button type="submit">Split Groups</button>
+	</form>
+{/if}
 
 <h2>Pending Decisions</h2>
 <form method="POST" action="?/release" use:enhance>
@@ -149,6 +171,21 @@
 		justify-content: flex-end;
 		align-items: center;
 		gap: 1em;
+	}
+
+	.flex-row-space-between {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	#splitGroups {
+		margin-right: 3em;
+		min-width: 50%;
+	}
+
+	#maxGroups {
+		margin-right: 3em;
+		max-width: 40%;
 	}
 
 	button {

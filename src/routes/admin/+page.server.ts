@@ -68,7 +68,7 @@ export const actions = {
 		return 'Released all decisions!';
 	},
 
-	splitGroups: async ({ locals, request }) => {
+	splitCustomGroups: async ({ locals, request }) => {
 		const formData = await request.formData();
 		const groups = formData.get('splitGroups') as string;
 		const groupNames = groups.split(',').map((name) => name.trim());
@@ -81,7 +81,24 @@ export const actions = {
 		}
 
 		await trpc(locals.auth).users.splitGroups(groupNames);
-		await trpc(locals.auth).users.getAllGroups();
+		console.log(await trpc(locals.auth).users.getAllGroups());
+		return 'Groups successfully split and updated!';
+	},
+
+	splitGroups: async ({ locals, request }) => {
+		const formData = await request.formData();
+		const groups = parseInt(formData.get('maxGroups') as string);
+		const groupNames: string[] = [];
+
+		for (let i = 0; i < groups; i++) {
+			// Generate group name using ASCII code for letters
+			groupNames.push(`Group ${String.fromCharCode(65 + i)}`);
+		}
+
+		console.log(groupNames);
+
+		await trpc(locals.auth).users.splitGroups(groupNames);
+		console.log(await trpc(locals.auth).users.getAllGroups());
 		return 'Groups successfully split and updated!';
 	},
 };
