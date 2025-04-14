@@ -298,28 +298,6 @@ export const usersRouter = t.router({
 						settings.confirmIsHTML
 					);
 				}
-
-				const groupsWithMembers = await prisma.user.groupBy({
-					by: ['group'],
-					where: {
-						group: { not: null },
-						authUser: { status: 'CONFIRMED' },
-					},
-					_count: true,
-					orderBy: { group: 'asc' },
-				});
-
-				if (groupsWithMembers.length < 2) {
-					await prisma.user.update({
-						where: { authUserId: req.ctx.user.id },
-						data: { group: String.fromCharCode(65) },
-					});
-				} else {
-					await prisma.user.update({
-						where: { authUserId: req.ctx.user.id },
-						data: { group: groupsWithMembers[groupsWithMembers.length - 1].group },
-					});
-				}
 			} else {
 				// Hackers should be able to decline after accepting and/or the deadline
 				if (req.ctx.user.status === 'ACCEPTED' || req.ctx.user.status === 'CONFIRMED') {
@@ -330,7 +308,7 @@ export const usersRouter = t.router({
 							status: 'DECLINED',
 							user: {
 								update: {
-									group: null,
+									mealGroup: null,
 								},
 							},
 						},
@@ -994,6 +972,41 @@ export const usersRouter = t.router({
 			)?.mealGroup ?? null
 		);
 	}),
+
+	setGroup: t.procedure
+		.use(authenticate(['HACKER']))
+		.mutation(async (req): Promise<string | null> => {
+			const groupsWithMembers = await prisma.user.groupBy({
+				by: ['mealGroup'],
+				where: {
+					mealGroup: { not: null },
+					authUser: { status: 'CONFIRMED' },
+				},
+				_count: true,
+				orderBy: { mealGroup: 'asc' },
+			});
+
+			if (groupsWithMembers.length < 2) {
+				await prisma.user.update({
+					where: { authUserId: req.ctx.user.id },
+					data: { mealGroup: String.fromCharCode(65) },
+				});
+			} else {
+				await prisma.user.update({
+					where: { authUserId: req.ctx.user.id },
+					data: { mealGroup: groupsWithMembers[groupsWithMembers.length - 1].mealGroup },
+				});
+			}
+
+			return (
+				(
+					await prisma.user.findUnique({
+						where: { authUserId: req.ctx.user.id },
+						select: { mealGroup: true },
+					})
+				)?.mealGroup ?? null
+			);
+		}),
 });
 
 async function getWhereCondition(

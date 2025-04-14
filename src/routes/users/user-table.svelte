@@ -26,6 +26,7 @@
 	// Throws an error if the action is invalid, otherwise returns a string
 	function validateSelection(action: string, selected: boolean[]) {
 		const selectedUsers = users.filter((_, i) => selected[i]);
+
 		if (action === '') {
 			throw 'You must select an action.';
 		}
@@ -40,6 +41,7 @@
 			) {
 				throw 'You can only perform admissions on users that have applied or are waitlisted.';
 			}
+
 			return `${
 				selected.filter(Boolean).length
 			} selected users will be added to the pending decisions pool.
