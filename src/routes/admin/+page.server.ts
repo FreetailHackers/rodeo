@@ -92,7 +92,7 @@ export const actions = {
 
 		for (let i = 0; i < groups; i++) {
 			// Generate group name using ASCII code for letters
-			groupNames.push(`Group ${String.fromCharCode(65 + i)}`);
+			groupNames.push(String.fromCharCode(65 + i));
 		}
 
 		console.log(groupNames);

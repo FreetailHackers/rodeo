@@ -312,7 +312,7 @@ export const usersRouter = t.router({
 				if (groupsWithMembers.length < 2) {
 					await prisma.user.update({
 						where: { authUserId: req.ctx.user.id },
-						data: { group: 'Group ' + String.fromCharCode(65) },
+						data: { group: String.fromCharCode(65) },
 					});
 				} else {
 					await prisma.user.update({
