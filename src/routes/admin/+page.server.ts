@@ -76,8 +76,7 @@ export const actions = {
 		const isValid = groupNames.every((group) => group.trim().length > 0);
 
 		if (!isValid) {
-			alert('Please enter valid group names separated by commas.');
-			return;
+			return 'Please enter valid group names separated by commas.';
 		}
 
 		await trpc(locals.auth).users.splitGroups(groupNames);
