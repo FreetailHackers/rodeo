@@ -10,6 +10,7 @@ dayjs.extend(timezone);
 
 export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['ADMIN']);
+
 	return {
 		settings: await trpc(locals.auth).settings.getPublic(),
 		events: await trpc(locals.auth).events.getAll(),
@@ -42,6 +43,17 @@ export const actions = {
 			showSponsors,
 		});
 		return 'Saved displayed sections!';
+	},
+
+	setHomepageURL: async ({ locals, request }) => {
+		const formData = await request.formData();
+		const homepageURL = formData.get('homepageURL') as string;
+
+		await trpc(locals.auth).settings.update({
+			homepageURL,
+		});
+
+		return 'Updated Homepage URL!';
 	},
 
 	handleEvent: async ({ locals, request }) => {

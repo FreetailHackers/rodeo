@@ -105,6 +105,7 @@ model Settings {
   waitlistIsHTML            Boolean   @default(false)
   withdrawIsHTML            Boolean   @default(false)
   hackathonStartDate        DateTime?
+  homepageURL              String    @default("https://www.freetailhackers.com/")
 }
 
 model Question {

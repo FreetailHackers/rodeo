@@ -81,6 +81,28 @@
 	<button id="save-show-sections" type="submit">Save</button>
 </form>
 
+<form
+	method="POST"
+	action="?/setHomepageURL"
+	use:enhance={() => {
+		return async ({ update }) => {
+			update({ reset: false });
+		};
+	}}
+>
+	<label for="setHomepageURL"><h2>Set Homepage Url</h2></label>
+	<input
+		type="url"
+		name="homepageURL"
+		id="url"
+		placeholder="https://example.com"
+		pattern="https://.*"
+		size="30"
+		required
+	/>
+	<button id="save-homepage-url" type="submit">Save</button>
+</form>
+
 <!-- Events -->
 <section>
 	<div class="flex-row">
