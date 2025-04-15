@@ -64,7 +64,7 @@ export const actions = {
 		await trpc(locals.auth).users.update(
 			formToApplication(await trpc(locals.auth).questions.get(), formData)
 		);
-		const selectedRole = formData.get("group_applied");
+		const selectedRole = formData.get('group_applied');
 
 		return await trpc(locals.auth).users.submitApplication(selectedRole);
 	},

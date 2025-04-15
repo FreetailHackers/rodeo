@@ -4,7 +4,6 @@
 	import Toggle from '$lib/components/toggle.svelte';
 
 	export let data;
-
 </script>
 
 <svelte:head>
@@ -70,10 +69,7 @@
 			{#if question.type === 'SENTENCE' || question.type === 'PARAGRAPH'}
 				<div>
 					<label for={question.id + '_placeholder'}>Placeholder</label>
-					<input
-						value={question.placeholder}
-						placeholder="J. Random Hacker"
-					/>
+					<input value={question.placeholder} placeholder="J. Random Hacker" />
 				</div>
 				<div>
 					<label for={question.id + '_regex'}>Response must match regex:</label>
@@ -195,17 +191,23 @@
 			/>
 			<div>
 				<label for={question.id + '_targetGroup'}>Group Filters</label>
-				<div id={question.id + '_targetGroup'} style="display: grid; grid-template-columns: repeat(2, auto);">
+				<div
+					id={question.id + '_targetGroup'}
+					style="display: grid; grid-template-columns: repeat(2, auto);"
+				>
 					{#each ['Hacker', 'Judge', 'Mentor', 'Volunteer'] as filter}
 						<div style="display: flex; align-items: center; gap: 0.5rem; flex-direction: row;">
-							<label for={question.id +'_targetGroup_'+filter} style="white-space: nowrap; display: flex; align-items: center;">
+							<label
+								for={question.id + '_targetGroup_' + filter}
+								style="white-space: nowrap; display: flex; align-items: center;"
+							>
 								{filter}
 								<input
 									type="checkbox"
 									bind:group={question.targetGroup}
 									value={filter}
-									name={question.id +'_targetGroup_'+filter}
-									id={question.id +'_targetGroup_'+filter}
+									name={question.id + '_targetGroup_' + filter}
+									id={question.id + '_targetGroup_' + filter}
 									style="margin-bottom: -2px;"
 								/>
 							</label>

@@ -72,7 +72,6 @@ export const actions = {
 				questions[id]['targetGroup'] = [];
 			}
 
-
 			if (field.includes('targetGroup')) {
 				questions[id][field].push(formData[key]);
 			} else {
@@ -80,16 +79,12 @@ export const actions = {
 			}
 		}
 
-
-
 		// Perform type conversions
 		for (const id in questions) {
 			questions[id].required = questions[id].required === 'on';
 			questions[id].sponsorView = questions[id].sponsorView === 'on';
 			questions[id].hideAdmission = questions[id].hideAdmission === 'on';
 			questions[id].hideScan = questions[id].hideScan === 'on';
-
-
 
 			if (questions[id].type === 'NUMBER') {
 				const min = Number(questions[id].min);

@@ -46,7 +46,6 @@
 					</bold>
 					to be considered for admission.
 				</p>
-
 			{:else}
 				<p>You must complete your application to be considered for admission.</p>
 			{/if}
@@ -212,7 +211,12 @@
 				autocomplete="off"
 			>
 				<!-- Hidden input to send the role to the server -->
-				<input type="hidden" name="group_applied" id="group_applied" value={selectedRole.toUpperCase()} />
+				<input
+					type="hidden"
+					name="group_applied"
+					id="group_applied"
+					value={selectedRole.toUpperCase()}
+				/>
 
 				<!-- Display the selected role -->
 				{#if selectedRole}
@@ -220,76 +224,76 @@
 				{/if}
 				{#each data.questions as question}
 					{#if question.targetGroup?.includes(selectedRole) || !question.targetGroup}
-					<div class={'question ' + question.type.toLowerCase()}>
-						<label for={question.id}>
-							<SvelteMarkdown source={question.label} isInline />
-							{#if question.required}*{/if}
-							{#if form !== null && typeof form === 'object' && question.id in form}
-								<span class="error">{form[question.id]}</span>
+						<div class={'question ' + question.type.toLowerCase()}>
+							<label for={question.id}>
+								<SvelteMarkdown source={question.label} isInline />
+								{#if question.required}*{/if}
+								{#if form !== null && typeof form === 'object' && question.id in form}
+									<span class="error">{form[question.id]}</span>
+								{/if}
+							</label>
+							{#if question.type === 'SENTENCE'}
+								<input
+									type="text"
+									name={question.id}
+									id={question.id}
+									bind:value={application[question.id]}
+									placeholder={question.placeholder}
+								/>
+							{:else if question.type === 'PARAGRAPH'}
+								<textarea
+									name={question.id}
+									id={question.id}
+									bind:value={application[question.id]}
+									placeholder={question.placeholder}
+								/>
+							{:else if question.type === 'NUMBER'}
+								<input
+									type="number"
+									name={question.id}
+									id={question.id}
+									step={question.step}
+									bind:value={application[question.id]}
+									placeholder={question.placeholder}
+								/>
+							{:else if question.type === 'CHECKBOX'}
+								<input
+									type="checkbox"
+									name={question.id}
+									id={question.id}
+									bind:checked={application[question.id]}
+								/>
+							{:else if question.type === 'DROPDOWN'}
+								<Dropdown
+									name={question.id}
+									items={question.options}
+									custom={Boolean(question.custom)}
+									multiple={Boolean(question.multiple)}
+									bind:value={application[question.id]}
+									on:input={() => applicationForm.dispatchEvent(new Event('input'))}
+								/>
+							{:else if question.type === 'RADIO'}
+								{#each question.options as option}
+									<div class="radio-buttons">
+										<input
+											type="radio"
+											name={question.id}
+											id={question.id + option}
+											value={option}
+											bind:group={application[question.id]}
+										/>
+										<label for={question.id + option}>{option}</label>
+									</div>
+								{/each}
+							{:else if question.type === 'FILE'}
+								<FileInput
+									name={question.id}
+									bind:selectedFile={application[question.id]}
+									accept={question.accept}
+									maxSizeMB={question.maxSizeMB}
+								/>
 							{/if}
-						</label>
-						{#if question.type === 'SENTENCE'}
-							<input
-								type="text"
-								name={question.id}
-								id={question.id}
-								bind:value={application[question.id]}
-								placeholder={question.placeholder}
-							/>
-						{:else if question.type === 'PARAGRAPH'}
-							<textarea
-								name={question.id}
-								id={question.id}
-								bind:value={application[question.id]}
-								placeholder={question.placeholder}
-							/>
-						{:else if question.type === 'NUMBER'}
-							<input
-								type="number"
-								name={question.id}
-								id={question.id}
-								step={question.step}
-								bind:value={application[question.id]}
-								placeholder={question.placeholder}
-							/>
-						{:else if question.type === 'CHECKBOX'}
-							<input
-								type="checkbox"
-								name={question.id}
-								id={question.id}
-								bind:checked={application[question.id]}
-							/>
-						{:else if question.type === 'DROPDOWN'}
-							<Dropdown
-								name={question.id}
-								items={question.options}
-								custom={Boolean(question.custom)}
-								multiple={Boolean(question.multiple)}
-								bind:value={application[question.id]}
-								on:input={() => applicationForm.dispatchEvent(new Event('input'))}
-							/>
-						{:else if question.type === 'RADIO'}
-							{#each question.options as option}
-								<div class="radio-buttons">
-									<input
-										type="radio"
-										name={question.id}
-										id={question.id + option}
-										value={option}
-										bind:group={application[question.id]}
-									/>
-									<label for={question.id + option}>{option}</label>
-								</div>
-							{/each}
-						{:else if question.type === 'FILE'}
-							<FileInput
-								name={question.id}
-								bind:selectedFile={application[question.id]}
-								accept={question.accept}
-								maxSizeMB={question.maxSizeMB}
-							/>
-						{/if}
-					</div>
+						</div>
 					{/if}
 				{/each}
 

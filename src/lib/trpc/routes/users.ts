@@ -96,7 +96,7 @@ export const usersRouter = t.router({
 	 * Maybe it should?
 	 */
 	update: t.procedure
-		.use(authenticate(['HACKER','UNDECLARED']))
+		.use(authenticate(['HACKER', 'UNDECLARED']))
 		.input(z.record(z.any()))
 		.mutation(async (req): Promise<void> => {
 			if (!(await canApply()) || req.ctx.user.status !== 'CREATED') {
@@ -155,8 +155,8 @@ export const usersRouter = t.router({
 	 * containing questions with validation errors, if any.
 	 */
 	submitApplication: t.procedure
-		.use(authenticate(['HACKER','UNDECLARED']))
-		.input(z.enum(['ORGANIZER', 'HACKER','JUDGE','VOLUNTEER']))
+		.use(authenticate(['HACKER', 'UNDECLARED']))
+		.input(z.enum(['ORGANIZER', 'HACKER', 'JUDGE', 'VOLUNTEER']))
 		.mutation(async (req): Promise<Record<string, string>> => {
 			// Ensure applications are open and the user has not received a decision yet
 			if (!(await canApply()) || req.ctx.user.status !== 'CREATED') {
@@ -231,9 +231,7 @@ export const usersRouter = t.router({
 			if (Object.keys(errors).length === 0) {
 				await prisma.authUser.update({
 					where: { id: req.ctx.user.id },
-					data: { status: 'APPLIED',
-						roles: [req.input]
-					},
+					data: { status: 'APPLIED', roles: [req.input] },
 				});
 				// notify user through their email on successful application submission
 				const subject = 'Thanks for submitting!';
@@ -273,7 +271,7 @@ export const usersRouter = t.router({
 		}),
 
 	getRSVPDeadline: t.procedure
-		.use(authenticate(['HACKER','UNDECLARED']))
+		.use(authenticate(['HACKER', 'UNDECLARED']))
 		.query(async (req): Promise<Date | null> => {
 			return await getRSVPDeadline(req.ctx.user);
 		}),
@@ -282,7 +280,7 @@ export const usersRouter = t.router({
 	 * Confirms or declines the logged in user's acceptance.
 	 */
 	rsvp: t.procedure
-		.use(authenticate(['HACKER','UNDECLARED']))
+		.use(authenticate(['HACKER', 'UNDECLARED']))
 		.input(z.enum(['CONFIRMED', 'DECLINED']))
 		.mutation(async (req): Promise<void> => {
 			const deadline = await getRSVPDeadline(req.ctx.user);
@@ -710,7 +708,7 @@ export const usersRouter = t.router({
 		}),
 
 	doesEmailExist: t.procedure
-		.use(authenticate(['ADMIN', 'HACKER','UNDECLARED']))
+		.use(authenticate(['ADMIN', 'HACKER', 'UNDECLARED']))
 		.input(z.string())
 		.query(async (req): Promise<boolean> => {
 			return (
