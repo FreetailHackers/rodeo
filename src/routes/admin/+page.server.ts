@@ -19,6 +19,7 @@ export const load = async ({ locals }) => {
 const parseDateWithTimezone = (dateString: string | null, timezone: string): Date | null => {
 	try {
 		return dateString ? dayjs.tz(dateString, timezone).toDate() : null;
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	} catch (e) {
 		return null;
 	}

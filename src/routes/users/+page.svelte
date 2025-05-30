@@ -27,8 +27,8 @@
 			throw new Error('Subject or email body is empty');
 		}
 
-		let rejectedEmails: string[] = [];
-		let userEmails = await trpc().users.emails.query({ key, search, searchFilter });
+		const rejectedEmails: string[] = [];
+		const userEmails = await trpc().users.emails.query({ key, search, searchFilter });
 		let completed = 0;
 
 		const toast = toasts.notify(`Sent 0/${userEmails.length} emails...`);
@@ -72,7 +72,7 @@
 					toasts.notify(message);
 					throw new Error(message);
 				}
-				let blob = await r.blob();
+				const blob = await r.blob();
 				completed++;
 				toasts.update(toast, `Downloading files (${completed}/${allFiles.length} completed)...`);
 				return blob;

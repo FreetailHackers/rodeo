@@ -12,6 +12,7 @@
 </script>
 
 <div class="accordion">
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<div class="header" on:click={handleClick} on:keydown={handleKeyDown}>
 		<span class="sign">{open ? '-' : '+'}</span>
 		<span class="text">
@@ -20,7 +21,7 @@
 	</div>
 
 	{#if open}
-		<div class="details" transition:slide>
+		<div class="details" transition:slide|global>
 			<slot name="details" />
 		</div>
 	{/if}

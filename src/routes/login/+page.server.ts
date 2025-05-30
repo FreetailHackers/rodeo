@@ -22,6 +22,7 @@ export const actions = {
 		const password = formData.get('password') as string;
 		try {
 			locals.auth.setSession(await trpc(locals.auth).users.login({ email, password }));
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		} catch (error) {
 			return 'Invalid email or password.';
 		}

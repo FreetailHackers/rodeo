@@ -65,6 +65,7 @@
 									<form method="POST" action="?/inviteUser">
 										<h3 class="modal-header">
 											Invite a new member
+											<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 											<img
 												class="close-button"
 												src="/close-button.png"
@@ -92,6 +93,7 @@
 								</div>
 							</Content>
 							<Trigger>
+								<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 								<img
 									src="/add-button.png"
 									alt="add team member"

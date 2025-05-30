@@ -101,7 +101,7 @@
 {#key $page.url.pathname}
 	<div
 		class:container={!noLayoutRoutes.some((route) => $page.url.pathname.startsWith(route))}
-		in:fade={{ easing: cubicOut, duration: 300 }}
+		in:fade|global={{ easing: cubicOut, duration: 300 }}
 	>
 		<slot />
 	</div>

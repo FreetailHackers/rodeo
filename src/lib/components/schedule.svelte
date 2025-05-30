@@ -16,7 +16,7 @@
 
 	// Assumes there are no events occurring on the same day of the week but in different weeks.
 	const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-	let groupByDateArray: { day: string; events: Event[] }[] = [];
+	const groupByDateArray: { day: string; events: Event[] }[] = [];
 	for (let event of schedule) {
 		const dayOfWeek =
 			daysOfWeek[
@@ -56,7 +56,7 @@
 	}
 
 	let selectedFilters: string[] = [];
-	let filters = [...new Set(schedule.map((event: Event) => event.type))];
+	const filters = [...new Set(schedule.map((event: Event) => event.type))];
 	function toggleFilter(filter: string) {
 		if (selectedFilters.includes(filter)) {
 			selectedFilters = selectedFilters.filter((f) => f !== filter);
