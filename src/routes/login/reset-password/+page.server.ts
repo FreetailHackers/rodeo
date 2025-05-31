@@ -1,11 +1,13 @@
 import { trpc } from '$lib/trpc/router';
-import { redirect } from '@sveltejs/kit';
 
 export const actions = {
 	email: async ({ locals, request, url }) => {
 		const email = (await request.formData()).get('email') as string;
 		await trpc(locals.auth).users.sendPasswordResetEmail({ email });
-		throw redirect(302, url.pathname + '?submitted');
+		return new Response(null, {
+			status: 302,
+			headers: { location: url.pathname + '?submitted' }
+		});
 	},
 
 	reset: async ({ request, url, locals }) => {
@@ -17,8 +19,14 @@ export const actions = {
 			});
 			locals.auth.setSession(session);
 		} catch (e) {
-			throw redirect(302, url.pathname + '?invalid');
+			return new Response(null, {
+				status: 302,
+				headers: { location: url.pathname + '?invalid' }
+			});
 		}
-		throw redirect(302, '/');
+		return new Response(null, {
+			status: 302,
+			headers: { location: '/' }
+		});
 	},
 };

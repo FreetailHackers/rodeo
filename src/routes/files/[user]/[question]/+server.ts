@@ -13,7 +13,7 @@ export const GET = async ({ params, locals }) => {
 		!user.roles.includes('ADMIN') &&
 		!questions.filter((question) => question.id === params.question)[0].sponsorView
 	) {
-		throw redirect(303, '/?forbidden');
+		redirect(303, '/?forbidden');
 	}
 	const url = await getSignedUrl(
 		s3Client,
@@ -22,5 +22,5 @@ export const GET = async ({ params, locals }) => {
 			Key: `files/${params.user}/${params.question}`,
 		})
 	);
-	throw redirect(302, url);
+	redirect(302, url);
 };

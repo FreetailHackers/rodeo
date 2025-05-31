@@ -1,5 +1,4 @@
 import { auth, googleAuth } from '$lib/lucia';
-import { redirect } from '@sveltejs/kit';
 import { _upsert } from '../+server';
 
 export const GET = async ({ cookies, url, locals }) => {
@@ -8,7 +7,10 @@ export const GET = async ({ cookies, url, locals }) => {
 	}
 	const code = url.searchParams.get('code');
 	if (code === null || url.searchParams.get('state') !== cookies.get('state')) {
-		throw redirect(302, '/');
+		return new Response(null, {
+			status: 302,
+			headers: { location: '/' }
+		});
 	}
 
 	try {
@@ -23,7 +25,10 @@ export const GET = async ({ cookies, url, locals }) => {
 			!providerUserAuth.googleUser.email_verified ||
 			providerUserAuth.googleUser.email === undefined
 		) {
-			throw redirect(302, '/');
+			return new Response(null, {
+				status: 302,
+				headers: { location: '/' }
+			});
 		}
 
 		const id = await _upsert(providerUserAuth, providerUserAuth.googleUser.email);
@@ -32,5 +37,8 @@ export const GET = async ({ cookies, url, locals }) => {
 	} catch (e) {
 		console.error(e);
 	}
-	throw redirect(302, '/');
+	return new Response(null, {
+		status: 302,
+		headers: { location: '/' }
+	});
 };

@@ -4,7 +4,7 @@ import { redirect } from '@sveltejs/kit';
 
 export const load = async ({ locals }) => {
 	if (await locals.auth.validate()) {
-		throw redirect(303, '/');
+		redirect(303, '/');
 	}
 	return {
 		providers: {

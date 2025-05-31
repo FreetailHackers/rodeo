@@ -6,7 +6,7 @@ import { s3Delete, s3Upload } from '$lib/s3Handler';
 export const load = async ({ locals, params }) => {
 	await authenticate(locals.auth, ['ADMIN']);
 	if (Number.isNaN(Number(params.specificSponsor))) {
-		throw error(404, 'Sponsor not found');
+		error(404, 'Sponsor not found');
 	}
 	const sponsor = await trpc(locals.auth).sponsors.getSponsorWithImageValue(
 		Number(params.specificSponsor)
@@ -14,7 +14,7 @@ export const load = async ({ locals, params }) => {
 	if (sponsor !== null) {
 		return sponsor;
 	}
-	throw error(404, 'Sponsor not found');
+	error(404, 'Sponsor not found');
 };
 
 export const actions = {
@@ -65,6 +65,6 @@ export const actions = {
 		s3Delete(existingSponsor?.imageKey);
 
 		await trpc(locals.auth).sponsors.delete(id);
-		throw redirect(303, '/');
+		redirect(303, '/');
 	},
 };

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import SvelteMarkdown from 'svelte-markdown';
 	import { toasts } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import Announcements from '$lib/components/announcements.svelte';
@@ -28,7 +27,11 @@
 	<div>
 		<!-- svelte-ignore a11y-img-redundant-alt -->
 		<div class="homepage-text">
-			<SvelteMarkdown source={data.settings.homepageText} />
+			{#await import('svelte-markdown')}
+				<p>Loading...</p>
+			{:then module}
+				<svelte:component this={module.default} source={data.settings.homepageText} />
+			{/await}
 		</div>
 	</div>
 

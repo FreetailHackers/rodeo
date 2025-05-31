@@ -15,7 +15,7 @@ export const GET = async ({ cookies, url, locals }) => {
 	}
 	const code = url.searchParams.get('code');
 	if (code === null || url.searchParams.get('state') !== cookies.get('state')) {
-		throw redirect(302, '/');
+		redirect(302, '/');
 	}
 
 	try {
@@ -31,7 +31,7 @@ export const GET = async ({ cookies, url, locals }) => {
 		// GitHub docs says OAuth is only enabled when the user has
 		// verified their email, but we'll check anyway
 		if (email === undefined || !email.verified) {
-			throw redirect(302, '/');
+			redirect(302, '/');
 		}
 
 		const id = await _upsert(providerUserAuth, email.email);
@@ -40,5 +40,5 @@ export const GET = async ({ cookies, url, locals }) => {
 	} catch (e) {
 		console.error(e);
 	}
-	throw redirect(302, '/');
+	redirect(302, '/');
 };

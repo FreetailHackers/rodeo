@@ -14,18 +14,18 @@ import type { AuthRequest, UserSchema } from 'lucia';
 export async function authenticate(auth: AuthRequest, roles?: Role[]): Promise<UserSchema> {
 	const session = await auth.validate();
 	if (session === null) {
-		throw redirect(303, '/login/?unauthenticated');
+		redirect(303, '/login/?unauthenticated');
 	}
 	const user = session.user;
 	if (roles !== undefined && !hasAnyRole(user.roles, roles)) {
-		throw redirect(303, '/?forbidden');
+		redirect(303, '/?forbidden');
 	}
 	// For all protected routes, we should make sure the user has
 	// verified their email. Note that this is not currently enforced
 	// in the backend; this is just a convenience to prevent users
 	// from using an account with a typo'd address.
 	if (!user.verifiedEmail) {
-		throw redirect(303, '/unverified');
+		redirect(303, '/unverified');
 	}
 	return user;
 }

@@ -2,7 +2,6 @@
 	import QRCode from 'qrcode';
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
-	// @ts-expect-error: The 'sv-popup' module does not have type definitions, so we are temporarily using 'any' type.
 	import { Modal, Content, Trigger } from 'sv-popup';
 	export let data;
 

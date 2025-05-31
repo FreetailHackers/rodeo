@@ -38,7 +38,7 @@ export const actions = {
 		}
 
 		if (response === 'SUCCESS') {
-			throw redirect(302, '/account/');
+			redirect(302, '/account/');
 		}
 
 		return response;

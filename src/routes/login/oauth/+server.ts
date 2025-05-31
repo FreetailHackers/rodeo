@@ -23,7 +23,7 @@
  */
 import { githubAuth, googleAuth } from '$lib/lucia';
 import { prisma } from '$lib/trpc/db';
-import type { ProviderUserAuth } from '@lucia-auth/oauth/dist/core/provider.js';
+import type { ProviderUserAuth } from '@lucia-auth/oauth';
 
 export const GET = async ({ cookies, url }) => {
 	const provider = getProvider(url.searchParams.get('provider'));

@@ -1,7 +1,6 @@
 import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import type { Question } from '@prisma/client';
-import { redirect } from '@sveltejs/kit';
 
 export const load = async ({ locals }) => {
 	await authenticate(locals.auth, ['HACKER']);
@@ -57,7 +56,10 @@ export const actions = {
 
 	finish: async ({ locals, request }) => {
 		if (!(await trpc(locals.auth).admissions.canApply())) {
-			throw redirect(301, '/apply');
+			return new Response(null, {
+				status: 301,
+				headers: { location: '/apply' }
+			});
 		}
 		await trpc(locals.auth).users.update(
 			formToApplication(await trpc(locals.auth).questions.get(), await request.formData())
@@ -67,7 +69,10 @@ export const actions = {
 
 	withdraw: async ({ locals }) => {
 		if (!(await trpc(locals.auth).admissions.canApply())) {
-			throw redirect(301, '/apply');
+			return new Response(null, {
+				status: 301,
+				headers: { location: '/apply' }
+			});
 		}
 		await trpc(locals.auth).users.withdrawApplication();
 	},
