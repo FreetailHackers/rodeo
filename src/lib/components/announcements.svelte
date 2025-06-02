@@ -5,8 +5,12 @@
 	import { confirmationDialog } from '$lib/actions';
 	import TextEditor from './text-editor.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
-	export let admin: boolean;
-	export let announcements: Announcement[];
+	interface Props {
+		admin: boolean;
+		announcements: Announcement[];
+	}
+
+	let { admin, announcements }: Props = $props();
 </script>
 
 <h1>Announcements</h1>

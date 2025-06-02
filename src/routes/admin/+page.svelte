@@ -3,9 +3,9 @@
 	import { confirmationDialog } from '$lib/actions';
 	import Toggle from '$lib/components/toggle.svelte';
 	import Graph from './line-graph.svelte';
-	export let data;
+	let { data } = $props();
 
-	let applicationOpenStatus = data.settings.applicationOpen;
+	let applicationOpenStatus = $state(data.settings.applicationOpen);
 </script>
 
 <svelte:head>
@@ -105,7 +105,7 @@
 		name="scanActions"
 		id="scanActions"
 		placeholder="Write one option per line, like this:&#13;OPTION 1&#13;OPTION 2&#13;OPTION 3"
-	/>
+	></textarea>
 
 	<button type="submit">Save</button>
 </form>

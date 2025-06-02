@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import { enhance } from '$app/forms';
 	import { Modal, Content, Trigger } from 'sv-popup';
 
@@ -8,9 +10,13 @@
 		answer: string;
 	};
 
-	export let faq: FAQ | null = null;
+	interface Props {
+		faq?: FAQ | null;
+	}
 
-	let closeModal = false;
+	let { faq = null }: Props = $props();
+
+	let closeModal = $state(false);
 
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
@@ -30,7 +36,7 @@
 	<Content>
 		<h2>{faq ? 'Edit FAQ' : 'Create FAQ'}</h2>
 
-		<form method="POST" action="?/handleFAQ" on:submit|preventDefault={handleSubmit} use:enhance>
+		<form method="POST" action="?/handleFAQ" onsubmit={preventDefault(handleSubmit)} use:enhance>
 			<input type="hidden" name="id" value={faq?.id || ''} />
 			<label for="question">Question</label>
 			<input

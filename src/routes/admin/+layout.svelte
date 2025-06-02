@@ -1,27 +1,31 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
 </script>
 
 <div class="main-content">
 	<h1>Admin Panel</h1>
 
 	<ul>
-		<li><a href="/admin" class:active={$page.url.pathname === '/admin'}>Admissions</a></li>
+		<li><a href="/admin" class:active={page.url.pathname === '/admin'}>Admissions</a></li>
 		<li>
-			<a href="/admin/email" class:active={$page.url.pathname === '/admin/email'}>Email Templates</a
-			>
+			<a href="/admin/email" class:active={page.url.pathname === '/admin/email'}>Email Templates</a>
 		</li>
 		<li>
-			<a href="/admin/questions" class:active={$page.url.pathname === '/admin/questions'}
+			<a href="/admin/questions" class:active={page.url.pathname === '/admin/questions'}
 				>Registration Questions</a
 			>
 		</li>
 		<li>
-			<a href="/admin/homepage" class:active={$page.url.pathname === '/admin/homepage'}>Homepage</a>
+			<a href="/admin/homepage" class:active={page.url.pathname === '/admin/homepage'}>Homepage</a>
 		</li>
 	</ul>
 
-	<slot />
+	{@render children?.()}
 </div>
 
 <style>

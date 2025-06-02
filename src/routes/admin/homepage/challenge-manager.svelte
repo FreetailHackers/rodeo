@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { preventDefault } from 'svelte/legacy';
+
 	import { enhance } from '$app/forms';
 	import { Modal, Content, Trigger } from 'sv-popup';
 
@@ -9,9 +11,13 @@
 		description: string;
 	};
 
-	export let challenge: Challenge | null = null;
+	interface Props {
+		challenge?: Challenge | null;
+	}
 
-	let closeModal = false;
+	let { challenge = null }: Props = $props();
+
+	let closeModal = $state(false);
 
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
@@ -34,7 +40,7 @@
 		<form
 			method="POST"
 			action="?/handleChallenge"
-			on:submit|preventDefault={handleSubmit}
+			onsubmit={preventDefault(handleSubmit)}
 			use:enhance
 		>
 			<input type="hidden" name="id" value={challenge?.id || ''} />

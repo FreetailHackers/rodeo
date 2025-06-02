@@ -29,7 +29,7 @@ export const GET = async ({ locals, url }) => {
 // Helper function to replace question IDs with their labels
 function prepare(
 	user: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>,
-	questions: Question[]
+	questions: Question[],
 ) {
 	function prepareApplication(application: Record<string, unknown>) {
 		const prepared: Record<string, unknown> = {};

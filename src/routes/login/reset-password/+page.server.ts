@@ -6,7 +6,7 @@ export const actions = {
 		await trpc(locals.auth).users.sendPasswordResetEmail({ email });
 		return new Response(null, {
 			status: 302,
-			headers: { location: url.pathname + '?submitted' }
+			headers: { location: url.pathname + '?submitted' },
 		});
 	},
 
@@ -21,12 +21,12 @@ export const actions = {
 		} catch (e) {
 			return new Response(null, {
 				status: 302,
-				headers: { location: url.pathname + '?invalid' }
+				headers: { location: url.pathname + '?invalid' },
 			});
 		}
 		return new Response(null, {
 			status: 302,
-			headers: { location: '/' }
+			headers: { location: '/' },
 		});
 	},
 };

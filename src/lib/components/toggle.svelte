@@ -1,8 +1,12 @@
 <script lang="ts">
-	export let name: string;
-	export let label: string;
-	export let checked: boolean;
-	export let isLeft: boolean = false;
+	interface Props {
+		name: string;
+		label: string;
+		checked: boolean;
+		isLeft?: boolean;
+	}
+
+	let { name, label, checked = $bindable(), isLeft = false }: Props = $props();
 </script>
 
 <div>

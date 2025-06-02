@@ -4,7 +4,7 @@
 	import { onMount } from 'svelte';
 	import SocialLogin from '$lib/components/social-login.svelte';
 
-	export let data;
+	let { data } = $props();
 
 	// Some helpful error messages triggered in /src/lib/authenticate.ts
 	onMount(() => {

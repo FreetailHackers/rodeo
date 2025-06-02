@@ -3,11 +3,11 @@
 	import { confirmationDialog } from '$lib/actions.js';
 	import Toggle from '$lib/components/toggle.svelte';
 	import TextEditor from '$lib/components/text-editor.svelte';
-	export let data;
 	import { toasts } from '$lib/stores';
 	import EventManager from './event-manager.svelte';
 	import FAQManager from './faq-manager.svelte';
 	import ChallengeManager from './challenge-manager.svelte';
+	let { data = $bindable() } = $props();
 
 	function handleFileChange(event: Event) {
 		const input = event.target as HTMLInputElement;
@@ -209,7 +209,7 @@
 		name="sponsorLogo"
 		accept=".jpg, .jpeg, .png, .webp"
 		required
-		on:change={handleFileChange}
+		onchange={handleFileChange}
 	/>
 
 	<label for="sponsorLink">Image Link</label>

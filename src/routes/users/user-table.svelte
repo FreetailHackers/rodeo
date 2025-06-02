@@ -1,26 +1,33 @@
 <script lang="ts">
+	import { run } from 'svelte/legacy';
+
 	import { enhance } from '$app/forms';
 	import UserCard from '$lib/components/user-card.svelte';
 	import type { Prisma, Question } from '@prisma/client';
 	import type { UserSchema } from 'lucia';
 
-	export let users: (Prisma.UserGetPayload<{
-		include: { authUser: true; decision: true };
-	}> & {
-		teammates: { email: string; status: string }[];
-	})[];
-
-	export let self: UserSchema;
-	export let questions: Question[];
-
-	let action = 'admissions';
-	$: selected = users.map(() => false);
-	let selectAll: HTMLInputElement;
-	$: if (selectAll) {
-		selectAll.indeterminate =
-			selected.filter(Boolean).length > 0 && selected.filter(Boolean).length < users.length;
-		selectAll.checked = selected.filter(Boolean).length === users.length;
+	interface Props {
+		users: (Prisma.UserGetPayload<{
+			include: { authUser: true; decision: true };
+		}> & {
+			teammates: { email: string; status: string }[];
+		})[];
+		self: UserSchema;
+		questions: Question[];
 	}
+
+	let { users, self, questions }: Props = $props();
+
+	let action = $state('admissions');
+	let selected = $derived(users.map(() => false));
+	let selectAll: HTMLInputElement | undefined = $state();
+	run(() => {
+		if (selectAll) {
+			selectAll.indeterminate =
+				selected.filter(Boolean).length > 0 && selected.filter(Boolean).length < users.length;
+			selectAll.checked = selected.filter(Boolean).length === users.length;
+		}
+	});
 
 	// Validate that the selected action can be applied to the selected users
 	// Throws an error if the action is invalid, otherwise returns a string
@@ -35,7 +42,7 @@
 		if (action === 'admissions') {
 			if (
 				selectedUsers.filter(
-					(user) => user.authUser.status !== 'APPLIED' && user.authUser.status !== 'WAITLISTED'
+					(user) => user.authUser.status !== 'APPLIED' && user.authUser.status !== 'WAITLISTED',
 				).length > 0
 			) {
 				throw 'You can only perform admissions on users that have applied or are waitlisted.';
@@ -79,7 +86,7 @@
 <form
 	method="POST"
 	use:enhance={() => {
-		selectAll.indeterminate = false;
+		if (selectAll) selectAll.indeterminate = false;
 		return async ({ update }) => {
 			update({ reset: false });
 		};
@@ -95,7 +102,7 @@
 						type="checkbox"
 						id="selectAll"
 						bind:this={selectAll}
-						on:click={() => (selected = selected.map(() => selectAll.checked))}
+						onclick={() => (selected = selected.map(() => selectAll?.checked ?? false))}
 					/>
 					Select an action:
 				</div>
@@ -109,7 +116,7 @@
 							value="admissions"
 						/>
 						<label for="user-admissions">Admissions:&nbsp;</label>
-						<span class="grow" />
+						<span class="grow"></span>
 						<select name="user-admissions">
 							<option value="ACCEPTED">Accept</option>
 							<option value="REJECTED">Reject</option>
@@ -119,7 +126,7 @@
 					<div class="flex-align-center">
 						<input type="radio" name="action" id="user-status" bind:group={action} value="status" />
 						<label for="user-status">Set status:&nbsp;</label>
-						<span class="grow" />
+						<span class="grow"></span>
 						<select name="user-status">
 							<option value="CREATED">Created</option>
 							<option value="APPLIED">Applied</option>
@@ -133,7 +140,7 @@
 					<div class="flex-align-center">
 						<input type="radio" name="action" id="add-role" bind:group={action} value="add-role" />
 						<label for="add-role">Add role:&nbsp;</label>
-						<span class="grow" />
+						<span class="grow"></span>
 						<select name="role-to-add">
 							<option value="HACKER">Hacker</option>
 							<option value="ADMIN">Admin</option>
@@ -152,7 +159,7 @@
 							value="remove-role"
 						/>
 						<label for="remove-role">Remove role:&nbsp;</label>
-						<span class="grow" />
+						<span class="grow"></span>
 						<select name="role-to-remove">
 							<option value="HACKER">Hacker</option>
 							<option value="ADMIN">Admin</option>
@@ -206,15 +213,15 @@
 								type="checkbox"
 								name={'id ' + user.authUserId}
 								checked={selected[i]}
-								on:click={() => (selected[i] = !selected[i])}
+								onclick={() => (selected[i] = !selected[i])}
 							/>
 						{/if}
 						<a href="mailto:{user.authUser.email}">{user.authUser.email}</a>
-						<span class="grow" />
+						<span class="grow"></span>
 						<span
 							class="{user.authUser.status.toLowerCase()} dot"
 							title={user.decision?.status ?? user.authUser.status}
-						/>
+						></span>
 					</summary>
 					<div class="user">
 						<UserCard {user} {questions} teammates={user.teammates} />

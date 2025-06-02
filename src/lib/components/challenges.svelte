@@ -1,7 +1,11 @@
 <script lang="ts">
 	import type { Challenge } from '@prisma/client';
 
-	export let challenges: Challenge[];
+	interface Props {
+		challenges: Challenge[];
+	}
+
+	let { challenges }: Props = $props();
 </script>
 
 <div class="home-content">

@@ -7,7 +7,7 @@
 	import Challenges from '$lib/components/challenges.svelte';
 	import Sponsors from '$lib/components/sponsors.svelte';
 
-	export let data;
+	let { data } = $props();
 
 	// Some helpful error messages triggered in /src/lib/authenticate.ts
 	onMount(() => {
@@ -25,12 +25,12 @@
 
 <div class="main-content">
 	<div>
-		<!-- svelte-ignore a11y-img-redundant-alt -->
+		<!-- svelte-ignore a11y_img_redundant_alt -->
 		<div class="homepage-text">
 			{#await import('svelte-markdown')}
 				<p>Loading...</p>
 			{:then module}
-				<svelte:component this={module.default} source={data.settings.homepageText} />
+				<module.default source={data.settings.homepageText} />
 			{/await}
 		</div>
 	</div>

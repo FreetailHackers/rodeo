@@ -18,7 +18,7 @@ export const load = async ({ locals, url }) => {
 			teammates: user.roles.includes('ADMIN')
 				? await trpc(locals.auth).team.getTeammates(hacker.authUserId)
 				: [],
-		}))
+		})),
 	);
 
 	return {

@@ -1,7 +1,11 @@
 <script lang="ts">
 	import type { AuthUser, Sponsor } from '@prisma/client';
-	export let user: AuthUser;
-	export let sponsors: (Sponsor & { imageUrl: string | null })[];
+	interface Props {
+		user: AuthUser;
+		sponsors: (Sponsor & { imageUrl: string | null })[];
+	}
+
+	let { user, sponsors }: Props = $props();
 </script>
 
 <div class="content-container">

@@ -9,7 +9,7 @@ export const load = async ({ locals, params }) => {
 		error(404, 'Sponsor not found');
 	}
 	const sponsor = await trpc(locals.auth).sponsors.getSponsorWithImageValue(
-		Number(params.specificSponsor)
+		Number(params.specificSponsor),
 	);
 	if (sponsor !== null) {
 		return sponsor;
@@ -28,7 +28,7 @@ export const actions = {
 			let key: string = '';
 
 			const existingSponsor = await trpc(locals.auth).sponsors.get(
-				Number(formData.get('id') as string)
+				Number(formData.get('id') as string),
 			);
 
 			// If no file was specified, use pre existing logo

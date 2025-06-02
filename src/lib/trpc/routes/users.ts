@@ -39,7 +39,7 @@ export const usersRouter = t.router({
 		.input(z.string().optional())
 		.query(
 			async (
-				req
+				req,
 			): Promise<Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>> => {
 				const session = await req.ctx.validate();
 				if (session === null) {
@@ -60,7 +60,7 @@ export const usersRouter = t.router({
 						include: { authUser: true, decision: true },
 					});
 				}
-			}
+			},
 		),
 
 	getAppliedDate: t.procedure
@@ -240,7 +240,7 @@ export const usersRouter = t.router({
 					req.ctx.user.email,
 					subject,
 					settings.submitTemplate,
-					settings.submitIsHTML
+					settings.submitIsHTML,
 				);
 			}
 			return errors;
@@ -266,7 +266,7 @@ export const usersRouter = t.router({
 				req.ctx.user.email,
 				subject,
 				settings.withdrawalWarningTemplate,
-				settings.withdrawIsHTML
+				settings.withdrawIsHTML,
 			);
 		}),
 
@@ -296,7 +296,7 @@ export const usersRouter = t.router({
 						req.ctx.user.email,
 						'Thanks for your RSVP!',
 						settings.confirmTemplate,
-						settings.confirmIsHTML
+						settings.confirmIsHTML,
 					);
 				}
 			} else {
@@ -311,7 +311,7 @@ export const usersRouter = t.router({
 						req.ctx.user.email,
 						'Thanks for your RSVP!',
 						settings.declineTemplate,
-						settings.declineIsHTML
+						settings.declineIsHTML,
 					);
 				}
 			}
@@ -524,11 +524,11 @@ export const usersRouter = t.router({
 				searchFilter: z.string(),
 				limit: z.number().transform((limit) => (limit === 0 ? Number.MAX_SAFE_INTEGER : limit)),
 				page: z.number().transform((page) => page - 1),
-			})
+			}),
 		)
 		.query(
 			async (
-				req
+				req,
 			): Promise<{
 				pages: number;
 				start: number;
@@ -540,7 +540,7 @@ export const usersRouter = t.router({
 					req.input.key,
 					req.input.searchFilter,
 					req.input.search,
-					req.ctx.user.roles
+					req.ctx.user.roles,
 				);
 				const count = await prisma.user.count({ where });
 				const users = await prisma.user.findMany({
@@ -569,7 +569,7 @@ export const usersRouter = t.router({
 					count,
 					users: users,
 				};
-			}
+			},
 		),
 
 	/**
@@ -586,7 +586,7 @@ export const usersRouter = t.router({
 				key: z.string(),
 				search: z.string(),
 				searchFilter: z.string(),
-			})
+			}),
 		)
 		.query(async (req): Promise<{ path: string; url: string }[]> => {
 			let questions = (await getQuestions()).filter((question) => question.type === 'FILE');
@@ -597,7 +597,7 @@ export const usersRouter = t.router({
 				req.input.key,
 				req.input.searchFilter,
 				req.input.search,
-				req.ctx.user.roles
+				req.ctx.user.roles,
 			);
 			const users = await prisma.user.findMany({ include: { authUser: true }, where });
 			// Remove questions that should not be visible to sponsors
@@ -628,7 +628,7 @@ export const usersRouter = t.router({
 				key: z.string(),
 				search: z.string(),
 				searchFilter: z.string(),
-			})
+			}),
 		)
 		.query(async (req) => {
 			let questions = await getQuestions();
@@ -636,7 +636,7 @@ export const usersRouter = t.router({
 				req.input.key,
 				req.input.searchFilter,
 				req.input.search,
-				req.ctx.user.roles
+				req.ctx.user.roles,
 			);
 			const users = await prisma.user.findMany({ where });
 
@@ -727,7 +727,7 @@ export const usersRouter = t.router({
 			z.object({
 				status: z.nativeEnum(Status),
 				ids: z.array(z.string()),
-			})
+			}),
 		)
 		.mutation(async (req): Promise<void> => {
 			const updateStatuses = prisma.authUser.updateMany({
@@ -749,7 +749,7 @@ export const usersRouter = t.router({
 			z.object({
 				role: z.nativeEnum(Role),
 				ids: z.array(z.string()),
-			})
+			}),
 		)
 		.mutation(async (req): Promise<void> => {
 			if (req.input.ids.includes(req.ctx.user.id)) {
@@ -781,7 +781,7 @@ export const usersRouter = t.router({
 			z.object({
 				role: z.nativeEnum(Role),
 				ids: z.array(z.string()),
-			})
+			}),
 		)
 		.mutation(async (req): Promise<void> => {
 			if (req.input.ids.includes(req.ctx.user.id)) {
@@ -818,14 +818,14 @@ export const usersRouter = t.router({
 				subject: z.string(),
 				emailBody: z.string(),
 				isHTML: z.boolean(),
-			})
+			}),
 		)
 		.mutation(async (req): Promise<number> => {
 			return await sendEmail(
 				req.input.emails,
 				req.input.subject,
 				req.input.emailBody,
-				req.input.isHTML
+				req.input.isHTML,
 			);
 		}),
 
@@ -836,14 +836,14 @@ export const usersRouter = t.router({
 				key: z.string(),
 				search: z.string(),
 				searchFilter: z.string(),
-			})
+			}),
 		)
 		.query(async (req): Promise<string[]> => {
 			const where = await getWhereCondition(
 				req.input.key,
 				req.input.searchFilter,
 				req.input.search,
-				req.ctx.user.roles
+				req.ctx.user.roles,
 			);
 			return await prisma.user
 				.findMany({
@@ -859,15 +859,13 @@ export const usersRouter = t.router({
 		.mutation(async ({ input }): Promise<User[][]> => {
 			// Update all teams before group assignments, as all statuses have been finalized.
 			await Promise.all(
-				(
-					await prisma.team.findMany()
-				).map(async (team) => {
+				(await prisma.team.findMany()).map(async (team) => {
 					const members = await prisma.user.findMany({
 						where: { teamId: team.id },
 						include: { authUser: true },
 					});
 					await removeInvalidTeamMembers({ ...team, members });
-				})
+				}),
 			);
 
 			const confirmedUsers = await prisma.user.findMany({
@@ -906,8 +904,8 @@ export const usersRouter = t.router({
 					prisma.user.updateMany({
 						where: { authUserId: { in: group.map((user) => user.authUserId) } },
 						data: { mealGroup: input[index] },
-					})
-				)
+					}),
+				),
 			);
 
 			return groups;
@@ -947,7 +945,7 @@ export const usersRouter = t.router({
 					memberCount: lunchGroup._count,
 					members: members,
 				};
-			})
+			}),
 		);
 
 		return groupDetails;
@@ -970,7 +968,7 @@ async function getWhereCondition(
 	key: string,
 	searchFilter: string,
 	search: string,
-	roles: Role[]
+	roles: Role[],
 ): Promise<Prisma.UserWhereInput> {
 	if (!roles.includes('ADMIN')) {
 		return {
@@ -988,7 +986,7 @@ async function getWhereConditionHelper(
 	key: string,
 	searchFilter: string,
 	search: string,
-	roles: Role[]
+	roles: Role[],
 ): Promise<Prisma.UserWhereInput> {
 	const questions = await getQuestions();
 	const scanActions = (await getSettings()).scanActions;

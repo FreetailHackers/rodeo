@@ -93,7 +93,7 @@ export const settingsRouter = t.router({
 				withdrawIsHTML: settings.withdrawIsHTML,
 				byStatusIsHTML: settings.byStatusIsHTML,
 			};
-		}
+		},
 	),
 
 	/**

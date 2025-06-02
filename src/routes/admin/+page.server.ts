@@ -32,11 +32,11 @@ export const actions = {
 
 		const applicationDeadline = parseDateWithTimezone(
 			formData.get('applicationDeadline') as string,
-			timezone
+			timezone,
 		);
 		const hackathonStartDate = parseDateWithTimezone(
 			formData.get('hackathonStartDate') as string,
-			timezone
+			timezone,
 		);
 
 		const applicationLimitRaw = formData.get('applicationLimit');

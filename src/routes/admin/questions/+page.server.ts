@@ -95,7 +95,7 @@ export const actions = {
 						questions[id].options
 							.split('\r\n')
 							.map((option: string) => option.trim())
-							.filter(Boolean)
+							.filter(Boolean),
 					),
 				]; // Remove only whitespace options
 				questions[id].multiple = questions[id].multiple === 'on';

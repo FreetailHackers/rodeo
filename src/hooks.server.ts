@@ -8,7 +8,7 @@ import { createTRPCHandle } from 'trpc-sveltekit';
 import { sequence } from '@sveltejs/kit/hooks';
 
 const luciaAuthHandle: Handle = async ({ event, resolve }) => {
-	event.locals.auth = auth.handleRequest(event);
+	event.locals.auth = auth.handleRequest(event as any);
 	return await resolve(event);
 };
 

@@ -8,13 +8,20 @@
 	import { onDestroy, onMount } from 'svelte';
 	import Plot from 'svelte-plotly.js';
 
-	export let data;
+	let { data } = $props();
 
-	let html5QrCode: Html5Qrcode;
-	let dialog: HTMLDialogElement;
+	let html5QrCode: Html5Qrcode | undefined = $state();
+	let dialog: HTMLDialogElement | undefined = $state();
 
-	let user: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }> | null = null;
-	let totalScans: number;
+	// Corrected UserWithScanCount: This type will include `scanCount` as `Prisma.JsonValue`
+	// if `scanCount` is a field of type Json in your User model.
+	type UserWithScanCount = Prisma.UserGetPayload<{
+		include: { authUser: true; decision: true };
+	}>;
+
+	// Corrected user state to allow null for "not found" state
+	let user: UserWithScanCount | undefined | null = $state();
+	let totalScans: number = $state(0);
 
 	onMount(() => {
 		html5QrCode = new Html5Qrcode('reader');
@@ -22,14 +29,24 @@
 		html5QrCode.start({ facingMode: 'environment' }, config, handleScan, () => undefined);
 		trpc()
 			.users.getScanCount.query($page.params.action)
-			.then((count) => {
+			.then((count: number) => {
 				totalScans = count;
 			});
 	});
-	$: scanCount = user?.scanCount as Record<string, number>;
+	// Corrected scanCount derived logic to handle Prisma.JsonValue from user.scanCount
+	let scanCount = $derived(
+		user &&
+			user.scanCount &&
+			typeof user.scanCount === 'object' &&
+			user.scanCount !== null &&
+			!Array.isArray(user.scanCount)
+			? (user.scanCount as Record<string, number>)
+			: {},
+	);
 
 	async function handleScan(decodedText: string) {
 		if (dialog?.open) {
+			console.log('Dialog is already open, ignoring scan');
 			return;
 		}
 		user = await trpc().users.get.query(decodedText);
@@ -71,8 +88,8 @@
 	<title>Rodeo | Scan - {$page.params.action}</title>
 </svelte:head>
 
-<a href="/scan" on:click={() => html5QrCode.stop()}><button>Back</button></a>
-<div id="reader" />
+<a href="/scan" onclick={() => html5QrCode && html5QrCode.stop()}><button>Back</button></a>
+<div id="reader"></div>
 
 {#if data.scans !== null}
 	<a href="?"><button class="stats">Hide stats</button></a>
@@ -120,12 +137,15 @@
 {/if}
 
 <dialog bind:this={dialog}>
-	{#if user === null}
+	{#if user === undefined}
+		<!-- Content for when user is undefined, e.g., a loading message -->
+		<p>Loading user data...</p>
+	{:else if user === null}
 		<p class="error">Could not find this user in the database.</p>
-		<button type="button" on:click={() => dialog.close()}>Close</button>
+		<button type="button" onclick={() => dialog?.close()}>Close</button>
 	{:else if user.authUser.roles.includes('HACKER') && user.authUser.status !== 'CONFIRMED'}
 		<p class="error">This user has not confirmed their attendance.</p>
-		<button type="button" on:click={() => dialog.close()}>Close</button>
+		<button type="button" onclick={() => dialog?.close()}>Close</button>
 	{:else}
 		<br />
 		<details>
@@ -138,13 +158,13 @@
 		</p>
 		<p>{totalScans} users have scanned for this action.</p>
 		<form method="POST" action="?/scan" use:enhance>
-			<button type="button" on:click={() => dialog.close()}>Cancel</button>
+			<button type="button" onclick={() => dialog?.close()}>Cancel</button>
 			<input type="hidden" name="id" value={user.authUserId} />
 			<button
 				type="submit"
 				name="action"
 				value={$page.params.action}
-				on:click={() => dialog.close()}>Scan</button
+				onclick={() => dialog?.close()}>Scan</button
 			>
 		</form>
 	{/if}

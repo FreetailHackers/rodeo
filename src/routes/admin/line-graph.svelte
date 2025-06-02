@@ -2,7 +2,11 @@
 	import type { StatusChange } from '@prisma/client';
 	import { Status } from '@prisma/client';
 	import Plot from 'svelte-plotly.js';
-	export let statusChanges: StatusChange[];
+	interface Props {
+		statusChanges: StatusChange[];
+	}
+
+	let { statusChanges }: Props = $props();
 	const statuses: Status[] = Object.keys(Status) as Status[];
 	const statusColorMap = new Map<Status, string>([
 		['CREATED', 'lightgray'],
@@ -19,7 +23,7 @@
 		// [key is status] : array of counts with index corresponding to timestamp
 
 		const statusCounts: Record<Status, number[]> = Object.fromEntries(
-			statuses.map((status) => [status, [0]])
+			statuses.map((status) => [status, [0]]),
 		) as Record<Status, number[]>;
 
 		// [key is status] : Set of userIds

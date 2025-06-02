@@ -46,7 +46,7 @@ async function getDeployments() {
 				Authorization: 'Bearer ' + process.env.VERCEL_TOKEN,
 			},
 			method: 'get',
-		}
+		},
 	);
 	const deployments = (await data.json()).deployments;
 	return deployments.sort((a: any, b: any) => a.created - b.created);
@@ -73,18 +73,18 @@ function formatDeployment(deployment: any) {
 const deployments = await getDeployments();
 // Delete all unsuccessful deployments
 const toDelete = deployments.filter(
-	(deployment: any) => deployment.state === 'ERROR' || deployment.state === 'CANCELED'
+	(deployment: any) => deployment.state === 'ERROR' || deployment.state === 'CANCELED',
 );
 // Delete all but last LATEST_TO_KEEP successful preview and production deployments
 toDelete.push(
 	...deployments
 		.filter((deployment: any) => deployment.state === 'READY' && deployment.target !== 'production')
-		.slice(0, -LATEST_TO_KEEP)
+		.slice(0, -LATEST_TO_KEEP),
 );
 toDelete.push(
 	...deployments
 		.filter((deployment: any) => deployment.state === 'READY' && deployment.target === 'production')
-		.slice(0, -LATEST_TO_KEEP)
+		.slice(0, -LATEST_TO_KEEP),
 );
 
 // Display what will be deleted and what will be kept

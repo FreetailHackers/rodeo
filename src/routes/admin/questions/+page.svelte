@@ -1,3 +1,5 @@
+<!-- @migration-task Error while migrating Svelte code: `<form>` cannot be a child of `<form>`. The browser will 'repair' the HTML (by moving, removing, or inserting elements) which breaks Svelte's assumptions about the structure of your components.
+https://svelte.dev/e/node_invalid_placement -->
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { confirmationDialog } from '$lib/actions.js';
@@ -28,7 +30,7 @@
 				<!-- Put a hidden disabled button before the these
 					 buttons to prevent enter from triggering them -->
 				<div class="flex-row actions">
-					<button type="submit" disabled style="display: none" aria-hidden="true" />
+					<button type="submit" disabled style="display: none" aria-hidden="true"></button>
 					<button
 						type="submit"
 						name="id"
@@ -135,11 +137,12 @@
 				<div>
 					<label for={question.id + '_options'}>Options</label>
 					<textarea
-						value={question.options.join('\n')}
 						name={question.id + '_options'}
 						id={question.id + '_options'}
-						placeholder="Write one option per line, like this:&#13;OPTION 1&#13;OPTION 2&#13;OPTION 3"
-					/>
+						placeholder="Write one option per line, like this: OPTION 1&#13;OPTION 2&#13;OPTION 3"
+					>
+						{question.options.join('\n')}
+					</textarea>
 				</div>
 				<div class="flex-row">
 					<Toggle
@@ -196,20 +199,20 @@
 			/>
 		</fieldset>
 	{/each}
-
-	<form method="POST" id="addQuestion" action="?/create" use:enhance>
-		<select name="type" form="addQuestion">
-			<option value="SENTENCE">Sentence</option>
-			<option value="PARAGRAPH">Paragraph</option>
-			<option value="NUMBER">Number</option>
-			<option value="DROPDOWN">Dropdown</option>
-			<option value="CHECKBOX">Checkbox</option>
-			<option value="RADIO">Radio</option>
-			<option value="FILE">File</option>
-		</select>
-		<button type="submit">Add Question</button>
-	</form>
 	<button type="submit">Save</button>
+</form>
+
+<form method="POST" id="addQuestion" action="?/create" use:enhance>
+	<select name="type">
+		<option value="SENTENCE">Sentence</option>
+		<option value="PARAGRAPH">Paragraph</option>
+		<option value="NUMBER">Number</option>
+		<option value="DROPDOWN">Dropdown</option>
+		<option value="CHECKBOX">Checkbox</option>
+		<option value="RADIO">Radio</option>
+		<option value="FILE">File</option>
+	</select>
+	<button type="submit">Add Question</button>
 </form>
 
 <style>

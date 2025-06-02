@@ -79,7 +79,7 @@ export const sponsorsRouter = t.router({
 		await Promise.all(
 			imageKeys.map(async (sponsor) => {
 				await s3Delete(sponsor.imageKey);
-			})
+			}),
 		);
 
 		await prisma.sponsor.deleteMany();
@@ -103,7 +103,7 @@ export const sponsorsRouter = t.router({
 					new GetObjectCommand({
 						Bucket: process.env.S3_BUCKET,
 						Key: `${sponsor.imageKey}`,
-					})
+					}),
 				);
 				return {
 					...sponsor,
@@ -139,7 +139,7 @@ export const sponsorsRouter = t.router({
 							new GetObjectCommand({
 								Bucket: process.env.S3_BUCKET,
 								Key: `${sponsor.imageKey}`,
-							})
+							}),
 						);
 						return {
 							...sponsor,
@@ -152,10 +152,10 @@ export const sponsorsRouter = t.router({
 							imageUrl: null,
 						};
 					}
-				})
+				}),
 			);
 
 			return sponsorsWithUrls;
-		}
+		},
 	),
 });

@@ -3,7 +3,7 @@
 	import { confirmationDialog } from '$lib/actions.js';
 	import { toasts } from '$lib/stores';
 
-	export let data;
+	let { data } = $props();
 
 	function handleFileChange(event: Event) {
 		const input = event.target as HTMLInputElement;
@@ -55,7 +55,7 @@
 			id="logo"
 			name="logo"
 			accept=".jpg, .jpeg, .png, .webp"
-			on:change={handleFileChange}
+			onchange={handleFileChange}
 		/>
 
 		<label for="link">Link</label>

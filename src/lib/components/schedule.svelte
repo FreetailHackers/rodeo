@@ -11,8 +11,12 @@
 	dayjs.extend(utc);
 	dayjs.extend(timezone);
 
-	export let schedule: Event[];
-	export let settingsTimezone: string;
+	interface Props {
+		schedule: Event[];
+		settingsTimezone: string;
+	}
+
+	let { schedule, settingsTimezone }: Props = $props();
 
 	// Assumes there are no events occurring on the same day of the week but in different weeks.
 	const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -22,7 +26,7 @@
 			daysOfWeek[
 				new Date(
 					// Either event.start or event.end is guaranteed to be non-null
-					event.start !== null ? event.start : event.end!
+					event.start !== null ? event.start : event.end!,
 				).getDay()
 			];
 
@@ -55,7 +59,7 @@
 		}
 	}
 
-	let selectedFilters: string[] = [];
+	let selectedFilters: string[] = $state([]);
 	const filters = [...new Set(schedule.map((event: Event) => event.type))];
 	function toggleFilter(filter: string) {
 		if (selectedFilters.includes(filter)) {
@@ -65,7 +69,7 @@
 		}
 	}
 
-	let currentTime = new Date();
+	let currentTime = $state(new Date());
 	onMount(() => {
 		const interval = setInterval(() => {
 			currentTime = new Date();
@@ -92,7 +96,7 @@
 				<button
 					class:selected={selectedFilters.includes(filter)}
 					data-name={filter}
-					on:click={() => toggleFilter(filter)}
+					onclick={() => toggleFilter(filter)}
 					style="--color: {colors[index]}"
 				>
 					<span class="dot">●</span>
@@ -118,7 +122,7 @@
 							<div class="date">
 								<p>{getDateString(event.start, event.end)}</p>
 							</div>
-							<div class="separator" />
+							<div class="separator"></div>
 							<div class="details">
 								<p class="name">{event.name}</p>
 								<p class="location">{event.location}</p>

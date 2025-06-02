@@ -3,12 +3,16 @@
 	import type { Prisma, Question } from '@prisma/client';
 	import SvelteMarkdown from 'svelte-markdown';
 
-	export let user: Partial<Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>>;
-	export let questions: Question[];
-	export let teammates: { email: string; status: string }[] = [];
+	interface Props {
+		user: Partial<Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>>;
+		questions: Question[];
+		teammates?: { email: string; status: string }[];
+	}
+
+	let { user, questions, teammates = [] }: Props = $props();
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	$: application = user.application as Record<string, any>;
+	let application = $derived(user.application as Record<string, any>);
 </script>
 
 <!-- Ensures the teammate list is only displayed if the user is not the only person on the team -->

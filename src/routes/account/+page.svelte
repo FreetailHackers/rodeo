@@ -3,9 +3,9 @@
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { Modal, Content, Trigger } from 'sv-popup';
-	export let data;
+	let { data } = $props();
 
-	let canvas: HTMLCanvasElement;
+	let canvas: HTMLCanvasElement | undefined = $state();
 
 	onMount(() => {
 		QRCode.toCanvas(canvas, data.user.id, {
@@ -18,11 +18,13 @@
 				data.user.roles.length > 1 ||
 				data.user.status === 'CONFIRMED')
 		) {
-			canvas.style.width = '64%';
-			canvas.style.height = 'auto';
+			if (canvas) {
+				canvas.style.width = '64%';
+				canvas.style.height = 'auto';
+			}
 		}
 	});
-	let closeModal = false;
+	let closeModal = $state(false);
 </script>
 
 <svelte:head>
@@ -64,14 +66,14 @@
 									<form method="POST" action="?/inviteUser">
 										<h3 class="modal-header">
 											Invite a new member
-											<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+											<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 											<img
 												class="close-button"
 												src="/close-button.png"
 												alt="close add team member"
 												draggable="false"
-												on:click={() => (closeModal = true)}
-												on:keypress={() => (closeModal = true)}
+												onclick={() => (closeModal = true)}
+												onkeypress={() => (closeModal = true)}
 											/>
 										</h3>
 										<input
@@ -92,13 +94,13 @@
 								</div>
 							</Content>
 							<Trigger>
-								<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 								<img
 									src="/add-button.png"
 									alt="add team member"
 									draggable="false"
-									on:click={() => (closeModal = false)}
-									on:keypress={() => (closeModal = false)}
+									onclick={() => (closeModal = false)}
+									onkeypress={() => (closeModal = false)}
 								/>
 							</Trigger>
 						</Modal>
@@ -142,7 +144,7 @@
 			<h3>My Hacker ID</h3>
 
 			<div class="id-card">
-				<canvas bind:this={canvas} id="qrcode" />
+				<canvas bind:this={canvas} id="qrcode"></canvas>
 				<img src="hacker-id/background.png" alt="hacker id-card" />
 			</div>
 		</div>

@@ -179,14 +179,14 @@ async function main() {
 function generateStatusFlow(
 	id: string,
 	startingTime: Date,
-	maxSecondsBetweenStatusChanges: number
+	maxSecondsBetweenStatusChanges: number,
 ): Prisma.StatusChangeCreateManyInput[] {
 	const statusChanges: Prisma.StatusChangeCreateManyInput[] = [];
 	const attritionRate = 0.1; // 10% of hackers drop out at each stage
 	let lastTimestamp = startingTime;
 	for (const status of ['CREATED', 'APPLIED'] as Status[]) {
 		lastTimestamp = new Date(
-			lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random()
+			lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random(),
 		);
 		statusChanges.push({ newStatus: status, timestamp: lastTimestamp, userId: id });
 		if (random() < attritionRate) {
@@ -199,7 +199,7 @@ function generateStatusFlow(
 		'WAITLISTED',
 	] as Status[]);
 	lastTimestamp = new Date(
-		lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random()
+		lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random(),
 	);
 	statusChanges.push({
 		newStatus: afterStatusAppliedRandom,
@@ -209,7 +209,7 @@ function generateStatusFlow(
 
 	if (random() >= attritionRate && afterStatusAppliedRandom === 'ACCEPTED') {
 		lastTimestamp = new Date(
-			lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random()
+			lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random(),
 		);
 		statusChanges.push({
 			newStatus: randomElement(['CONFIRMED', 'DECLINED'] as Status[]),

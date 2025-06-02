@@ -50,7 +50,7 @@ function formToApplication(questions: Question[], formData: FormData) {
 export const actions = {
 	save: async ({ locals, request }) => {
 		await trpc(locals.auth).users.update(
-			formToApplication(await trpc(locals.auth).questions.get(), await request.formData())
+			formToApplication(await trpc(locals.auth).questions.get(), await request.formData()),
 		);
 	},
 
@@ -58,11 +58,11 @@ export const actions = {
 		if (!(await trpc(locals.auth).admissions.canApply())) {
 			return new Response(null, {
 				status: 301,
-				headers: { location: '/apply' }
+				headers: { location: '/apply' },
 			});
 		}
 		await trpc(locals.auth).users.update(
-			formToApplication(await trpc(locals.auth).questions.get(), await request.formData())
+			formToApplication(await trpc(locals.auth).questions.get(), await request.formData()),
 		);
 		return await trpc(locals.auth).users.submitApplication();
 	},
@@ -71,7 +71,7 @@ export const actions = {
 		if (!(await trpc(locals.auth).admissions.canApply())) {
 			return new Response(null, {
 				status: 301,
-				headers: { location: '/apply' }
+				headers: { location: '/apply' },
 			});
 		}
 		await trpc(locals.auth).users.withdrawApplication();

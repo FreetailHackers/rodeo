@@ -2,26 +2,40 @@
 	import { onMount } from 'svelte';
 	import SvelteMarkdown from 'svelte-markdown';
 
-	export let name: string;
-	export let id = name;
-	export let required = false;
-	export let placeholder = '';
-	export let rows = 5;
-	export let value = '';
+	let previewing = $state(false);
+	let textarea: HTMLTextAreaElement | undefined = $state();
 
-	let previewing = false;
-	let textarea: HTMLTextAreaElement;
+	interface Props {
+		name: string;
+		id?: any;
+		required?: boolean;
+		placeholder?: string;
+		rows?: number;
+		value?: string;
+		useAnnouncementFont?: boolean;
+		isHTML: boolean;
+	}
 
-	export let useAnnouncementFont: boolean = false;
-	export let isHTML: boolean;
+	let {
+		name,
+		id = name,
+		required = false,
+		placeholder = '',
+		rows = 5,
+		value = $bindable(''),
+		useAnnouncementFont = false,
+		isHTML,
+	}: Props = $props();
 
 	// HACK: This is a workaround for Svelte not updating input bindings a form is reset
 	onMount(() => {
-		textarea.form?.addEventListener('reset', () => {
-			value = '';
-			// We might as well switch back to write mode for good measure
-			previewing = false;
-		});
+		if (textarea?.form) {
+			textarea.form.addEventListener('reset', () => {
+				value = '';
+				// We might as well switch back to write mode for good measure
+				previewing = false;
+			});
+		}
 	});
 </script>
 
@@ -46,7 +60,7 @@
 		{name}
 		{required}
 		{value}
-	/>
+	></textarea>
 {:else}
 	<textarea
 		class:announcement-font={useAnnouncementFont}
@@ -57,7 +71,7 @@
 		{rows}
 		bind:value
 		bind:this={textarea}
-	/>
+	></textarea>
 {/if}
 
 <div id="preview-button">
@@ -65,7 +79,7 @@
 		class:announcement-font={useAnnouncementFont}
 		type="button"
 		class:selected={previewing}
-		on:click={() => (previewing = !previewing)}>Preview</button
+		onclick={() => (previewing = !previewing)}>Preview</button
 	>
 </div>
 

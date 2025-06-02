@@ -3,7 +3,11 @@
 	import Accordion from './accordion.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
 
-	export let faqs: FAQ[];
+	interface Props {
+		faqs: FAQ[];
+	}
+
+	let { faqs }: Props = $props();
 
 	const splitQuestions = (faqs: FAQ[]) => {
 		const middleIndex = Math.ceil(faqs.length / 2);
@@ -20,10 +24,14 @@
 			<div class="questions-col">
 				{#each column as faq}
 					<Accordion>
-						<span slot="head" class="question-title">{faq.question}</span>
-						<div slot="details" class="question-answer">
-							<SvelteMarkdown source={faq.answer} />
-						</div>
+						{#snippet head()}
+							<span class="question-title">{faq.question}</span>
+						{/snippet}
+						{#snippet details()}
+							<div class="question-answer">
+								<SvelteMarkdown source={faq.answer} />
+							</div>
+						{/snippet}
 					</Accordion>
 				{/each}
 			</div>

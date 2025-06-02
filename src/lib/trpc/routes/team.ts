@@ -149,7 +149,7 @@ export const teamRouter = t.router({
 			z.object({
 				token: z.string(),
 				teamId: z.number(),
-			})
+			}),
 		)
 		.mutation(async ({ input }): Promise<string> => {
 			const userId = await inviteToTeamToken.validate(input.token);
@@ -203,7 +203,7 @@ export const teamRouter = t.router({
 			z.object({
 				token: z.string(),
 				teamId: z.number(),
-			})
+			}),
 		)
 		.mutation(async ({ input }): Promise<string> => {
 			const userId = await inviteToTeamToken.validate(input.token);
@@ -287,7 +287,7 @@ export const teamRouter = t.router({
 export const removeInvalidTeamMembers = async function removeInvalidTeamMembers(
 	team: Team & {
 		members: { authUserId: string; authUser: { status: string } }[];
-	}
+	},
 ): Promise<void> {
 	// Filter out members who are not confirmed
 	const usersToRemove = team.members

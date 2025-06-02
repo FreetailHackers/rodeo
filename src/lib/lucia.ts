@@ -64,7 +64,10 @@ export const githubAuth = (() => {
  * Barebones reimplementation of deprecated @lucia-auth/tokens
  */
 class TokenType {
-	constructor(private purpose: string, private expiresIn: number) {}
+	constructor(
+		private purpose: string,
+		private expiresIn: number,
+	) {}
 
 	/**
 	 * Invalidates all previously issued tokens for a given user and

@@ -9,7 +9,7 @@ export const GET = async ({ cookies, url, locals }) => {
 	if (code === null || url.searchParams.get('state') !== cookies.get('state')) {
 		return new Response(null, {
 			status: 302,
-			headers: { location: '/' }
+			headers: { location: '/' },
 		});
 	}
 
@@ -27,7 +27,7 @@ export const GET = async ({ cookies, url, locals }) => {
 		) {
 			return new Response(null, {
 				status: 302,
-				headers: { location: '/' }
+				headers: { location: '/' },
 			});
 		}
 
@@ -39,6 +39,6 @@ export const GET = async ({ cookies, url, locals }) => {
 	}
 	return new Response(null, {
 		status: 302,
-		headers: { location: '/' }
+		headers: { location: '/' },
 	});
 };

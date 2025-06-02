@@ -5,16 +5,15 @@
 	import { confirmationDialog } from '$lib/actions.js';
 	import Dropdown from '$lib/components/dropdown.svelte';
 
-	export let data;
-	export let form;
+	let { data, form } = $props();
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const application = data.user.application as Record<string, any>;
+	const application = $state(data.user.application as Record<string, any>);
 
-	let applicationForm: HTMLFormElement;
+	let applicationForm: HTMLFormElement | undefined = $state();
 
-	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
-	let saveButton: HTMLButtonElement;
-	let rsvpSelectedValue: string = '';
+	let debounceTimer: ReturnType<typeof setTimeout> | undefined = $state();
+	let saveButton: HTMLButtonElement | undefined = $state();
+	let rsvpSelectedValue: string = $state('');
 </script>
 
 <svelte:head>
@@ -185,18 +184,24 @@
 						}
 					};
 				}}
-				on:input={() => {
-					saveButton.disabled = true;
-					saveButton.textContent = 'Autosaving...';
-					if (debounceTimer !== undefined) {
-						clearTimeout(debounceTimer);
+				oninput={() => {
+					if (saveButton) {
+						saveButton.disabled = true;
+						saveButton.textContent = 'Autosaving...';
+						if (debounceTimer !== undefined) {
+							clearTimeout(debounceTimer);
+						}
+						debounceTimer = setTimeout(async () => {
+							debounceTimer = undefined;
+							if (applicationForm) {
+								applicationForm.requestSubmit();
+							}
+							if (saveButton) {
+								saveButton.disabled = false;
+								saveButton.textContent = 'Save and finish later';
+							}
+						}, 1000);
 					}
-					debounceTimer = setTimeout(async () => {
-						debounceTimer = undefined;
-						applicationForm.requestSubmit();
-						saveButton.disabled = false;
-						saveButton.textContent = 'Save and finish later';
-					}, 1000);
 				}}
 				autocomplete="off"
 			>
@@ -223,7 +228,7 @@
 								id={question.id}
 								bind:value={application[question.id]}
 								placeholder={question.placeholder}
-							/>
+							></textarea>
 						{:else if question.type === 'NUMBER'}
 							<input
 								type="number"
@@ -247,7 +252,9 @@
 								custom={Boolean(question.custom)}
 								multiple={Boolean(question.multiple)}
 								bind:value={application[question.id]}
-								on:input={() => applicationForm.dispatchEvent(new Event('input'))}
+								on:input={() => {
+									if (applicationForm) applicationForm.dispatchEvent(new Event('input'));
+								}}
 							/>
 						{:else if question.type === 'RADIO'}
 							{#each question.options as option}
@@ -278,10 +285,12 @@
 						<button class="negative-button" bind:this={saveButton}>Save and finish later</button>
 						<button
 							formaction="?/finish"
-							on:click={() => {
-								clearTimeout(debounceTimer);
-								saveButton.disabled = false;
-								saveButton.textContent = 'Save and finish later';
+							onclick={() => {
+								if (saveButton) {
+									clearTimeout(debounceTimer);
+									saveButton.disabled = false;
+									saveButton.textContent = 'Save and finish later';
+								}
 							}}>Submit application</button
 						>
 					</div>

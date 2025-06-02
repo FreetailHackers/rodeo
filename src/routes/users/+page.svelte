@@ -11,16 +11,16 @@
 	import Dropdown from '$lib/components/dropdown.svelte';
 	import TextEditor from '$lib/components/text-editor.svelte';
 
-	export let data;
+	let { data } = $props();
 
-	$: query = Object.fromEntries($page.url.searchParams);
-	let key = $page.url.searchParams.get('key') ?? 'email';
-	let search = $page.url.searchParams.get('search') ?? '';
-	let limit: string = $page.url.searchParams.get('limit') ?? '10';
-	let searchFilter = $page.url.searchParams.get('searchFilter') ?? '';
-	let emailBody: string;
-	let subject: string;
-	let isHTML = false;
+	let query = $derived(Object.fromEntries($page.url.searchParams));
+	let key = $state($page.url.searchParams.get('key') ?? 'email');
+	let search = $state($page.url.searchParams.get('search') ?? '');
+	let limit: string = $state($page.url.searchParams.get('limit') ?? '10');
+	let searchFilter = $state($page.url.searchParams.get('searchFilter') ?? '');
+	let emailBody: string = $state('');
+	let subject: string = $state('');
+	let isHTML = $state(false);
 
 	async function sendEmailsByUsers() {
 		if (!subject || !emailBody || subject.length === 0 || emailBody.length === 0) {
@@ -117,7 +117,7 @@
 			></a
 		>
 	{/if}
-	<button class="download-button" on:click={downloadAllFiles}
+	<button class="download-button" onclick={downloadAllFiles}
 		>Download file uploads from {data.count} users as ZIP</button
 	>
 
@@ -129,7 +129,7 @@
 				class="key"
 				placeholder="Choose criteria"
 				bind:value={key}
-				on:change={() => {
+				onchange={() => {
 					if (key === 'role') search = 'HACKER';
 					else if (key === 'status') search = 'CREATED';
 					else if (key === 'decision') search = 'ACCEPTED';
@@ -366,7 +366,7 @@
 						isHTML={data.settings.submitIsHTML}
 						required
 					/>
-					<button class="email-by-users" on:click={sendEmailsByUsers}>Send</button>
+					<button class="email-by-users" onclick={sendEmailsByUsers}>Send</button>
 				</form>
 			</div>
 		{/if}
@@ -380,7 +380,7 @@
 			<select
 				name="limit"
 				bind:value={limit}
-				on:change={() => {
+				onchange={() => {
 					goto(`${location.pathname}?${new URLSearchParams({ ...query, limit })}`, {
 						noScroll: true,
 					});

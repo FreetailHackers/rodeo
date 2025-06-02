@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import UserCard from '$lib/components/user-card.svelte';
 
-	export let data;
+	let { data } = $props();
 </script>
 
 <svelte:head>
@@ -15,7 +15,7 @@
 		<h1>{data.user.authUser.email}</h1>
 		<UserCard user={data.user} questions={data.questions} teammates={data.teammates} />
 		<div id="form">
-			<div id="padding" />
+			<div id="padding"></div>
 			<form method="POST" use:enhance>
 				<input type="hidden" name="id" value={data.user.authUserId} />
 				<button type="submit" formaction="?/accept">Accept</button>
