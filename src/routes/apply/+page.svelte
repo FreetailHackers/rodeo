@@ -1,18 +1,17 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import SvelteMarkdown from 'svelte-markdown';
+	import SvelteMarkdown from '@humanspeak/svelte-markdown';
 	import FileInput from '$lib/components/file-input.svelte';
 	import { confirmationDialog } from '$lib/actions.js';
 	import Dropdown from '$lib/components/dropdown.svelte';
 
 	let { data, form } = $props();
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const application = $state(data.user.application as Record<string, any>);
 
-	let applicationForm: HTMLFormElement | undefined = $state();
+	let applicationForm = $state() as HTMLFormElement;
 
 	let debounceTimer: ReturnType<typeof setTimeout> | undefined = $state();
-	let saveButton: HTMLButtonElement | undefined = $state();
+	let saveButton = $state() as HTMLButtonElement;
 	let rsvpSelectedValue: string = $state('');
 </script>
 
@@ -185,23 +184,17 @@
 					};
 				}}
 				oninput={() => {
-					if (saveButton) {
-						saveButton.disabled = true;
-						saveButton.textContent = 'Autosaving...';
-						if (debounceTimer !== undefined) {
-							clearTimeout(debounceTimer);
-						}
-						debounceTimer = setTimeout(async () => {
-							debounceTimer = undefined;
-							if (applicationForm) {
-								applicationForm.requestSubmit();
-							}
-							if (saveButton) {
-								saveButton.disabled = false;
-								saveButton.textContent = 'Save and finish later';
-							}
-						}, 1000);
+					saveButton.disabled = true;
+					saveButton.textContent = 'Autosaving...';
+					if (debounceTimer !== undefined) {
+						clearTimeout(debounceTimer);
 					}
+					debounceTimer = setTimeout(async () => {
+						debounceTimer = undefined;
+						applicationForm.requestSubmit();
+						saveButton.disabled = false;
+						saveButton.textContent = 'Save and finish later';
+					}, 1000);
 				}}
 				autocomplete="off"
 			>

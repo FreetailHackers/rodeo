@@ -1,7 +1,7 @@
 <script lang="ts">
 	import UserTable from './user-table.svelte';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Statistics from './statistics.svelte';
 	import Toggle from '$lib/components/toggle.svelte';
 	import saveAs from 'file-saver';
@@ -13,11 +13,11 @@
 
 	let { data } = $props();
 
-	let query = $derived(Object.fromEntries($page.url.searchParams));
-	let key = $state($page.url.searchParams.get('key') ?? 'email');
-	let search = $state($page.url.searchParams.get('search') ?? '');
-	let limit: string = $state($page.url.searchParams.get('limit') ?? '10');
-	let searchFilter = $state($page.url.searchParams.get('searchFilter') ?? '');
+	let query = $derived(Object.fromEntries(page.url.searchParams));
+	let key = $state(page.url.searchParams.get('key') ?? 'email');
+	let search = $state(page.url.searchParams.get('search') ?? '');
+	let limit: string = $state(page.url.searchParams.get('limit') ?? '10');
+	let searchFilter = $state(page.url.searchParams.get('searchFilter') ?? '');
 	let emailBody: string = $state('');
 	let subject: string = $state('');
 	let isHTML = $state(false);
@@ -111,7 +111,7 @@
 <div class="main-content">
 	<h1>Master Database</h1>
 	{#if data.user.roles.includes('ADMIN')}
-		<a href={'/users/download-data' + $page.url.search} download="users.csv"
+		<a href={'/users/download-data' + page.url.search} download="users.csv"
 			><button class="download-button"
 				>Download user data (excluding file uploads) for {data.count} users as CSV</button
 			></a
@@ -398,16 +398,16 @@
 		<form>
 			<p id="page">
 				<a
-					class:disabled={Number($page.url.searchParams.get('page') ?? 1) === 1}
+					class:disabled={Number(page.url.searchParams.get('page') ?? 1) === 1}
 					data-sveltekit-noscroll
 					href={`?${new URLSearchParams({ ...query, page: '1' })}`}>&lt;&lt;</a
 				>
 				<a
-					class:disabled={Number($page.url.searchParams.get('page') ?? 1) === 1}
+					class:disabled={Number(page.url.searchParams.get('page') ?? 1) === 1}
 					data-sveltekit-noscroll
 					href={`?${new URLSearchParams({
 						...query,
-						page: String(Number($page.url.searchParams.get('page') ?? 1) - 1),
+						page: String(Number(page.url.searchParams.get('page') ?? 1) - 1),
 					})}`}>&lt;</a
 				>
 				Page
@@ -416,24 +416,24 @@
 					name="page"
 					min="1"
 					max={data.pages}
-					value={$page.url.searchParams.get('page') ?? 1}
+					value={page.url.searchParams.get('page') ?? 1}
 				/>
 				of {data.pages}
 				<a
-					class:disabled={Number($page.url.searchParams.get('page') ?? 1) >= data.pages}
+					class:disabled={Number(page.url.searchParams.get('page') ?? 1) >= data.pages}
 					data-sveltekit-noscroll
 					href={`?${new URLSearchParams({
 						...query,
-						page: String(Number($page.url.searchParams.get('page') ?? 1) + 1),
+						page: String(Number(page.url.searchParams.get('page') ?? 1) + 1),
 					})}`}>&gt;</a
 				>
 				<a
-					class:disabled={Number($page.url.searchParams.get('page') ?? 1) >= data.pages}
+					class:disabled={Number(page.url.searchParams.get('page') ?? 1) >= data.pages}
 					data-sveltekit-noscroll
 					href={`?${new URLSearchParams({ ...query, page: String(data.pages) })}`}>&gt;&gt;</a
 				>
 			</p>
-			{#each [...$page.url.searchParams] as [key, value]}
+			{#each [...page.url.searchParams] as [key, value]}
 				{#if key !== 'page'}
 					<input type="hidden" name={key} {value} />
 				{/if}

@@ -25,9 +25,8 @@
 
 <div class="main-content">
 	<div>
-		<!-- svelte-ignore a11y_img_redundant_alt -->
 		<div class="homepage-text">
-			{#await import('svelte-markdown')}
+			{#await import('@humanspeak/svelte-markdown')}
 				<p>Loading...</p>
 			{:then module}
 				<module.default source={data.settings.homepageText} />

@@ -4,7 +4,7 @@
 	import { enhance } from '$app/forms';
 	import { confirmationDialog } from '$lib/actions';
 	import TextEditor from './text-editor.svelte';
-	import SvelteMarkdown from 'svelte-markdown';
+	import SvelteMarkdown from '@humanspeak/svelte-markdown';
 	interface Props {
 		admin: boolean;
 		announcements: Announcement[];

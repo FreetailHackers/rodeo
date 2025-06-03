@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import type { Prisma, Question } from '@prisma/client';
-	import SvelteMarkdown from 'svelte-markdown';
+	import SvelteMarkdown from '@humanspeak/svelte-markdown';
 
 	interface Props {
 		user: Partial<Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>>;
@@ -48,7 +48,7 @@
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				{`${$page.url.origin}/files/${user.authUserId}/${question.id}`}</a
+				{`${page.url.origin}/files/${user.authUserId}/${question.id}`}</a
 			>
 		{:else if Array.isArray(application[question.id])}
 			{application[question.id].join(', ')}

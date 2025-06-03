@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import UserCard from '$lib/components/user-card.svelte';
 	import { trpc } from '$lib/trpc/client';
 	import type { Prisma } from '@prisma/client';
@@ -28,7 +28,7 @@
 		const config = { fps: 5, qrbox: { width: 250, height: 250 }, aspectRatio: 1 };
 		html5QrCode.start({ facingMode: 'environment' }, config, handleScan, () => undefined);
 		trpc()
-			.users.getScanCount.query($page.params.action)
+			.users.getScanCount.query(page.params.action)
 			.then((count: number) => {
 				totalScans = count;
 			});
@@ -50,7 +50,7 @@
 			return;
 		}
 		user = await trpc().users.get.query(decodedText);
-		totalScans = await trpc().users.getScanCount.query($page.params.action);
+		totalScans = await trpc().users.getScanCount.query(page.params.action);
 		dialog?.showModal();
 	}
 
@@ -85,7 +85,7 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Scan - {$page.params.action}</title>
+	<title>Rodeo | Scan - {page.params.action}</title>
 </svelte:head>
 
 <a href="/scan" onclick={() => html5QrCode && html5QrCode.stop()}><button>Back</button></a>
@@ -152,19 +152,16 @@
 			<summary>{user.authUser.email}</summary>
 			<UserCard {user} questions={data.questions} />
 		</details>
-		<p class={(scanCount[$page.params.action] ?? 0) === 0 ? 'success' : 'error'}>
-			This user has scanned for {$page.params.action}
-			{scanCount[$page.params.action] ?? 0} times.
+		<p class={(scanCount[page.params.action] ?? 0) === 0 ? 'success' : 'error'}>
+			This user has scanned for {page.params.action}
+			{scanCount[page.params.action] ?? 0} times.
 		</p>
 		<p>{totalScans} users have scanned for this action.</p>
 		<form method="POST" action="?/scan" use:enhance>
 			<button type="button" onclick={() => dialog?.close()}>Cancel</button>
 			<input type="hidden" name="id" value={user.authUserId} />
-			<button
-				type="submit"
-				name="action"
-				value={$page.params.action}
-				onclick={() => dialog?.close()}>Scan</button
+			<button type="submit" name="action" value={page.params.action} onclick={() => dialog?.close()}
+				>Scan</button
 			>
 		</form>
 	{/if}

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { FAQ } from '@prisma/client';
 	import Accordion from './accordion.svelte';
-	import SvelteMarkdown from 'svelte-markdown';
+	import SvelteMarkdown from '@humanspeak/svelte-markdown';
 
 	interface Props {
 		faqs: FAQ[];

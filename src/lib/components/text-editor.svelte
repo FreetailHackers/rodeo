@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import SvelteMarkdown from 'svelte-markdown';
+	import SvelteMarkdown from '@humanspeak/svelte-markdown';
 
 	let previewing = $state(false);
-	let textarea: HTMLTextAreaElement | undefined = $state();
+	let textarea = $state() as HTMLTextAreaElement;
 
 	interface Props {
 		name: string;

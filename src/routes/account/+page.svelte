@@ -5,7 +5,7 @@
 	import { Modal, Content, Trigger } from 'sv-popup';
 	let { data } = $props();
 
-	let canvas: HTMLCanvasElement | undefined = $state();
+	let canvas = $state() as HTMLCanvasElement;
 
 	onMount(() => {
 		QRCode.toCanvas(canvas, data.user.id, {
@@ -18,10 +18,8 @@
 				data.user.roles.length > 1 ||
 				data.user.status === 'CONFIRMED')
 		) {
-			if (canvas) {
-				canvas.style.width = '64%';
-				canvas.style.height = 'auto';
-			}
+			canvas.style.width = '64%';
+			canvas.style.height = 'auto';
 		}
 	});
 	let closeModal = $state(false);

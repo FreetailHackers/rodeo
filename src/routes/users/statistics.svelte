@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { afterNavigate } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { trpc } from '$lib/trpc/client';
 	import type { Question } from '@prisma/client';
 	import Plot from 'svelte-plotly.js';
@@ -69,9 +69,9 @@
 	<button
 		onclick={async () =>
 			(stats = await trpc().users.getStats.query({
-				key: $page.url.searchParams.get('key') ?? '',
-				search: $page.url.searchParams.get('search') ?? '',
-				searchFilter: $page.url.searchParams.get('searchFilter') ?? '',
+				key: page.url.searchParams.get('key') ?? '',
+				search: page.url.searchParams.get('search') ?? '',
+				searchFilter: page.url.searchParams.get('searchFilter') ?? '',
 			}))}>Show statistics</button
 	>
 {:else}

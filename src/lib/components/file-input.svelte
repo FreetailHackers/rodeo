@@ -9,19 +9,17 @@
 
 	let { name, id = name, selectedFile = $bindable(), accept, maxSizeMB }: Props = $props();
 
-	let input: HTMLInputElement | undefined = $state();
+	let input = $state() as HTMLInputElement;
 	let tooBig = $state(false);
 	function checkSize() {
-		if (input) {
-			if (input.files?.[0]) {
-				if (input.files[0].size > maxSizeMB * 1024 * 1024) {
-					input.value = '';
-					tooBig = true;
-					selectedFile = undefined;
-				} else {
-					tooBig = false;
-					selectedFile = input.files[0].name;
-				}
+		if (input.files?.[0]) {
+			if (input.files[0].size > maxSizeMB * 1024 * 1024) {
+				input.value = '';
+				tooBig = true;
+				selectedFile = undefined;
+			} else {
+				tooBig = false;
+				selectedFile = input.files[0].name;
 			}
 		}
 	}
