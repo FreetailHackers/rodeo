@@ -24,7 +24,6 @@
 		isHTML,
 	}: Props = $props();
 
-
 	let previewing = $state(false);
 	let textarea = $state() as HTMLTextAreaElement;
 

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
-	
+
 	interface Props {
 		open?: boolean;
 		head?: import('svelte').Snippet;

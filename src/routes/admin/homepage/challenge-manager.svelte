@@ -35,12 +35,7 @@
 	<Content>
 		<h2>{challenge ? 'Edit Challenge' : 'Create Challenge'}</h2>
 
-		<form
-			method="POST"
-			action="?/handleChallenge"
-			onsubmit={handleSubmit}
-			use:enhance
-		>
+		<form method="POST" action="?/handleChallenge" onsubmit={handleSubmit} use:enhance>
 			<input type="hidden" name="id" value={challenge?.id || ''} />
 
 			<label for="title">Title</label>

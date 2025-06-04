@@ -5,7 +5,7 @@
 	import { confirmationDialog } from '$lib/actions';
 	import TextEditor from './text-editor.svelte';
 	import SvelteMarkdown from '@humanspeak/svelte-markdown';
-	
+
 	interface Props {
 		admin: boolean;
 		announcements: Announcement[];
