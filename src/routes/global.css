@@ -151,7 +151,6 @@ input {
 	padding: 1rem;
 	border: 1px solid var(--grey);
 	border-radius: var(--border-radius);
-	margin-bottom: 0.5em;
 }
 
 input[type='checkbox'],

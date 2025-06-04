@@ -245,7 +245,7 @@
 								custom={Boolean(question.custom)}
 								multiple={Boolean(question.multiple)}
 								bind:value={application[question.id]}
-								on:input={() => {
+								onInput={() => {
 									if (applicationForm) applicationForm.dispatchEvent(new Event('input'));
 								}}
 							/>
