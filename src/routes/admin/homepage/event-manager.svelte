@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
-
 	import { enhance } from '$app/forms';
 	import { Modal, Content, Trigger } from 'sv-popup';
 
@@ -40,7 +38,7 @@
 	<Content>
 		<h2>{scheduleEvent ? 'Edit Event' : 'Create Event'}</h2>
 
-		<form method="POST" action="?/handleEvent" onsubmit={preventDefault(handleSubmit)} use:enhance>
+		<form method="POST" action="?/handleEvent" onsubmit={handleSubmit} use:enhance>
 			<input type="hidden" name="id" value={scheduleEvent?.id || ''} />
 			<label for="name">Name</label>
 			<input

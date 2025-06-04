@@ -3,9 +3,11 @@
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { Modal, Content, Trigger } from 'sv-popup';
+
 	let { data } = $props();
 
 	let canvas = $state() as HTMLCanvasElement;
+	let closeModal = $state(false);
 
 	onMount(() => {
 		QRCode.toCanvas(canvas, data.user.id, {
@@ -22,7 +24,6 @@
 			canvas.style.height = 'auto';
 		}
 	});
-	let closeModal = $state(false);
 </script>
 
 <svelte:head>

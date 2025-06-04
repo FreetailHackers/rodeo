@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
-
 	import { enhance } from '$app/forms';
 	import { Modal, Content, Trigger } from 'sv-popup';
 
@@ -40,7 +38,7 @@
 		<form
 			method="POST"
 			action="?/handleChallenge"
-			onsubmit={preventDefault(handleSubmit)}
+			onsubmit={handleSubmit}
 			use:enhance
 		>
 			<input type="hidden" name="id" value={challenge?.id || ''} />

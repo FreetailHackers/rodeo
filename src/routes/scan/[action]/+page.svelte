@@ -10,43 +10,27 @@
 
 	let { data } = $props();
 
-	let html5QrCode: Html5Qrcode | undefined = $state();
-	let dialog: HTMLDialogElement | undefined = $state();
+	let html5QrCode = $state() as Html5Qrcode;
+	let dialog = $state() as HTMLDialogElement;
 
-	// Corrected UserWithScanCount: This type will include `scanCount` as `Prisma.JsonValue`
-	// if `scanCount` is a field of type Json in your User model.
-	type UserWithScanCount = Prisma.UserGetPayload<{
-		include: { authUser: true; decision: true };
-	}>;
+	let user = $state<Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }> | null>(
+		null,
+	);
+	let totalScans = $state(0);
+	let scanCount: Record<string, number> = $state({});
 
-	// Corrected user state to allow null for "not found" state
-	let user: UserWithScanCount | undefined | null = $state();
-	let totalScans: number = $state(0);
-
-	onMount(() => {
+	onMount(async () => {
 		html5QrCode = new Html5Qrcode('reader');
 		const config = { fps: 5, qrbox: { width: 250, height: 250 }, aspectRatio: 1 };
 		html5QrCode.start({ facingMode: 'environment' }, config, handleScan, () => undefined);
-		trpc()
-			.users.getScanCount.query(page.params.action)
-			.then((count: number) => {
-				totalScans = count;
-			});
+		totalScans = await trpc().users.getScanCount.query(page.params.action);
 	});
-	// Corrected scanCount derived logic to handle Prisma.JsonValue from user.scanCount
-	let scanCount = $derived(
-		user &&
-			user.scanCount &&
-			typeof user.scanCount === 'object' &&
-			user.scanCount !== null &&
-			!Array.isArray(user.scanCount)
-			? (user.scanCount as Record<string, number>)
-			: {},
-	);
+	$effect(() => {
+		scanCount = user?.scanCount as Record<string, number>;
+	});
 
 	async function handleScan(decodedText: string) {
 		if (dialog?.open) {
-			console.log('Dialog is already open, ignoring scan');
 			return;
 		}
 		user = await trpc().users.get.query(decodedText);
@@ -88,7 +72,7 @@
 	<title>Rodeo | Scan - {page.params.action}</title>
 </svelte:head>
 
-<a href="/scan" onclick={() => html5QrCode && html5QrCode.stop()}><button>Back</button></a>
+<a href="/scan" onclick={() => html5QrCode.stop()}><button>Back</button></a>
 <div id="reader"></div>
 
 {#if data.scans !== null}
@@ -137,15 +121,12 @@
 {/if}
 
 <dialog bind:this={dialog}>
-	{#if user === undefined}
-		<!-- Content for when user is undefined, e.g., a loading message -->
-		<p>Loading user data...</p>
-	{:else if user === null}
+	{#if user === null}
 		<p class="error">Could not find this user in the database.</p>
-		<button type="button" onclick={() => dialog?.close()}>Close</button>
+		<button type="button" onclick={() => dialog.close()}>Close</button>
 	{:else if user.authUser.roles.includes('HACKER') && user.authUser.status !== 'CONFIRMED'}
 		<p class="error">This user has not confirmed their attendance.</p>
-		<button type="button" onclick={() => dialog?.close()}>Close</button>
+		<button type="button" onclick={() => dialog.close()}>Close</button>
 	{:else}
 		<br />
 		<details>
@@ -158,9 +139,9 @@
 		</p>
 		<p>{totalScans} users have scanned for this action.</p>
 		<form method="POST" action="?/scan" use:enhance>
-			<button type="button" onclick={() => dialog?.close()}>Cancel</button>
+			<button type="button" onclick={() => dialog.close()}>Cancel</button>
 			<input type="hidden" name="id" value={user.authUserId} />
-			<button type="submit" name="action" value={page.params.action} onclick={() => dialog?.close()}
+			<button type="submit" name="action" value={page.params.action} onclick={() => dialog.close()}
 				>Scan</button
 			>
 		</form>

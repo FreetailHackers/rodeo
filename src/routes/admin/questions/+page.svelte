@@ -201,7 +201,7 @@
 </form>
 
 <form method="POST" id="addQuestion" action="?/create" use:enhance>
-	<select name="type">
+	<select name="type" form="addQuestion" required>
 		<option value="SENTENCE">Sentence</option>
 		<option value="PARAGRAPH">Paragraph</option>
 		<option value="NUMBER">Number</option>

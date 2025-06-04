@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { run } from 'svelte/legacy';
-
 	import { enhance } from '$app/forms';
 	import UserCard from '$lib/components/user-card.svelte';
 	import type { Prisma, Question } from '@prisma/client';
@@ -20,8 +18,8 @@
 
 	let action = $state('admissions');
 	let selected = $derived(users.map(() => false));
-	let selectAll: HTMLInputElement | undefined = $state();
-	run(() => {
+	let selectAll = $state() as HTMLInputElement;
+	$effect(() => {
 		if (selectAll) {
 			selectAll.indeterminate =
 				selected.filter(Boolean).length > 0 && selected.filter(Boolean).length < users.length;

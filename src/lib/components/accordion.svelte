@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { slide } from 'svelte/transition';
+	
 	interface Props {
 		open?: boolean;
 		head?: import('svelte').Snippet;
@@ -18,8 +19,7 @@
 </script>
 
 <div class="accordion">
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="header" onclick={handleClick} onkeydown={handleKeyDown}>
+	<div class="header" onclick={handleClick} onkeydown={handleKeyDown} role="button" tabindex="0">
 		<span class="sign">{open ? '-' : '+'}</span>
 		<span class="text">
 			{@render head?.()}

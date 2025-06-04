@@ -6,6 +6,7 @@
 	import FAQ from '$lib/components/faq.svelte';
 	import Challenges from '$lib/components/challenges.svelte';
 	import Sponsors from '$lib/components/sponsors.svelte';
+	import SvelteMarkdown from '@humanspeak/svelte-markdown';
 
 	let { data } = $props();
 
@@ -26,11 +27,7 @@
 <div class="main-content">
 	<div>
 		<div class="homepage-text">
-			{#await import('@humanspeak/svelte-markdown')}
-				<p>Loading...</p>
-			{:then module}
-				<module.default source={data.settings.homepageText} />
-			{/await}
+			<SvelteMarkdown source={data.settings.homepageText} />
 		</div>
 	</div>
 

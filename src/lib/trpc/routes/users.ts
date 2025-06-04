@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Prisma, Role, Status, type StatusChange } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';

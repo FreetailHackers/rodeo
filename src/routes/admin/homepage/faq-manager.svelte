@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { preventDefault } from 'svelte/legacy';
-
 	import { enhance } from '$app/forms';
 	import { Modal, Content, Trigger } from 'sv-popup';
 
@@ -36,7 +34,7 @@
 	<Content>
 		<h2>{faq ? 'Edit FAQ' : 'Create FAQ'}</h2>
 
-		<form method="POST" action="?/handleFAQ" onsubmit={preventDefault(handleSubmit)} use:enhance>
+		<form method="POST" action="?/handleFAQ" onsubmit={handleSubmit} use:enhance>
 			<input type="hidden" name="id" value={faq?.id || ''} />
 			<label for="question">Question</label>
 			<input

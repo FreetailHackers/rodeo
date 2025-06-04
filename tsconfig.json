@@ -15,5 +15,5 @@
 	"ts-node": {
 		"esm": true
 	},
-	"include": ["playwright.config.ts", "src/**/*"]
+	"include": ["playwright.config.ts", "src/**/*", "src/types/.ts"]
 }

@@ -1,13 +1,13 @@
-<!-- @migration-task Error while migrating Svelte code: Can't migrate code with afterUpdate. Please migrate by hand. -->
 <script lang="ts">
 	import { page } from '$app/state';
 	import Toasts from '$lib/components/toasts.svelte';
 	import { toasts } from '$lib/stores';
 	import './global.css';
+	import { invalidateAll } from '$app/navigation';
 	import { fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import Loader from '$lib/components/loader.svelte';
-	import { beforeNavigate, afterNavigate } from '$app/navigation';
+	import { beforeNavigate, afterNavigate, goto } from '$app/navigation';
 
 	let { data, children } = $props();
 
@@ -67,13 +67,7 @@
 			{/if}
 			{#if data.user?.roles.includes('ADMIN') || data.user?.roles.includes('SPONSOR')}
 				<li>
-					<!-- HACK: Tell SvelteKit to force refresh on /users since
-				IDK how to reset the filters on the users page otherwise -->
-					<a
-						href="/users"
-						class:active={page.url.pathname.startsWith('/users')}
-						data-sveltekit-reload>Users</a
-					>
+					<a href="/users" class:active={page.url.pathname.startsWith('/users')}>Users</a>
 				</li>
 				{#if data.user?.roles.includes('ADMIN')}
 					<li><a href="/admin" class:active={page.url.pathname.startsWith('/admin')}>Admin</a></li>

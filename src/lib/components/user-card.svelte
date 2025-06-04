@@ -11,7 +11,6 @@
 
 	let { user, questions, teammates = [] }: Props = $props();
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	let application = $derived(user.application as Record<string, any>);
 </script>
 

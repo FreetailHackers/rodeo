@@ -2,9 +2,6 @@
 	import { onMount } from 'svelte';
 	import SvelteMarkdown from '@humanspeak/svelte-markdown';
 
-	let previewing = $state(false);
-	let textarea = $state() as HTMLTextAreaElement;
-
 	interface Props {
 		name: string;
 		id?: any;
@@ -27,15 +24,17 @@
 		isHTML,
 	}: Props = $props();
 
+
+	let previewing = $state(false);
+	let textarea = $state() as HTMLTextAreaElement;
+
 	// HACK: This is a workaround for Svelte not updating input bindings a form is reset
 	onMount(() => {
-		if (textarea?.form) {
-			textarea.form.addEventListener('reset', () => {
-				value = '';
-				// We might as well switch back to write mode for good measure
-				previewing = false;
-			});
-		}
+		textarea.form?.addEventListener('reset', () => {
+			value = '';
+			// We might as well switch back to write mode for good measure
+			previewing = false;
+		});
 	});
 </script>
 
