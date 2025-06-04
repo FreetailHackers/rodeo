@@ -19,6 +19,7 @@
 	let action = $state('admissions');
 	let selected = $derived(users.map(() => false));
 	let selectAll = $state() as HTMLInputElement;
+
 	$effect(() => {
 		if (selectAll) {
 			selectAll.indeterminate =
