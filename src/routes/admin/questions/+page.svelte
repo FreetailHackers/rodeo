@@ -138,9 +138,8 @@
 						name={question.id + '_options'}
 						id={question.id + '_options'}
 						placeholder="Write one option per line, like this: OPTION 1&#13;OPTION 2&#13;OPTION 3"
-					>
-						{question.options.join('\n')}
-					</textarea>
+						value={question.options.join('\n')}
+					></textarea>
 				</div>
 				<div class="flex-row">
 					<Toggle

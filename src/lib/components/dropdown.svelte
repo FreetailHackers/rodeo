@@ -1,5 +1,3 @@
-<!-- @migration-task Error while migrating Svelte code: $$props is used together with named props in a way that cannot be automatically migrated. -->
-<!-- TODO: fix this -->
 <script lang="ts">
 	import Select from 'svelte-select';
 	import fuzzysort from 'fuzzysort';
@@ -13,7 +11,7 @@
 		value: string;
 		json?: boolean;
 		class?: string;
-		onInput?: (event: CustomEvent) => void; // Callback prop for input events
+		onInput?: (event: CustomEvent) => void;
 	}
 
 	let {

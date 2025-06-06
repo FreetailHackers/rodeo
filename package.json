@@ -22,7 +22,7 @@
 		"test:unit:run"
 	],
 	"prisma": {
-		"seed": "npx --import tsx@3.14.0 prisma/seed.ts"
+		"seed": "npx --import tsx prisma/seed.ts"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.28.1",
@@ -50,6 +50,7 @@
 		"svelte-check": "^4.2.1",
 		"ts-node": "^10.9.1",
 		"tslib": "^2.4.1",
+		"tsx": "^4.19.4",
 		"typescript": "^5.5.0",
 		"vite": "^5.4.4",
 		"vitest": "^3.2.1",
@@ -85,7 +86,6 @@
 		"svelte-plotly.js": "^0.3.2",
 		"svelte-select": "^5.8.3",
 		"trpc-sveltekit": "^3.2.2",
-		"tsx": "^3.14.0",
 		"typescript-eslint": "^8.33.0",
 		"zod": "^3.20.2"
 	}
