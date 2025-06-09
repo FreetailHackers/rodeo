@@ -8,33 +8,33 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const load = async ({ locals }) => {
-	await authenticate(locals.auth, ['ADMIN']);
+export const load = async (event) => {
+	await authenticate(event.locals.session, ['ADMIN']);
 	return {
-		settings: await trpc(locals.auth).settings.getPublic(),
-		events: await trpc(locals.auth).events.getAll(),
-		faqs: await trpc(locals.auth).faq.getAll(),
-		challenges: await trpc(locals.auth).challenges.getAll(),
+		settings: await trpc(event).settings.getPublic(),
+		events: await trpc(event).events.getAll(),
+		faqs: await trpc(event).faq.getAll(),
+		challenges: await trpc(event).challenges.getAll(),
 	};
 };
 
 export const actions = {
-	settings: async ({ locals, request }) => {
-		const homepageText = (await request.formData()).get('homepageText') as string;
-		await trpc(locals.auth).settings.update({
+	settings: async (event) => {
+		const homepageText = (await event.request.formData()).get('homepageText') as string;
+		await trpc(event).settings.update({
 			homepageText,
 		});
 		return 'Saved homepage text!';
 	},
 
-	showSections: async ({ locals, request }) => {
-		const formData = await request.formData();
+	showSections: async (event) => {
+		const formData = await event.request.formData();
 		const showAnnouncements = formData.get('showAnnouncements') === 'on';
 		const showSchedule = formData.get('showSchedule') === 'on';
 		const showFAQ = formData.get('showFAQ') === 'on';
 		const showChallenges = formData.get('showChallenges') === 'on';
 		const showSponsors = formData.get('showSponsors') === 'on';
-		await trpc(locals.auth).settings.update({
+		await trpc(event).settings.update({
 			showAnnouncements,
 			showSchedule,
 			showFAQ,
@@ -44,9 +44,9 @@ export const actions = {
 		return 'Saved displayed sections!';
 	},
 
-	handleEvent: async ({ locals, request }) => {
-		const timezone = (await trpc(locals.auth).settings.getPublic()).timezone;
-		const formData = await request.formData();
+	handleEvent: async (event) => {
+		const timezone = (await trpc(event).settings.getPublic()).timezone;
+		const formData = await event.request.formData();
 
 		const id = formData.get('id'); // Check for id to determine create or update
 		const start = formData.get('start') as string;
@@ -65,35 +65,35 @@ export const actions = {
 
 		if (id) {
 			// Update existing event
-			await trpc(locals.auth).events.update({
+			await trpc(event).events.update({
 				id: Number(id),
 				...eventData,
 			});
 			return 'Saved event!';
 		} else {
 			// Create new event
-			await trpc(locals.auth).events.create(eventData);
+			await trpc(event).events.create(eventData);
 			return 'Created event!';
 		}
 	},
 
-	deleteEvent: async ({ locals, request }) => {
-		const eventId = parseInt((await request.formData()).get('id') as string, 10);
+	deleteEvent: async (event) => {
+		const eventId = parseInt((await event.request.formData()).get('id') as string, 10);
 		if (isNaN(eventId)) {
 			throw new Error('Invalid event ID');
 		}
-		await trpc(locals.auth).events.delete(eventId);
+		await trpc(event).events.delete(eventId);
 		return 'Deleted event!';
 	},
 
-	deleteAllEvents: async ({ locals }) => {
-		await trpc(locals.auth).events.deleteAll();
+	deleteAllEvents: async (event) => {
+		await trpc(event).events.deleteAll();
 		return 'Deleted all events!';
 	},
 
 	// FAQ Functions
-	handleFAQ: async ({ locals, request }) => {
-		const formData = await request.formData();
+	handleFAQ: async (event) => {
+		const formData = await event.request.formData();
 		const id = formData.get('id'); // Check for id to determine create or update
 		const question = formData.get('question') as string;
 		const answer = formData.get('answer') as string;
@@ -104,34 +104,34 @@ export const actions = {
 		};
 
 		if (id) {
-			await trpc(locals.auth).faq.update({
+			await trpc(event).faq.update({
 				id: Number(id),
 				...FAQData,
 			});
 			return 'Saved FAQ!';
 		} else {
-			await trpc(locals.auth).faq.create(FAQData);
+			await trpc(event).faq.create(FAQData);
 			return 'Created FAQ!';
 		}
 	},
 
-	deleteFAQ: async ({ locals, request }) => {
-		const id = parseInt((await request.formData()).get('id') as string, 10);
+	deleteFAQ: async (event) => {
+		const id = parseInt((await event.request.formData()).get('id') as string, 10);
 		if (isNaN(id)) {
 			throw new Error('Invalid FAQ ID');
 		}
-		await trpc(locals.auth).faq.delete(id);
+		await trpc(event).faq.delete(id);
 		return 'Deleted FAQ!';
 	},
 
-	deleteAllFAQs: async ({ locals }) => {
-		await trpc(locals.auth).faq.deleteAll();
+	deleteAllFAQs: async (event) => {
+		await trpc(event).faq.deleteAll();
 		return 'Deleted all FAQ!';
 	},
 
 	// Challenge Functions
-	handleChallenge: async ({ locals, request }) => {
-		const formData = await request.formData();
+	handleChallenge: async (event) => {
+		const formData = await event.request.formData();
 		const id = formData.get('id'); // Check for id to determine create or update
 		const title = formData.get('title') as string;
 		const prize = formData.get('prize') as string;
@@ -144,34 +144,34 @@ export const actions = {
 		};
 
 		if (id) {
-			await trpc(locals.auth).challenges.update({
+			await trpc(event).challenges.update({
 				id: Number(id),
 				...challengeData,
 			});
 			return 'Saved challenge!';
 		} else {
-			await trpc(locals.auth).challenges.create(challengeData);
+			await trpc(event).challenges.create(challengeData);
 			return 'Created challenge!';
 		}
 	},
 
-	deleteChallenge: async ({ locals, request }) => {
-		const id = parseInt((await request.formData()).get('id') as string, 10);
+	deleteChallenge: async (event) => {
+		const id = parseInt((await event.request.formData()).get('id') as string, 10);
 		if (isNaN(id)) {
 			throw new Error('Invalid challenge ID');
 		}
-		await trpc(locals.auth).challenges.delete(id);
+		await trpc(event).challenges.delete(id);
 		return 'Deleted challenge!';
 	},
 
-	deleteAllChallenges: async ({ locals }) => {
-		await trpc(locals.auth).challenges.deleteAll();
+	deleteAllChallenges: async (event) => {
+		await trpc(event).challenges.deleteAll();
 		return 'Deleted all challenges!';
 	},
 
 	// Sponsor Functions
-	createSponsor: async ({ locals, request }) => {
-		const formData = await request.formData();
+	createSponsor: async (event) => {
+		const formData = await event.request.formData();
 
 		const sponsorLogo = formData.get('sponsorLogo') as File;
 		const sponsorLink = formData.get('sponsorLink') as string;
@@ -182,7 +182,7 @@ export const actions = {
 
 			s3Upload(key, sponsorLogo);
 
-			await trpc(locals.auth).sponsors.create({
+			await trpc(event).sponsors.create({
 				name: formData.get('sponsorName') as string,
 				imageKey: key,
 				url: sponsorLink,

@@ -2,28 +2,28 @@ import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import type { Role, Status } from '@prisma/client';
 
-export const load = async ({ locals, url }) => {
-	const user = await authenticate(locals.auth, ['ADMIN', 'SPONSOR']);
-	const results = await trpc(locals.auth).users.search({
-		page: Number(url.searchParams.get('page') ?? 1),
-		key: url.searchParams.get('key') ?? '',
-		search: url.searchParams.get('search') ?? '',
-		limit: Number(url.searchParams.get('limit') ?? 10),
-		searchFilter: url.searchParams.get('searchFilter') ?? '',
+export const load = async (event) => {
+	const user = await authenticate(event.locals.session, ['ADMIN', 'SPONSOR']);
+	const results = await trpc(event).users.search({
+		page: Number(event.url.searchParams.get('page') ?? 1),
+		key: event.url.searchParams.get('key') ?? '',
+		search: event.url.searchParams.get('search') ?? '',
+		limit: Number(event.url.searchParams.get('limit') ?? 10),
+		searchFilter: event.url.searchParams.get('searchFilter') ?? '',
 	});
-	const questions = await trpc(locals.auth).questions.get();
+	const questions = await trpc(event).questions.get();
 	const users = await Promise.all(
 		results.users.map(async (hacker) => ({
 			...hacker,
-			teammates: user.roles.includes('ADMIN')
-				? await trpc(locals.auth).team.getTeammates(hacker.authUserId)
+			teammates: event.locals.user.roles.includes('ADMIN')
+				? await trpc(event).team.getTeammates(hacker.authUserId)
 				: [],
 		})),
 	);
 
 	return {
-		settings: await trpc(locals.auth).settings.getPublic(),
-		questions: user.roles.includes('ADMIN')
+		settings: await trpc(event).settings.getPublic(),
+		questions: event.locals.user.roles.includes('ADMIN')
 			? questions
 			: questions.filter((question) => question.sponsorView),
 		users: users,
@@ -31,13 +31,13 @@ export const load = async ({ locals, url }) => {
 		start: results.start,
 		count: results.count,
 		user,
-		query: Object.fromEntries(url.searchParams),
+		query: Object.fromEntries(event.url.searchParams),
 	};
 };
 
 export const actions = {
-	bulk: async ({ locals, request }) => {
-		const formData = await request.formData();
+	bulk: async (event) => {
+		const formData = await event.request.formData();
 		const action = formData.get('action') as string;
 		const ids: string[] = [];
 		for (const key of formData.keys()) {
@@ -47,22 +47,22 @@ export const actions = {
 		}
 		if (action === 'admissions') {
 			const decision = formData.get('user-admissions') as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED';
-			await trpc(locals.auth).admissions.decide({ decision, ids });
+			await trpc(event).admissions.decide({ decision, ids });
 			return 'Saved decisions!';
 		} else if (action === 'status') {
 			const status = formData.get('user-status') as Status;
-			await trpc(locals.auth).users.setStatuses({ status, ids });
+			await trpc(event).users.setStatuses({ status, ids });
 			return 'Saved statuses!';
 		} else if (action === 'add-role') {
 			const role = formData.get('role-to-add') as Role;
-			await trpc(locals.auth).users.addRole({ role, ids });
+			await trpc(event).users.addRole({ role, ids });
 			return 'Added roles!';
 		} else if (action === 'remove-role') {
 			const role = formData.get('role-to-remove') as Role;
-			await trpc(locals.auth).users.removeRole({ role, ids });
+			await trpc(event).users.removeRole({ role, ids });
 			return 'Removed roles!';
 		} else if (action === 'release') {
-			await trpc(locals.auth).admissions.releaseDecisions(ids);
+			await trpc(event).admissions.releaseDecisions(ids);
 			return 'Released decisions!';
 		}
 	},

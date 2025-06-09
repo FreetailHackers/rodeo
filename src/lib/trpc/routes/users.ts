@@ -1,4 +1,4 @@
-import { Prisma, Role, Status, type StatusChange } from '@prisma/client';
+import { Prisma, Role, Status } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
 import { sendEmail } from '../email';
@@ -6,8 +6,7 @@ import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getQuestions } from './questions';
 import { getSettings } from './settings';
-import { auth, emailVerificationToken, resetPasswordToken } from '$lib/lucia';
-import type { Session, User } from 'lucia';
+import type { AuthSession, User, AuthUser, StatusChange } from '@prisma/client';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { canApply } from './admissions';
@@ -18,6 +17,8 @@ import { removeStopwords } from 'stopword';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import { hash } from '@node-rs/argon2';
+import * as auth from '$lib/authenticate';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -40,11 +41,13 @@ export const usersRouter = t.router({
 			async (
 				req,
 			): Promise<Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>> => {
-				const session = await req.ctx.validate();
+				const { session, user } = await auth.validateSessionToken(
+					req.ctx.cookies.get('session') ?? '',
+				);
 				if (session === null) {
 					throw new Error('Unauthorized');
 				}
-				const user = session.user;
+
 				if (req.input === undefined) {
 					return await prisma.user.findUniqueOrThrow({
 						where: { authUserId: user.id },
@@ -322,21 +325,36 @@ export const usersRouter = t.router({
 	 */
 	register: t.procedure
 		.input(z.object({ email: z.string().trim().toLowerCase(), password: z.string().min(8) }))
-		.mutation(async (req): Promise<Session | null> => {
+		.mutation(async (req): Promise<AuthSession | null> => {
 			try {
-				const user = await auth.createUser({
-					key: {
-						providerId: 'email',
-						providerUserId: req.input.email,
-						password: req.input.password,
-					},
-					attributes: {
+				const passwordHash = await hash(req.input.password, {
+					memoryCost: 19456,
+					timeCost: 2,
+					outputLen: 32,
+					parallelism: 1,
+				});
+				const user = await prisma.authUser.create({
+					data: {
+						id: crypto.randomUUID(),
 						email: req.input.email,
+						// password: passwordHash, // Prisma will handle hashing via the adapter
 						roles: ['HACKER'],
 						status: 'CREATED',
 					},
 				});
-				return await auth.createSession({ userId: user.userId, attributes: {} });
+				await prisma.authKey.create({
+					data: {
+						id: crypto.randomUUID(),
+						userId: user.id,
+						hashedPassword: passwordHash,
+						providerId: 'email',
+						providerUserId: user.email,
+					},
+				});
+				const session = await auth.createSession(user.id);
+				auth.setSessionTokenCookie(req.ctx, session.id, session.expiresAt);
+
+				return session;
 			} catch (e) {
 				if (e instanceof PrismaClientKnownRequestError && e.code === 'P2002') {
 					// Email already exists
@@ -346,17 +364,16 @@ export const usersRouter = t.router({
 			}
 		}),
 
-	/**
-	 * Logs in a user with the given email and password. Returns the
-	 * resulting session, or throws an error if the credentials are
-	 * invalid.
-	 */
-	login: t.procedure
-		.input(z.object({ email: z.string().trim().toLowerCase(), password: z.string() }))
-		.mutation(async (req): Promise<Session> => {
-			const key = await auth.useKey('email', req.input.email, req.input.password);
-			return await auth.createSession({ userId: key.userId, attributes: {} });
-		}),
+	// /**
+	//  * Logs in a user with the given email and password. Returns the
+	//  * resulting session, or throws an error if the credentials are
+	//  * invalid.
+	//  */
+	// login: t.procedure
+	// 	.input(z.object({ email: z.string().trim().toLowerCase(), password: z.string() }))
+	// 	.mutation(async (req): Promise<Session> => {
+	// 		return await auth.createSession({ userId: key.userId, attributes: {} });
+	// 	}),
 
 	/**
 	 * Sends an email verification link to the logged in user.
@@ -367,7 +384,7 @@ export const usersRouter = t.router({
 		if (req.ctx.user.verifiedEmail) {
 			return;
 		}
-		const token = await emailVerificationToken.issue(req.ctx.user.id);
+		const token = await auth.emailVerificationToken.issue(req.ctx.user.id);
 		let link = `${process.env.DOMAIN_NAME}/login/verify-email/${token}`;
 		link = `<a href="${link}">${link}</a>`;
 		const body =
@@ -388,7 +405,7 @@ export const usersRouter = t.router({
 				where: { email: req.input.email },
 			});
 			if (user !== null) {
-				const token = await resetPasswordToken.issue(user.id);
+				const token = await auth.resetPasswordToken.issue(user.id);
 				let link = `${process.env.DOMAIN_NAME}/login/reset-password?token=${token}`;
 				link = `<a href="${link}">${link}</a>`;
 				const body =
@@ -404,7 +421,7 @@ export const usersRouter = t.router({
 	 * invalid or expired.
 	 */
 	verifyEmail: t.procedure.input(z.string()).mutation(async (req): Promise<void> => {
-		const userId = await emailVerificationToken.validate(req.input);
+		const userId = await auth.emailVerificationToken.validate(req.input);
 		await prisma.authUser.update({
 			where: { id: userId },
 			data: { verifiedEmail: true },
@@ -418,32 +435,52 @@ export const usersRouter = t.router({
 	 */
 	resetPassword: t.procedure
 		.input(z.object({ token: z.string(), password: z.string().min(8) }))
-		.mutation(async (req): Promise<Session> => {
-			const userId = await resetPasswordToken.validate(req.input.token);
-			const user = await auth.getUser(userId);
-			await auth.invalidateAllUserSessions(user.id);
+		.mutation(async (req): Promise<AuthSession> => {
+			const userId = await auth.resetPasswordToken.validate(req.input.token);
+			const user = await prisma.authUser.findUniqueOrThrow({
+				where: { id: userId },
+			});
+			await auth.invalidateAllSessions(user.id);
+			const passwordHash = await hash(req.input.password, {
+				memoryCost: 19456,
+				timeCost: 2,
+				outputLen: 32,
+				parallelism: 1,
+			});
 			try {
-				await auth.updateKeyPassword('email', user.email, req.input.password);
+				await prisma.authKey.updateMany({
+					where: {
+						userId: user.id,
+						providerId: 'email',
+					},
+					data: {
+						hashedPassword: passwordHash,
+					},
+				});
 			} catch (e) {
 				// If the user doesn't have a password (because they
 				// signed up through a third-party provider), create one
-				await auth.createKey({
-					userId: user.id,
-					providerId: 'email',
-					providerUserId: user.email,
-					password: req.input.password,
+				await prisma.authKey.create({
+					data: {
+						id: crypto.randomUUID(),
+						userId: user.id,
+						hashedPassword: passwordHash,
+						providerId: 'email',
+						providerUserId: user.email,
+					},
 				});
 			}
-			return await auth.createSession({ userId: user.id, attributes: {} });
+			return await auth.createSession(user.id);
 		}),
 
 	/**
 	 * Logs out the logged in user by invalidating their session.
 	 */
 	logout: t.procedure.mutation(async (req): Promise<void> => {
-		const session = await req.ctx.validate();
+		const { session } = await auth.validateSessionToken(req.ctx.cookies.get('session') ?? '');
+
 		if (session !== null) {
-			await auth.invalidateSession(session.sessionId);
+			await auth.invalidateSession(session.id);
 		}
 	}),
 
@@ -1163,10 +1200,10 @@ async function getWhereConditionHelper(
 	return {};
 }
 
-async function getRSVPDeadline(user: User) {
+async function getRSVPDeadline(user: AuthUser): Promise<Date | null> {
 	const daysToConfirmBy = (
 		await prisma.statusChange.findFirstOrThrow({
-			where: { userId: user.authUserId },
+			where: { userId: user.id },
 			orderBy: { timestamp: 'desc' },
 		})
 	).timestamp;

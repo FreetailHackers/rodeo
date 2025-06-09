@@ -7,12 +7,12 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const load = async ({ locals }) => {
-	await authenticate(locals.auth, ['ADMIN']);
+export const load = async (event) => {
+	await authenticate(event.locals.session, ['ADMIN']);
 	return {
-		decisions: await trpc(locals.auth).admissions.getDecisions(),
-		settings: await trpc(locals.auth).settings.getAll(),
-		graph: await trpc(locals.auth).users.getStatusChanges(),
+		decisions: await trpc(event).admissions.getDecisions(),
+		settings: await trpc(event).settings.getAll(),
+		graph: await trpc(event).users.getStatusChanges(),
 	};
 };
 
@@ -26,8 +26,8 @@ const parseDateWithTimezone = (dateString: string | null, timezone: string): Dat
 };
 
 export const actions = {
-	settings: async ({ locals, request }) => {
-		const formData = await request.formData();
+	settings: async (event) => {
+		const formData = await event.request.formData();
 		const timezone = formData.get('timezone') as string;
 
 		const applicationDeadline = parseDateWithTimezone(
@@ -52,7 +52,7 @@ export const actions = {
 			.split('\r\n')
 			.map((option: string) => option.trim())
 			.filter(Boolean);
-		await trpc(locals.auth).settings.update({
+		await trpc(event).settings.update({
 			applicationOpen,
 			daysToRSVP,
 			scanActions,
@@ -64,13 +64,13 @@ export const actions = {
 		return 'Saved settings!';
 	},
 
-	release: async ({ locals }) => {
-		await trpc(locals.auth).admissions.releaseAllDecisions();
+	release: async (event) => {
+		await trpc(event).admissions.releaseAllDecisions();
 		return 'Released all decisions!';
 	},
 
-	splitGroups: async ({ locals, request }) => {
-		const formData = await request.formData();
+	splitGroups: async (event) => {
+		const formData = await event.request.formData();
 		const groups = formData.get('splitGroups') as string;
 		const groupNames = groups.split(',').map((name) => name.trim());
 
@@ -80,7 +80,7 @@ export const actions = {
 			return 'Please enter valid group names separated by commas.';
 		}
 
-		await trpc(locals.auth).users.splitGroups(groupNames);
+		await trpc(event).users.splitGroups(groupNames);
 		return 'Groups successfully split and updated!';
 	},
 };

@@ -2,10 +2,10 @@ import { trpc } from '$lib/trpc/router';
 import { authenticate } from '$lib/authenticate';
 import { redirect } from '@sveltejs/kit';
 
-export const load = async ({ locals, url }) => {
-	await authenticate(locals.auth);
-	const token = url.searchParams.get('token');
-	const teamId = url.searchParams.get('teamId');
+export const load = async (event) => {
+	await authenticate(event.locals.session, []);
+	const token = event.url.searchParams.get('token');
+	const teamId = event.url.searchParams.get('teamId');
 
 	if (!token || !teamId) {
 		throw new Error('Invalid link');
@@ -18,8 +18,8 @@ export const load = async ({ locals, url }) => {
 };
 
 export const actions = {
-	respondInvitation: async ({ request, locals }) => {
-		const formData = await request.formData();
+	respondInvitation: async (event) => {
+		const formData = await event.request.formData();
 		const token = formData.get('token') as string;
 		const teamId = parseInt(formData.get('teamId') as string, 10);
 		const accept = formData.get('action') === 'accept';
@@ -31,8 +31,8 @@ export const actions = {
 		let response;
 		try {
 			response = accept
-				? await trpc(locals.auth).team.acceptInvitation({ token, teamId })
-				: await trpc(locals.auth).team.rejectInvitation({ token, teamId });
+				? await trpc(event).team.acceptInvitation({ token, teamId })
+				: await trpc(event).team.rejectInvitation({ token, teamId });
 		} catch (error) {
 			return 'Invalid request';
 		}

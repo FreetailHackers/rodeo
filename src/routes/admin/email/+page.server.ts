@@ -7,16 +7,16 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const load = async ({ locals }) => {
-	await authenticate(locals.auth, ['ADMIN']);
+export const load = async (event) => {
+	await authenticate(event.locals.session, ['ADMIN']);
 	return {
-		settings: await trpc(locals.auth).settings.getAll(),
+		settings: await trpc(event).settings.getAll(),
 	};
 };
 
 export const actions = {
-	settings: async ({ locals, request }) => {
-		const formData = await request.formData();
+	settings: async (event) => {
+		const formData = await event.request.formData();
 		const submitTemplate = formData.get('submitTemplate') as string;
 		const acceptTemplate = formData.get('acceptTemplate') as string;
 		const rejectTemplate = formData.get('rejectTemplate') as string;
@@ -31,7 +31,7 @@ export const actions = {
 		const confirmIsHTML = formData.get('confirmFormType') === 'on';
 		const declineIsHTML = formData.get('declineFormType') === 'on';
 		const withdrawIsHTML = formData.get('withdrawFormType') === 'on';
-		await trpc(locals.auth).settings.update({
+		await trpc(event).settings.update({
 			submitTemplate,
 			acceptTemplate,
 			rejectTemplate,

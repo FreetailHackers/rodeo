@@ -2,29 +2,29 @@ import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import type { QuestionType } from '@prisma/client';
 
-export const load = async ({ locals }) => {
-	await authenticate(locals.auth, ['ADMIN']);
-	return { questions: await trpc(locals.auth).questions.get() };
+export const load = async (event) => {
+	await authenticate(event.locals.session, ['ADMIN']);
+	return { questions: await trpc(event).questions.get() };
 };
 
 export const actions = {
-	create: async ({ locals, request }) => {
-		const formData = await request.formData();
-		await trpc(locals.auth).questions.create(formData.get('type') as QuestionType);
+	create: async (event) => {
+		const formData = await event.request.formData();
+		await trpc(event).questions.create(formData.get('type') as QuestionType);
 	},
 
-	moveDown: async ({ locals, request }) => {
-		const formData = await request.formData();
-		await trpc(locals.auth).questions.moveDown(formData.get('id') as string);
+	moveDown: async (event) => {
+		const formData = await event.request.formData();
+		await trpc(event).questions.moveDown(formData.get('id') as string);
 	},
 
-	moveUp: async ({ locals, request }) => {
-		const formData = await request.formData();
-		await trpc(locals.auth).questions.moveUp(formData.get('id') as string);
+	moveUp: async (event) => {
+		const formData = await event.request.formData();
+		await trpc(event).questions.moveUp(formData.get('id') as string);
 	},
 
-	update: async ({ locals, request }) => {
-		const formData = Object.fromEntries(await request.formData());
+	update: async (event) => {
+		const formData = Object.fromEntries(await event.request.formData());
 		// We have to do a bit of transformation on the form data to
 		// get it into the format that the tRPC endpoint expects.
 
@@ -104,12 +104,12 @@ export const actions = {
 				questions[id].maxSizeMB = Number(questions[id].maxSizeMB) || 1;
 			}
 		}
-		await trpc(locals.auth).questions.update(questions);
+		await trpc(event).questions.update(questions);
 		return 'Saved questions!';
 	},
 
-	delete: async ({ locals, request }) => {
-		const formData = await request.formData();
-		await trpc(locals.auth).questions.delete(formData.get('id') as string);
+	delete: async (event) => {
+		const formData = await event.request.formData();
+		await trpc(event).questions.delete(formData.get('id') as string);
 	},
 };

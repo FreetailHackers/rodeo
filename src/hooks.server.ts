@@ -1,4 +1,3 @@
-import { auth } from '$lib/lucia';
 import { building } from '$app/environment';
 import { prisma } from '$lib/trpc/db';
 import { router } from '$lib/trpc/router';
@@ -6,18 +5,36 @@ import { createContext } from '$lib/trpc/t';
 import type { Handle } from '@sveltejs/kit';
 import { createTRPCHandle } from 'trpc-sveltekit';
 import { sequence } from '@sveltejs/kit/hooks';
-
-const luciaAuthHandle: Handle = async ({ event, resolve }) => {
-	event.locals.auth = auth.handleRequest(event as any);
-	return await resolve(event);
-};
+import * as auth from '$lib/authenticate';
 
 const trpcHandle = createTRPCHandle({
 	router,
-	createContext: async (event) => createContext(event.locals.auth),
+	createContext: async (event) => createContext(event),
 });
 
-export const handle = sequence(luciaAuthHandle, trpcHandle);
+const authHandle: Handle = async ({ event, resolve }) => {
+	const sessionToken = event.cookies.get(auth.sessionCookieName);
+
+	if (!sessionToken) {
+		event.locals.user = null;
+		event.locals.session = null;
+		return resolve(event);
+	}
+
+	const { session, user } = await auth.validateSessionToken(sessionToken);
+
+	if (session) {
+		auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
+	} else {
+		auth.deleteSessionTokenCookie(event);
+	}
+
+	event.locals.user = user;
+	event.locals.session = session;
+	return resolve(event);
+};
+
+export const handle = sequence(authHandle, trpcHandle);
 
 if (!building) {
 	// Set default settings

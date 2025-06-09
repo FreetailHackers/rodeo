@@ -1,5 +1,6 @@
 import type { Role } from '@prisma/client';
 import { t } from './t';
+import { validateSessionToken } from '$lib/authenticate';
 
 /**
  * A helper function that returns a TRPC middleware that authenticates a
@@ -8,15 +9,22 @@ import { t } from './t';
  */
 export function authenticate(roles?: Role[]) {
 	return t.middleware(async ({ ctx, next }) => {
-		const session = await ctx.validate();
-		if (session === null) {
+		const sessionId = await ctx.cookies.get('auth-session');
+
+		if (sessionId === null || sessionId === undefined) {
 			throw new Error('Unauthorized');
 		}
-		if (roles !== undefined && !hasAnyRole(session.user.roles, roles)) {
+
+		const { session, user } = await validateSessionToken(sessionId);
+		if (session === null || user === null) {
+			throw new Error('Unauthorized');
+		}
+
+		if (roles !== undefined && !hasAnyRole(user?.roles, roles)) {
 			throw new Error('Forbidden');
 		}
 		return next({
-			ctx: { user: session.user },
+			ctx: { user: user },
 		});
 	});
 }

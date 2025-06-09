@@ -4,7 +4,7 @@ import { prisma } from '../db';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 import { sendEmail } from '../email';
-import { inviteToTeamToken } from '$lib/lucia';
+import { inviteToTeamToken } from '$lib/authenticate';
 
 export const teamRouter = t.router({
 	getTeam: t.procedure.use(authenticate(['HACKER'])).query(async (req) => {

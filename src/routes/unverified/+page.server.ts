@@ -2,15 +2,15 @@ import { trpc } from '$lib/trpc/router';
 import { redirect } from '@sveltejs/kit';
 
 export const load = async ({ locals }) => {
-	const session = await locals.auth.validate();
-	if (session === null || session.user.status !== 'CREATED') {
+	const session = await locals.session;
+	if (session === null || locals.user.status !== 'CREATED') {
 		redirect(303, '/');
 	}
 };
 
 export const actions = {
-	default: async ({ locals }) => {
-		await trpc(locals.auth).users.sendVerificationEmail();
+	default: async (event) => {
+		await trpc(event).users.sendVerificationEmail();
 		return 'Verification email resent!';
 	},
 };

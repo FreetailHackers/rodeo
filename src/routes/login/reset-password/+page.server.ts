@@ -1,27 +1,28 @@
 import { trpc } from '$lib/trpc/router';
+import { setSessionTokenCookie } from '$lib/authenticate';
 
 export const actions = {
-	email: async ({ locals, request, url }) => {
-		const email = (await request.formData()).get('email') as string;
-		await trpc(locals.auth).users.sendPasswordResetEmail({ email });
+	email: async (event) => {
+		const email = (await event.request.formData()).get('email') as string;
+		await trpc(event).users.sendPasswordResetEmail({ email });
 		return new Response(null, {
 			status: 302,
-			headers: { location: url.pathname + '?submitted' },
+			headers: { location: event.url.pathname + '?submitted' },
 		});
 	},
 
-	reset: async ({ request, url, locals }) => {
-		const formData = await request.formData();
+	reset: async (event) => {
+		const formData = await event.request.formData();
 		try {
-			const session = await trpc(locals.auth).users.resetPassword({
+			const session = await trpc(event).users.resetPassword({
 				token: formData.get('token') as string,
 				password: formData.get('password') as string,
 			});
-			locals.auth.setSession(session);
+			setSessionTokenCookie(event, session.id, session.expiresAt);
 		} catch (e) {
 			return new Response(null, {
 				status: 302,
-				headers: { location: url.pathname + '?invalid' },
+				headers: { location: event.url.pathname + '?invalid' },
 			});
 		}
 		return new Response(null, {

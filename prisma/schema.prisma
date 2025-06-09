@@ -11,42 +11,47 @@ datasource db {
 model AuthUser {
   id             String         @id @unique
   email          String         @unique
+  password       String?
+  githubId       Int?          
+  githubUsername String?        
+  googleId       String?
+  goodleUsername String?
   roles          Role[]         @default([HACKER])
   status         Status         @default(CREATED)
   verifiedEmail  Boolean        @default(false)
-  auth_key       AuthKey[]
-  auth_session   AuthSession[]
-  single_use_key SingleUseKey[]
+  authKey        AuthKey[]
+  authSession    AuthSession[]
+  singleUseKey   SingleUseKey[]
   user           User?
 }
 
 model AuthSession {
-  id             String   @id @unique
-  user_id        String
-  active_expires BigInt
-  idle_expires   BigInt
-  auth_user      AuthUser @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  id            String   @id @unique
+  userId        String
+  expiresAt     DateTime
+  authUser      AuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([user_id])
+  @@index([userId])
 }
 
 model AuthKey {
-  id              String   @id @unique
-  hashed_password String?
-  user_id         String
-  auth_user       AuthUser @relation(fields: [user_id], references: [id], onDelete: Cascade)
-
-  @@index([user_id])
+  id               String   @id @unique
+  hashedPassword   String?
+  userId           String
+  authUser         AuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  providerId       String?
+  providerUserId   String?
+  @@index([userId])
 }
 
 model SingleUseKey {
   id        String   @id @unique
   purpose   String
   expires   DateTime
-  user_id   String
-  auth_user AuthUser @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  userId    String
+  authUser  AuthUser @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([user_id])
+  @@index([userId])
 }
 
 model User {

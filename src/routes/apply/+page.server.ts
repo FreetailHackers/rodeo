@@ -2,18 +2,18 @@ import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import type { Question } from '@prisma/client';
 
-export const load = async ({ locals }) => {
-	await authenticate(locals.auth, ['HACKER']);
-	const settings = await trpc(locals.auth).settings.getPublic();
-	const deadline = await trpc(locals.auth).users.getRSVPDeadline();
+export const load = async (event) => {
+	await authenticate(event.locals.session, ['HACKER']);
+	const settings = await trpc(event).settings.getPublic();
+	const deadline = await trpc(event).users.getRSVPDeadline();
 
 	return {
-		user: await trpc(locals.auth).users.get(),
-		appliedDate: await trpc(locals.auth).users.getAppliedDate(),
+		user: await trpc(event).users.get(),
+		appliedDate: await trpc(event).users.getAppliedDate(),
 		rsvpDeadline: deadline,
-		questions: await trpc(locals.auth).questions.get(),
+		questions: await trpc(event).questions.get(),
 		settings: settings,
-		canApply: await trpc(locals.auth).admissions.canApply(),
+		canApply: await trpc(event).admissions.canApply(),
 	};
 };
 
@@ -48,40 +48,40 @@ function formToApplication(questions: Question[], formData: FormData) {
 }
 
 export const actions = {
-	save: async ({ locals, request }) => {
-		await trpc(locals.auth).users.update(
-			formToApplication(await trpc(locals.auth).questions.get(), await request.formData()),
+	save: async (event) => {
+		await trpc(event).users.update(
+			formToApplication(await trpc(event).questions.get(), await event.request.formData()),
 		);
 	},
 
-	finish: async ({ locals, request }) => {
-		if (!(await trpc(locals.auth).admissions.canApply())) {
+	finish: async (event) => {
+		if (!(await trpc(event).admissions.canApply())) {
 			return new Response(null, {
 				status: 301,
 				headers: { location: '/apply' },
 			});
 		}
-		await trpc(locals.auth).users.update(
-			formToApplication(await trpc(locals.auth).questions.get(), await request.formData()),
+		await trpc(event).users.update(
+			formToApplication(await trpc(event).questions.get(), await event.request.formData()),
 		);
-		return await trpc(locals.auth).users.submitApplication();
+		return await trpc(event).users.submitApplication();
 	},
 
-	withdraw: async ({ locals }) => {
-		if (!(await trpc(locals.auth).admissions.canApply())) {
+	withdraw: async (event) => {
+		if (!(await trpc(event).admissions.canApply())) {
 			return new Response(null, {
 				status: 301,
 				headers: { location: '/apply' },
 			});
 		}
-		await trpc(locals.auth).users.withdrawApplication();
+		await trpc(event).users.withdrawApplication();
 	},
 
-	confirm: async ({ locals }) => {
-		await trpc(locals.auth).users.rsvp('CONFIRMED');
+	confirm: async (event) => {
+		await trpc(event).users.rsvp('CONFIRMED');
 	},
 
-	decline: async ({ locals }) => {
-		await trpc(locals.auth).users.rsvp('DECLINED');
+	decline: async (event) => {
+		await trpc(event).users.rsvp('DECLINED');
 	},
 };
