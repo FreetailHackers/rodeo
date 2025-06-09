@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import UserCard from '$lib/components/user-card.svelte';
-	import type { Prisma, Question } from '@prisma/client';
-	import type { UserSchema } from 'lucia';
+	import type { Prisma, Question, AuthUser } from '@prisma/client';
 
 	interface Props {
 		users: (Prisma.UserGetPayload<{
@@ -10,7 +9,7 @@
 		}> & {
 			teammates: { email: string; status: string }[];
 		})[];
-		self: UserSchema;
+		self: AuthUser;
 		questions: Question[];
 	}
 
