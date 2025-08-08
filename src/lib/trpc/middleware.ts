@@ -9,7 +9,7 @@ import { validateSessionToken } from '$lib/authenticate';
  */
 export function authenticate(roles?: Role[]) {
 	return t.middleware(async ({ ctx, next }) => {
-		const sessionId = await ctx.cookies.get('auth-session');
+		const sessionId = await ctx.cookies.get('session');
 
 		if (sessionId === null || sessionId === undefined) {
 			throw new Error('Unauthorized');

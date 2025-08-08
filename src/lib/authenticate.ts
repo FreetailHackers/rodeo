@@ -5,7 +5,7 @@ import type { RequestEvent } from '@sveltejs/kit';
 import { prisma } from './trpc/db';
 import { GitHub, Google } from 'arctic';
 
-export const sessionCookieName = 'auth-session';
+export const sessionCookieName = 'session';
 
 /**
  * Authenticates and authorizes a user, redirecting to the login page if
