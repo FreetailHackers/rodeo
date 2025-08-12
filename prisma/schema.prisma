@@ -60,6 +60,7 @@ model User {
   application   Json           @default("{}")
   teamId        Int?
   mealGroup     String?
+  qrCodeStyle   Json?          @default("{}")
   decision      Decision?
   scans         Scan[]
   statusChanges StatusChange[]

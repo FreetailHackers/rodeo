@@ -83,4 +83,20 @@ export const actions = {
 		await trpc(event).users.splitGroups(groupNames);
 		return 'Groups successfully split and updated!';
 	},
+
+	qrCodeSettings: async (event) => {
+		const formData = await event.request.formData();
+		const qrConfig = {
+			image: formData.get('imageUrl') as string,
+			dotsOptions: {
+				color: formData.get('dotsColor') as string,
+				type: formData.get('dotsType') as string,
+			},
+			backgroundOptions: {
+				color: formData.get('backgroundColor') as string,
+			},
+		};
+
+		await trpc(event).users.updateQRCodeStyle(qrConfig);
+	},
 };

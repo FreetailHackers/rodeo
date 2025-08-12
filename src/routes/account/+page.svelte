@@ -1,28 +1,51 @@
 <script lang="ts">
-	import QRCode from 'qrcode';
+	import QRCodeStyling from 'qr-code-styling';
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { Modal, Content, Trigger } from 'sv-popup';
 
 	let { data } = $props();
 
-	let canvas = $state() as HTMLCanvasElement;
+	let qrCodeContainer = $state() as HTMLDivElement;
 	let closeModal = $state(false);
 
-	onMount(() => {
-		QRCode.toCanvas(canvas, data.user.id, {
-			scale: 10,
-		});
+	const userQrStyle =
+		(data.qrCodeStyle as {
+			image?: string;
+			dotsOptions?: {
+				color: string;
+				type: string;
+			};
+			backgroundOptions?: {
+				color: string;
+			};
+		}) || {};
 
-		if (
-			data.user !== undefined &&
-			(!data.user.roles.includes('HACKER') ||
-				data.user.roles.length > 1 ||
-				data.user.status === 'CONFIRMED')
-		) {
-			canvas.style.width = '64%';
-			canvas.style.height = 'auto';
-		}
+	const qrCode = new QRCodeStyling({
+		width: 1000,
+		height: 1000,
+		data: data.user.id,
+		image: userQrStyle.image || undefined,
+		dotsOptions: {
+			color: userQrStyle.dotsOptions?.color || '#000000',
+			type: (userQrStyle.dotsOptions?.type as any) || 'square',
+		},
+		backgroundOptions: {
+			color: userQrStyle.backgroundOptions?.color || '#ffffff',
+		},
+	});
+
+	onMount(() => {
+		qrCode.append(qrCodeContainer);
+
+		// Force the QR code to scale after it's been appended
+		setTimeout(() => {
+			const qrElement = qrCodeContainer.querySelector('svg, canvas') as HTMLElement;
+			if (qrElement) {
+				qrElement.style.width = '100%';
+				qrElement.style.height = 'auto';
+			}
+		}, 100);
 	});
 </script>
 
@@ -143,7 +166,7 @@
 			<h3>My Hacker ID</h3>
 
 			<div class="id-card">
-				<canvas bind:this={canvas} id="qrcode"></canvas>
+				<div bind:this={qrCodeContainer} id="qrcode"></div>
 				<img src="hacker-id/background.png" alt="hacker id-card" />
 			</div>
 		</div>
@@ -197,10 +220,11 @@
 
 	.id-card #qrcode {
 		position: absolute;
-		object-fit: contain;
 		margin: 18%;
 		margin-top: 55%;
 		border-radius: 10%;
+		width: 64%;
+		height: auto;
 	}
 
 	form {

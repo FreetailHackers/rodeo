@@ -83,6 +83,7 @@
 		"marked": "^15.0.12",
 		"natural": "^6.10.4",
 		"nodemailer": "^6.9.1",
+		"qr-code-styling": "^1.9.2",
 		"qrcode": "^1.5.1",
 		"stopword": "^3.0.1",
 		"superjson": "^1.12.2",
