@@ -125,53 +125,41 @@
 	<button type="submit">Split Groups</button>
 </form>
 
-<h2>QR Code Customization</h2>
+<h2>Customize QR Codes</h2>
 
-<form method="POST" action="?/qrCodeSettings" use:enhance>
-	<div class="qr-settings-container">
-		<div class="qr-controls">
-			<status-container>
-				<label for="dotsColor">Dots Color</label>
-				<input type="color" id="dotsColor" name="dotsColor" />
-			</status-container>
+<form method="POST" action="?/qrCodeSettings" class="qr-form">
+	<h3>QR Code Styling</h3>
 
-			<status-container>
-				<label for="backgroundColor">Background Color</label>
-				<input type="color" id="backgroundColor" name="backgroundColor" value="#ffffff" />
-			</status-container>
+	<div class="qr-grid">
+		<div class="qr-field">
+			<label for="imageUrl">Logo Image URL</label>
+			<input type="url" id="imageUrl" name="imageUrl" placeholder="https://example.com/logo.png" />
+		</div>
 
-			<status-container>
-				<label for="cornerSquareType">Corner Square Style</label>
-				<select id="cornerSquareType" name="dotsType">
-					<option value="square">Square</option>
-					<option value="dot">Dot</option>
-					<option value="extra-rounded">Extra Rounded</option>
-				</select>
-			</status-container>
+		<div class="qr-field">
+			<label for="dotsType">Dots Style</label>
+			<select id="dotsType" name="dotsType">
+				<option value="rounded">Rounded</option>
+				<option value="dots">Dots</option>
+				<option value="classy">Classy</option>
+				<option value="classy-rounded">Classy Rounded</option>
+				<option value="square">Square</option>
+				<option value="extra-rounded">Extra Rounded</option>
+			</select>
+		</div>
 
-			<status-container>
-				<label for="imageUrl">Logo URL (optional)</label>
-				<input
-					type="url"
-					id="imageUrl"
-					name="imageUrl"
-					placeholder="https://example.com/logo.png"
-				/>
-				<small
-					>Leave empty to disable logo. Recommended size: square image, at least 100x100px</small
-				>
-			</status-container>
+		<div class="qr-field">
+			<label for="dotsColor">Dots Color</label>
+			<input type="color" id="dotsColor" name="dotsColor" value="#000000" />
+		</div>
 
-			<div class="qr-preview">
-				<h3>Preview</h3>
-				<div class="preview-container">
-					<div class="qr-preview-code"></div>
-				</div>
-				<p><small>Preview shows sample data. Actual QR codes will contain user IDs.</small></p>
-			</div>
-			<button type="submit">Save QR Code Settings</button>
+		<div class="qr-field">
+			<label for="backgroundColor">Background Color</label>
+			<input type="color" id="backgroundColor" name="backgroundColor" value="#ffffff" />
 		</div>
 	</div>
+
+	<button type="submit"> Update QR Code Style </button>
 </form>
 
 <h2>Pending Decisions</h2>
@@ -235,74 +223,60 @@
 	status-container {
 		margin-top: 1rem;
 	}
+
+	.qr-form {
+		margin: 20px 0;
+		padding: 20px;
+		border: 1px solid #e5e5e5;
+		border-radius: 6px;
+	}
+
+	.qr-form h3 {
+		margin: 0 0 16px 0;
+		font-size: 18px;
+		font-weight: 600;
+	}
+
+	.qr-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 16px;
+		margin-bottom: 16px;
+	}
+
+	.qr-field label {
+		display: block;
+		font-size: 14px;
+		font-weight: 500;
+		margin-bottom: 4px;
+	}
+
+	.qr-field input,
+	.qr-field select {
+		width: 100%;
+		padding: 8px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		font-size: 14px;
+	}
+
+	.qr-field input[type='color'] {
+		height: 40px;
+		cursor: pointer;
+		max-width: 25%;
+	}
+
+	@media (max-width: 768px) {
+		.qr-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
 	select {
 		width: 100%;
 	}
 
 	input[readonly] {
 		background-color: rgb(182, 182, 182);
-	}
-
-	.qr-settings-container {
-		display: flex;
-		flex-direction: column;
-		gap: 2rem;
-		margin-bottom: 2rem;
-	}
-
-	.qr-controls {
-		display: flex;
-		flex-direction: row;
-		gap: 1rem;
-		flex-wrap: wrap;
-	}
-
-	.qr-controls status-container {
-		flex: 1;
-		min-width: 12.5rem;
-		padding: 1rem;
-	}
-
-	.qr-controls input[type='color'] {
-		width: 7.5rem;
-		height: 5rem;
-		border: none;
-		border-radius: var(--border-radius);
-		cursor: pointer;
-		padding: 0;
-		margin: 0 auto;
-		flex-grow: 0;
-	}
-
-	.qr-controls status-container:has(input[type='color']) {
-		text-align: center;
-	}
-
-	.qr-controls status-container:has(input[type='color']) label {
-		text-align: center;
-		margin-bottom: 0.5rem;
-	}
-
-	.qr-preview {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-	}
-
-	.preview-container {
-		border: 2px solid var(--grey);
-		border-radius: var(--border-radius);
-		padding: 1rem;
-		background-color: #f9f9f9;
-		width: 12.5rem;
-		height: 12.5rem;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.qr-preview-code {
-		width: 100%;
-		height: 100%;
 	}
 </style>
