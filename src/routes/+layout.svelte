@@ -58,7 +58,7 @@
 			style="display: none"
 		/>
 		<menu id="menu" bind:this={menu}>
-			<li><a href="https://recordhacks.freetailhackers.com/">Homepage</a></li>
+			<li><a href="https://hacktx.com">Homepage</a></li>
 			<li><a href="/">Announcements</a></li>
 			{#if data.user?.roles.includes('HACKER')}
 				<li>
