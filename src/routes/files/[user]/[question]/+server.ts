@@ -7,20 +7,21 @@ import { redirect } from '@sveltejs/kit';
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
 export const GET = async ({ params, locals }) => {
-	const user = await authenticate(locals.auth, ['ADMIN', 'SPONSOR']);
+	const user = await authenticate(locals.session, ['ADMIN', 'SPONSOR']);
 	const questions = await getQuestions();
 	if (
-		!user.roles.includes('ADMIN') &&
-		!questions.filter((question) => question.id === params.question)[0].sponsorView
+		user === null ||
+		(!user.roles.includes('ADMIN') &&
+			!questions.filter((question) => question.id === params.question)[0].sponsorView)
 	) {
-		throw redirect(303, '/?forbidden');
+		redirect(303, '/?forbidden');
 	}
 	const url = await getSignedUrl(
 		s3Client,
 		new GetObjectCommand({
 			Bucket: process.env.S3_BUCKET,
 			Key: `files/${params.user}/${params.question}`,
-		})
+		}),
 	);
-	throw redirect(302, url);
+	redirect(302, url);
 };

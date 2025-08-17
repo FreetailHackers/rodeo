@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 
-	export let data;
+	let { data } = $props();
 
-	let accept = true;
+	let accept = $state(true);
 
 	function setAction(value: boolean) {
 		accept = value;
@@ -21,9 +21,8 @@
 		<input type="hidden" name="teamId" value={data.teamId} />
 
 		<div>
-			<button type="submit" on:click={() => setAction(true)}>Accept</button>
-			<button class="negative-button" type="submit" on:click={() => setAction(false)}
-				>Decline</button
+			<button type="submit" onclick={() => setAction(true)}>Accept</button>
+			<button class="negative-button" type="submit" onclick={() => setAction(false)}>Decline</button
 			>
 		</div>
 

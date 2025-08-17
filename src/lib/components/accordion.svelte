@@ -1,6 +1,13 @@
 <script lang="ts">
-	export let open = false;
 	import { slide } from 'svelte/transition';
+
+	interface Props {
+		open?: boolean;
+		head?: import('svelte').Snippet;
+		details?: import('svelte').Snippet;
+	}
+
+	let { open = $bindable(false), head, details }: Props = $props();
 
 	function handleClick(): void {
 		open = !open;
@@ -12,16 +19,16 @@
 </script>
 
 <div class="accordion">
-	<div class="header" on:click={handleClick} on:keydown={handleKeyDown}>
+	<div class="header" onclick={handleClick} onkeydown={handleKeyDown} role="button" tabindex="0">
 		<span class="sign">{open ? '-' : '+'}</span>
 		<span class="text">
-			<slot name="head" />
+			{@render head?.()}
 		</span>
 	</div>
 
 	{#if open}
-		<div class="details" transition:slide>
-			<slot name="details" />
+		<div class="details" transition:slide|global>
+			{@render details?.()}
 		</div>
 	{/if}
 </div>
@@ -29,7 +36,6 @@
 <style>
 	.accordion {
 		margin-bottom: 2rem;
-		color: var(--white);
 	}
 
 	.header {
@@ -44,6 +50,5 @@
 
 	.details {
 		padding: 0.5rem;
-		color: #7d7a72;
 	}
 </style>

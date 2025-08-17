@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import UserCard from '$lib/components/user-card.svelte';
 	import { trpc } from '$lib/trpc/client';
 	import type { Prisma } from '@prisma/client';
@@ -8,28 +8,33 @@
 	import { onDestroy, onMount } from 'svelte';
 	import Plot from 'svelte-plotly.js';
 
-	export let data;
+	let { data } = $props();
 
-	let html5QrCode: Html5Qrcode;
-	let dialog: HTMLDialogElement;
+	let html5QrCode = $state() as Html5Qrcode;
+	let dialog = $state() as HTMLDialogElement;
 
-	let user: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }> | null = null;
-	let totalScans: number;
+	let user = $state<Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }> | null>(
+		null,
+	);
+	let totalScans = $state(0);
+	let scanCount: Record<string, number> = $state({});
 
 	onMount(async () => {
 		html5QrCode = new Html5Qrcode('reader');
 		const config = { fps: 5, qrbox: { width: 250, height: 250 }, aspectRatio: 1 };
 		html5QrCode.start({ facingMode: 'environment' }, config, handleScan, () => undefined);
-		totalScans = await trpc().users.getScanCount.query($page.params.action);
+		totalScans = await trpc().users.getScanCount.query(page.params.action);
 	});
-	$: scanCount = user?.scanCount as Record<string, number>;
+	$effect(() => {
+		scanCount = user?.scanCount as Record<string, number>;
+	});
 
 	async function handleScan(decodedText: string) {
 		if (dialog?.open) {
 			return;
 		}
 		user = await trpc().users.get.query(decodedText);
-		totalScans = await trpc().users.getScanCount.query($page.params.action);
+		totalScans = await trpc().users.getScanCount.query(page.params.action);
 		dialog?.showModal();
 	}
 
@@ -64,11 +69,11 @@
 </script>
 
 <svelte:head>
-	<title>Rodeo | Scan - {$page.params.action}</title>
+	<title>Rodeo | Scan - {page.params.action}</title>
 </svelte:head>
 
-<a href="/scan" on:click={() => html5QrCode.stop()}><button>Back</button></a>
-<div id="reader" />
+<a href="/scan" onclick={() => html5QrCode.stop()}><button>Back</button></a>
+<div id="reader"></div>
 
 {#if data.scans !== null}
 	<a href="?"><button class="stats">Hide stats</button></a>
@@ -118,29 +123,26 @@
 <dialog bind:this={dialog}>
 	{#if user === null}
 		<p class="error">Could not find this user in the database.</p>
-		<button type="button" on:click={() => dialog.close()}>Close</button>
+		<button type="button" onclick={() => dialog.close()}>Close</button>
 	{:else if user.authUser.roles.includes('HACKER') && user.authUser.status !== 'CONFIRMED'}
 		<p class="error">This user has not confirmed their attendance.</p>
-		<button type="button" on:click={() => dialog.close()}>Close</button>
+		<button type="button" onclick={() => dialog.close()}>Close</button>
 	{:else}
 		<br />
 		<details>
 			<summary>{user.authUser.email}</summary>
 			<UserCard {user} questions={data.questions} />
 		</details>
-		<p class={(scanCount[$page.params.action] ?? 0) === 0 ? 'success' : 'error'}>
-			This user has scanned for {$page.params.action}
-			{scanCount[$page.params.action] ?? 0} times.
+		<p class={(scanCount[page.params.action] ?? 0) === 0 ? 'success' : 'error'}>
+			This user has scanned for {page.params.action}
+			{scanCount[page.params.action] ?? 0} times.
 		</p>
 		<p>{totalScans} users have scanned for this action.</p>
 		<form method="POST" action="?/scan" use:enhance>
-			<button type="button" on:click={() => dialog.close()}>Cancel</button>
+			<button type="button" onclick={() => dialog.close()}>Cancel</button>
 			<input type="hidden" name="id" value={user.authUserId} />
-			<button
-				type="submit"
-				name="action"
-				value={$page.params.action}
-				on:click={() => dialog.close()}>Scan</button
+			<button type="submit" name="action" value={page.params.action} onclick={() => dialog.close()}
+				>Scan</button
 			>
 		</form>
 	{/if}

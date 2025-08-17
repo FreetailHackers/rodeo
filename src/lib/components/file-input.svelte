@@ -1,12 +1,16 @@
 <script lang="ts">
-	export let name: string;
-	export let id = name;
-	export let selectedFile: string | undefined;
-	export let accept: string;
-	export let maxSizeMB: number;
+	interface Props {
+		name: string;
+		id?: any;
+		selectedFile: string | undefined;
+		accept: string;
+		maxSizeMB: number;
+	}
 
-	let input: HTMLInputElement;
-	let tooBig = false;
+	let { name, id = name, selectedFile = $bindable(), accept, maxSizeMB }: Props = $props();
+
+	let input = $state() as HTMLInputElement;
+	let tooBig = $state(false);
 	function checkSize() {
 		if (input.files?.[0]) {
 			if (input.files[0].size > maxSizeMB * 1024 * 1024) {
@@ -30,7 +34,7 @@
 			>{selectedFile ?? (accept ? 'Allowed types are ' + accept : 'No file selected')}</span
 		>
 	{/if}
-	<input type="file" {id} {name} {accept} bind:this={input} on:change={checkSize} />
+	<input type="file" {id} {name} {accept} bind:this={input} onchange={checkSize} />
 </div>
 
 <style>

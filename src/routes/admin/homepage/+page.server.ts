@@ -1,6 +1,6 @@
 import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
-import { s3Delete, s3Upload } from '$lib/s3Handler';
+import { s3Upload } from '$lib/s3Handler';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -8,30 +8,33 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const load = async ({ locals }) => {
-	await authenticate(locals.auth, ['ADMIN']);
+export const load = async (event) => {
+	await authenticate(event.locals.session, ['ADMIN']);
 	return {
-		settings: await trpc(locals.auth).settings.getPublic(),
+		settings: await trpc(event).settings.getPublic(),
+		events: await trpc(event).events.getAll(),
+		faqs: await trpc(event).faq.getAll(),
+		challenges: await trpc(event).challenges.getAll(),
 	};
 };
 
 export const actions = {
-	settings: async ({ locals, request }) => {
-		const homepageText = (await request.formData()).get('homepageText') as string;
-		await trpc(locals.auth).settings.update({
+	settings: async (event) => {
+		const homepageText = (await event.request.formData()).get('homepageText') as string;
+		await trpc(event).settings.update({
 			homepageText,
 		});
 		return 'Saved homepage text!';
 	},
 
-	showSections: async ({ locals, request }) => {
-		const formData = await request.formData();
+	showSections: async (event) => {
+		const formData = await event.request.formData();
 		const showAnnouncements = formData.get('showAnnouncements') === 'on';
 		const showSchedule = formData.get('showSchedule') === 'on';
 		const showFAQ = formData.get('showFAQ') === 'on';
 		const showChallenges = formData.get('showChallenges') === 'on';
 		const showSponsors = formData.get('showSponsors') === 'on';
-		await trpc(locals.auth).settings.update({
+		await trpc(event).settings.update({
 			showAnnouncements,
 			showSchedule,
 			showFAQ,
@@ -41,47 +44,134 @@ export const actions = {
 		return 'Saved displayed sections!';
 	},
 
-	createEvent: async ({ locals, request }) => {
-		const timezone = (await trpc(locals.auth).settings.getPublic()).timezone;
-		const formData = await request.formData();
-		const fixedStartTime = dayjs.tz(formData.get('start') as string, timezone).toDate();
-		const fixedEndTime = dayjs.tz(formData.get('end') as string, timezone).toDate();
+	handleEvent: async (event) => {
+		const timezone = (await trpc(event).settings.getPublic()).timezone;
+		const formData = await event.request.formData();
 
-		await trpc(locals.auth).events.create({
+		const id = formData.get('id'); // Check for id to determine create or update
+		const start = formData.get('start') as string;
+		const end = formData.get('end') as string;
+		const fixedStartTime = start ? dayjs.tz(start, timezone).toDate() : null;
+		const fixedEndTime = end ? dayjs.tz(end, timezone).toDate() : null;
+
+		const eventData = {
 			name: formData.get('name') as string,
 			description: formData.get('description') as string,
 			start: fixedStartTime,
 			end: fixedEndTime,
 			location: formData.get('location') as string,
 			type: formData.get('type') as string,
-		});
-		return 'Created event!';
+		};
+
+		if (id) {
+			// Update existing event
+			await trpc(event).events.update({
+				id: Number(id),
+				...eventData,
+			});
+			return 'Saved event!';
+		} else {
+			// Create new event
+			await trpc(event).events.create(eventData);
+			return 'Created event!';
+		}
 	},
 
-	createFAQ: async ({ locals, request }) => {
-		const formData = await request.formData();
-
-		await trpc(locals.auth).infoBox.create({
-			title: formData.get('question') as string,
-			response: formData.get('answer') as string,
-			category: 'FAQ',
-		});
-		return 'Created FAQ!';
+	deleteEvent: async (event) => {
+		const eventId = parseInt((await event.request.formData()).get('id') as string, 10);
+		if (isNaN(eventId)) {
+			throw new Error('Invalid event ID');
+		}
+		await trpc(event).events.delete(eventId);
+		return 'Deleted event!';
 	},
 
-	createChallenge: async ({ locals, request }) => {
-		const formData = await request.formData();
-
-		await trpc(locals.auth).infoBox.create({
-			title: formData.get('category') as string,
-			response: formData.get('challenge') as string,
-			category: 'CHALLENGE',
-		});
-		return 'Created challenge!';
+	deleteAllEvents: async (event) => {
+		await trpc(event).events.deleteAll();
+		return 'Deleted all events!';
 	},
 
-	createSponsor: async ({ locals, request }) => {
-		const formData = await request.formData();
+	// FAQ Functions
+	handleFAQ: async (event) => {
+		const formData = await event.request.formData();
+		const id = formData.get('id'); // Check for id to determine create or update
+		const question = formData.get('question') as string;
+		const answer = formData.get('answer') as string;
+
+		const FAQData = {
+			question: question,
+			answer: answer,
+		};
+
+		if (id) {
+			await trpc(event).faq.update({
+				id: Number(id),
+				...FAQData,
+			});
+			return 'Saved FAQ!';
+		} else {
+			await trpc(event).faq.create(FAQData);
+			return 'Created FAQ!';
+		}
+	},
+
+	deleteFAQ: async (event) => {
+		const id = parseInt((await event.request.formData()).get('id') as string, 10);
+		if (isNaN(id)) {
+			throw new Error('Invalid FAQ ID');
+		}
+		await trpc(event).faq.delete(id);
+		return 'Deleted FAQ!';
+	},
+
+	deleteAllFAQs: async (event) => {
+		await trpc(event).faq.deleteAll();
+		return 'Deleted all FAQ!';
+	},
+
+	// Challenge Functions
+	handleChallenge: async (event) => {
+		const formData = await event.request.formData();
+		const id = formData.get('id'); // Check for id to determine create or update
+		const title = formData.get('title') as string;
+		const prize = formData.get('prize') as string;
+		const description = formData.get('description') as string;
+
+		const challengeData = {
+			title: title,
+			prize: prize,
+			description: description,
+		};
+
+		if (id) {
+			await trpc(event).challenges.update({
+				id: Number(id),
+				...challengeData,
+			});
+			return 'Saved challenge!';
+		} else {
+			await trpc(event).challenges.create(challengeData);
+			return 'Created challenge!';
+		}
+	},
+
+	deleteChallenge: async (event) => {
+		const id = parseInt((await event.request.formData()).get('id') as string, 10);
+		if (isNaN(id)) {
+			throw new Error('Invalid challenge ID');
+		}
+		await trpc(event).challenges.delete(id);
+		return 'Deleted challenge!';
+	},
+
+	deleteAllChallenges: async (event) => {
+		await trpc(event).challenges.deleteAll();
+		return 'Deleted all challenges!';
+	},
+
+	// Sponsor Functions
+	createSponsor: async (event) => {
+		const formData = await event.request.formData();
 
 		const sponsorLogo = formData.get('sponsorLogo') as File;
 		const sponsorLink = formData.get('sponsorLink') as string;
@@ -92,40 +182,15 @@ export const actions = {
 
 			s3Upload(key, sponsorLogo);
 
-			await trpc(locals.auth).infoBox.create({
-				title: key,
-				response: sponsorLink,
-				category: 'SPONSOR',
+			await trpc(event).sponsors.create({
+				name: formData.get('sponsorName') as string,
+				imageKey: key,
+				url: sponsorLink,
 			});
+
 			return 'Created sponsor!';
 		} else {
 			return 'Error in creating sponsor! Please check file input!';
-		}
-	},
-
-	deleteAll: async ({ locals, request }) => {
-		const deleteAllValue = (await request.formData()).get('deleteAll') as string;
-
-		if (deleteAllValue === 'events') {
-			await trpc(locals.auth).events.deleteAll();
-			return 'Deleted all Events!';
-		} else if (deleteAllValue === 'FAQs') {
-			await trpc(locals.auth).infoBox.deleteAllOfCategory('FAQ');
-			return 'Deleted all FAQ!';
-		} else if (deleteAllValue === 'challenges') {
-			await trpc(locals.auth).infoBox.deleteAllOfCategory('CHALLENGE');
-			return 'Deleted all challenges!';
-		} else if (deleteAllValue === 'sponsors') {
-			const sponsors = await trpc(locals.auth).infoBox.getAllOfCategory('SPONSOR');
-
-			for (const sponsor of sponsors) {
-				s3Delete(sponsor.title);
-			}
-
-			await trpc(locals.auth).infoBox.deleteAllOfCategory('SPONSOR');
-			return 'Deleted all sponsors!';
-		} else {
-			return 'Invalid element to delete';
 		}
 	},
 };

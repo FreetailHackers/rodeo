@@ -3,9 +3,9 @@
 	import { confirmationDialog } from '$lib/actions';
 	import Toggle from '$lib/components/toggle.svelte';
 	import Graph from './line-graph.svelte';
-	export let data;
+	let { data } = $props();
 
-	let applicationOpenStatus = data.settings.applicationOpen;
+	let applicationOpenStatus = $state(data.settings.applicationOpen);
 </script>
 
 <svelte:head>
@@ -105,20 +105,21 @@
 		name="scanActions"
 		id="scanActions"
 		placeholder="Write one option per line, like this:&#13;OPTION 1&#13;OPTION 2&#13;OPTION 3"
-	/>
+	></textarea>
 
 	<button type="submit">Save</button>
 </form>
 
-<h2>Split Hackers Into Groups</h2>
+<h2>Split Hackers Into Lunch Groups</h2>
+
 <form method="POST" action="?/splitGroups" use:enhance>
 	<input
-		type="number"
+		type="text"
 		id="splitGroups"
 		name="splitGroups"
-		min="1"
-		max="26"
-		placeholder="Enter a number of groups between 1 and 26"
+		placeholder="Group A, Group B, Group C, ..."
+		pattern="^[A-Za-z0-9\s]+(,\s*[A-Za-z0-9\s]+)*$"
+		title="Names must be alphanumeric in the form: 'Group 1', 'Group 2', 'Group 3', ..."
 		required
 	/>
 	<button type="submit">Split Groups</button>
@@ -161,7 +162,7 @@
 		margin-top: 0;
 		margin-bottom: 1rem;
 		text-transform: uppercase;
-		background-color: #e53c09;
+		background-color: var(--red);
 		height: auto;
 		min-height: 3rem;
 	}

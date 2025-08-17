@@ -1,25 +1,46 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import Select from 'svelte-select';
 	import fuzzysort from 'fuzzysort';
 
-	export let name: string; // Name for the input
-	export let id = name; // ID for the input
-	export let items: string[]; // Items to display in the dropdown
-	export let custom = false; // Whether to allow custom values
-	export let multiple = false; // Whether to allow multiple values
-	export let value: string; // Value of the dropdown
-	export let json = false; // Whether to parse the value as JSON (mainly useful for GET forms)
+	interface Props {
+		name: string;
+		id?: string;
+		items: string[];
+		custom: boolean;
+		multiple: boolean;
+		value: string;
+		json?: boolean;
+		class?: string;
+		onInput?: (event: CustomEvent) => void;
+	}
 
-	let filterText: string;
+	let {
+		name,
+		id = name,
+		items,
+		custom = false,
+		multiple = false,
+		value = $bindable(),
+		json = false,
+		class: className,
+		onInput,
+	}: Props = $props();
+	// KEEP THESE
+	// name: string; Name for the input
+	// id = name; ID for the input
+	// items: string[]; // Items to display in the dropdown
+	// custom = false; // Whether to allow custom values
+	// multiple = false; // Whether to allow multiple values
+	// value: string; // Value of the dropdown
+	// json = false; // Whether to parse the value as JSON (mainly useful for GET forms)
 
-	const dispatch = createEventDispatcher();
+	let filterText = $state('');
 </script>
 
 <Select
 	{id}
 	{name}
-	class={$$props.class}
+	class={className}
 	itemFilter={(label, filterText) =>
 		filterText === '' || fuzzysort.go(filterText, [label]).length > 0}
 	items={custom && filterText ? [...new Set([...items, filterText])] : items}
@@ -39,7 +60,9 @@
 		if (json) {
 			value = JSON.stringify(value);
 		}
-		dispatch('input', event);
+		if (onInput) {
+			onInput(event);
+		}
 	}}
 	value={(() => {
 		if (!json) {

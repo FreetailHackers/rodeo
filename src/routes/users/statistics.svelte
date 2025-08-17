@@ -1,20 +1,24 @@
 <script lang="ts">
 	import { afterNavigate } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { trpc } from '$lib/trpc/client';
 	import type { Question } from '@prisma/client';
 	import Plot from 'svelte-plotly.js';
 
-	let stats: Record<string, Record<string, number | [number, number]>> | null = null;
-	export let questions: Question[];
-	export let count: number;
+	let stats: Record<string, Record<string, number | [number, number]>> | null = $state(null);
+	interface Props {
+		questions: Question[];
+		count: number;
+	}
+
+	let { questions, count }: Props = $props();
 
 	afterNavigate(() => {
 		stats = null;
 	});
 
 	function frequencyToPieChartData(
-		answerData: Record<string, number | [number, number]>
+		answerData: Record<string, number | [number, number]>,
 	): Partial<Plotly.PieData> {
 		return {
 			type: 'pie',
@@ -25,7 +29,7 @@
 	}
 
 	function frequencyToBoxPlotData(
-		answerData: Record<string, number | [number, number]>
+		answerData: Record<string, number | [number, number]>,
 	): Partial<Plotly.BoxPlotData> {
 		const data = Object.entries(answerData).flatMap(([response, frequency]) => {
 			const numericResponse = Number(response);
@@ -48,7 +52,7 @@
 
 	function getWordFrequencyStatisticsMap(
 		answerData: Record<string, number | [number, number]>,
-		totalResponses: number
+		totalResponses: number,
 	) {
 		return Object.entries(answerData as Record<string, [number, number]>)
 			.map(([word, [totalFrequency, frequencyPerResponse]]) => ({
@@ -63,15 +67,15 @@
 
 {#if stats === null}
 	<button
-		on:click={async () =>
+		onclick={async () =>
 			(stats = await trpc().users.getStats.query({
-				key: $page.url.searchParams.get('key') ?? '',
-				search: $page.url.searchParams.get('search') ?? '',
-				searchFilter: $page.url.searchParams.get('searchFilter') ?? '',
+				key: page.url.searchParams.get('key') ?? '',
+				search: page.url.searchParams.get('search') ?? '',
+				searchFilter: page.url.searchParams.get('searchFilter') ?? '',
 			}))}>Show statistics</button
 	>
 {:else}
-	<button on:click={() => (stats = null)}>Hide statistics</button>
+	<button onclick={() => (stats = null)}>Hide statistics</button>
 	{#if Object.keys(stats).length === 0}
 		<p>No statistics available.</p>
 	{/if}

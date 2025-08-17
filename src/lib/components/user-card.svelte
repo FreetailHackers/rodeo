@@ -1,14 +1,17 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import type { Prisma, Question } from '@prisma/client';
-	import SvelteMarkdown from 'svelte-markdown';
+	import SvelteMarkdown from '@humanspeak/svelte-markdown';
 
-	export let user: Partial<Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>>;
-	export let questions: Question[];
-	export let teammates: { email: string; status: string }[] = [];
+	interface Props {
+		user: Partial<Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>>;
+		questions: Question[];
+		teammates?: { email: string; status: string }[];
+	}
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	$: application = user.application as Record<string, any>;
+	let { user, questions, teammates = [] }: Props = $props();
+
+	let application = $derived(user.application as Record<string, any>);
 </script>
 
 <!-- Ensures the teammate list is only displayed if the user is not the only person on the team -->
@@ -44,7 +47,7 @@
 				target="_blank"
 				rel="noopener noreferrer"
 			>
-				{`${$page.url.origin}/files/${user.authUserId}/${question.id}`}</a
+				{`${page.url.origin}/files/${user.authUserId}/${question.id}`}</a
 			>
 		{:else if Array.isArray(application[question.id])}
 			{application[question.id].join(', ')}

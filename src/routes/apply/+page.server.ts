@@ -1,20 +1,19 @@
 import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
-import type { Question } from '@prisma/client';
-import { redirect } from '@sveltejs/kit';
+import type { Question, Role } from '@prisma/client';
 
-export const load = async ({ locals }) => {
-	await authenticate(locals.auth, ['UNDECLARED']);
-	const settings = await trpc(locals.auth).settings.getPublic();
-	const deadline = await trpc(locals.auth).users.getRSVPDeadline();
+export const load = async (event) => {
+	await authenticate(event.locals.session, ['UNDECLARED']);
+	const settings = await trpc(event).settings.getPublic();
+	const deadline = await trpc(event).users.getRSVPDeadline();
 
 	return {
-		user: await trpc(locals.auth).users.get(),
-		appliedDate: await trpc(locals.auth).users.getAppliedDate(),
+		user: await trpc(event).users.get(),
+		appliedDate: await trpc(event).users.getAppliedDate(),
 		rsvpDeadline: deadline,
-		questions: await trpc(locals.auth).questions.get(),
+		questions: await trpc(event).questions.get(),
 		settings: settings,
-		canApply: await trpc(locals.auth).admissions.canApply(),
+		canApply: await trpc(event).admissions.canApply(),
 	};
 };
 
@@ -50,37 +49,48 @@ function formToApplication(questions: Question[], formData: FormData) {
 }
 
 export const actions = {
-	save: async ({ locals, request }) => {
-		await trpc(locals.auth).users.update(
-			formToApplication(await trpc(locals.auth).questions.get(), await request.formData())
+	save: async (event) => {
+		await trpc(event).users.update(
+			formToApplication(await trpc(event).questions.get(), await event.request.formData()),
 		);
 	},
 
-	finish: async ({ locals, request }) => {
-		if (!(await trpc(locals.auth).admissions.canApply())) {
-			throw redirect(301, '/apply');
+	finish: async (event) => {
+		if (!(await trpc(event).admissions.canApply())) {
+			return new Response(null, {
+				status: 301,
+				headers: { location: '/apply' },
+			});
 		}
-		const formData = await request.formData();
-		await trpc(locals.auth).users.update(
-			formToApplication(await trpc(locals.auth).questions.get(), formData)
-		);
+		const formData = await event.request.formData();
 		const selectedRole = formData.get('group_applied');
+		const allowedRoles = ['HACKER', 'ORGANIZER', 'JUDGE', 'VOLUNTEER'] as const;
 
-		return await trpc(locals.auth).users.submitApplication(selectedRole);
-	},
-
-	withdraw: async ({ locals }) => {
-		if (!(await trpc(locals.auth).admissions.canApply())) {
-			throw redirect(301, '/apply');
+		await trpc(event).users.update(formToApplication(await trpc(event).questions.get(), formData));
+		if (allowedRoles.includes(selectedRole as any)) {
+			return await trpc(event).users.submitApplication(
+				selectedRole as (typeof allowedRoles)[number],
+			);
+		} else {
+			return new Response('Invalid role selected', { status: 400 });
 		}
-		await trpc(locals.auth).users.withdrawApplication();
 	},
 
-	confirm: async ({ locals }) => {
-		await trpc(locals.auth).users.rsvp('CONFIRMED');
+	withdraw: async (event) => {
+		if (!(await trpc(event).admissions.canApply())) {
+			return new Response(null, {
+				status: 301,
+				headers: { location: '/apply' },
+			});
+		}
+		await trpc(event).users.withdrawApplication();
 	},
 
-	decline: async ({ locals }) => {
-		await trpc(locals.auth).users.rsvp('DECLINED');
+	confirm: async (event) => {
+		await trpc(event).users.rsvp('CONFIRMED');
+	},
+
+	decline: async (event) => {
+		await trpc(event).users.rsvp('DECLINED');
 	},
 };

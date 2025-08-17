@@ -3,21 +3,23 @@ import { trpc } from '$lib/trpc/router';
 import { error, redirect } from '@sveltejs/kit';
 import { s3Delete, s3Upload } from '$lib/s3Handler';
 
-export const load = async ({ locals, params }) => {
-	await authenticate(locals.auth, ['ADMIN']);
-	if (Number.isNaN(Number(params.specificSponsor))) {
-		throw error(404, 'Sponsor not found');
+export const load = async (event) => {
+	await authenticate(event.locals.session, ['ADMIN']);
+	if (Number.isNaN(Number(event.params.specificSponsor))) {
+		error(404, 'Sponsor not found');
 	}
-	const sponsor = await trpc(locals.auth).infoBox.get(Number(params.specificSponsor));
+	const sponsor = await trpc(event).sponsors.getSponsorWithImageValue(
+		Number(event.params.specificSponsor),
+	);
 	if (sponsor !== null) {
 		return sponsor;
 	}
-	throw error(404, 'Sponsor not found');
+	error(404, 'Sponsor not found');
 };
 
 export const actions = {
-	edit: async ({ locals, request }) => {
-		const formData = await request.formData();
+	edit: async (event) => {
+		const formData = await event.request.formData();
 
 		const sponsorLogo = formData.get('sponsorLogo') as File;
 		const sponsorLink = formData.get('sponsorLink') as string;
@@ -25,27 +27,25 @@ export const actions = {
 		if (sponsorLogo && sponsorLogo.size <= 1024 * 1024) {
 			let key: string = '';
 
-			const existingSponsor = await trpc(locals.auth).infoBox.get(
-				Number(formData.get('id') as string)
-			);
+			const existingSponsor = await trpc(event).sponsors.get(Number(formData.get('id') as string));
 
 			// If no file was specified, use pre existing logo
 			if (sponsorLogo?.size === 0 && existingSponsor) {
-				key = existingSponsor.title;
+				key = existingSponsor.imageKey;
 			} else {
 				// Deleting previous logo
-				s3Delete(existingSponsor?.title);
+				s3Delete(existingSponsor?.imageKey);
 				// Removes all characters that are not alphanumeric, periods, or hyphens
 				key = `sponsors/${sponsorLogo.name.replace(/[^\w.-]+/g, '')}`;
 				// Uploading new logo
 				s3Upload(key, sponsorLogo);
 			}
 
-			await trpc(locals.auth).infoBox.update({
+			await trpc(event).sponsors.update({
 				id: Number(formData.get('id') as string),
-				title: key,
-				response: sponsorLink,
-				category: 'SPONSOR',
+				name: formData.get('name') as string,
+				imageKey: key,
+				url: sponsorLink,
 			});
 			return 'Saved sponsor!';
 		} else {
@@ -53,16 +53,16 @@ export const actions = {
 		}
 	},
 
-	delete: async ({ locals, request }) => {
-		const formData = await request.formData();
+	delete: async (event) => {
+		const formData = await event.request.formData();
 		const id = Number(formData.get('id') as string);
 
-		const existingSponsor = await trpc(locals.auth).infoBox.get(id);
+		const existingSponsor = await trpc(event).sponsors.get(id);
 
 		// Deleting uploaded image
-		s3Delete(existingSponsor?.title);
+		s3Delete(existingSponsor?.imageKey);
 
-		await trpc(locals.auth).infoBox.delete(id);
-		throw redirect(303, '/');
+		await trpc(event).sponsors.delete(id);
+		redirect(303, '/');
 	},
 };

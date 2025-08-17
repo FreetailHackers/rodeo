@@ -1,35 +1,41 @@
-import { googleAuth, githubAuth } from '$lib/lucia';
 import { trpc } from '$lib/trpc/router';
-import { authenticate } from '$lib/authenticate';
+import * as auth from '$lib/authenticate';
 
-export const load = async ({ locals }) => {
-	await authenticate(locals.auth);
+export const load = async (event) => {
+	await auth.authenticate(event.locals.session, []);
 
 	return {
-		user: (await locals.auth.validate())?.user,
-		announcements: await trpc(locals.auth).announcements.getAll(),
-		settings: await trpc(locals.auth).settings.getPublic(),
-
+		user: await event.locals.user,
+		announcements: await trpc(event).announcements.getAll(),
+		settings: await trpc(event).settings.getPublic(),
+		events: await trpc(event).events.getAll(),
+		faq: await trpc(event).faq.getAll(),
+		challenges: await trpc(event).challenges.getAll(),
+		sponsors: await trpc(event).sponsors.getSponsorsWithImageValues(),
 		// Check whether various OAuth providers are set up in
 		// environment variables so we can show/hide buttons.
 		providers: {
-			google: googleAuth !== null,
-			github: githubAuth !== null,
+			google: auth.googleAuth !== null,
+			github: auth.githubAuth !== null,
 		},
-		canApply: await trpc(locals.auth).admissions.canApply(),
+		canApply: await trpc(event).admissions.canApply(),
 	};
 };
 
 export const actions = {
-	announce: async ({ locals, request }) => {
-		const formData = await request.formData();
+	announce: async (event) => {
+		const formData = await event.request.formData();
 		const body = formData.get('announcement') as string;
-		await trpc(locals.auth).announcements.create(body);
+		await trpc(event).announcements.create(body);
 	},
 
-	unannounce: async ({ locals, request }) => {
-		const formData = await request.formData();
+	unannounce: async (event) => {
+		const formData = await event.request.formData();
 		const id = formData.get('id') as string;
-		await trpc(locals.auth).announcements.delete(Number(id));
+		await trpc(event).announcements.delete(Number(id));
+	},
+
+	clearAnnouncements: async (event) => {
+		await trpc(event).announcements.deleteAll();
 	},
 };

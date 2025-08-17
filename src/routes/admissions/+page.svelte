@@ -3,9 +3,9 @@
 	import UserCard from '$lib/components/user-card.svelte';
 	import { Role } from '@prisma/client';
 
-	export let data;
+	let { data } = $props();
 
-	let selectedRole: Role = Role.HACKER;
+	let selectedRole = $state(Role.HACKER) as Role;
 
 	function lookingAt(role: Role) {
 		selectedRole = role;
@@ -20,10 +20,10 @@
 		<p>Congratulations! You've read every application.</p>
 	{:else}
 		<div class="role-buttons">
-			<button on:click={() => lookingAt(Role.HACKER)}>Hackers</button>
-			<button on:click={() => lookingAt(Role.JUDGE)}>Judges</button>
-			<button on:click={() => lookingAt(Role.MENTOR)}>Mentors</button>
-			<button on:click={() => lookingAt(Role.VOLUNTEER)}>Volunteers</button>
+			<button onclick={() => lookingAt(Role.HACKER)}>Hackers</button>
+			<button onclick={() => lookingAt(Role.JUDGE)}>Judges</button>
+			<button onclick={() => lookingAt(Role.MENTOR)}>Mentors</button>
+			<button onclick={() => lookingAt(Role.VOLUNTEER)}>Volunteers</button>
 		</div>
 
 		<!-- Display the selected role -->
@@ -35,7 +35,7 @@
 			<h1>{data.user.authUser.email}</h1>
 			<UserCard user={data.user} questions={data.questions} teammates={data.teammates} />
 			<div id="form">
-				<div id="padding" />
+				<div id="padding"></div>
 				<form method="POST" use:enhance>
 					<input type="hidden" name="id" value={data.user.authUserId} />
 					<button type="submit" formaction="?/accept">Accept</button>

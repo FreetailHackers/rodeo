@@ -17,11 +17,11 @@ export const sendEmail = async (
 	recipient: string,
 	subject: string,
 	message: string,
-	isHTML: boolean
+	isHTML: boolean,
 ): Promise<number> => {
 	// Preface with warning if not in production
 	let warning = '';
-	message = isHTML ? message : marked.parse(message);
+	message = isHTML ? message : await marked.parse(message);
 	if (process.env.VERCEL_ENV !== 'production') {
 		if (process.env.VERCEL_ENV === 'preview' && recipient.endsWith('@yopmail.com')) {
 			// Only allow emails to YOPmail on staging

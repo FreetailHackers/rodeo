@@ -10,38 +10,50 @@
  * admin@yopmail.com (sample admin account)
  */
 
-import { lucia } from 'lucia';
-import 'lucia/polyfill/node';
-import { MY_TIMEZONE, events, questions, faq } from './data.ts';
+import { MY_TIMEZONE, events, questions, faq, challenges } from './data.ts';
 import { PrismaClient, Status, Prisma } from '@prisma/client';
-import { prisma as prismaAdapter } from '@lucia-auth/adapter-prisma';
+import argon2 from 'argon2';
 
 const prisma = new PrismaClient();
 
-const auth = lucia({
-	adapter: prismaAdapter(prisma, {
-		user: 'authUser',
-		session: 'authSession',
-		key: 'authKey',
-	}),
-	env: 'DEV',
-});
+async function hashPassword(password: string): Promise<string> {
+	return await argon2.hash(password, {
+		type: argon2.argon2id,
+		memoryCost: 19456,
+		timeCost: 2,
+		parallelism: 1,
+	});
+}
+
+async function verifyPassword(hashedPassword: string, inputPassword: string): Promise<boolean> {
+	return await argon2.verify(hashedPassword, inputPassword);
+}
 
 async function register(email: string, password: string): Promise<string> {
-	const user = await auth.createUser({
-		attributes: {
-			email: email,
+	const hashedPassword = await hashPassword(password);
+
+	const user = await prisma.authUser.create({
+		data: {
+			id: email,
+			email,
 			roles: ['HACKER'],
 			status: 'CREATED',
 			verifiedEmail: true,
+			authKey: {
+				create: {
+					id: email,
+					providerId: 'email',
+					providerUserId: email,
+					hashedPassword: hashedPassword,
+				},
+			},
 		},
-		key: {
-			providerId: 'email',
-			providerUserId: email,
-			password: password,
+		include: {
+			authKey: true,
 		},
 	});
-	return user.userId;
+
+	return user.id;
 }
 
 async function main() {
@@ -55,7 +67,9 @@ async function main() {
 	await prisma.authUser.deleteMany();
 	await prisma.authSession.deleteMany();
 	await prisma.authKey.deleteMany();
-	await prisma.infoBox.deleteMany();
+	await prisma.fAQ.deleteMany();
+	await prisma.challenge.deleteMany();
+	await prisma.sponsor.deleteMany();
 	await prisma.team.deleteMany();
 
 	// Create example announcement
@@ -79,7 +93,8 @@ async function main() {
 	await prisma.settings.create({ data: { timezone: MY_TIMEZONE } });
 
 	// Create example FAQ and Challenges
-	await prisma.infoBox.createMany({ data: faq });
+	await prisma.fAQ.createMany({ data: faq });
+	await prisma.challenge.createMany({ data: challenges });
 
 	// Generate fake users and status changes
 	// NOTE: By "fake", I mean the fact that there is no way to sign in
@@ -176,14 +191,14 @@ async function main() {
 function generateStatusFlow(
 	id: string,
 	startingTime: Date,
-	maxSecondsBetweenStatusChanges: number
+	maxSecondsBetweenStatusChanges: number,
 ): Prisma.StatusChangeCreateManyInput[] {
 	const statusChanges: Prisma.StatusChangeCreateManyInput[] = [];
 	const attritionRate = 0.1; // 10% of hackers drop out at each stage
 	let lastTimestamp = startingTime;
 	for (const status of ['CREATED', 'APPLIED'] as Status[]) {
 		lastTimestamp = new Date(
-			lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random()
+			lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random(),
 		);
 		statusChanges.push({ newStatus: status, timestamp: lastTimestamp, userId: id });
 		if (random() < attritionRate) {
@@ -196,7 +211,7 @@ function generateStatusFlow(
 		'WAITLISTED',
 	] as Status[]);
 	lastTimestamp = new Date(
-		lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random()
+		lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random(),
 	);
 	statusChanges.push({
 		newStatus: afterStatusAppliedRandom,
@@ -206,7 +221,7 @@ function generateStatusFlow(
 
 	if (random() >= attritionRate && afterStatusAppliedRandom === 'ACCEPTED') {
 		lastTimestamp = new Date(
-			lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random()
+			lastTimestamp.getTime() + 1000 * maxSecondsBetweenStatusChanges * random(),
 		);
 		statusChanges.push({
 			newStatus: randomElement(['CONFIRMED', 'DECLINED'] as Status[]),

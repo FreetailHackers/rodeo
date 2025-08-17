@@ -2,11 +2,12 @@
 	import QRCode from 'qrcode';
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
-	// @ts-expect-error: The 'sv-popup' module does not have type definitions, so we are temporarily using 'any' type.
 	import { Modal, Content, Trigger } from 'sv-popup';
-	export let data;
 
-	let canvas: HTMLCanvasElement;
+	let { data } = $props();
+
+	let canvas = $state() as HTMLCanvasElement;
+	let closeModal = $state(false);
 
 	onMount(() => {
 		QRCode.toCanvas(canvas, data.user.id, {
@@ -23,7 +24,6 @@
 			canvas.style.height = 'auto';
 		}
 	});
-	let closeModal = false;
 </script>
 
 <svelte:head>
@@ -65,13 +65,14 @@
 									<form method="POST" action="?/inviteUser">
 										<h3 class="modal-header">
 											Invite a new member
+											<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 											<img
 												class="close-button"
 												src="/close-button.png"
 												alt="close add team member"
 												draggable="false"
-												on:click={() => (closeModal = true)}
-												on:keypress={() => (closeModal = true)}
+												onclick={() => (closeModal = true)}
+												onkeypress={() => (closeModal = true)}
 											/>
 										</h3>
 										<input
@@ -92,12 +93,13 @@
 								</div>
 							</Content>
 							<Trigger>
+								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 								<img
 									src="/add-button.png"
 									alt="add team member"
 									draggable="false"
-									on:click={() => (closeModal = false)}
-									on:keypress={() => (closeModal = false)}
+									onclick={() => (closeModal = false)}
+									onkeypress={() => (closeModal = false)}
 								/>
 							</Trigger>
 						</Modal>
@@ -141,7 +143,7 @@
 			<h3>My Hacker ID</h3>
 
 			<div class="id-card">
-				<canvas bind:this={canvas} id="qrcode" />
+				<canvas bind:this={canvas} id="qrcode"></canvas>
 				<img src="hacker-id/background.png" alt="hacker id-card" />
 			</div>
 		</div>
@@ -191,14 +193,13 @@
 		left: 0;
 		object-fit: cover;
 		width: 100%;
-		height: 60vh;
 	}
 
 	.id-card #qrcode {
 		position: absolute;
 		object-fit: contain;
 		margin: 18%;
-		margin-top: 23%;
+		margin-top: 55%;
 		border-radius: 10%;
 	}
 

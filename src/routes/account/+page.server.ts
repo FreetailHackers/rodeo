@@ -1,15 +1,15 @@
 import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 
-export const load = async ({ locals }) => {
-	const user = await authenticate(locals.auth);
+export const load = async (event) => {
+	const user = await authenticate(event.locals.session, []);
 
 	if (user.roles.includes('HACKER')) {
 		return {
 			user: user,
-			team: await trpc(locals.auth).team.getTeam(),
-			invitations: await trpc(locals.auth).team.getTeamInvitations(),
-			group: await trpc(locals.auth).users.getGroup(),
+			team: await trpc(event).team.getTeam(),
+			invitations: await trpc(event).team.getTeamInvitations(),
+			group: await trpc(event).users.getGroup(),
 		};
 	}
 
@@ -19,24 +19,24 @@ export const load = async ({ locals }) => {
 };
 
 export const actions = {
-	createTeam: async ({ locals, request }) => {
-		const name = (await request.formData()).get('teamName') as string;
-		await trpc(locals.auth).team.createTeam(name);
+	createTeam: async (event) => {
+		const name = (await event.request.formData()).get('teamName') as string;
+		await trpc(event).team.createTeam(name);
 		return 'Created team!';
 	},
 
-	leaveTeam: async ({ locals }) => {
-		await trpc(locals.auth).team.leaveTeam();
+	leaveTeam: async (event) => {
+		await trpc(event).team.leaveTeam();
 		return 'Left team!';
 	},
 
-	inviteUser: async ({ locals, request }) => {
-		const email = (await request.formData()).get('inviteEmail') as string;
-		return await trpc(locals.auth).team.inviteUser(email);
+	inviteUser: async (event) => {
+		const email = (await event.request.formData()).get('inviteEmail') as string;
+		return await trpc(event).team.inviteUser(email);
 	},
 
-	removeTeammate: async ({ locals, request }) => {
-		const id = (await request.formData()).get('memberId') as string;
-		return await trpc(locals.auth).team.removeTeammate(id);
+	removeTeammate: async (event) => {
+		const id = (await event.request.formData()).get('memberId') as string;
+		return await trpc(event).team.removeTeammate(id);
 	},
 };

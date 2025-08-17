@@ -1,7 +1,7 @@
 <script lang="ts">
 	import UserTable from './user-table.svelte';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Statistics from './statistics.svelte';
 	import Toggle from '$lib/components/toggle.svelte';
 	import saveAs from 'file-saver';
@@ -11,24 +11,24 @@
 	import Dropdown from '$lib/components/dropdown.svelte';
 	import TextEditor from '$lib/components/text-editor.svelte';
 
-	export let data;
+	let { data } = $props();
 
-	$: query = Object.fromEntries($page.url.searchParams);
-	let key = $page.url.searchParams.get('key') ?? 'email';
-	let search = $page.url.searchParams.get('search') ?? '';
-	let limit: string = $page.url.searchParams.get('limit') ?? '10';
-	let searchFilter = $page.url.searchParams.get('searchFilter') ?? '';
-	let emailBody: string;
-	let subject: string;
-	let isHTML = false;
+	let query = $derived(Object.fromEntries(page.url.searchParams));
+	let key = $state(page.url.searchParams.get('key') ?? 'email');
+	let search = $state(page.url.searchParams.get('search') ?? '');
+	let limit: string = $state(page.url.searchParams.get('limit') ?? '10');
+	let searchFilter = $state(page.url.searchParams.get('searchFilter') ?? '');
+	let emailBody: string = $state('');
+	let subject: string = $state('');
+	let isHTML = $state(false);
 
 	async function sendEmailsByUsers() {
 		if (!subject || !emailBody || subject.length === 0 || emailBody.length === 0) {
 			throw new Error('Subject or email body is empty');
 		}
 
-		let rejectedEmails: string[] = [];
-		let userEmails = await trpc().users.emails.query({ key, search, searchFilter });
+		const rejectedEmails: string[] = [];
+		const userEmails = await trpc().users.emails.query({ key, search, searchFilter });
 		let completed = 0;
 
 		const toast = toasts.notify(`Sent 0/${userEmails.length} emails...`);
@@ -72,7 +72,7 @@
 					toasts.notify(message);
 					throw new Error(message);
 				}
-				let blob = await r.blob();
+				const blob = await r.blob();
 				completed++;
 				toasts.update(toast, `Downloading files (${completed}/${allFiles.length} completed)...`);
 				return blob;
@@ -111,13 +111,13 @@
 <div class="main-content">
 	<h1>Master Database</h1>
 	{#if data.user.roles.includes('ADMIN')}
-		<a href={'/users/download-data' + $page.url.search} download="users.csv"
+		<a href={'/users/download-data' + page.url.search} download="users.csv"
 			><button class="download-button"
 				>Download user data (excluding file uploads) for {data.count} users as CSV</button
 			></a
 		>
 	{/if}
-	<button class="download-button" on:click={downloadAllFiles}
+	<button class="download-button" onclick={downloadAllFiles}
 		>Download file uploads from {data.count} users as ZIP</button
 	>
 
@@ -129,7 +129,7 @@
 				class="key"
 				placeholder="Choose criteria"
 				bind:value={key}
-				on:change={() => {
+				onchange={() => {
 					if (key === 'role') search = 'HACKER';
 					else if (key === 'status') search = 'CREATED';
 					else if (key === 'decision') search = 'ACCEPTED';
@@ -366,7 +366,7 @@
 						isHTML={data.settings.submitIsHTML}
 						required
 					/>
-					<button class="email-by-users" on:click={sendEmailsByUsers}>Send</button>
+					<button class="email-by-users" onclick={sendEmailsByUsers}>Send</button>
 				</form>
 			</div>
 		{/if}
@@ -380,7 +380,7 @@
 			<select
 				name="limit"
 				bind:value={limit}
-				on:change={() => {
+				onchange={() => {
 					goto(`${location.pathname}?${new URLSearchParams({ ...query, limit })}`, {
 						noScroll: true,
 					});
@@ -398,16 +398,16 @@
 		<form>
 			<p id="page">
 				<a
-					class:disabled={Number($page.url.searchParams.get('page') ?? 1) === 1}
+					class:disabled={Number(page.url.searchParams.get('page') ?? 1) === 1}
 					data-sveltekit-noscroll
 					href={`?${new URLSearchParams({ ...query, page: '1' })}`}>&lt;&lt;</a
 				>
 				<a
-					class:disabled={Number($page.url.searchParams.get('page') ?? 1) === 1}
+					class:disabled={Number(page.url.searchParams.get('page') ?? 1) === 1}
 					data-sveltekit-noscroll
 					href={`?${new URLSearchParams({
 						...query,
-						page: String(Number($page.url.searchParams.get('page') ?? 1) - 1),
+						page: String(Number(page.url.searchParams.get('page') ?? 1) - 1),
 					})}`}>&lt;</a
 				>
 				Page
@@ -416,24 +416,24 @@
 					name="page"
 					min="1"
 					max={data.pages}
-					value={$page.url.searchParams.get('page') ?? 1}
+					value={page.url.searchParams.get('page') ?? 1}
 				/>
 				of {data.pages}
 				<a
-					class:disabled={Number($page.url.searchParams.get('page') ?? 1) >= data.pages}
+					class:disabled={Number(page.url.searchParams.get('page') ?? 1) >= data.pages}
 					data-sveltekit-noscroll
 					href={`?${new URLSearchParams({
 						...query,
-						page: String(Number($page.url.searchParams.get('page') ?? 1) + 1),
+						page: String(Number(page.url.searchParams.get('page') ?? 1) + 1),
 					})}`}>&gt;</a
 				>
 				<a
-					class:disabled={Number($page.url.searchParams.get('page') ?? 1) >= data.pages}
+					class:disabled={Number(page.url.searchParams.get('page') ?? 1) >= data.pages}
 					data-sveltekit-noscroll
 					href={`?${new URLSearchParams({ ...query, page: String(data.pages) })}`}>&gt;&gt;</a
 				>
 			</p>
-			{#each [...$page.url.searchParams] as [key, value]}
+			{#each [...page.url.searchParams] as [key, value]}
 				{#if key !== 'page'}
 					<input type="hidden" name={key} {value} />
 				{/if}

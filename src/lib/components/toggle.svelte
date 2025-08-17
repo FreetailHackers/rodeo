@@ -1,8 +1,12 @@
 <script lang="ts">
-	export let name: string;
-	export let label: string;
-	export let checked: boolean;
-	export let isLeft: boolean = false;
+	interface Props {
+		name: string;
+		label: string;
+		checked: boolean;
+		isLeft?: boolean;
+	}
+
+	let { name, label, checked = $bindable(), isLeft = false }: Props = $props();
 </script>
 
 <div>
@@ -30,18 +34,18 @@
 	}
 
 	/* Adapted from https://danklammer.com/articles/simple-css-toggle-switch */
+
 	.toggle {
 		appearance: none;
-		width: 62px;
-		height: 32px;
+		width: 2.5rem;
+		height: 1rem;
 		display: inline-block;
 		position: relative;
-		border-radius: 50px;
-		overflow: hidden;
+		border-radius: 4rem;
 		outline: none;
 		border: none;
 		cursor: pointer;
-		background-color: #707070;
+		background-color: #888;
 		transition: background-color ease 0.3s;
 		margin: 0;
 	}
@@ -51,15 +55,14 @@
 		display: block;
 		position: absolute;
 		z-index: 2;
-		width: 28px;
-		height: 28px;
-		background: #fff;
-		left: 2px;
-		top: 2px;
+		width: 1.25rem;
+		height: 1.25rem;
+		background: #eee;
+		left: -0.125rem;
+		top: -0.125rem;
 		border-radius: 50%;
-		color: #fff;
-		box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-		transition: all cubic-bezier(0.3, 1.5, 0.7, 1) 0.3s;
+		box-shadow: 0 0 0.2rem rgba(0, 0, 0, 0.4);
+		transition: left cubic-bezier(0.2, 1, 0.5, 1) 0.3s;
 	}
 
 	.toggle:checked {
@@ -67,7 +70,7 @@
 	}
 
 	.toggle:checked:before {
-		left: 32px;
+		left: calc(100% - 1.125rem);
 	}
 
 	input {

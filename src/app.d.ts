@@ -1,28 +1,19 @@
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces
+// and what to do when importing types
 
 import type { Role, Status } from '@prisma/client';
 
-// and what to do when importing types
-declare namespace App {
-	// interface Error {}
-	// interface Locals {}
-	// interface PageData {}
-	// interface Platform {}
-}
-
-// Lucia Auth boilerplate
 declare global {
 	namespace App {
 		interface Locals {
-			auth: import('lucia').AuthRequest;
+			user: import('$lib/server/auth').SessionValidationResult['user'];
+			session: import('$lib/server/auth').SessionValidationResult['session'];
 		}
+		// Interface Error {}
+		// Interface PageData {}
+		// Interface Platform {}
 	}
 }
-declare global {
-	namespace Lucia {
-		type Auth = import('$lib/lucia').Auth;
-		type UserAttributes = { email: string; roles: Role[]; status: Status };
-	}
-}
+
 export {};

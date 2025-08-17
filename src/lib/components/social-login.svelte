@@ -1,5 +1,9 @@
 <script lang="ts">
-	export let providers: Record<string, boolean>;
+	interface Props {
+		providers: Record<string, boolean>;
+	}
+
+	let { providers }: Props = $props();
 </script>
 
 <div id="social-logins">

@@ -1,30 +1,32 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import Toasts from '$lib/components/toasts.svelte';
 	import { toasts } from '$lib/stores';
-	import { afterUpdate } from 'svelte';
 	import './global.css';
+	import { invalidateAll } from '$app/navigation';
 	import { fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import Loader from '$lib/components/loader.svelte';
-	import { beforeNavigate, afterNavigate } from '$app/navigation';
+	import { beforeNavigate, afterNavigate, goto } from '$app/navigation';
 
-	export let data;
+	let { data, children } = $props();
 
 	// Automatically display a toast if a form action returns a string
-	$: if (typeof $page.form === 'string') {
-		toasts.notify($page.form);
-	}
+	$effect(() => {
+		if (typeof page.form === 'string') {
+			toasts.notify(page.form);
+		}
+	});
 
-	let menu: HTMLMenuElement;
-	let hamburgerCheckbox: HTMLInputElement;
-	let isLoading = false;
+	let menu = $state() as HTMLMenuElement;
+	let hamburgerCheckbox = $state() as HTMLInputElement;
+	let isLoading = $state(false);
 	beforeNavigate(() => (isLoading = true));
 	afterNavigate(() => (isLoading = false));
 
 	const noLayoutRoutes = ['/login', '/register', '/unverified']; // Routes that shouldn't have layout
 
-	afterUpdate(() => {
+	$effect(() => {
 		if (menu && menu.childNodes) {
 			for (const link of menu.childNodes) {
 				if (link) {
@@ -38,10 +40,15 @@
 	});
 </script>
 
-{#if !noLayoutRoutes.some((route) => $page.url.pathname.startsWith(route))}
+{#if !noLayoutRoutes.some((route) => page.url.pathname.startsWith(route))}
 	<div class="navbar">
 		<label for="hamburgerCheckbox"
-			><img draggable="false" src="/auth-assets/bat.svg" alt="burger-menu" id="hamburger-logo" />
+			><img
+				draggable="false"
+				src="/auth-assets/recordhacks-mascot.png"
+				alt="burger-menu"
+				id="hamburger-logo"
+			/>
 			<img draggable="false" src="/burger_Menu.png" alt="burger-menu" id="hamburger-logo" /></label
 		>
 		<input
@@ -51,27 +58,21 @@
 			style="display: none"
 		/>
 		<menu id="menu" bind:this={menu}>
-			<li><a href="https://hacktx.com/">Homepage</a></li>
+			<li><a href="https://hacktx.com">Homepage</a></li>
 			<li><a href="/">Announcements</a></li>
 			{#if data.user?.roles.includes('UNDECLARED')}
 				<li>
-					<a href="/apply" class:active={$page.url.pathname.startsWith('/apply')}> Application</a>
+					<a href="/apply" class:active={page.url.pathname.startsWith('/apply')}> Application</a>
 				</li>
 			{/if}
 			{#if data.user?.roles.includes('ADMIN') || data.user?.roles.includes('SPONSOR')}
 				<li>
-					<!-- HACK: Tell SvelteKit to force refresh on /users since
-				IDK how to reset the filters on the users page otherwise -->
-					<a
-						href="/users"
-						class:active={$page.url.pathname.startsWith('/users')}
-						data-sveltekit-reload>Users</a
-					>
+					<a href="/users" class:active={page.url.pathname.startsWith('/users')}>Users</a>
 				</li>
 				{#if data.user?.roles.includes('ADMIN')}
-					<li><a href="/admin" class:active={$page.url.pathname.startsWith('/admin')}>Admin</a></li>
+					<li><a href="/admin" class:active={page.url.pathname.startsWith('/admin')}>Admin</a></li>
 					<li>
-						<a href="/admissions" class:active={$page.url.pathname.startsWith('/admissions')}
+						<a href="/admissions" class:active={page.url.pathname.startsWith('/admissions')}
 							>Admissions</a
 						>
 					</li>
@@ -79,14 +80,11 @@
 			{/if}
 
 			{#if data.user?.roles.includes('ORGANIZER') || data.user?.roles.includes('ADMIN')}
-				<li><a href="/scan" class:active={$page.url.pathname.startsWith('/scan')}>Scan</a></li>
+				<li><a href="/scan" class:active={page.url.pathname.startsWith('/scan')}>Scan</a></li>
 			{/if}
 			<li>
-				<a href="/account" class:active={$page.url.pathname.startsWith('/account')}>Account</a>
+				<a href="/account" class:active={page.url.pathname.startsWith('/account')}>Account</a>
 			</li>
-			<!-- <li>
-				<a href="/settings" class:active={$page.url.pathname.startsWith('/settings')}>Settings</a>
-			</li> -->
 			<li>
 				<form method="POST" action="/logout">
 					<button type="submit">Logout</button>
@@ -96,12 +94,12 @@
 	</div>
 {/if}
 
-{#key $page.url.pathname}
+{#key page.url.pathname}
 	<div
-		class:container={!noLayoutRoutes.some((route) => $page.url.pathname.startsWith(route))}
-		in:fade={{ easing: cubicOut, duration: 300 }}
+		class:container={!noLayoutRoutes.some((route) => page.url.pathname.startsWith(route))}
+		in:fade|global={{ easing: cubicOut, duration: 300 }}
 	>
-		<slot />
+		{@render children()}
 	</div>
 {/key}
 <!-- No layout for /login or /register and their children -->
@@ -121,6 +119,7 @@
 		height: 100vh;
 		backdrop-filter: blur(2px) brightness(0.9);
 		z-index: 200;
+		background-color: var(--white);
 	}
 
 	.container {
@@ -133,7 +132,7 @@
 		position: fixed;
 		top: 0;
 		margin: 0;
-		background-color: var(--background-grey);
+		background-color: var(--background-pink);
 		z-index: 10;
 	}
 

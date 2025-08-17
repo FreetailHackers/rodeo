@@ -1,19 +1,31 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import SvelteMarkdown from 'svelte-markdown';
+	import SvelteMarkdown from '@humanspeak/svelte-markdown';
 
-	export let name: string;
-	export let id = name;
-	export let required = false;
-	export let placeholder = '';
-	export let rows = 5;
-	export let value = '';
+	interface Props {
+		name: string;
+		id?: any;
+		required?: boolean;
+		placeholder?: string;
+		rows?: number;
+		value?: string;
+		useAnnouncementFont?: boolean;
+		isHTML: boolean;
+	}
 
-	let previewing = false;
-	let textarea: HTMLTextAreaElement;
+	let {
+		name,
+		id = name,
+		required = false,
+		placeholder = '',
+		rows = 5,
+		value = $bindable(''),
+		useAnnouncementFont = false,
+		isHTML,
+	}: Props = $props();
 
-	export let useAnnouncementFont: boolean = false;
-	export let isHTML: boolean;
+	let previewing = $state(false);
+	let textarea = $state() as HTMLTextAreaElement;
 
 	// HACK: This is a workaround for Svelte not updating input bindings a form is reset
 	onMount(() => {
@@ -25,20 +37,6 @@
 	});
 </script>
 
-<div>
-	<button
-		class:announcement-font={useAnnouncementFont}
-		type="button"
-		class:selected={!previewing}
-		on:click={() => (previewing = false)}>Write</button
-	>
-	<button
-		class:announcement-font={useAnnouncementFont}
-		type="button"
-		class:selected={previewing}
-		on:click={() => (previewing = true)}>Preview</button
-	>
-</div>
 {#if previewing}
 	<div class="border white-preview-background">
 		{#if value === ''}
@@ -60,7 +58,7 @@
 		{name}
 		{required}
 		{value}
-	/>
+	></textarea>
 {:else}
 	<textarea
 		class:announcement-font={useAnnouncementFont}
@@ -71,41 +69,53 @@
 		{rows}
 		bind:value
 		bind:this={textarea}
-	/>
+	></textarea>
 {/if}
+
+<div id="preview-button">
+	<button
+		class:announcement-font={useAnnouncementFont}
+		type="button"
+		class:selected={previewing}
+		onclick={() => (previewing = !previewing)}>Preview</button
+	>
+</div>
 
 <style>
 	.white-preview-background {
 		background: white;
 	}
-	button {
-		padding: 0 1rem;
-		background-color: #ddd;
-		color: black;
-	}
+
 	textarea {
 		height: auto;
 		width: 100%;
 	}
 
 	.border {
-		border: 2px solid gray;
+		border: 1px solid var(--grey);
+		border-radius: var(--border-radius);
 		padding: 0 1rem;
 		min-height: 3rem;
 	}
 
+	#preview-button {
+		display: flex;
+		justify-content: flex-end;
+		margin: 0.5em 0;
+	}
+
+	button {
+		background-color: var(--light-grey);
+		color: var(--black);
+	}
+
 	.selected {
-		text-decoration: underline;
+		background-color: var(--accent);
+		color: var(--white);
 	}
 
 	.empty-preview {
 		color: gray;
 		font-style: italic;
-	}
-
-	.announcement-font {
-		font-family: 'Fugaz One';
-		font-weight: 400;
-		color: #000000;
 	}
 </style>

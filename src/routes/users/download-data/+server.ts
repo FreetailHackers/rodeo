@@ -3,16 +3,16 @@ import { trpc } from '$lib/trpc/router';
 import { Parser } from '@json2csv/plainjs';
 import type { Prisma, Question } from '@prisma/client';
 
-export const GET = async ({ locals, url }) => {
-	await authenticate(locals.auth, ['ADMIN']);
-	const results = await trpc(locals.auth).users.search({
+export const GET = async (event) => {
+	await authenticate(event.locals.session, ['ADMIN']);
+	const results = await trpc(event).users.search({
 		page: 1,
-		key: url.searchParams.get('key') ?? '',
-		search: url.searchParams.get('search') ?? '',
+		key: event.url.searchParams.get('key') ?? '',
+		search: event.url.searchParams.get('search') ?? '',
 		limit: 0,
-		searchFilter: url.searchParams.get('searchFilter') ?? '',
+		searchFilter: event.url.searchParams.get('searchFilter') ?? '',
 	});
-	const questions = await trpc(locals.auth).questions.get();
+	const questions = await trpc(event).questions.get();
 	const parser = new Parser();
 	const users = [];
 	for (const user of results.users) {
@@ -29,7 +29,7 @@ export const GET = async ({ locals, url }) => {
 // Helper function to replace question IDs with their labels
 function prepare(
 	user: Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>,
-	questions: Question[]
+	questions: Question[],
 ) {
 	function prepareApplication(application: Record<string, unknown>) {
 		const prepared: Record<string, unknown> = {};

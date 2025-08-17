@@ -1,20 +1,18 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
-	import SvelteMarkdown from 'svelte-markdown';
+	import SvelteMarkdown from '@humanspeak/svelte-markdown';
 	import FileInput from '$lib/components/file-input.svelte';
 	import { confirmationDialog } from '$lib/actions.js';
 	import Dropdown from '$lib/components/dropdown.svelte';
 
-	export let data;
-	export let form;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const application = data.user.application as Record<string, any>;
+	let { data, form } = $props();
+	const application = $state(data.user.application as Record<string, any>);
 
-	let applicationForm: HTMLFormElement;
+	let applicationForm = $state() as HTMLFormElement;
 
-	let debounceTimer: ReturnType<typeof setTimeout> | undefined;
-	let saveButton: HTMLButtonElement;
-	let rsvpSelectedValue: string = '';
+	let debounceTimer: ReturnType<typeof setTimeout> | undefined = $state();
+	let saveButton = $state() as HTMLButtonElement;
+	let rsvpSelectedValue: string = $state('');
 
 	let selectedRole = 'Hacker';
 
@@ -49,10 +47,10 @@
 			{:else}
 				<p>You must complete your application to be considered for admission.</p>
 			{/if}
-			<button on:click={() => applyAs('Hacker')}>Apply as Hacker</button>
-			<button on:click={() => applyAs('Judge')}>Apply as Judge</button>
-			<button on:click={() => applyAs('Mentor')}>Apply as Mentor</button>
-			<button on:click={() => applyAs('Volunteer')}>Apply as Volunteer</button>
+			<button onclick={() => applyAs('Hacker')}>Apply as Hacker</button>
+			<button onclick={() => applyAs('Judge')}>Apply as Judge</button>
+			<button onclick={() => applyAs('Mentor')}>Apply as Mentor</button>
+			<button onclick={() => applyAs('Volunteer')}>Apply as Volunteer</button>
 		{:else if data.user.authUser.status === 'APPLIED'}
 			<h2 class="status-message">You've submitted your application!</h2>
 			{#if data.appliedDate !== null}
@@ -195,7 +193,7 @@
 						}
 					};
 				}}
-				on:input={() => {
+				oninput={() => {
 					saveButton.disabled = true;
 					saveButton.textContent = 'Autosaving...';
 					if (debounceTimer !== undefined) {
@@ -270,7 +268,6 @@
 									custom={Boolean(question.custom)}
 									multiple={Boolean(question.multiple)}
 									bind:value={application[question.id]}
-									on:input={() => applicationForm.dispatchEvent(new Event('input'))}
 								/>
 							{:else if question.type === 'RADIO'}
 								{#each question.options as option}
@@ -302,10 +299,12 @@
 						<button class="negative-button" bind:this={saveButton}>Save and finish later</button>
 						<button
 							formaction="?/finish"
-							on:click={() => {
-								clearTimeout(debounceTimer);
-								saveButton.disabled = false;
-								saveButton.textContent = 'Save and finish later';
+							onclick={() => {
+								if (saveButton) {
+									clearTimeout(debounceTimer);
+									saveButton.disabled = false;
+									saveButton.textContent = 'Save and finish later';
+								}
 							}}>Submit application</button
 						>
 					</div>

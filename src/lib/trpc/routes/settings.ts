@@ -35,6 +35,7 @@ const settingsSchema = z
 		declineIsHTML: z.boolean().optional(),
 		withdrawIsHTML: z.boolean().optional(),
 		byStatusIsHTML: z.boolean().optional(),
+		showGroups: z.boolean().optional(),
 	})
 	.strict();
 
@@ -92,7 +93,7 @@ export const settingsRouter = t.router({
 				withdrawIsHTML: settings.withdrawIsHTML,
 				byStatusIsHTML: settings.byStatusIsHTML,
 			};
-		}
+		},
 	),
 
 	/**

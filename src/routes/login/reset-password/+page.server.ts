@@ -1,24 +1,33 @@
 import { trpc } from '$lib/trpc/router';
-import { redirect } from '@sveltejs/kit';
+import { setSessionTokenCookie } from '$lib/authenticate';
 
 export const actions = {
-	email: async ({ locals, request, url }) => {
-		const email = (await request.formData()).get('email') as string;
-		await trpc(locals.auth).users.sendPasswordResetEmail({ email });
-		throw redirect(302, url.pathname + '?submitted');
+	email: async (event) => {
+		const email = (await event.request.formData()).get('email') as string;
+		await trpc(event).users.sendPasswordResetEmail({ email });
+		return new Response(null, {
+			status: 302,
+			headers: { location: event.url.pathname + '?submitted' },
+		});
 	},
 
-	reset: async ({ request, url, locals }) => {
-		const formData = await request.formData();
+	reset: async (event) => {
+		const formData = await event.request.formData();
 		try {
-			const session = await trpc(locals.auth).users.resetPassword({
+			const session = await trpc(event).users.resetPassword({
 				token: formData.get('token') as string,
 				password: formData.get('password') as string,
 			});
-			locals.auth.setSession(session);
+			setSessionTokenCookie(event, session.id, session.expiresAt);
 		} catch (e) {
-			throw redirect(302, url.pathname + '?invalid');
+			return new Response(null, {
+				status: 302,
+				headers: { location: event.url.pathname + '?invalid' },
+			});
 		}
-		throw redirect(302, '/');
+		return new Response(null, {
+			status: 302,
+			headers: { location: '/' },
+		});
 	},
 };

@@ -66,8 +66,8 @@ async function releaseDecisions(ids?: string[]): Promise<void> {
 				decisions
 					.slice(i, i + 100)
 					.map((hacker) =>
-						sendEmail(hacker.authUser.email, 'Freetail Hackers status update', template, isHTML)
-					)
+						sendEmail(hacker.authUser.email, 'Freetail Hackers status update', template, isHTML),
+					),
 			);
 		}
 	}
@@ -84,7 +84,7 @@ export const admissionsRouter = t.router({
 			z.object({
 				decision: z.enum(['ACCEPTED', 'REJECTED', 'WAITLISTED']),
 				ids: z.array(z.string()),
-			})
+			}),
 		)
 		.mutation(async (req): Promise<void> => {
 			for (const id of req.input.ids) {
@@ -126,7 +126,7 @@ export const admissionsRouter = t.router({
 					include: { user: true },
 				}),
 			};
-		}
+		},
 	),
 
 	/**
@@ -170,7 +170,7 @@ export const admissionsRouter = t.router({
 				include: { authUser: true, decision: true },
 				orderBy: [{ teamId: 'asc' }],
 			});
-		}
+		},
 	),
 
 	canApply: t.procedure.query(async (): Promise<boolean> => {

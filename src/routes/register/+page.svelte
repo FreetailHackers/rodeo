@@ -2,9 +2,9 @@
 	import { enhance } from '$app/forms';
 	import SocialLogin from '$lib/components/social-login.svelte';
 
-	export let data;
+	let { data } = $props();
 
-	let hidden = true;
+	let hidden = $state(true);
 </script>
 
 <svelte:head>
@@ -12,7 +12,7 @@
 </svelte:head>
 <main class="vert-center">
 	<div class="auth-content">
-		<img class="bat" src="/auth-assets/bat.svg" alt="Freetail Bat" />
+		<img class="mascot" src="/auth-assets/recordhacks-mascot.png" alt="RecordHacks Mascot" />
 		<h1>Register</h1>
 		<div class="socials">
 			<SocialLogin providers={data.providers} />
@@ -35,9 +35,9 @@
 				class="inputValues"
 				autocomplete="username"
 			/>
-			<!-- svelte-ignore a11y-invalid-attribute -->
+			<!-- svelte-ignore a11y_invalid_attribute -->
 			<label for="password">
-				Password (<a href="javascript:;" on:click={() => (hidden = !hidden)}>
+				Password (<a href="javascript:;" onclick={() => (hidden = !hidden)}>
 					{#if hidden}show{:else}hide{/if}</a
 				>)
 			</label>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let data;
+	let { data } = $props();
 </script>
 
 <svelte:head>
@@ -8,7 +8,7 @@
 
 <main class="vert-center">
 	<div class="auth-content">
-		<img class="bat" src="/auth-assets/bat.svg" alt="Freetail Bat" />
+		<img class="mascot" src="/auth-assets/recordhacks-mascot.png" alt="RecordHacks Mascot" />
 		{#if data.success}
 			<p>Your email has been successfully verified! You can close this window now.</p>
 		{:else}

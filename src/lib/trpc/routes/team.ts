@@ -4,7 +4,7 @@ import { prisma } from '../db';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 import { sendEmail } from '../email';
-import { inviteToTeamToken } from '$lib/lucia';
+import { inviteToTeamToken } from '$lib/authenticate';
 
 export const teamRouter = t.router({
 	getTeam: t.procedure.use(authenticate(['HACKER'])).query(async (req) => {
@@ -149,7 +149,7 @@ export const teamRouter = t.router({
 			z.object({
 				token: z.string(),
 				teamId: z.number(),
-			})
+			}),
 		)
 		.mutation(async ({ input }): Promise<string> => {
 			const userId = await inviteToTeamToken.validate(input.token);
@@ -203,7 +203,7 @@ export const teamRouter = t.router({
 			z.object({
 				token: z.string(),
 				teamId: z.number(),
-			})
+			}),
 		)
 		.mutation(async ({ input }): Promise<string> => {
 			const userId = await inviteToTeamToken.validate(input.token);
@@ -287,7 +287,7 @@ export const teamRouter = t.router({
 export const removeInvalidTeamMembers = async function removeInvalidTeamMembers(
 	team: Team & {
 		members: { authUserId: string; authUser: { status: string } }[];
-	}
+	},
 ): Promise<void> {
 	// Filter out members who are not confirmed
 	const usersToRemove = team.members

@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import Toggle from '$lib/components/toggle.svelte';
 	import TextEditor from '$lib/components/text-editor.svelte';
-	export let data;
+	let { data = $bindable() } = $props();
 </script>
 
 <svelte:head>

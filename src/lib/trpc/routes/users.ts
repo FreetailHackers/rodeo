@@ -1,4 +1,4 @@
-import { Prisma, Role, Status, type StatusChange } from '@prisma/client';
+import { Prisma, Role, Status } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
 import { sendEmail } from '../email';
@@ -6,8 +6,7 @@ import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getQuestions } from './questions';
 import { getSettings } from './settings';
-import { auth, emailVerificationToken, resetPasswordToken } from '$lib/lucia';
-import type { Session, User } from 'lucia';
+import type { AuthSession, User, AuthUser, StatusChange } from '@prisma/client';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { canApply } from './admissions';
@@ -18,6 +17,8 @@ import { removeStopwords } from 'stopword';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import { hash } from '@node-rs/argon2';
+import * as auth from '$lib/authenticate';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -38,13 +39,15 @@ export const usersRouter = t.router({
 		.input(z.string().optional())
 		.query(
 			async (
-				req
+				req,
 			): Promise<Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>> => {
-				const session = await req.ctx.validate();
+				const { session, user } = await auth.validateSessionToken(
+					req.ctx.cookies.get('session') ?? '',
+				);
 				if (session === null) {
 					throw new Error('Unauthorized');
 				}
-				const user = session.user;
+
 				if (req.input === undefined) {
 					return await prisma.user.findUniqueOrThrow({
 						where: { authUserId: user.id },
@@ -59,7 +62,7 @@ export const usersRouter = t.router({
 						include: { authUser: true, decision: true },
 					});
 				}
-			}
+			},
 		),
 
 	getAppliedDate: t.procedure
@@ -240,7 +243,7 @@ export const usersRouter = t.router({
 					req.ctx.user.email,
 					subject,
 					settings.submitTemplate,
-					settings.submitIsHTML
+					settings.submitIsHTML,
 				);
 			}
 			return errors;
@@ -266,7 +269,7 @@ export const usersRouter = t.router({
 				req.ctx.user.email,
 				subject,
 				settings.withdrawalWarningTemplate,
-				settings.withdrawIsHTML
+				settings.withdrawIsHTML,
 			);
 		}),
 
@@ -296,7 +299,7 @@ export const usersRouter = t.router({
 						req.ctx.user.email,
 						'Thanks for your RSVP!',
 						settings.confirmTemplate,
-						settings.confirmIsHTML
+						settings.confirmIsHTML,
 					);
 				}
 			} else {
@@ -311,7 +314,7 @@ export const usersRouter = t.router({
 						req.ctx.user.email,
 						'Thanks for your RSVP!',
 						settings.declineTemplate,
-						settings.declineIsHTML
+						settings.declineIsHTML,
 					);
 				}
 			}
@@ -323,21 +326,35 @@ export const usersRouter = t.router({
 	 */
 	register: t.procedure
 		.input(z.object({ email: z.string().trim().toLowerCase(), password: z.string().min(8) }))
-		.mutation(async (req): Promise<Session | null> => {
+		.mutation(async (req): Promise<AuthSession | null> => {
 			try {
-				const user = await auth.createUser({
-					key: {
-						providerId: 'email',
-						providerUserId: req.input.email,
-						password: req.input.password,
-					},
-					attributes: {
+				const passwordHash = await hash(req.input.password, {
+					memoryCost: 19456,
+					timeCost: 2,
+					outputLen: 32,
+					parallelism: 1,
+				});
+				const user = await prisma.authUser.create({
+					data: {
+						id: crypto.randomUUID(),
 						email: req.input.email,
 						roles: ['UNDECLARED'],
 						status: 'CREATED',
 					},
 				});
-				return await auth.createSession({ userId: user.userId, attributes: {} });
+				await prisma.authKey.create({
+					data: {
+						id: crypto.randomUUID(),
+						userId: user.id,
+						hashedPassword: passwordHash,
+						providerId: 'email',
+						providerUserId: user.email,
+					},
+				});
+				const session = await auth.createSession(user.id);
+				auth.setSessionTokenCookie(req.ctx, session.id, session.expiresAt);
+
+				return session;
 			} catch (e) {
 				if (e instanceof PrismaClientKnownRequestError && e.code === 'P2002') {
 					// Email already exists
@@ -347,17 +364,16 @@ export const usersRouter = t.router({
 			}
 		}),
 
-	/**
-	 * Logs in a user with the given email and password. Returns the
-	 * resulting session, or throws an error if the credentials are
-	 * invalid.
-	 */
-	login: t.procedure
-		.input(z.object({ email: z.string().trim().toLowerCase(), password: z.string() }))
-		.mutation(async (req): Promise<Session> => {
-			const key = await auth.useKey('email', req.input.email, req.input.password);
-			return await auth.createSession({ userId: key.userId, attributes: {} });
-		}),
+	// /**
+	//  * Logs in a user with the given email and password. Returns the
+	//  * resulting session, or throws an error if the credentials are
+	//  * invalid.
+	//  */
+	// login: t.procedure
+	// 	.input(z.object({ email: z.string().trim().toLowerCase(), password: z.string() }))
+	// 	.mutation(async (req): Promise<Session> => {
+	// 		return await auth.createSession({ userId: key.userId, attributes: {} });
+	// 	}),
 
 	/**
 	 * Sends an email verification link to the logged in user.
@@ -368,7 +384,7 @@ export const usersRouter = t.router({
 		if (req.ctx.user.verifiedEmail) {
 			return;
 		}
-		const token = await emailVerificationToken.issue(req.ctx.user.id);
+		const token = await auth.emailVerificationToken.issue(req.ctx.user.id);
 		let link = `${process.env.DOMAIN_NAME}/login/verify-email/${token}`;
 		link = `<a href="${link}">${link}</a>`;
 		const body =
@@ -389,7 +405,7 @@ export const usersRouter = t.router({
 				where: { email: req.input.email },
 			});
 			if (user !== null) {
-				const token = await resetPasswordToken.issue(user.id);
+				const token = await auth.resetPasswordToken.issue(user.id);
 				let link = `${process.env.DOMAIN_NAME}/login/reset-password?token=${token}`;
 				link = `<a href="${link}">${link}</a>`;
 				const body =
@@ -405,7 +421,7 @@ export const usersRouter = t.router({
 	 * invalid or expired.
 	 */
 	verifyEmail: t.procedure.input(z.string()).mutation(async (req): Promise<void> => {
-		const userId = await emailVerificationToken.validate(req.input);
+		const userId = await auth.emailVerificationToken.validate(req.input);
 		await prisma.authUser.update({
 			where: { id: userId },
 			data: { verifiedEmail: true },
@@ -419,32 +435,52 @@ export const usersRouter = t.router({
 	 */
 	resetPassword: t.procedure
 		.input(z.object({ token: z.string(), password: z.string().min(8) }))
-		.mutation(async (req): Promise<Session> => {
-			const userId = await resetPasswordToken.validate(req.input.token);
-			const user = await auth.getUser(userId);
-			await auth.invalidateAllUserSessions(user.id);
+		.mutation(async (req): Promise<AuthSession> => {
+			const userId = await auth.resetPasswordToken.validate(req.input.token);
+			const user = await prisma.authUser.findUniqueOrThrow({
+				where: { id: userId },
+			});
+			await auth.invalidateAllSessions(user.id);
+			const passwordHash = await hash(req.input.password, {
+				memoryCost: 19456,
+				timeCost: 2,
+				outputLen: 32,
+				parallelism: 1,
+			});
 			try {
-				await auth.updateKeyPassword('email', user.email, req.input.password);
+				await prisma.authKey.updateMany({
+					where: {
+						userId: user.id,
+						providerId: 'email',
+					},
+					data: {
+						hashedPassword: passwordHash,
+					},
+				});
 			} catch (e) {
 				// If the user doesn't have a password (because they
 				// signed up through a third-party provider), create one
-				await auth.createKey({
-					userId: user.id,
-					providerId: 'email',
-					providerUserId: user.email,
-					password: req.input.password,
+				await prisma.authKey.create({
+					data: {
+						id: crypto.randomUUID(),
+						userId: user.id,
+						hashedPassword: passwordHash,
+						providerId: 'email',
+						providerUserId: user.email,
+					},
 				});
 			}
-			return await auth.createSession({ userId: user.id, attributes: {} });
+			return await auth.createSession(user.id);
 		}),
 
 	/**
 	 * Logs out the logged in user by invalidating their session.
 	 */
 	logout: t.procedure.mutation(async (req): Promise<void> => {
-		const session = await req.ctx.validate();
+		const { session } = await auth.validateSessionToken(req.ctx.cookies.get('session') ?? '');
+
 		if (session !== null) {
-			await auth.invalidateSession(session.sessionId);
+			await auth.invalidateSession(session.id);
 		}
 	}),
 
@@ -524,11 +560,11 @@ export const usersRouter = t.router({
 				searchFilter: z.string(),
 				limit: z.number().transform((limit) => (limit === 0 ? Number.MAX_SAFE_INTEGER : limit)),
 				page: z.number().transform((page) => page - 1),
-			})
+			}),
 		)
 		.query(
 			async (
-				req
+				req,
 			): Promise<{
 				pages: number;
 				start: number;
@@ -540,7 +576,7 @@ export const usersRouter = t.router({
 					req.input.key,
 					req.input.searchFilter,
 					req.input.search,
-					req.ctx.user.roles
+					req.ctx.user.roles,
 				);
 				const count = await prisma.user.count({ where });
 				const users = await prisma.user.findMany({
@@ -569,7 +605,7 @@ export const usersRouter = t.router({
 					count,
 					users: users,
 				};
-			}
+			},
 		),
 
 	/**
@@ -586,7 +622,7 @@ export const usersRouter = t.router({
 				key: z.string(),
 				search: z.string(),
 				searchFilter: z.string(),
-			})
+			}),
 		)
 		.query(async (req): Promise<{ path: string; url: string }[]> => {
 			let questions = (await getQuestions()).filter((question) => question.type === 'FILE');
@@ -597,7 +633,7 @@ export const usersRouter = t.router({
 				req.input.key,
 				req.input.searchFilter,
 				req.input.search,
-				req.ctx.user.roles
+				req.ctx.user.roles,
 			);
 			const users = await prisma.user.findMany({ include: { authUser: true }, where });
 			// Remove questions that should not be visible to sponsors
@@ -628,7 +664,7 @@ export const usersRouter = t.router({
 				key: z.string(),
 				search: z.string(),
 				searchFilter: z.string(),
-			})
+			}),
 		)
 		.query(async (req) => {
 			let questions = await getQuestions();
@@ -636,7 +672,7 @@ export const usersRouter = t.router({
 				req.input.key,
 				req.input.searchFilter,
 				req.input.search,
-				req.ctx.user.roles
+				req.ctx.user.roles,
 			);
 			const users = await prisma.user.findMany({ where });
 
@@ -727,7 +763,7 @@ export const usersRouter = t.router({
 			z.object({
 				status: z.nativeEnum(Status),
 				ids: z.array(z.string()),
-			})
+			}),
 		)
 		.mutation(async (req): Promise<void> => {
 			const updateStatuses = prisma.authUser.updateMany({
@@ -749,7 +785,7 @@ export const usersRouter = t.router({
 			z.object({
 				role: z.nativeEnum(Role),
 				ids: z.array(z.string()),
-			})
+			}),
 		)
 		.mutation(async (req): Promise<void> => {
 			if (req.input.ids.includes(req.ctx.user.id)) {
@@ -781,7 +817,7 @@ export const usersRouter = t.router({
 			z.object({
 				role: z.nativeEnum(Role),
 				ids: z.array(z.string()),
-			})
+			}),
 		)
 		.mutation(async (req): Promise<void> => {
 			if (req.input.ids.includes(req.ctx.user.id)) {
@@ -818,14 +854,14 @@ export const usersRouter = t.router({
 				subject: z.string(),
 				emailBody: z.string(),
 				isHTML: z.boolean(),
-			})
+			}),
 		)
 		.mutation(async (req): Promise<number> => {
 			return await sendEmail(
 				req.input.emails,
 				req.input.subject,
 				req.input.emailBody,
-				req.input.isHTML
+				req.input.isHTML,
 			);
 		}),
 
@@ -836,14 +872,14 @@ export const usersRouter = t.router({
 				key: z.string(),
 				search: z.string(),
 				searchFilter: z.string(),
-			})
+			}),
 		)
 		.query(async (req): Promise<string[]> => {
 			const where = await getWhereCondition(
 				req.input.key,
 				req.input.searchFilter,
 				req.input.search,
-				req.ctx.user.roles
+				req.ctx.user.roles,
 			);
 			return await prisma.user
 				.findMany({
@@ -853,24 +889,19 @@ export const usersRouter = t.router({
 				.then((users) => users.map((user) => user.authUser.email));
 		}),
 
-	/*
-	 * Splits up users into different groups
-	 */
 	splitGroups: t.procedure
 		.use(authenticate(['ADMIN']))
-		.input(z.number().min(1).max(26))
-		.mutation(async ({ input }) => {
+		.input(z.array(z.string()))
+		.mutation(async ({ input }): Promise<User[][]> => {
 			// Update all teams before group assignments, as all statuses have been finalized.
 			await Promise.all(
-				(
-					await prisma.team.findMany()
-				).map(async (team) => {
+				(await prisma.team.findMany()).map(async (team) => {
 					const members = await prisma.user.findMany({
 						where: { teamId: team.id },
 						include: { authUser: true },
 					});
 					await removeInvalidTeamMembers({ ...team, members });
-				})
+				}),
 			);
 
 			const confirmedUsers = await prisma.user.findMany({
@@ -882,7 +913,9 @@ export const usersRouter = t.router({
 				include: { team: true, authUser: true },
 			});
 
-			const groups: User[][] = Array.from({ length: input }, () => []);
+			const numGroups = input.length;
+
+			const groups: User[][] = Array.from({ length: numGroups }, () => []);
 			const teamDictionary: Record<number, User[]> = {};
 			const nonTeamUsers: User[] = [];
 
@@ -895,22 +928,64 @@ export const usersRouter = t.router({
 			});
 
 			// Distribute non-team users across groups, then distribute team members
-			nonTeamUsers.forEach((user, index) => groups[index % input].push(user));
+			nonTeamUsers.forEach((user, index) => groups[index % numGroups].push(user));
 			Object.values(teamDictionary)
 				.sort((a, b) => b.length - a.length)
 				.forEach((teamMembers, index) => {
-					groups[index % input].push(...teamMembers);
+					groups[index % numGroups].push(...teamMembers);
 				});
 
 			await prisma.$transaction(
 				groups.map((group, index) =>
 					prisma.user.updateMany({
 						where: { authUserId: { in: group.map((user) => user.authUserId) } },
-						data: { group: String.fromCharCode(65 + index) }, // A, B, C, ...
-					})
-				)
+						data: { mealGroup: input[index] },
+					}),
+				),
 			);
+
+			return groups;
 		}),
+
+	getAllGroups: t.procedure.use(authenticate(['ADMIN'])).query(async () => {
+		const groupsWithMembers = await prisma.user.groupBy({
+			by: ['mealGroup'],
+			where: {
+				mealGroup: { not: null },
+				authUser: { status: 'CONFIRMED' },
+			},
+			_count: true,
+			orderBy: { mealGroup: 'asc' },
+		});
+
+		const groupDetails = await Promise.all(
+			groupsWithMembers.map(async (lunchGroup) => {
+				const members = await prisma.user.findMany({
+					where: {
+						mealGroup: lunchGroup.mealGroup,
+						authUser: { status: 'CONFIRMED' },
+					},
+					select: {
+						teamId: true,
+						team: true,
+						authUser: {
+							select: {
+								email: true,
+							},
+						},
+					},
+				});
+
+				return {
+					mealGroup: lunchGroup.mealGroup,
+					memberCount: lunchGroup._count,
+					members: members,
+				};
+			}),
+		);
+
+		return groupDetails;
+	}),
 
 	// Returns the group of the user
 	getGroup: t.procedure.use(authenticate(['HACKER'])).query(async (req): Promise<string | null> => {
@@ -918,9 +993,9 @@ export const usersRouter = t.router({
 			(
 				await prisma.user.findUnique({
 					where: { authUserId: req.ctx.user.id },
-					select: { group: true },
+					select: { mealGroup: true },
 				})
-			)?.group ?? null
+			)?.mealGroup ?? null
 		);
 	}),
 });
@@ -929,7 +1004,7 @@ async function getWhereCondition(
 	key: string,
 	searchFilter: string,
 	search: string,
-	roles: Role[]
+	roles: Role[],
 ): Promise<Prisma.UserWhereInput> {
 	if (!roles.includes('ADMIN')) {
 		return {
@@ -947,7 +1022,7 @@ async function getWhereConditionHelper(
 	key: string,
 	searchFilter: string,
 	search: string,
-	roles: Role[]
+	roles: Role[],
 ): Promise<Prisma.UserWhereInput> {
 	const questions = await getQuestions();
 	const scanActions = (await getSettings()).scanActions;
@@ -1125,10 +1200,10 @@ async function getWhereConditionHelper(
 	return {};
 }
 
-async function getRSVPDeadline(user: User) {
+async function getRSVPDeadline(user: AuthUser): Promise<Date | null> {
 	const daysToConfirmBy = (
 		await prisma.statusChange.findFirstOrThrow({
-			where: { userId: user.authUserId },
+			where: { userId: user.id },
 			orderBy: { timestamp: 'desc' },
 		})
 	).timestamp;
