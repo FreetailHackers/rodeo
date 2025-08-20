@@ -14,7 +14,7 @@
 	let saveButton = $state() as HTMLButtonElement;
 	let rsvpSelectedValue: string = $state('');
 
-	let selectedRole = 'Hacker';
+	let selectedRole = $state('UNDECLARED');
 
 	function applyAs(role: string) {
 		selectedRole = role;
