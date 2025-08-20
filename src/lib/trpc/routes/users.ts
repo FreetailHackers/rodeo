@@ -334,6 +334,8 @@ export const usersRouter = t.router({
 					outputLen: 32,
 					parallelism: 1,
 				});
+				console.log(`Registering user with email: ${req.input.email}`);
+				console.log(`Password hash: ${passwordHash}`);
 				const user = await prisma.authUser.create({
 					data: {
 						id: crypto.randomUUID(),
@@ -364,11 +366,11 @@ export const usersRouter = t.router({
 			}
 		}),
 
-	// /**
-	//  * Logs in a user with the given email and password. Returns the
-	//  * resulting session, or throws an error if the credentials are
-	//  * invalid.
-	//  */
+	/**
+	 * Logs in a user with the given email and password. Returns the
+	 * resulting session, or throws an error if the credentials are
+	 * invalid.
+	 */
 	// login: t.procedure
 	// 	.input(z.object({ email: z.string().trim().toLowerCase(), password: z.string() }))
 	// 	.mutation(async (req): Promise<Session> => {

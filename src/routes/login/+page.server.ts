@@ -33,6 +33,7 @@ export const actions = {
 
 		// Logic for yopmail users (DEV ONLY)
 		if (email.includes('@yopmail.com') && !password) {
+			console.log('YOPmail user login detected, skipping password check.');
 			const session = await auth.createSession(user.id);
 			auth.setSessionTokenCookie(event, session.id, session.expiresAt);
 			throw redirect(303, '/');

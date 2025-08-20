@@ -113,6 +113,7 @@ export async function invalidateAllSessions(userId: string): Promise<void> {
  * Sets a cookie in the current browser session.
  */
 export function setSessionTokenCookie(event: RequestEvent, token: string, expiresAt: Date) {
+	console.log(`Setting session cookie: ${sessionCookieName}=${token}`);
 	event.cookies.set(sessionCookieName, token, {
 		httpOnly: true,
 		sameSite: 'lax',
