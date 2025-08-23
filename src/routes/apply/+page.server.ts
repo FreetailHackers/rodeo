@@ -1,9 +1,17 @@
 import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import type { Question, Role } from '@prisma/client';
+import { redirect } from '@sveltejs/kit';
 
 export const load = async (event) => {
-	await authenticate(event.locals.session, ['UNDECLARED']);
+	await authenticate(event.locals.session, [
+		'UNDECLARED',
+		'HACKER',
+		'MENTOR',
+		'JUDGE',
+		'VOLUNTEER',
+		'SPONSOR',
+	]);
 	const settings = await trpc(event).settings.getPublic();
 	const deadline = await trpc(event).users.getRSVPDeadline();
 
@@ -57,14 +65,11 @@ export const actions = {
 
 	finish: async (event) => {
 		if (!(await trpc(event).admissions.canApply())) {
-			return new Response(null, {
-				status: 301,
-				headers: { location: '/apply' },
-			});
+			throw redirect(301, '/apply');
 		}
 		const formData = await event.request.formData();
 		const selectedRole = formData.get('group_applied');
-		const allowedRoles = ['HACKER', 'ORGANIZER', 'JUDGE', 'VOLUNTEER'] as const;
+		const allowedRoles = ['HACKER', 'MENTOR', 'JUDGE', 'VOLUNTEER'] as const;
 
 		await trpc(event).users.update(formToApplication(await trpc(event).questions.get(), formData));
 		if (allowedRoles.includes(selectedRole as any)) {

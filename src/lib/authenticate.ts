@@ -4,6 +4,7 @@ import argon2 from 'argon2';
 import type { RequestEvent } from '@sveltejs/kit';
 import { prisma } from './trpc/db';
 import { GitHub, Google } from 'arctic';
+import { hash, verify } from '@node-rs/argon2';
 
 export const sessionCookieName = 'session';
 
@@ -31,6 +32,9 @@ export async function authenticate(sessionInput: AuthSession, roles?: Role[]): P
 
 	// user is now AuthUser
 	if (roles !== undefined && !hasAnyRole(user.roles, roles)) {
+		console.log('in authenticate.ts, User does not have required role');
+		console.log('user roles:', user.roles);
+		console.log('required roles:', roles);
 		redirect(303, '/?forbidden');
 	}
 
@@ -56,6 +60,7 @@ export async function createSession(userId: string) {
 			expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
 		},
 	});
+	console.log('Created session: ' + session.id);
 	return session;
 }
 
@@ -152,7 +157,7 @@ export async function verifyPassword(
 	hashedPassword: string,
 	inputPassword: string,
 ): Promise<boolean> {
-	return await argon2.verify(hashedPassword, inputPassword);
+	return await verify(hashedPassword, inputPassword);
 }
 
 export type SessionValidationResult =
@@ -170,6 +175,8 @@ class TokenType {
 	 * issues a new one.
 	 */
 	async issue(userId: string): Promise<string> {
+		console.log('issue method called with userId: ' + userId);
+		console.log('purpose is: ' + this.purpose);
 		await prisma.singleUseKey.deleteMany({
 			where: { userId, purpose: this.purpose },
 		});
@@ -191,9 +198,16 @@ class TokenType {
 	 * issued tokens for the same user.
 	 */
 	async validate(token: string): Promise<string> {
+		console.log('validation method called with token: ' + token);
+		const sesh = await prisma.authSession.findUnique({
+			where: { id: token },
+		});
+		console.log('sesh is: ' + sesh);
 		const singleUseKey = await prisma.singleUseKey.findUnique({
 			where: { id: token },
 		});
+
+		console.log('singleUseKey is: ' + singleUseKey);
 		if (
 			singleUseKey === null ||
 			singleUseKey.purpose !== this.purpose ||
@@ -250,7 +264,7 @@ export async function createGitHubUser(
 			email: email,
 			githubId: githubId,
 			githubUsername: githubUsername,
-			roles: ['HACKER'],
+			roles: ['UNDECLARED'],
 			status: 'CREATED',
 			verifiedEmail: false,
 		},
@@ -319,7 +333,7 @@ export async function createGoogleUser(
 			email: email,
 			googleId: googleId,
 			goodleUsername: googleUsername, // Ensure this field name matches your schema (goodleUsername vs googleUsername)
-			roles: ['HACKER'],
+			roles: ['UNDECLARED'],
 			status: 'CREATED',
 			verifiedEmail: false, // Email from Google might be verified by Google, but not yet in your system
 		},
@@ -345,3 +359,25 @@ export const googleAuth = new Google(
 	import.meta.env.VITE_GOOGLE_CLIENT_SECRET,
 	'http://localhost:5173/login/google/callback',
 );
+
+/**
+ * Verifies if the provided email is valid and meets basic criteria.
+ * Returns true if valid, false otherwise.
+ */
+export function verifyEmailInput(email: string): boolean {
+	return /^.+@.+\..+$/.test(email) && email.length < 256;
+}
+
+/**
+ * Hashes a password using Argon2 with specific parameters.
+ * Returns the hashed password as a string.
+ */
+export async function hashPassword(password: string): Promise<string> {
+	console.log('hashing password');
+	return await hash(password, {
+		memoryCost: 19456,
+		timeCost: 2,
+		outputLen: 32,
+		parallelism: 1,
+	});
+}

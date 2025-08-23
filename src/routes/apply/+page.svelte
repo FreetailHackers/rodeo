@@ -244,7 +244,7 @@
 									id={question.id}
 									bind:value={application[question.id]}
 									placeholder={question.placeholder}
-								/>
+								></textarea>
 							{:else if question.type === 'NUMBER'}
 								<input
 									type="number"
