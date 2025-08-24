@@ -3,7 +3,7 @@ import { redirect } from '@sveltejs/kit';
 
 export const load = async ({ locals }) => {
 	const session = await locals.session;
-	if (session === null || locals.user.status !== 'CREATED') {
+	if (session === null || locals.user.status !== 'CREATED' || locals.user.verifiedEmail) {
 		redirect(303, '/');
 	}
 };
