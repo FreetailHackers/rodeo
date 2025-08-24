@@ -52,7 +52,7 @@
 default:
   # This pipeline requires a custom Docker image with npm and psql
   # installed (see the relevant Dockerfile for details)
-  image: registry.gitlab.com/freetail-hackers/rodeo
+  image: registry.gitlab.com/freetail-hackers/rodeo:latest
 
 workflow:
   rules:

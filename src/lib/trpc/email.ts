@@ -2,12 +2,7 @@ import { Resend } from 'resend';
 import nodemailer from 'nodemailer';
 import { marked } from 'marked';
 
-function getResend() {
-	const resend = process.env.RESEND_API_KEY;
-	if (!resend) throw new Error('Missing RESEND_API_KEY');
-	return new Resend(resend);
-}
-
+const resend = new Resend(process.env.RESEND_API_KEY);
 const transporter = nodemailer.createTransport({
 	host: process.env.EMAIL_HOST,
 	port: Number(process.env.EMAIL_PORT),
@@ -52,7 +47,6 @@ export const sendEmail = async (
 		};
 
 		if (process.env.RESEND_API_KEY) {
-			const resend = getResend();
 			await resend.emails.send(email);
 		} else {
 			await transporter.sendMail(email);
