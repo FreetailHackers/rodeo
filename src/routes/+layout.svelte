@@ -60,9 +60,11 @@
 		<menu id="menu" bind:this={menu}>
 			<li><a href="https://hacktx.com">Homepage</a></li>
 			<li><a href="/">Announcements</a></li>
-			<li>
-				<a href="/apply" class:active={page.url.pathname.startsWith('/apply')}> Application</a>
-			</li>
+			{#if !data.user?.roles.includes('ADMIN')}
+				<li>
+					<a href="/apply" class:active={page.url.pathname.startsWith('/apply')}> Application</a>
+				</li>
+			{/if}
 			{#if data.user?.roles.includes('ADMIN') || data.user?.roles.includes('SPONSOR')}
 				<li>
 					<a href="/users" class:active={page.url.pathname.startsWith('/users')}>Users</a>

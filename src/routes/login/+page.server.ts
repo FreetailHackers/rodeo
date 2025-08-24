@@ -1,8 +1,6 @@
-import { verify } from '@node-rs/argon2';
 import { redirect } from '@sveltejs/kit';
 import * as auth from '$lib/authenticate';
 import { verifyEmailInput } from '$lib/authenticate';
-import { prisma } from '$lib/trpc/db';
 import { trpc } from '$lib/trpc/client';
 
 export const load = async (event) => {
@@ -26,10 +24,6 @@ export const actions = {
 		const password = formData.get('password') as string;
 		if (typeof email !== 'string' || typeof password !== 'string') {
 			return 'Invalid or missing fields';
-		}
-
-		if (email === '' || password === '') {
-			return 'Please enter your email and password.';
 		}
 
 		if (!verifyEmailInput(email)) {

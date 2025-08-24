@@ -338,8 +338,6 @@ export const usersRouter = t.router({
 		.mutation(async (req): Promise<AuthSession | null> => {
 			try {
 				const passwordHash = await auth.hashPassword(req.input.password);
-				console.log(`Registering user with email: ${req.input.email}`);
-				console.log(`Password hash: ${passwordHash}`);
 				const user = await prisma.authUser.create({
 					data: {
 						id: crypto.randomUUID(),
@@ -349,15 +347,6 @@ export const usersRouter = t.router({
 						status: 'CREATED',
 					},
 				});
-				// await prisma.authKey.create({
-				// 	data: {
-				// 		id: crypto.randomUUID(),
-				// 		userId: user.id,
-				// 		hashedPassword: passwordHash,
-				// 		providerId: 'email',
-				// 		providerUserId: user.email,
-				// 	},
-				// });
 				const session = await auth.createSession(user.id);
 				auth.setSessionTokenCookie(req.ctx, session.id, session.expiresAt);
 

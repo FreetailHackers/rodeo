@@ -21,10 +21,13 @@ const authHandle: Handle = async ({ event, resolve }) => {
 		return resolve(event);
 	}
 
-	const { session, user } = await auth.validateSessionToken(sessionToken);
+	const { session, user, sessionRenewed } = await auth.validateSessionToken(sessionToken);
 
 	if (session) {
-		auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
+		// Only set the cookie if the session was renewed to avoid unnecessary cookie setting
+		if (sessionRenewed) {
+			auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
+		}
 	} else {
 		auth.deleteSessionTokenCookie(event);
 	}

@@ -37,19 +37,9 @@ async function register(email: string, password: string): Promise<string> {
 			id: email,
 			email,
 			roles: ['HACKER'],
+			hashedPassword: hashedPassword,
 			status: 'CREATED',
 			verifiedEmail: true,
-			authKey: {
-				create: {
-					id: email,
-					providerId: 'email',
-					providerUserId: email,
-					hashedPassword: hashedPassword,
-				},
-			},
-		},
-		include: {
-			authKey: true,
 		},
 	});
 
@@ -109,6 +99,7 @@ async function main() {
 	// (CREATED -> PPLIED -> ACCEPTED/REJECTED/WAITLISTED -> CONFIRMED/DECLINED)
 	startingTime.setSeconds(-maxSecondsBetweenStatusChanges * 5);
 
+	const hashedPassword = await hashPassword('');
 	for (let i = 0; i < 1000; i++) {
 		const id = `hacker${String(i).padStart(3, '0')}@yopmail.com`;
 		const statusFlow = generateStatusFlow(id, startingTime, maxSecondsBetweenStatusChanges);
@@ -118,10 +109,21 @@ async function main() {
 			// IMPORTANT: This assumes that the questions variable is ordered by the order field!!
 			application[question.id] = questions[question.order].generate();
 		}
+		// randomly generate hacker, judge, volunteer, mentor roles
+		const roles: ('HACKER' | 'JUDGE' | 'VOLUNTEER' | 'MENTOR')[] = [
+			'HACKER',
+			'JUDGE',
+			'VOLUNTEER',
+			'MENTOR',
+		];
+		const role = roles[Math.floor(random() * roles.length)];
+
 		authUsers.push({
 			id: id,
 			email: id,
-			roles: ['HACKER'],
+			hashedPassword: hashedPassword,
+			roles: [role],
+			verifiedEmail: true,
 			status: statusFlow[statusFlow.length - 1].newStatus,
 		});
 		users.push({ authUserId: id, application });

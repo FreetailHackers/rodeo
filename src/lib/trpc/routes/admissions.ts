@@ -5,6 +5,7 @@ import { sendEmail } from '../email';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getSettings } from './settings';
+import { Role } from '@prisma/client';
 
 /**
  * Considers applicationOpen, applicationDeadline, and applicationLimit
@@ -155,23 +156,28 @@ export const admissionsRouter = t.router({
 	 * Gets one user that has submitted their application. User must be
 	 * an admin.
 	 */
-	getAppliedUser: t.procedure.use(authenticate(['ADMIN'])).query(
-		async (): Promise<Prisma.UserGetPayload<{
-			include: { authUser: true; decision: true };
-		}> | null> => {
-			return await prisma.user.findFirst({
-				where: {
-					authUser: {
-						roles: { has: 'HACKER' },
-						status: { in: ['APPLIED', 'WAITLISTED'] },
+	getAppliedUser: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(z.object({ role: z.nativeEnum(Role) }))
+		.query(
+			async (
+				req,
+			): Promise<Prisma.UserGetPayload<{
+				include: { authUser: true; decision: true };
+			}> | null> => {
+				return await prisma.user.findFirst({
+					where: {
+						authUser: {
+							roles: { has: req.input.role },
+							status: { in: ['APPLIED', 'WAITLISTED'] },
+						},
+						decision: null,
 					},
-					decision: null,
-				},
-				include: { authUser: true, decision: true },
-				orderBy: [{ teamId: 'asc' }],
-			});
-		},
-	),
+					include: { authUser: true, decision: true },
+					orderBy: [{ teamId: 'asc' }],
+				});
+			},
+		),
 
 	canApply: t.procedure.query(async (): Promise<boolean> => {
 		return await canApply();

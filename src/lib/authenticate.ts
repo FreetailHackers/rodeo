@@ -85,15 +85,17 @@ export async function validateSessionToken(sessionId: string): Promise<SessionVa
 		return { session: null, user: null };
 	}
 
+	let sessionRenewed = false;
 	if (Date.now() >= session.expiresAt.getTime() - 15 * 24 * 60 * 60 * 1000) {
 		sessionData.expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 		await prisma.authSession.update({
 			where: { id: sessionId },
 			data: { expiresAt: sessionData.expiresAt },
 		});
+		sessionRenewed = true;
 	}
 
-	return { session, user: authUser };
+	return { session: sessionData, user: authUser, sessionRenewed };
 }
 
 /**
@@ -118,7 +120,6 @@ export async function invalidateAllSessions(userId: string): Promise<void> {
  * Sets a cookie in the current browser session.
  */
 export function setSessionTokenCookie(event: RequestEvent, token: string, expiresAt: Date) {
-	console.log(`Setting session cookie: ${sessionCookieName}=${token}`);
 	event.cookies.set(sessionCookieName, token, {
 		httpOnly: true,
 		sameSite: 'lax',
@@ -161,8 +162,8 @@ export async function verifyPassword(
 }
 
 export type SessionValidationResult =
-	| { session: AuthSession; user: AuthUser }
-	| { session: null; user: null };
+	| { session: AuthSession; user: AuthUser; sessionRenewed?: boolean }
+	| { session: null; user: null; sessionRenewed?: boolean };
 
 class TokenType {
 	constructor(

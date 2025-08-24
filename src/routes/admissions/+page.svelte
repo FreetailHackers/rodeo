@@ -1,14 +1,19 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import UserCard from '$lib/components/user-card.svelte';
 	import { Role } from '@prisma/client';
 
 	let { data } = $props();
 
-	let selectedRole = $state(Role.HACKER) as Role;
+	let selectedRole = $state(data.selectedRole) as Role;
 
 	function lookingAt(role: Role) {
 		selectedRole = role;
+		const url = new URL(page.url);
+		url.searchParams.set('role', role);
+		goto(url.toString(), { replaceState: true });
 	}
 </script>
 
