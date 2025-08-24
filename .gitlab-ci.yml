@@ -93,14 +93,13 @@ deploy-preview-job:
     - export SIGNER_CERT=$SIGNER_CERT
     - export SIGNER_KEY=$SIGNER_KEY
     - export SIGNER_KEY_PASSPHRASE=$SIGNER_KEY_PASSPHRASE
-    - export RESEND_API_KEY=$RESEND_API_KEY
     - npm ci
     # Get environment variables from Vercel
     - npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
-    - echo "RESEND_API_KEY is ${RESEND_API_KEY:-(not set)}"
-
     # Export .env to environment variables in shell so we can use them in this script
     - "export $(grep -v '^#' .vercel/.env.preview.local | xargs)"
+    - echo "RESEND_API_KEY is ${RESEND_API_KEY:-(not set)}"
+
     # Drop existing branch-specific database if it exists
     - echo "DROP DATABASE IF EXISTS \"$CI_COMMIT_BRANCH\"" | psql $DATABASE_URL/postgres
     # Create a branch-specific database
@@ -121,7 +120,6 @@ deploy-preview-job:
     - if [ "$CI_COMMIT_BRANCH" == "master" ]; then npx vercel switch --token=$VERCEL_TOKEN --scope=$VERCEL_SCOPE && npx vercel alias $DOMAIN_NAME $STAGING_URL --token=$VERCEL_TOKEN ; fi
     # Set dynamic environment URL
     - echo "DOMAIN_NAME=$DOMAIN_NAME" >> deploy.env
-    - echo "RESEND_API_KEY is ${RESEND_API_KEY:-(not set)}"
   artifacts:
     reports:
       dotenv: deploy.env
