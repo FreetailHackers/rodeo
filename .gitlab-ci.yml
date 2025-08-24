@@ -121,6 +121,7 @@ deploy-preview-job:
     - if [ "$CI_COMMIT_BRANCH" == "master" ]; then npx vercel switch --token=$VERCEL_TOKEN --scope=$VERCEL_SCOPE && npx vercel alias $DOMAIN_NAME $STAGING_URL --token=$VERCEL_TOKEN ; fi
     # Set dynamic environment URL
     - echo "DOMAIN_NAME=$DOMAIN_NAME" >> deploy.env
+    - echo "RESEND_API_KEY is ${RESEND_API_KEY:-(not set)}"
   artifacts:
     reports:
       dotenv: deploy.env
