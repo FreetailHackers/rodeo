@@ -98,8 +98,6 @@ deploy-preview-job:
     - npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
     # Export .env to environment variables in shell so we can use them in this script
     - "export $(grep -v '^#' .vercel/.env.preview.local | xargs)"
-    - echo "RESEND_API_KEY is ${RESEND_API_KEY:-(not set)}"
-
     # Drop existing branch-specific database if it exists
     - echo "DROP DATABASE IF EXISTS \"$CI_COMMIT_BRANCH\"" | psql $DATABASE_URL/postgres
     # Create a branch-specific database
