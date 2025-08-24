@@ -2,7 +2,14 @@ import { Resend } from 'resend';
 import nodemailer from 'nodemailer';
 import { marked } from 'marked';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResend() {
+	if (!process.env.RESEND_API_KEY) {
+		console.error('RESEND_API_KEY is not set');
+		throw new Error('RESEND_API_KEY is not set');
+	}
+	return new Resend(process.env.RESEND_API_KEY);
+}
+
 const transporter = nodemailer.createTransport({
 	host: process.env.EMAIL_HOST,
 	port: Number(process.env.EMAIL_PORT),
@@ -47,6 +54,7 @@ export const sendEmail = async (
 		};
 
 		if (process.env.RESEND_API_KEY) {
+			const resend = getResend();
 			await resend.emails.send(email);
 		} else {
 			await transporter.sendMail(email);
