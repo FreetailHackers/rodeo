@@ -63,24 +63,9 @@ workflow:
     - when: always
 
 stages:
-  - build-image
   - test
   - deploy-preview
   - deploy-production
-
-build-image:
-  stage: build-image
-  image: docker:latest
-  services:
-    - docker:dind
-  variables:
-    DOCKER_DRIVER: overlay2
-  script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
-    - docker build -t registry.gitlab.com/freetail-hackers/rodeo:latest .
-    - docker push registry.gitlab.com/freetail-hackers/rodeo:latest
-  only:
-    - master
 
 test-job:
   stage: test
@@ -89,8 +74,6 @@ test-job:
     - export SIGNER_CERT=$SIGNER_CERT
     - export SIGNER_KEY=$SIGNER_KEY
     - export SIGNER_KEY_PASSPHRASE=$SIGNER_KEY_PASSPHRASE
-    - export RESEND_API_KEY=$RESEND_API_KEY
-    - echo "RESEND_API_KEY is ${RESEND_API_KEY:-(not set)}"
     - npm ci
     - npm run build
     - npm run check
@@ -114,7 +97,8 @@ deploy-preview-job:
     - npm ci
     # Get environment variables from Vercel
     - npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
-
+    - export RESEND_API_KEY=$RESEND_API_KEY
+    - echo "RESEND_API_KEY is ${RESEND_API_KEY:-(not set)}"
     # Export .env to environment variables in shell so we can use them in this script
     - "export $(grep -v '^#' .vercel/.env.preview.local | xargs)"
     # Drop existing branch-specific database if it exists
