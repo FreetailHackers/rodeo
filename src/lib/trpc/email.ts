@@ -4,10 +4,11 @@ import { marked } from 'marked';
 
 function getResend() {
 	if (!process.env.RESEND_API_KEY) {
-		console.error('RESEND_API_KEY is not set');
+		console.log('RESEND_API_KEY is not set');
 		throw new Error('RESEND_API_KEY is not set');
 	}
-	return new Resend(process.env.RESEND_API_KEY);
+	console.log('Using Resend to send emails');
+	return new Resend(process.env.RESEND_API_KEY as string);
 }
 
 const transporter = nodemailer.createTransport({
