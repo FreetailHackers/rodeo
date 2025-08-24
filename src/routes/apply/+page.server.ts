@@ -26,8 +26,6 @@ export const load = async (event) => {
 };
 
 function formToApplication(questions: Question[], formData: FormData) {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	//console.log(formData);
 	const application: Record<string, any> = {};
 	for (const question of questions) {
 		if (

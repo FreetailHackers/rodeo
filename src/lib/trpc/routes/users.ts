@@ -169,7 +169,6 @@ export const usersRouter = t.router({
 			if (!(await canApply()) || req.ctx.user.status !== 'CREATED') {
 				return {};
 			}
-			console.log('users.ts, Submitting application for role: ' + req.input);
 			// Validate the user's data
 			// TODO: We assume the data is the correct type here. Maybe we should validate it?
 			// Better yet, we can validate it in trpc.users.update
@@ -179,7 +178,6 @@ export const usersRouter = t.router({
 				where: { authUserId: req.ctx.user.id },
 			});
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			console.log('user', user);
 			const application = user.application as Record<string, any>;
 			for (const question of questions) {
 				const answer = application[question.id];
@@ -386,7 +384,6 @@ export const usersRouter = t.router({
 	sendPasswordResetEmail: t.procedure
 		.input(z.object({ email: z.string().trim().toLowerCase() }))
 		.mutation(async (req): Promise<void> => {
-			console.log('inside the sendPasswordResetEmail mutation');
 			const user = await prisma.authUser.findUnique({
 				where: { email: req.input.email },
 			});
@@ -422,13 +419,10 @@ export const usersRouter = t.router({
 	resetPassword: t.procedure
 		.input(z.object({ token: z.string(), password: z.string().min(8) }))
 		.mutation(async (req): Promise<AuthSession> => {
-			console.log('inside the resetPassword mutation');
 			const userId = await auth.resetPasswordToken.validate(req.input.token);
-			console.log('userId is: ' + userId);
 			const user = await prisma.authUser.findUniqueOrThrow({
 				where: { id: userId },
 			});
-			console.log('got the user for resetPassword: ' + user.email);
 			await auth.invalidateAllSessions(user.id);
 			const passwordHash = await auth.hashPassword(req.input.password);
 			try {
@@ -1006,20 +1000,15 @@ export const usersRouter = t.router({
 		.input(z.object({ email: z.string().trim().toLowerCase(), password: z.string() }))
 		.mutation(async (req): Promise<boolean> => {
 			try {
-				console.log(`Verifying password for user with email: ${req.input.email}`);
 				const user = await prisma.authUser.findUnique({
 					where: { email: req.input.email },
 					select: { id: true, hashedPassword: true },
 				});
-				console.log(`User found: ${user ? 'Yes' : 'No'}`);
-				console.log("User's password exists: ", user?.hashedPassword ? 'Yes' : 'No');
 				if (!user || !user.hashedPassword) {
 					return false;
 				}
-				console.log(`Hashed password: ${user.hashedPassword}`);
 				const isValid = await auth.verifyPassword(user.hashedPassword, req.input.password);
 				if (isValid) {
-					console.log('Password is correct, creating session...');
 					const session = await auth.createSession(user.id);
 					auth.setSessionTokenCookie(req.ctx, session.id, session.expiresAt);
 				}

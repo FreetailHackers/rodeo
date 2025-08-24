@@ -31,15 +31,12 @@ export const actions = {
 		}
 
 		const user = await trpc(event).users.getUserFromEmail.query(email);
-		console.log('user is: ' + user?.email);
 		if (!user) {
-			console.log('User not found: ' + email);
 			return 'User not found.';
 		}
 
 		const verifiedUser = await trpc(event).users.login.mutate({ email, password });
 		if (!verifiedUser) {
-			console.log('Invalid password for user: ' + email);
 			return 'Invalid password.';
 		}
 
