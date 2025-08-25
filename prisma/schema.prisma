@@ -11,7 +11,7 @@ datasource db {
 model AuthUser {
   id             String         @id @unique
   email          String         @unique
-  password       String?
+  hashedPassword String?
   githubId       Int?          
   githubUsername String?        
   googleId       String?
@@ -117,6 +117,7 @@ model Question {
   label         String
   type          QuestionType
   required      Boolean      @default(false)
+  targetGroup   String[]
   order         Int          @unique
   placeholder   String       @default("")
   options       String[]
@@ -205,10 +206,12 @@ enum InvitationStatus {
 enum Role {
   HACKER
   ADMIN
-  ORGANIZER
-  JUDGE
-  VOLUNTEER
-  SPONSOR
+  ORGANIZER // Same as VOLUNTEER but can scan Hacker IDs
+  JUDGE // Should have access to judging
+  VOLUNTEER // Miscenalleous volunteer; only has access to Hacker ID
+  SPONSOR // Should have access to resumes
+  MENTOR
+  UNDECLARED
 }
 
 enum Status {

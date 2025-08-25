@@ -1,9 +1,17 @@
 import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
-import type { Question } from '@prisma/client';
+import type { Question, Role } from '@prisma/client';
+import { redirect } from '@sveltejs/kit';
 
 export const load = async (event) => {
-	await authenticate(event.locals.session, ['HACKER']);
+	await authenticate(event.locals.session, [
+		'UNDECLARED',
+		'HACKER',
+		'MENTOR',
+		'JUDGE',
+		'VOLUNTEER',
+		'SPONSOR',
+	]);
 	const settings = await trpc(event).settings.getPublic();
 	const deadline = await trpc(event).users.getRSVPDeadline();
 
@@ -18,7 +26,6 @@ export const load = async (event) => {
 };
 
 function formToApplication(questions: Question[], formData: FormData) {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const application: Record<string, any> = {};
 	for (const question of questions) {
 		if (
@@ -56,15 +63,20 @@ export const actions = {
 
 	finish: async (event) => {
 		if (!(await trpc(event).admissions.canApply())) {
-			return new Response(null, {
-				status: 301,
-				headers: { location: '/apply' },
-			});
+			throw redirect(301, '/apply');
 		}
-		await trpc(event).users.update(
-			formToApplication(await trpc(event).questions.get(), await event.request.formData()),
-		);
-		return await trpc(event).users.submitApplication();
+		const formData = await event.request.formData();
+		const selectedRole = formData.get('group_applied');
+		const allowedRoles = ['HACKER', 'MENTOR', 'JUDGE', 'VOLUNTEER'] as const;
+
+		await trpc(event).users.update(formToApplication(await trpc(event).questions.get(), formData));
+		if (allowedRoles.includes(selectedRole as any)) {
+			return await trpc(event).users.submitApplication(
+				selectedRole as (typeof allowedRoles)[number],
+			);
+		} else {
+			return new Response('Invalid role selected', { status: 400 });
+		}
 	},
 
 	withdraw: async (event) => {

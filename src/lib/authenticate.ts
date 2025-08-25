@@ -1,9 +1,9 @@
 import type { Role, AuthSession, AuthUser } from '.prisma/client';
 import { redirect } from '@sveltejs/kit';
-import argon2 from 'argon2';
 import type { RequestEvent } from '@sveltejs/kit';
 import { prisma } from './trpc/db';
 import { GitHub, Google } from 'arctic';
+import { hash, verify } from '@node-rs/argon2';
 
 export const sessionCookieName = 'session';
 
@@ -80,15 +80,17 @@ export async function validateSessionToken(sessionId: string): Promise<SessionVa
 		return { session: null, user: null };
 	}
 
+	let sessionRenewed = false;
 	if (Date.now() >= session.expiresAt.getTime() - 15 * 24 * 60 * 60 * 1000) {
 		sessionData.expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 		await prisma.authSession.update({
 			where: { id: sessionId },
 			data: { expiresAt: sessionData.expiresAt },
 		});
+		sessionRenewed = true;
 	}
 
-	return { session, user: authUser };
+	return { session: sessionData, user: authUser, sessionRenewed };
 }
 
 /**
@@ -151,12 +153,12 @@ export async function verifyPassword(
 	hashedPassword: string,
 	inputPassword: string,
 ): Promise<boolean> {
-	return await argon2.verify(hashedPassword, inputPassword);
+	return await verify(hashedPassword, inputPassword);
 }
 
 export type SessionValidationResult =
-	| { session: AuthSession; user: AuthUser }
-	| { session: null; user: null };
+	| { session: AuthSession; user: AuthUser; sessionRenewed?: boolean }
+	| { session: null; user: null; sessionRenewed?: boolean };
 
 class TokenType {
 	constructor(
@@ -190,9 +192,13 @@ class TokenType {
 	 * issued tokens for the same user.
 	 */
 	async validate(token: string): Promise<string> {
+		const sesh = await prisma.authSession.findUnique({
+			where: { id: token },
+		});
 		const singleUseKey = await prisma.singleUseKey.findUnique({
 			where: { id: token },
 		});
+
 		if (
 			singleUseKey === null ||
 			singleUseKey.purpose !== this.purpose ||
@@ -249,7 +255,7 @@ export async function createGitHubUser(
 			email: email,
 			githubId: githubId,
 			githubUsername: githubUsername,
-			roles: ['HACKER'],
+			roles: ['UNDECLARED'],
 			status: 'CREATED',
 			verifiedEmail: false,
 		},
@@ -318,7 +324,7 @@ export async function createGoogleUser(
 			email: email,
 			googleId: googleId,
 			goodleUsername: googleUsername, // Ensure this field name matches your schema (goodleUsername vs googleUsername)
-			roles: ['HACKER'],
+			roles: ['UNDECLARED'],
 			status: 'CREATED',
 			verifiedEmail: false, // Email from Google might be verified by Google, but not yet in your system
 		},
@@ -344,3 +350,24 @@ export const googleAuth = new Google(
 	import.meta.env.VITE_GOOGLE_CLIENT_SECRET,
 	'http://localhost:5173/login/google/callback',
 );
+
+/**
+ * Verifies if the provided email is valid and meets basic criteria.
+ * Returns true if valid, false otherwise.
+ */
+export function verifyEmailInput(email: string): boolean {
+	return /^.+@.+\..+$/.test(email) && email.length < 256;
+}
+
+/**
+ * Hashes a password using Argon2 with specific parameters.
+ * Returns the hashed password as a string.
+ */
+export async function hashPassword(password: string): Promise<string> {
+	return await hash(password, {
+		memoryCost: 19456,
+		timeCost: 2,
+		outputLen: 32,
+		parallelism: 1,
+	});
+}

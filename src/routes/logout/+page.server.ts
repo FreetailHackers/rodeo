@@ -10,7 +10,6 @@ export const actions = {
 		if (!event.locals.session) {
 			return fail(401);
 		}
-		await auth.invalidateSession(event.locals.session.id);
 		auth.deleteSessionTokenCookie(event);
 
 		// Properly return the redirect

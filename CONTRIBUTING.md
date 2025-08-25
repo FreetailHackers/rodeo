@@ -23,8 +23,7 @@ Run this so that you can use the `createdb` utility. Finally, run `brew services
 1. Install Chocolatey at https://chocolatey.org/install. Chocolatey is a package manager that automatically adds everything you install to PATH.
 2. Run `choco install nodejs-lts` to install node and npm
 3. Run `choco install postgresql15 --params '/Password:postgres'` to install postgres and use 'postgres' as the default password for the root user in postgreSQL (Chocolatey generates a random password if you don't give it the flag)
-4. Skip the `createdb rodeo-development` step in Final Steps
-   - Use postgres:postgres for both lines instead of username:password
+4. Run `createdb -U postgres rodeo-development` and input `postgres` for the password, then follow the rest of `Final Steps`.
 
 ## Linux
 

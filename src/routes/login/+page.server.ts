@@ -1,7 +1,7 @@
-import { verify } from '@node-rs/argon2';
 import { redirect } from '@sveltejs/kit';
 import * as auth from '$lib/authenticate';
-import { prisma } from '$lib/trpc/db';
+import { verifyEmailInput } from '$lib/authenticate';
+import { trpc } from '$lib/trpc/client';
 
 export const load = async (event) => {
 	if (event.locals.user) {
@@ -22,40 +22,26 @@ export const actions = {
 		const formData = await event.request.formData();
 		const email = formData.get('email') as string;
 		const password = formData.get('password') as string;
+		if (typeof email !== 'string' || typeof password !== 'string') {
+			return 'Invalid or missing fields';
+		}
 
-		const user = await prisma.authUser.findUnique({
-			where: { email },
-		});
+		if (!verifyEmailInput(email)) {
+			return 'Invalid email';
+		}
 
+		const user = await trpc(event).users.getUserFromEmail.query(email);
 		if (!user) {
-			return { error: 'Invalid email or password.' };
+			return 'User not found.';
 		}
 
-		// Logic for yopmail users (DEV ONLY)
-		if (email.includes('@yopmail.com') && !password) {
-			const session = await auth.createSession(user.id);
-			auth.setSessionTokenCookie(event, session.id, session.expiresAt);
-			throw redirect(303, '/');
+		const verifiedUser = await trpc(event).users.login.mutate({ email, password });
+		if (!verifiedUser) {
+			return 'Invalid password.';
 		}
 
-		// Logic for email/password based login
-		if (!password || !user.password) {
-			return { error: 'Password is required for login.' };
+		if (verifiedUser) {
+			return redirect(303, '/');
 		}
-
-		const validPassword = await verify(user.password, password, {
-			memoryCost: 19456,
-			timeCost: 2,
-			outputLen: 32,
-			parallelism: 1,
-		});
-		if (!validPassword) {
-			return { error: 'Invalid email or password.' };
-		}
-
-		const session = await auth.createSession(user.id);
-		auth.setSessionTokenCookie(event, session.id, session.expiresAt);
-
-		return redirect(303, '/');
 	},
 };
