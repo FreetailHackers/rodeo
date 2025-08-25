@@ -47,10 +47,12 @@
 			{:else}
 				<p>You must complete your application to be considered for admission.</p>
 			{/if}
-			<button onclick={() => applyAs('Hacker')}>Apply as Hacker</button>
-			<button onclick={() => applyAs('Judge')}>Apply as Judge</button>
-			<button onclick={() => applyAs('Mentor')}>Apply as Mentor</button>
-			<button onclick={() => applyAs('Volunteer')}>Apply as Volunteer</button>
+			<div class="applyButtons">
+				<button onclick={() => applyAs('Hacker')}>Apply as Hacker</button>
+				<button onclick={() => applyAs('Judge')}>Apply as Judge</button>
+				<button onclick={() => applyAs('Mentor')}>Apply as Mentor</button>
+				<button onclick={() => applyAs('Volunteer')}>Apply as Volunteer</button>
+			</div>
 		{:else if data.user.authUser.status === 'APPLIED'}
 			<h2 class="status-message">You've submitted your application!</h2>
 			{#if data.appliedDate !== null}
@@ -117,6 +119,7 @@
 						<h5 id="application-status" class={data.user.authUser.status}>
 							{data.user.authUser.status}
 						</h5>
+						<h5>Applied as a {data.user.authUser.roles}</h5>
 					{/if}
 				</div>
 				{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'CONFIRMED' || data.user.authUser.status === 'DECLINED'}
@@ -221,7 +224,8 @@
 					<p>You are applying as: <strong>{selectedRole}</strong></p>
 				{/if}
 				{#each data.questions as question}
-					{#if question.targetGroup?.includes(selectedRole) || !question.targetGroup}
+					<!-- All the non target specific questions were being shown before user selected a role -->
+					{#if selectedRole !== 'UNDECLARED' && (question.targetGroup?.includes(selectedRole) || question.targetGroup.length === 0)}
 						<div class={'question ' + question.type.toLowerCase()}>
 							<label for={question.id}>
 								<SvelteMarkdown source={question.label} isInline />
@@ -458,9 +462,10 @@
 		flex: 1;
 	}
 
-	#status button {
+	/* #status button {
+		width: 45%;
 		margin-bottom: 1rem;
-	}
+	} */
 
 	.radio-buttons {
 		display: flex;
@@ -476,5 +481,18 @@
 
 	bold {
 		font-weight: bold;
+	}
+
+	.applyButtons {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: 1rem;
+		width: 100%;
+		flex-wrap: wrap;
+	}
+
+	.applyButtons button {
+		min-width: 15rem;
 	}
 </style>

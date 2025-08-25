@@ -50,14 +50,14 @@
 	}
 
 	button {
-		width: 8rem;
 		height: 100%;
+		margin-left: 0.5em;
 		/* Needed to make the button activate the file picker for some reason */
 		pointer-events: none;
 	}
 
 	span {
-		padding: 0.5rem 0;
+		align-self: center;
 	}
 
 	input {

@@ -14,12 +14,7 @@
 			scale: 10,
 		});
 
-		if (
-			data.user !== undefined &&
-			(!data.user.roles.includes('HACKER') ||
-				data.user.roles.length > 1 ||
-				data.user.status === 'CONFIRMED')
-		) {
+		if (data.user !== undefined && data.user.status === 'CONFIRMED') {
 			canvas.style.width = '64%';
 			canvas.style.height = 'auto';
 		}
@@ -140,12 +135,17 @@
 	{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
 		<!-- Right Section with Hacker ID -->
 		<div class="right-section">
-			<h3>My Hacker ID</h3>
+			{#if data.user.status === 'CONFIRMED'}
+				<h3>My Hacker ID</h3>
 
-			<div class="id-card">
-				<canvas bind:this={canvas} id="qrcode"></canvas>
-				<img src="hacker-id/background.png" alt="hacker id-card" />
-			</div>
+				<div class="id-card">
+					<canvas bind:this={canvas} id="qrcode"></canvas>
+					<img src="hacker-id/background.png" alt="hacker id-card" />
+				</div>
+			{/if}
+			{#if data.user.status !== 'CONFIRMED'}
+				<p>Your application is still being processed.</p>
+			{/if}
 		</div>
 	{/if}
 </div>
