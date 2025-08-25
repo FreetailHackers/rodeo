@@ -104,7 +104,7 @@ export const actions = {
 				questions[id].options = [
 					...new Set(
 						questions[id].options
-							.split('\r\n')
+							.split('\n')
 							.map((option: string) => option.trim())
 							.filter(Boolean),
 					),
