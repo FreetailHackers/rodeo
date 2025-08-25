@@ -33,4 +33,8 @@
 	button {
 		width: 100%;
 	}
+
+	section {
+		color: var(--accent); /* changed for dark mode */
+	}
 </style>

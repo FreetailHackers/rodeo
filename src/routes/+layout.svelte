@@ -132,7 +132,7 @@
 		position: fixed;
 		top: 0;
 		margin: 0;
-		background-color: var(--background-pink);
+		background-color: var(--background); /* changed for dark mode */
 		z-index: 10;
 	}
 
@@ -158,7 +158,7 @@
 	.navbar a,
 	.navbar form button {
 		text-decoration: none;
-		color: var(--black);
+		color: var(--white);
 		display: block;
 		padding: 1.5em 2em;
 		background-color: unset;
@@ -168,15 +168,14 @@
 
 	.navbar a:hover,
 	.navbar form button:hover {
-		background-color: var(--white);
+		background-color: var(--light-background);
 		font-weight: normal;
 	}
 
 	.navbar a:active {
-		background-color: var(--white);
+		background-color: var(--light-background);
 		font-weight: bold;
 	}
-
 	@media (max-width: 780px) {
 		.container {
 			margin-top: 5em;
@@ -193,7 +192,7 @@
 			width: 2rem;
 			display: block;
 			user-select: none;
-			filter: brightness(0);
+			/* filter: brightness(0); */ /* changed for dark mode */
 		}
 
 		/* Close hamburger menu */

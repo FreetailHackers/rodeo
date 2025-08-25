@@ -39,7 +39,7 @@
 
 	h5 {
 		text-align: center;
-		color: var(--secondary-color-1);
+		color: var(--accent); /* changed for dark mode */
 		margin: 4px;
 	}
 

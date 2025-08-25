@@ -119,7 +119,7 @@
 						<h5 id="application-status" class={data.user.authUser.status}>
 							{data.user.authUser.status}
 						</h5>
-						<h5>Applied as a {data.user.authUser.roles}</h5>
+						<h5>{data.user.authUser.roles}</h5>
 					{/if}
 				</div>
 				{#if data.user.authUser.status === 'ACCEPTED' || data.user.authUser.status === 'CONFIRMED' || data.user.authUser.status === 'DECLINED'}
@@ -333,7 +333,7 @@
 	#status-and-rsvp-sections {
 		border: 1px solid;
 		border-radius: var(--border-radius);
-		border-color: #bbbbbb;
+		border-color: var(--light-grey);
 		margin: 2rem 0;
 	}
 
@@ -358,7 +358,7 @@
 	}
 
 	.APPLIED {
-		color: var(--secondary-color-1);
+		color: var(--accent);
 	}
 
 	.rsvp-deadline > * {
@@ -494,5 +494,9 @@
 
 	.applyButtons button {
 		min-width: 15rem;
+	}
+
+	h5 {
+		color: var(--accent); /* changed for dark mode */
 	}
 </style>

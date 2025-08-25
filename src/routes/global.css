@@ -1,4 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Farro:wght@300;400;500;700&family=Grandstander:ital,wght@0,100..900;1,100..900&display=swap');
+/* Import local fonts */
+@font-face {
+	font-family: 'RELIGATH';
+	src: url('/fonts/RELIGATH-Demo.otf') format('opentype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: 'Satoshi';
+	src: url('/fonts/Satoshi-Regular.otf') format('opentype');
+	font-weight: lighter;
+	font-style: normal;
+}
 
 html {
 	scroll-behavior: smooth;
@@ -6,19 +19,19 @@ html {
 
 :root {
 	/* Fonts */
-	--font-titles: 'Grandstander', 'Inter';
-	--font-standard: 'Farro', 'Geologica', 'Helvetica Neue', sans-serif;
+	--font-titles: 'RELIGATH', 'Inter', serif;
+	--font-standard: 'Satoshi', 'Helvetica Neue', sans-serif;
 
 	/* Colors */
-	--white: #fcfaf1;
+	--white: #f5f0e9;
 	--black: #000;
-	--accent: #fa8620;
-	--light-accent: #d8d5ff;
+	--accent: #e8d8a1;
+	--other-accent: #d8d5ff;
 	--dark-grey: #757575;
 	--grey: #bbb;
 	--light-grey: #ebebeb;
-	--background-pink: #e3bcd2;
-	--secondary-color-1: #e3bcd2;
+	--background: #01051a;
+	--light-background: #000c44;
 	--red: #e53c09;
 
 	--border-radius: 15px;
@@ -34,6 +47,7 @@ html {
 
 p {
 	margin: 0.5em 0;
+	color: var(--accent);
 }
 
 h1,
@@ -82,7 +96,7 @@ html {
 body {
 	margin: 0 auto;
 	overflow-wrap: anywhere;
-	background-color: var(--white);
+	background-color: var(--light-background); /* TODO: CHANGE BACKGROUND HERE */
 }
 
 section {
@@ -96,7 +110,7 @@ nav {
 button,
 a.button {
 	background-color: var(--accent);
-	color: var(--white);
+	color: var(--light-background);
 	border: none;
 	padding: 0.5em 1.5em;
 	text-decoration: none;
@@ -108,7 +122,7 @@ a.button {
 button:not(:disabled):hover,
 a.button:not(:disabled):hover {
 	cursor: pointer;
-	background-color: var(--light-accent);
+	background-color: var(--other-accent);
 	color: var(--accent);
 }
 
