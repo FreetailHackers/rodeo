@@ -25,6 +25,7 @@
 		class: className,
 		onInput,
 	}: Props = $props();
+
 	// KEEP THESE
 	// name: string; Name for the input
 	// id = name; ID for the input
@@ -50,12 +51,8 @@
 		// defining an expression for value causes an infinite loop for some reason 😭😭😭
 		if (!event.detail) {
 			value = '';
-		} else if (multiple) {
-			// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-			// @ts-ignore: Svelte doesn't support TypeScript in HTML template expressions 😭
-			value = event.detail.map((item) => item.value);
-		} else {
-			value = event.detail.value;
+		} else if (!multiple) {
+			value = event.detail;
 		}
 		if (json) {
 			value = JSON.stringify(value);
@@ -66,6 +63,7 @@
 	}}
 	value={(() => {
 		if (!json) {
+			$inspect('value prop', value);
 			return value;
 		}
 		// Ugly but this is the easiest way I found to populate the dropdown that works when

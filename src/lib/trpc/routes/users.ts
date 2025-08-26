@@ -182,7 +182,10 @@ export const usersRouter = t.router({
 			for (const question of questions) {
 				const answer = application[question.id];
 				if (answer === undefined || answer === null || answer === false || answer === '') {
-					if (question.required && question.targetGroup.includes(req.input)) {
+					if (
+						question.required &&
+						(question.targetGroup.includes(req.input) || question.targetGroup.length === 0)
+					) {
 						errors[question.id] = 'This field is required.';
 					}
 					// Must skip validation for unanswered questions, not only to avoid type errors,

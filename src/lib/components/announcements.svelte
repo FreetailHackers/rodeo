@@ -107,6 +107,10 @@
 		padding: 1rem 1.5em;
 	}
 
+	.card :global(p) {
+		color: var(--light-background); /* changed for dark mode */
+	}
+
 	.delete-message {
 		position: absolute;
 		right: 1em;
@@ -117,6 +121,7 @@
 		padding: 0.4em 0.6em;
 		border-radius: var(--border-radius);
 		background: var(--red);
+		color: var(--white);
 	}
 
 	.delete-message button:hover {
@@ -133,7 +138,7 @@
 		top: -1em;
 		left: 1rem;
 		background-color: var(--accent);
-		color: var(--white);
+		color: var(--light-background);
 		border-radius: var(--border-radius);
 		display: flex;
 		align-items: center;
@@ -146,6 +151,7 @@
 		display: flex;
 		align-items: center;
 		white-space: nowrap;
+		color: var(--light-background);
 	}
 
 	.time {

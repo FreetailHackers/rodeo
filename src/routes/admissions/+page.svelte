@@ -62,7 +62,7 @@
 
 	#padding {
 		height: 1rem;
-		background: linear-gradient(transparent, white);
+		background: linear-gradient(transparent, var(--light-background)); /* changed for dark mode */
 	}
 
 	.role-buttons {
@@ -75,7 +75,7 @@
 		flex-direction: row;
 		justify-content: space-between;
 		gap: 1rem;
-		background: white;
+		background: var(--light-background); /* changed for dark mode */
 		padding-bottom: 1rem;
 	}
 

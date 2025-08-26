@@ -238,7 +238,7 @@
 	}
 
 	li {
-		border: 2px solid black;
+		border: 2px solid var(--accent); /* changed for dark mode */
 		/* simulate border-collapse */
 		margin-top: -2px;
 	}
@@ -256,6 +256,7 @@
 	.flex-align-center {
 		display: flex;
 		align-items: center;
+		color: var(--accent);
 	}
 
 	#actions {
@@ -346,5 +347,9 @@
 
 	.declined {
 		background: darkred;
+	}
+
+	label {
+		color: var(--accent);
 	}
 </style>
