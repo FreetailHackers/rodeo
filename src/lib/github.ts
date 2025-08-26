@@ -15,6 +15,8 @@ export function createGitHubClient(hostname?: string): GitHub {
 		redirectUri = `${process.env.DOMAIN_NAME}/login/oauth/github/callback`;
 	}
 
+	console.log(`[GitHub Client] Creating client with redirect URI: ${redirectUri}`);
+
 	return new GitHub(process.env.GITHUB_CLIENT_ID!, process.env.GITHUB_CLIENT_SECRET!, redirectUri);
 }
 
