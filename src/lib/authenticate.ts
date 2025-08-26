@@ -339,6 +339,8 @@ export async function createGitHubUser(
 
 /**
  * GitHub authentication instance for use with the Arctic library.
+ * Note: This uses a static domain and is mainly for checking if GitHub is configured.
+ * For OAuth flows, use createGitHubClient() instead to get dynamic hostname support.
  */
 export const githubAuth = new GitHub(
 	process.env.GITHUB_CLIENT_ID!,
