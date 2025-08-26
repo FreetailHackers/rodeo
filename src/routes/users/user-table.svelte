@@ -16,7 +16,7 @@
 	let { users, self, questions }: Props = $props();
 
 	let action = $state('admissions');
-	let selected = $derived(users.map(() => false));
+	let selected = $state(users.map(() => false));
 	let selectAll = $state() as HTMLInputElement;
 
 	$effect(() => {
@@ -159,6 +159,7 @@
 						<label for="remove-role">Remove role:&nbsp;</label>
 						<span class="grow"></span>
 						<select name="role-to-remove">
+							<option value="UNDECLARED">Undeclared</option>
 							<option value="HACKER">Hacker</option>
 							<option value="ADMIN">Admin</option>
 							<option value="ORGANIZER">Organizer</option>
