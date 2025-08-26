@@ -55,9 +55,17 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
 	const existingUser = await trpc(event).users.getUserFromGoogleId(googleUserId);
 
+	console.log('Google OAuth user lookup:', {
+		googleUserId,
+		existingUserFound: !!existingUser,
+		existingUserId: existingUser?.id,
+	});
+
 	if (existingUser) {
+		console.log('Creating session for existing user:', existingUser.id);
 		const sessionToken = await createSession(existingUser.id);
 		setSessionTokenCookie(event, sessionToken.id, sessionToken.expiresAt);
+		console.log('Session created and cookie set for existing user');
 		return new Response(null, {
 			status: 302,
 			headers: {
@@ -66,12 +74,23 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 	}
 
-	await trpc(event).users.registerGoogle({
+	console.log('Registering new Google user:', { googleUserId, username, googleEmail });
+	const registrationResult = await trpc(event).users.registerGoogle({
 		id: googleUserId,
 		username: username,
 		email: googleEmail,
 	});
 
+	console.log('Registration result:', registrationResult);
+
+	// The registerGoogle function should have set the session cookie via TRPC
+	// But let's add a fallback just in case
+	if (!registrationResult) {
+		console.error('Registration failed - no session returned');
+		return new Response('Registration failed', { status: 500 });
+	}
+
+	console.log('New user registered successfully, redirecting to home');
 	return new Response(null, {
 		status: 302,
 		headers: {

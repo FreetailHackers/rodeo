@@ -15,6 +15,13 @@ const trpcHandle = createTRPCHandle({
 const authHandle: Handle = async ({ event, resolve }) => {
 	const sessionToken = event.cookies.get(auth.sessionCookieName);
 
+	console.log('Auth handle - session validation:', {
+		url: event.url.pathname,
+		hostname: event.url.hostname,
+		hasSessionToken: !!sessionToken,
+		sessionToken: sessionToken ? sessionToken.substring(0, 8) + '...' : null,
+	});
+
 	if (!sessionToken) {
 		event.locals.user = null;
 		event.locals.session = null;
@@ -23,12 +30,20 @@ const authHandle: Handle = async ({ event, resolve }) => {
 
 	const { session, user, sessionRenewed } = await auth.validateSessionToken(sessionToken);
 
+	console.log('Session validation result:', {
+		hasSession: !!session,
+		hasUser: !!user,
+		sessionRenewed,
+		userId: user?.id,
+	});
+
 	if (session) {
 		// Only set the cookie if the session was renewed to avoid unnecessary cookie setting
 		if (sessionRenewed) {
 			auth.setSessionTokenCookie(event, sessionToken, session.expiresAt);
 		}
 	} else {
+		console.log('Invalid session - deleting cookie');
 		auth.deleteSessionTokenCookie(event);
 	}
 
