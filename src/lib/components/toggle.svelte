@@ -76,4 +76,8 @@
 	input {
 		padding: 0;
 	}
+
+	label {
+		color: var(--accent); /* changed for dark mode */
+	}
 </style>

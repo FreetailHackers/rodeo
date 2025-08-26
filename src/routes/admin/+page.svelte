@@ -169,12 +169,13 @@
 
 	#release:hover {
 		color: white;
-		background-color: #ff5555;
+		background-color: var(--red);
 	}
 
 	label {
 		display: block;
 		margin-bottom: 0.5rem;
+		color: var(--accent); /* changed for dark mode */
 	}
 
 	input,
@@ -191,6 +192,6 @@
 	}
 
 	input[readonly] {
-		background-color: rgb(182, 182, 182);
+		background-color: var(--light-grey);
 	}
 </style>

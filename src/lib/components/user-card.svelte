@@ -63,4 +63,8 @@
 		border-left: none;
 		border-left: #aaa 5px solid;
 	}
+
+	span {
+		color: var(--accent); /* changed for dark mode */
+	}
 </style>

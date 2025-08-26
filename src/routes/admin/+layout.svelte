@@ -45,7 +45,7 @@
 
 	a {
 		text-decoration: none;
-		color: var(--black);
+		color: var(--accent); /* changed for dark mode */
 	}
 
 	.active {
