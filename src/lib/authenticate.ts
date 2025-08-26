@@ -121,9 +121,19 @@ export async function invalidateAllSessions(userId: string): Promise<void> {
  * Sets a cookie in the current browser session.
  */
 export function setSessionTokenCookie(event: RequestEvent, token: string, expiresAt: Date) {
+	const isProduction = process.env.NODE_ENV === 'production' || event.url.hostname !== 'localhost';
+
+	console.log('Setting session cookie:', {
+		hostname: event.url.hostname,
+		isProduction,
+		secure: isProduction,
+		sameSite: isProduction ? 'none' : 'lax',
+	});
+
 	event.cookies.set(sessionCookieName, token, {
 		httpOnly: true,
-		sameSite: 'lax',
+		sameSite: isProduction ? 'none' : 'lax',
+		secure: isProduction,
 		expires: expiresAt,
 		path: '/',
 	});

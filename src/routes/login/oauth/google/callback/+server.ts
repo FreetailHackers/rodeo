@@ -107,8 +107,10 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	const existingUser = await trpc(event).users.getUserFromGoogleId(googleUserId);
 
 	if (existingUser) {
+		console.log('Found existing Google user:', { id: existingUser.id, email: existingUser.email });
 		const sessionToken = await createSession(existingUser.id);
 		setSessionTokenCookie(event, sessionToken.id, sessionToken.expiresAt);
+		console.log('Created session for existing user:', { sessionId: sessionToken.id });
 		return new Response(null, {
 			status: 302,
 			headers: {
@@ -117,11 +119,13 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 	}
 
+	console.log('Creating new Google user:', { id: googleUserId, email: googleEmail, username });
 	await trpc(event).users.registerGoogle({
 		id: googleUserId,
 		username: username,
 		email: googleEmail,
 	});
+	console.log('New Google user created and session should be set');
 
 	return new Response(null, {
 		status: 302,
