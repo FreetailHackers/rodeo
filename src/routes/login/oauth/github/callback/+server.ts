@@ -7,13 +7,15 @@ import type { OAuth2Tokens } from 'arctic';
 
 export async function GET(event: RequestEvent): Promise<Response> {
 	const hostname = event.url.hostname;
-	const github = createGitHubClient(hostname);
+	const github = createGitHubClient();
 
 	const code = event.url.searchParams.get('code');
 	const state = event.url.searchParams.get('state');
 	const storedState = event.cookies.get('github_oauth_state') ?? null;
+	const originalHostname = event.cookies.get('github_oauth_origin') ?? null;
 
 	console.log(`[GitHub OAuth Callback] Hostname: ${hostname}`);
+	console.log(`[GitHub OAuth Callback] Original hostname: ${originalHostname}`);
 	console.log(`[GitHub OAuth Callback] Code: ${code ? 'present' : 'missing'}`);
 	console.log(`[GitHub OAuth Callback] State: ${state ? 'present' : 'missing'}`);
 	console.log(`[GitHub OAuth Callback] Stored state: ${storedState ? 'present' : 'missing'}`);
@@ -59,14 +61,24 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
 	const existingUser = await trpc(event).users.getUserFromGitHubId(githubUserId);
 
+	// Determine where to redirect after successful OAuth
+	const redirectDomain = originalHostname || hostname;
+	const redirectUrl = redirectDomain !== hostname ? `https://${redirectDomain}/` : '/';
+
 	if (existingUser) {
 		console.log('[GitHub OAuth Callback] Found existing user, creating session');
 		const sessionToken = await createSession(existingUser.id);
 		setSessionTokenCookie(event, sessionToken.id, sessionToken.expiresAt);
+
+		// Clean up OAuth cookies
+		event.cookies.delete('github_oauth_state', { path: '/' });
+		event.cookies.delete('github_oauth_origin', { path: '/' });
+
+		console.log(`[GitHub OAuth Callback] Redirecting to: ${redirectUrl}`);
 		return new Response(null, {
 			status: 302,
 			headers: {
-				Location: '/',
+				Location: redirectUrl,
 			},
 		});
 	}
@@ -78,10 +90,15 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		email: githubEmail,
 	});
 
+	// Clean up OAuth cookies
+	event.cookies.delete('github_oauth_state', { path: '/' });
+	event.cookies.delete('github_oauth_origin', { path: '/' });
+
+	console.log(`[GitHub OAuth Callback] Redirecting to: ${redirectUrl}`);
 	return new Response(null, {
 		status: 302,
 		headers: {
-			Location: '/',
+			Location: redirectUrl,
 		},
 	});
 }
