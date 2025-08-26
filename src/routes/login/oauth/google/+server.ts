@@ -1,9 +1,16 @@
 import { generateState, generateCodeVerifier } from 'arctic';
-import { google } from '$lib/google';
+import { createGoogleClient } from '$lib/google';
 
 import type { RequestEvent } from '@sveltejs/kit';
 
 export async function GET(event: RequestEvent): Promise<Response> {
+	// Use current hostname to create redirect URI
+	const baseUrl = `${event.url.protocol}//${event.url.hostname}${event.url.port ? ':' + event.url.port : ''}`;
+	const redirectUri = `${baseUrl}/login/oauth/google/callback`;
+
+	// Create Google client with current hostname
+	const google = createGoogleClient(redirectUri);
+
 	const state = generateState();
 	const codeVerifier = generateCodeVerifier();
 	const url = google.createAuthorizationURL(state, codeVerifier, ['openid', 'profile', 'email']);
@@ -13,6 +20,8 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	console.log('Setting OAuth cookies:', {
 		hostname: event.url.hostname,
 		protocol: event.url.protocol,
+		baseUrl,
+		redirectUri,
 		isProduction,
 		secure: isProduction,
 	});

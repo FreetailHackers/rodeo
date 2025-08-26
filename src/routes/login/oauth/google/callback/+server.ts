@@ -1,5 +1,5 @@
 import { createSession, setSessionTokenCookie } from '$lib/authenticate';
-import { google } from '$lib/google';
+import { createGoogleClient } from '$lib/google';
 import { trpc } from '$lib/trpc/router';
 import { decodeIdToken } from 'arctic';
 
@@ -7,6 +7,13 @@ import type { RequestEvent } from '@sveltejs/kit';
 import type { OAuth2Tokens } from 'arctic';
 
 export async function GET(event: RequestEvent): Promise<Response> {
+	// Use current hostname to create redirect URI (must match the initiation)
+	const baseUrl = `${event.url.protocol}//${event.url.hostname}${event.url.port ? ':' + event.url.port : ''}`;
+	const redirectUri = `${baseUrl}/login/oauth/google/callback`;
+
+	// Create Google client with current hostname
+	const google = createGoogleClient(redirectUri);
+
 	const code = event.url.searchParams.get('code');
 	const state = event.url.searchParams.get('state');
 	const storedState = event.cookies.get('google_oauth_state') ?? null;
