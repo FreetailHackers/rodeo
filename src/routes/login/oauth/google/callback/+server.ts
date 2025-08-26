@@ -11,25 +11,69 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	const state = event.url.searchParams.get('state');
 	const storedState = event.cookies.get('google_oauth_state') ?? null;
 	const codeVerifier = event.cookies.get('google_code_verifier') ?? null;
+
+	// Debug logging for production
+	console.log('OAuth callback debug:', {
+		hasCode: !!code,
+		hasState: !!state,
+		hasStoredState: !!storedState,
+		hasCodeVerifier: !!codeVerifier,
+		stateMatch: state === storedState,
+	});
+
 	if (code === null || state === null || storedState === null || codeVerifier === null) {
-		return new Response(null, {
-			status: 400,
+		console.error('Missing OAuth parameters:', {
+			code: !!code,
+			state: !!state,
+			storedState: !!storedState,
+			codeVerifier: !!codeVerifier,
 		});
+		return new Response(
+			JSON.stringify({
+				error: 'Missing OAuth parameters',
+				details: {
+					code: !!code,
+					state: !!state,
+					storedState: !!storedState,
+					codeVerifier: !!codeVerifier,
+				},
+			}),
+			{
+				status: 400,
+				headers: { 'Content-Type': 'application/json' },
+			},
+		);
 	}
 	if (state !== storedState) {
-		return new Response(null, {
-			status: 400,
-		});
+		console.error('State mismatch:', { received: state, stored: storedState });
+		return new Response(
+			JSON.stringify({
+				error: 'State mismatch',
+				details: { received: state, stored: storedState },
+			}),
+			{
+				status: 400,
+				headers: { 'Content-Type': 'application/json' },
+			},
+		);
 	}
 
 	let tokens: OAuth2Tokens;
 	try {
 		tokens = await google.validateAuthorizationCode(code, codeVerifier);
 	} catch (e) {
+		console.error('Token validation error:', e);
 		// Invalid code or client credentials
-		return new Response(null, {
-			status: 400,
-		});
+		return new Response(
+			JSON.stringify({
+				error: 'Token validation failed',
+				details: e instanceof Error ? e.message : 'Unknown error',
+			}),
+			{
+				status: 400,
+				headers: { 'Content-Type': 'application/json' },
+			},
+		);
 	}
 
 	const claims = decodeIdToken(tokens.idToken()) as any;

@@ -13,12 +13,14 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		httpOnly: true,
 		maxAge: 60 * 10, // 10 minutes
 		sameSite: 'lax',
+		secure: event.url.protocol === 'https:', // Only secure in HTTPS
 	});
 	event.cookies.set('google_code_verifier', codeVerifier, {
 		path: '/',
 		httpOnly: true,
 		maxAge: 60 * 10, // 10 minutes
 		sameSite: 'lax',
+		secure: event.url.protocol === 'https:', // Only secure in HTTPS
 	});
 
 	return new Response(null, {
