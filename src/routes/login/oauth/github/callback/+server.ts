@@ -1,5 +1,8 @@
-import * as auth from '$lib/authenticate';
-import { redirect, type RequestEvent } from '@sveltejs/kit';
+import { createSession, setSessionTokenCookie } from '$lib/authenticate';
+import { github } from '$lib/github';
+import { trpc } from '$lib/trpc/router';
+
+import type { RequestEvent } from '@sveltejs/kit';
 import type { OAuth2Tokens } from 'arctic';
 
 export async function GET(event: RequestEvent): Promise<Response> {
@@ -19,7 +22,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
 	let tokens: OAuth2Tokens;
 	try {
-		tokens = await auth.githubAuth.validateAuthorizationCode(code);
+		tokens = await github.validateAuthorizationCode(code);
 	} catch (e) {
 		// Invalid code or client credentials
 		return new Response(null, {
@@ -34,18 +37,31 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	const githubUser = await githubUserResponse.json();
 	const githubUserId = githubUser.id;
 	const githubUsername = githubUser.login;
+	const githubEmail = githubUser.email || ''; // GitHub email might be null if private
 
-	const existingUser = await auth.getUserFromGitHubId(githubUserId);
+	const existingUser = await trpc(event).users.getUserFromGitHubId(githubUserId);
 
 	if (existingUser) {
-		const session = await auth.createSession(event.locals.user.id);
-		auth.setSessionTokenCookie(event, session.id, session.expiresAt);
-		redirect(302, '/');
+		const sessionToken = await createSession(existingUser.id);
+		setSessionTokenCookie(event, sessionToken.id, sessionToken.expiresAt);
+		return new Response(null, {
+			status: 302,
+			headers: {
+				Location: '/',
+			},
+		});
 	}
 
-	const user = await auth.createGitHubUser(githubUserId, githubUsername, githubUsername);
-	const session = await auth.createSession(user.id);
-	auth.setSessionTokenCookie(event, session.id, session.expiresAt);
+	await trpc(event).users.registerGitHub({
+		id: githubUserId,
+		username: githubUsername,
+		email: githubEmail,
+	});
 
-	return redirect(302, '/');
+	return new Response(null, {
+		status: 302,
+		headers: {
+			Location: '/',
+		},
+	});
 }

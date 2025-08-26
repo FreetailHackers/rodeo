@@ -362,6 +362,54 @@ export const usersRouter = t.router({
 		}),
 
 	/**
+	 * Creates a new user with the given GitHub ID and username. Returns
+	 * the resulting session or null if the user already exists.
+	 * This is used for GitHub OAuth login.
+	 */
+	registerGitHub: t.procedure
+		.input(z.object({ id: z.number(), username: z.string(), email: z.string().optional() }))
+		.mutation(async (req): Promise<AuthSession | null> => {
+			try {
+				const email = req.input.email || '';
+				const user = await prisma.authUser.create({
+					data: {
+						id: crypto.randomUUID(),
+						email: email,
+						githubId: req.input.id,
+						githubUsername: req.input.username,
+						roles: ['UNDECLARED'],
+						status: 'CREATED',
+						verifiedEmail: email !== '', // If we have an email from GitHub, consider it verified
+					},
+				});
+				const session = await auth.createSession(user.id);
+				auth.setSessionTokenCookie(req.ctx, session.id, session.expiresAt);
+
+				return session;
+			} catch (e) {
+				if (e instanceof PrismaClientKnownRequestError && e.code === 'P2002') {
+					// Email already exists
+					return null;
+				}
+				throw e;
+			}
+		}) /**
+	 * Gets the user with the given GitHub ID, or null if no such user exists.
+	 *  */,
+	getUserFromGitHubId: t.procedure
+		.input(z.number())
+		.query(async (req): Promise<AuthUser | null> => {
+			try {
+				const user = await prisma.authUser.findFirst({
+					where: { githubId: req.input },
+				});
+				return user;
+			} catch (e) {
+				return null;
+			}
+		}),
+
+	/**
 	 * Sends an email verification link to the logged in user.
 	 * Invalidates all other email verification tokens for the user.
 	 * Throws an error if the user is already verified.

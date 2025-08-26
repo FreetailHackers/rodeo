@@ -16,6 +16,7 @@ model AuthUser {
   githubUsername String?        
   googleId       String?
   goodleUsername String?
+  provider       String?        
   roles          Role[]         @default([HACKER])
   status         Status         @default(CREATED)
   verifiedEmail  Boolean        @default(false)

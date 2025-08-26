@@ -39,7 +39,13 @@ export async function authenticate(sessionInput: AuthSession, roles?: Role[]): P
 	// in the backend; this is just a convenience to prevent users
 	// from using an account with a typo'd address.
 	if (!user.verifiedEmail) {
-		redirect(303, '/unverified');
+		// Only redirect to unverified if user actually has an email to verify
+		if (user.email && user.email.trim() !== '') {
+			redirect(303, '/unverified');
+		} else {
+			// If no email, redirect to login to enter one
+			redirect(303, '/login');
+		}
 	}
 	return user;
 }
@@ -237,17 +243,49 @@ export async function createGitHubUser(
 	githubUsername: string,
 	email: string,
 ): Promise<AuthUser> {
-	const userId = crypto.randomUUID();
-
 	const existingUserByEmail = await prisma.authUser.findUnique({
 		where: { email },
+		include: { user: true },
 	});
 
 	if (existingUserByEmail) {
-		throw new Error(
-			`User with email ${email} already exists. Cannot create new user with this GitHub account.`,
-		);
+		// If user exists but doesn't have GitHub ID, link the GitHub account
+		if (!existingUserByEmail.githubId) {
+			const updatedUser = await prisma.authUser.update({
+				where: { email },
+				data: {
+					githubId: githubId,
+					githubUsername: githubUsername,
+				},
+			});
+
+			// Create User record if it doesn't exist
+			if (!existingUserByEmail.user) {
+				try {
+					await prisma.user.create({
+						data: {
+							authUserId: existingUserByEmail.id,
+							application: {},
+							scanCount: {},
+						},
+					});
+				} catch (error: any) {
+					// If the User record already exists, that's fine - just continue
+					if (error.code !== 'P2002') {
+						throw error;
+					}
+				}
+			}
+
+			return updatedUser;
+		} else {
+			throw new Error(
+				`User with email ${email} already exists and is linked to a different GitHub account.`,
+			);
+		}
 	}
+
+	const userId = crypto.randomUUID();
 
 	const newUser = await prisma.authUser.create({
 		data: {
@@ -261,13 +299,20 @@ export async function createGitHubUser(
 		},
 	});
 
-	await prisma.user.create({
-		data: {
-			authUserId: newUser.id,
-			application: {},
-			scanCount: {},
-		},
-	});
+	try {
+		await prisma.user.create({
+			data: {
+				authUserId: newUser.id,
+				application: {},
+				scanCount: {},
+			},
+		});
+	} catch (error: any) {
+		// If the User record already exists, that's fine - just continue
+		if (error.code !== 'P2002') {
+			throw error;
+		}
+	}
 
 	return newUser;
 }
@@ -276,9 +321,9 @@ export async function createGitHubUser(
  * GitHub authentication instance for use with the Arctic library.
  */
 export const githubAuth = new GitHub(
-	import.meta.env.VITE_GITHUB_CLIENT_ID,
-	import.meta.env.VITE_GITHUB_CLIENT_SECRET,
-	null,
+	process.env.GITHUB_CLIENT_ID!,
+	process.env.GITHUB_CLIENT_SECRET!,
+	`${process.env.DOMAIN_NAME || 'http://localhost:5173'}/login/oauth/github/callback`,
 );
 
 /**

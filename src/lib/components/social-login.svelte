@@ -8,7 +8,7 @@
 
 <div id="social-logins">
 	{#if providers.google}
-		<a href="/login/oauth?provider=google" class="social">
+		<a href="/login/oauth/google" class="social">
 			<button>
 				<img src="/auth-assets/google.svg" alt="Google Logo" />
 				<span>Continue with Google</span>
@@ -16,7 +16,7 @@
 		</a>
 	{/if}
 	{#if providers.github}
-		<a href="/login/oauth?provider=github" class="social">
+		<a href="/login/oauth/github" class="social">
 			<button>
 				<img src="/auth-assets/github.svg" alt="GitHub Logo" />
 				<span>Continue with GitHub</span>
