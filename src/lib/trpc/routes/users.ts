@@ -147,6 +147,11 @@ export const usersRouter = t.router({
 					application[question.id] = req.input[question.id];
 				}
 			}
+
+			if (req.input['selectedRole']) {
+				application['selectedRole'] = req.input['selectedRole'];
+			}
+
 			await prisma.user.update({
 				where: { authUserId: req.ctx.user.id },
 				data: { application },

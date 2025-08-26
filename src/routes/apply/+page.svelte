@@ -14,7 +14,7 @@
 	let saveButton = $state() as HTMLButtonElement;
 	let rsvpSelectedValue: string = $state('');
 
-	let selectedRole = $state('UNDECLARED');
+	let selectedRole = $state(application['selectedRole'] || 'UNDECLARED');
 
 	function applyAs(role: string) {
 		selectedRole = role;
@@ -192,6 +192,9 @@
 				use:enhance={({ action }) => {
 					return async ({ update }) => {
 						if (action.search === '?/finish') {
+							update({ reset: false });
+						} else {
+							// For save action, don't reset form but do update to trigger toasts
 							update({ reset: false });
 						}
 					};
@@ -422,6 +425,15 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
+		color: var(--accent); /* changed for dark mode */
+	}
+
+	.question input {
+		color: var(--accent);
+	}
+
+	.question label {
+		color: var(--accent);
 	}
 
 	.checkbox {
@@ -445,7 +457,7 @@
 	#actions-container {
 		position: sticky;
 		bottom: 0;
-		background: linear-gradient(transparent, white);
+		background: linear-gradient(transparent, var(--light-background));
 	}
 
 	#actions {
@@ -455,11 +467,16 @@
 		gap: 0.5rem;
 		position: sticky;
 		padding-bottom: 1rem;
-		background: white;
+		background: var(--light-background);
 	}
 
 	#actions > * {
 		flex: 1;
+	}
+
+	.negative-button {
+		background-color: var(--accent);
+		color: var(--background);
 	}
 
 	/* #status button {

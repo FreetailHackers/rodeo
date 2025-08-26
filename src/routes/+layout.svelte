@@ -119,7 +119,7 @@
 		height: 100vh;
 		backdrop-filter: blur(2px) brightness(0.9);
 		z-index: 200;
-		background-color: var(--white);
+		background-color: var(--background); /* changed for dark mode */
 	}
 
 	.container {

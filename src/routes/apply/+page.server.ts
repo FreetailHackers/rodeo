@@ -56,9 +56,17 @@ function formToApplication(questions: Question[], formData: FormData) {
 
 export const actions = {
 	save: async (event) => {
-		await trpc(event).users.update(
-			formToApplication(await trpc(event).questions.get(), await event.request.formData()),
-		);
+		const formData = await event.request.formData();
+		const selectedRole = formData.get('group_applied') as string;
+
+		const application = formToApplication(await trpc(event).questions.get(), formData);
+
+		if (selectedRole && selectedRole !== 'UNDECLARED') {
+			application['selectedRole'] = selectedRole;
+		}
+
+		await trpc(event).users.update(application);
+		return 'Application saved successfully!';
 	},
 
 	finish: async (event) => {
