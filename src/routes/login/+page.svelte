@@ -23,7 +23,7 @@
 </svelte:head>
 <main class="vert-center">
 	<div class="auth-content">
-		<img class="mascot" src="/auth-assets/recordhacks-mascot.png" alt="RecordHacks Mascot" />
+		<img class="mascot" src="/auth-assets/hacktxlogo.png" alt="RecordHacks Mascot" />
 		<h1>Login</h1>
 		<div class="socials">
 			<SocialLogin providers={data.providers} />

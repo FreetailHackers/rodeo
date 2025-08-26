@@ -45,7 +45,7 @@
 		<label for="hamburgerCheckbox"
 			><img
 				draggable="false"
-				src="/auth-assets/recordhacks-mascot.png"
+				src="/auth-assets/hacktxlogo.png"
 				alt="burger-menu"
 				id="hamburger-logo"
 			/>
