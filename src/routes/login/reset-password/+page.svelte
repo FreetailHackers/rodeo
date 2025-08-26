@@ -71,6 +71,7 @@
 	}
 
 	form {
+		color: var(--accent); /* changed for dark mode */
 		padding: 1em 1em 0 1em;
 	}
 
@@ -79,6 +80,7 @@
 	}
 
 	label {
+		color: var(--accent); /* changed for dark mode */
 		display: block;
 	}
 

@@ -1,3 +1,9 @@
+/*
+  Warnings:
+
+  - You are about to drop the column `password` on the `AuthUser` table. All the data in the column will be lost.
+
+*/
 -- AlterEnum
 -- This migration adds more than one value to an enum.
 -- With PostgreSQL versions 11 and earlier, this is not possible
@@ -8,6 +14,10 @@
 
 ALTER TYPE "Role" ADD VALUE 'MENTOR';
 ALTER TYPE "Role" ADD VALUE 'UNDECLARED';
+
+-- AlterTable
+ALTER TABLE "AuthUser" DROP COLUMN "password",
+ADD COLUMN     "hashedPassword" TEXT;
 
 -- AlterTable
 ALTER TABLE "Question" ADD COLUMN     "targetGroup" TEXT[];
