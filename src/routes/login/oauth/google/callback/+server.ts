@@ -1,4 +1,6 @@
-import * as auth from '$lib/authenticate';
+import { createSession, setSessionTokenCookie } from '$lib/authenticate';
+import { google } from '$lib/google';
+import { trpc } from '$lib/trpc/router';
 import { decodeIdToken } from 'arctic';
 
 import type { RequestEvent } from '@sveltejs/kit';
@@ -22,22 +24,40 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
 	let tokens: OAuth2Tokens;
 	try {
-		tokens = await auth.googleAuth.validateAuthorizationCode(code, codeVerifier);
+		tokens = await google.validateAuthorizationCode(code, codeVerifier);
 	} catch (e) {
 		// Invalid code or client credentials
 		return new Response(null, {
 			status: 400,
 		});
 	}
-	const claims = decodeIdToken(tokens.idToken()) as { sub: string; name: string };
-	const googleUserId = claims.sub;
-	const username = claims.name;
 
-	const existingUser = await auth.getUserFromGoogleId(googleUserId);
+	const claims = decodeIdToken(tokens.idToken()) as any;
+	const googleUserId = claims.sub as string;
+	const username = (claims.name as string) || '';
+	let googleEmail = (claims.email as string) || '';
 
-	if (existingUser !== null) {
-		const session = await auth.createSession(existingUser.id);
-		auth.setSessionTokenCookie(event, session.id, session.expiresAt);
+	// If email is not in the ID token, fetch it from Google's userinfo API
+	// TODO: Clean
+	if (!googleEmail) {
+		try {
+			const userinfoResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+				headers: {
+					Authorization: `Bearer ${tokens.accessToken()}`,
+				},
+			});
+			const userinfo = await userinfoResponse.json();
+			googleEmail = userinfo.email || '';
+		} catch (e) {
+			throw e;
+		}
+	}
+
+	const existingUser = await trpc(event).users.getUserFromGoogleId(googleUserId);
+
+	if (existingUser) {
+		const sessionToken = await createSession(existingUser.id);
+		setSessionTokenCookie(event, sessionToken.id, sessionToken.expiresAt);
 		return new Response(null, {
 			status: 302,
 			headers: {
@@ -46,10 +66,12 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 	}
 
-	const user = await auth.createGoogleUser(googleUserId, username, username + '@gmail.com');
+	await trpc(event).users.registerGoogle({
+		id: googleUserId,
+		username: username,
+		email: googleEmail,
+	});
 
-	const session = await auth.createSession(user.id);
-	auth.setSessionTokenCookie(event, session.id, session.expiresAt);
 	return new Response(null, {
 		status: 302,
 		headers: {
