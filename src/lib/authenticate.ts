@@ -323,7 +323,7 @@ export async function createGitHubUser(
 export const githubAuth = new GitHub(
 	process.env.GITHUB_CLIENT_ID!,
 	process.env.GITHUB_CLIENT_SECRET!,
-	`${process.env.DOMAIN_NAME || 'http://localhost:5173'}/login/oauth/github/callback`,
+	`${process.env.DOMAIN_NAME}/login/oauth/github/callback`,
 );
 
 /**
@@ -393,7 +393,7 @@ export async function createGoogleUser(
 export const googleAuth = new Google(
 	import.meta.env.VITE_GOOGLE_CLIENT_ID,
 	import.meta.env.VITE_GOOGLE_CLIENT_SECRET,
-	'http://localhost:5173/login/google/callback',
+	`${process.env.DOMAIN_NAME}/login/oauth/google/callback`,
 );
 
 /**
