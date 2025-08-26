@@ -384,7 +384,7 @@ export const usersRouter = t.router({
 						githubUsername: req.input.username,
 						roles: ['UNDECLARED'],
 						status: 'CREATED',
-						verifiedEmail: email !== '', // If we have an email from GitHub, consider it verified
+						verifiedEmail: true, // If we have an email from GitHub, consider it verified
 					},
 				});
 				const session = await auth.createSession(user.id);
