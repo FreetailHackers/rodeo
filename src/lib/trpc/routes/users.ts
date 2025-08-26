@@ -440,6 +440,39 @@ export const usersRouter = t.router({
 		.mutation(async (req): Promise<AuthSession | null> => {
 			try {
 				const email = req.input.email || '';
+
+				// First, check if a user with this email already exists
+				if (email) {
+					const existingUserByEmail = await prisma.authUser.findUnique({
+						where: { email },
+					});
+
+					if (existingUserByEmail && !existingUserByEmail.googleId) {
+						// Link the Google account to the existing user
+						console.log('Linking Google account to existing user:', existingUserByEmail.id);
+						const updatedUser = await prisma.authUser.update({
+							where: { email },
+							data: {
+								googleId: req.input.id,
+								goodleUsername: req.input.username,
+								verifiedEmail: true, // Google email is verified
+							},
+						});
+
+						const session = await auth.createSession(updatedUser.id);
+						auth.setSessionTokenCookie(req.ctx, session.id, session.expiresAt);
+						return session;
+					} else if (existingUserByEmail && existingUserByEmail.googleId) {
+						// User already has Google linked - just create session
+						console.log('User already has Google linked, creating session');
+						const session = await auth.createSession(existingUserByEmail.id);
+						auth.setSessionTokenCookie(req.ctx, session.id, session.expiresAt);
+						return session;
+					}
+				}
+
+				// Create new user if no existing user found
+				console.log('Creating new Google user');
 				const user = await prisma.authUser.create({
 					data: {
 						id: crypto.randomUUID(),
@@ -448,7 +481,7 @@ export const usersRouter = t.router({
 						goodleUsername: req.input.username, // Note: there's a typo in the schema field name
 						roles: ['UNDECLARED'],
 						status: 'CREATED',
-						verifiedEmail: email !== '', // If we have an email from Google, consider it verified
+						verifiedEmail: true, // If we have an email from Google, consider it verified
 					},
 				});
 				const session = await auth.createSession(user.id);
@@ -456,8 +489,10 @@ export const usersRouter = t.router({
 
 				return session;
 			} catch (e) {
+				console.error('Google registration error:', e);
 				if (e instanceof PrismaClientKnownRequestError && e.code === 'P2002') {
-					// Email already exists
+					// Email already exists - this shouldn't happen now that we check first
+					console.error('Unexpected email conflict in Google registration');
 					return null;
 				}
 				throw e;
