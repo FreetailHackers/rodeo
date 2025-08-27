@@ -6,11 +6,9 @@ export const load = async (event) => {
 	await authenticate(event.locals.session, ['ADMIN']);
 	const questions = await trpc(event).questions.get();
 
-	// Get the role from URL search params, default to HACKER
 	const roleParam = event.url.searchParams.get('role');
 	const selectedRole = (roleParam as Role) || Role.HACKER;
 
-	// Filter questions for the admissions view based on selected role
 	const admissionRelevantQuestions = questions.filter((question) => {
 		if (question.hideAdmission) return false;
 		if (!question.targetGroup?.length) return true;

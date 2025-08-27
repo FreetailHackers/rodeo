@@ -141,6 +141,7 @@
 		display: flex;
 		align-items: flex-start;
 		gap: 1rem;
+		color: var(--accent);
 	}
 
 	.event {
@@ -156,7 +157,7 @@
 	}
 
 	.separator {
-		border: 1px solid black;
+		border: 1px solid var(--accent);
 	}
 
 	.name {
@@ -183,7 +184,7 @@
 
 	.column {
 		flex: 1 1;
-		border: 3px solid black;
+		border: 3px solid var(--accent);
 		border-radius: 15px;
 	}
 
@@ -230,7 +231,7 @@
 
 	.day {
 		margin: 1em 1.5em;
-		color: var(--black);
+		color: var(--accent);
 	}
 
 	.card {
@@ -241,7 +242,7 @@
 		opacity: 0.5;
 		display: flex;
 		flex-direction: column;
-		border-top: 3px solid black;
+		border-top: 3px solid var(--accent);
 	}
 
 	.card.selected {

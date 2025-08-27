@@ -194,7 +194,6 @@
 						if (action.search === '?/finish') {
 							update({ reset: false });
 						} else {
-							// For save action, don't reset form but do update to trigger toasts
 							update({ reset: false });
 						}
 					};

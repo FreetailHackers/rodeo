@@ -4,11 +4,9 @@ import { createGoogleClient } from '$lib/google';
 import type { RequestEvent } from '@sveltejs/kit';
 
 export async function GET(event: RequestEvent): Promise<Response> {
-	// Use current hostname to create redirect URI
 	const baseUrl = `${event.url.protocol}//${event.url.hostname}${event.url.port ? ':' + event.url.port : ''}`;
 	const redirectUri = `${baseUrl}/login/oauth/google/callback`;
 
-	// Create Google client with current hostname
 	const google = createGoogleClient(redirectUri);
 
 	const state = generateState();
@@ -17,23 +15,17 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
 	const isProduction = process.env.NODE_ENV === 'production' || event.url.hostname !== 'localhost';
 
-	console.log('Google OAuth initiation:', {
-		hostname: event.url.hostname,
-		redirectUri,
-		isProduction,
-	});
-
 	event.cookies.set('google_oauth_state', state, {
 		path: '/',
 		httpOnly: true,
-		maxAge: 60 * 10, // 10 minutes
+		maxAge: 60 * 10,
 		sameSite: isProduction ? 'none' : 'lax',
 		secure: isProduction,
 	});
 	event.cookies.set('google_code_verifier', codeVerifier, {
 		path: '/',
 		httpOnly: true,
-		maxAge: 60 * 10, // 10 minutes
+		maxAge: 60 * 10,
 		sameSite: isProduction ? 'none' : 'lax',
 		secure: isProduction,
 	});

@@ -103,7 +103,7 @@ export const usersRouter = t.router({
 	 * Maybe it should?
 	 */
 	update: t.procedure
-		.use(authenticate(['HACKER', 'UNDECLARED', 'MENTOR', 'JUDGE', 'VOLUNTEER']))
+		.use(authenticate(['HACKER', 'UNDECLARED']))
 		.input(z.record(z.any()))
 		.mutation(async (req): Promise<void> => {
 			if (!(await canApply()) || req.ctx.user.status !== 'CREATED') {
@@ -126,7 +126,7 @@ export const usersRouter = t.router({
 						req.input[question.id].size > 0 &&
 						req.input[question.id].size <= question.maxSizeMB * 1024 * 1024
 					) {
-						const key = `files/${req.ctx.user.id}/${question.id}`;
+						const key = `${req.ctx.user.id}/${question.id}`;
 						const deleteObjectCommand = new DeleteObjectCommand({
 							Bucket: process.env.S3_BUCKET,
 							Key: key,
@@ -147,11 +147,6 @@ export const usersRouter = t.router({
 					application[question.id] = req.input[question.id];
 				}
 			}
-
-			if (req.input['selectedRole']) {
-				application['selectedRole'] = req.input['selectedRole'];
-			}
-
 			await prisma.user.update({
 				where: { authUserId: req.ctx.user.id },
 				data: { application },
@@ -384,7 +379,7 @@ export const usersRouter = t.router({
 						githubUsername: req.input.username,
 						roles: ['UNDECLARED'],
 						status: 'CREATED',
-						verifiedEmail: true, // If we have an email from GitHub, consider it verified
+						verifiedEmail: true,
 					},
 				});
 				const session = await auth.createSession(user.id);
@@ -393,7 +388,6 @@ export const usersRouter = t.router({
 				return session;
 			} catch (e) {
 				if (e instanceof PrismaClientKnownRequestError && e.code === 'P2002') {
-					// Email already exists
 					return null;
 				}
 				throw e;
@@ -441,21 +435,18 @@ export const usersRouter = t.router({
 			try {
 				const email = req.input.email || '';
 
-				// First, check if a user with this email already exists
 				if (email) {
 					const existingUserByEmail = await prisma.authUser.findUnique({
 						where: { email },
 					});
 
 					if (existingUserByEmail && !existingUserByEmail.googleId) {
-						// Link the Google account to the existing user
-						console.log('Linking Google account to existing user:', existingUserByEmail.id);
 						const updatedUser = await prisma.authUser.update({
 							where: { email },
 							data: {
 								googleId: req.input.id,
 								goodleUsername: req.input.username,
-								verifiedEmail: true, // Google email is verified
+								verifiedEmail: true,
 							},
 						});
 
@@ -463,25 +454,21 @@ export const usersRouter = t.router({
 						auth.setSessionTokenCookie(req.ctx, session.id, session.expiresAt);
 						return session;
 					} else if (existingUserByEmail && existingUserByEmail.googleId) {
-						// User already has Google linked - just create session
-						console.log('User already has Google linked, creating session');
 						const session = await auth.createSession(existingUserByEmail.id);
 						auth.setSessionTokenCookie(req.ctx, session.id, session.expiresAt);
 						return session;
 					}
 				}
 
-				// Create new user if no existing user found
-				console.log('Creating new Google user');
 				const user = await prisma.authUser.create({
 					data: {
 						id: crypto.randomUUID(),
 						email: email,
 						googleId: req.input.id,
-						goodleUsername: req.input.username, // Note: there's a typo in the schema field name
+						goodleUsername: req.input.username,
 						roles: ['UNDECLARED'],
 						status: 'CREATED',
-						verifiedEmail: true, // If we have an email from Google, consider it verified
+						verifiedEmail: true,
 					},
 				});
 				const session = await auth.createSession(user.id);
@@ -491,7 +478,6 @@ export const usersRouter = t.router({
 			} catch (e) {
 				console.error('Google registration error:', e);
 				if (e instanceof PrismaClientKnownRequestError && e.code === 'P2002') {
-					// Email already exists - this shouldn't happen now that we check first
 					console.error('Unexpected email conflict in Google registration');
 					return null;
 				}
@@ -570,7 +556,6 @@ export const usersRouter = t.router({
 				await prisma.authUser.updateMany({
 					where: {
 						id: user.id,
-						// providerId: 'email',
 					},
 					data: {
 						hashedPassword: passwordHash,
@@ -764,7 +749,7 @@ export const usersRouter = t.router({
 					if (applicationData[question.id]) {
 						files.push({
 							path: `${user.authUser.email}-${question.id}-${applicationData[question.id]}`,
-							url: `/files/${user.authUserId}/${question.id}`,
+							url: `${user.authUserId}/${question.id}`,
 						});
 					}
 				});
@@ -1122,14 +1107,11 @@ export const usersRouter = t.router({
 	 * Gets the user from their email address. User must be an admin, hacker, or undeclared.
 	 * Returns null if the user does not exist.
 	 */
-	getUserFromEmail: t.procedure
-		// .use(authenticate(['ADMIN', 'HACKER', 'UNDECLARED']))
-		.input(z.string())
-		.query(async (req): Promise<AuthUser | null> => {
-			return await prisma.authUser.findUnique({
-				where: { email: req.input },
-			});
-		}),
+	getUserFromEmail: t.procedure.input(z.string()).query(async (req): Promise<AuthUser | null> => {
+		return await prisma.authUser.findUnique({
+			where: { email: req.input },
+		});
+	}),
 
 	/**
 	 * Logs in a user with the given email and password. If the credentials are valid,

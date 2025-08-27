@@ -39,11 +39,9 @@ export async function authenticate(sessionInput: AuthSession, roles?: Role[]): P
 	// in the backend; this is just a convenience to prevent users
 	// from using an account with a typo'd address.
 	if (!user.verifiedEmail) {
-		// Only redirect to unverified if user actually has an email to verify
 		if (user.email && user.email.trim() !== '') {
 			redirect(303, '/unverified');
 		} else {
-			// If no email, redirect to login to enter one
 			redirect(303, '/login');
 		}
 	}
@@ -122,14 +120,6 @@ export async function invalidateAllSessions(userId: string): Promise<void> {
  */
 export function setSessionTokenCookie(event: RequestEvent, token: string, expiresAt: Date) {
 	const isProduction = process.env.NODE_ENV === 'production' || event.url.hostname !== 'localhost';
-
-	console.log('Setting session cookie:', {
-		hostname: event.url.hostname,
-		isProduction,
-		cookieName: sessionCookieName,
-		token: token.substring(0, 8) + '...',
-		expires: expiresAt,
-	});
 
 	event.cookies.set(sessionCookieName, token, {
 		httpOnly: true,
@@ -269,7 +259,6 @@ export async function createGitHubUser(
 	});
 
 	if (existingUserByEmail) {
-		// If user exists but doesn't have GitHub ID, link the GitHub account
 		if (!existingUserByEmail.githubId) {
 			const updatedUser = await prisma.authUser.update({
 				where: { email },
@@ -279,7 +268,6 @@ export async function createGitHubUser(
 				},
 			});
 
-			// Create User record if it doesn't exist
 			if (!existingUserByEmail.user) {
 				try {
 					await prisma.user.create({
@@ -290,7 +278,6 @@ export async function createGitHubUser(
 						},
 					});
 				} catch (error: any) {
-					// If the User record already exists, that's fine - just continue
 					if (error.code !== 'P2002') {
 						throw error;
 					}
@@ -328,7 +315,6 @@ export async function createGitHubUser(
 			},
 		});
 	} catch (error: any) {
-		// If the User record already exists, that's fine - just continue
 		if (error.code !== 'P2002') {
 			throw error;
 		}
@@ -363,7 +349,7 @@ export async function getUserFromGoogleId(googleId: string): Promise<AuthUser | 
  */
 export async function createGoogleUser(
 	googleId: string,
-	googleUsername: string, // Or use name, given_name, family_name from token claims
+	googleUsername: string,
 	email: string,
 ): Promise<AuthUser> {
 	const userId = crypto.randomUUID();
@@ -373,16 +359,9 @@ export async function createGoogleUser(
 	});
 
 	if (existingUserByEmail) {
-		// If email exists, you could link the Google account to this existing user
-		// For now, throwing an error. Adjust as needed.
 		throw new Error(
 			`User with email ${email} already exists. Cannot create new user with this Google account.`,
 		);
-		// Example of linking:
-		// return await prisma.authUser.update({
-		// 	where: { email: email },
-		// 	data: { googleId: googleId, googleUsername: googleUsername }, // Ensure your schema field is named appropriately e.g. googleUsername
-		// });
 	}
 
 	const newUser = await prisma.authUser.create({
@@ -390,10 +369,10 @@ export async function createGoogleUser(
 			id: userId,
 			email: email,
 			googleId: googleId,
-			goodleUsername: googleUsername, // Ensure this field name matches your schema (goodleUsername vs googleUsername)
+			goodleUsername: googleUsername,
 			roles: ['UNDECLARED'],
 			status: 'CREATED',
-			verifiedEmail: false, // Email from Google might be verified by Google, but not yet in your system
+			verifiedEmail: false,
 		},
 	});
 

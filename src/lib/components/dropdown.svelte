@@ -63,7 +63,6 @@
 	}}
 	value={(() => {
 		if (!json) {
-			$inspect('value prop', value);
 			return value;
 		}
 		// Ugly but this is the easiest way I found to populate the dropdown that works when

@@ -59,7 +59,6 @@ export const sendEmail = async (
 			await transporter.sendMail(email);
 		}
 
-		console.log(`Email successfully sent to ${recipient}!`);
 		return 1;
 	} catch (error) {
 		console.error(error);

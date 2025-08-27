@@ -9,7 +9,7 @@ export const load = async (event) => {
 	}
 
 	return {
-		user: null, // No user is logged in
+		user: null,
 		providers: {
 			google: auth.googleAuth !== null,
 			github: auth.githubAuth !== null,

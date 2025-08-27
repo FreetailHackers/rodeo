@@ -48,6 +48,7 @@
 		cursor: default;
 		user-select: none;
 		font-weight: bold;
+		color: var(--accent);
 	}
 
 	.question-title {
