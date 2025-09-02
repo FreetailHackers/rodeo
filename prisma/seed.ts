@@ -158,6 +158,22 @@ async function main() {
 	await prisma.authUser.update({ where: { id: volunteerId }, data: { roles: ['VOLUNTEER'] } });
 	await prisma.authUser.update({ where: { id: organizerId }, data: { roles: ['ORGANIZER'] } });
 
+	// Ensure User records exist for all AuthUsers (in case the trigger didn't work)
+	const authUsersWithoutUser = await prisma.authUser.findMany({
+		where: {
+			user: null,
+		},
+	});
+
+	if (authUsersWithoutUser.length > 0) {
+		const userRecords = authUsersWithoutUser.map((authUser) => ({
+			authUserId: authUser.id,
+			application: {},
+			scanCount: {},
+		}));
+		await prisma.user.createMany({ data: userRecords });
+	}
+
 	// Generate decisions for fake users
 	const decisions: Prisma.DecisionCreateManyInput[] = [];
 	const hackers = await prisma.authUser.findMany({

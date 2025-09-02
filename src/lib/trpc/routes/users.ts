@@ -1327,12 +1327,16 @@ async function getWhereConditionHelper(
 }
 
 async function getRSVPDeadline(user: AuthUser): Promise<Date | null> {
-	const daysToConfirmBy = (
-		await prisma.statusChange.findFirstOrThrow({
-			where: { userId: user.id },
-			orderBy: { timestamp: 'desc' },
-		})
-	).timestamp;
+	const latestStatusChange = await prisma.statusChange.findFirst({
+		where: { userId: user.id },
+		orderBy: { timestamp: 'desc' },
+	});
+
+	if (!latestStatusChange) {
+		return null;
+	}
+
+	const daysToConfirmBy = latestStatusChange.timestamp;
 
 	const settings = await getSettings();
 	const daysToRSVP = settings.daysToRSVP;
