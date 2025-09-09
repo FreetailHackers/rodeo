@@ -10,6 +10,7 @@
 	let closeModal = $state(false);
 
 	onMount(() => {
+		console.log('💔');
 		QRCode.toCanvas(canvas, data.user.id, {
 			scale: 10,
 		});
