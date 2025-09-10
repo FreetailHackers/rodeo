@@ -29,7 +29,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	try {
 		tokens = await github.validateAuthorizationCode(code);
 	} catch (e) {
-		return new Response('Please restart the process.', {
+		return new Response("Couldn't give Authorization token.", {
 			status: 400,
 		});
 	}
@@ -70,7 +70,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	const emailListResponse = await fetch(emailListRequest);
 	const emailListResult: unknown = await emailListResponse.json();
 	if (!Array.isArray(emailListResult) || emailListResult.length < 1) {
-		return new Response('Please restart the process.', {
+		return new Response('No email address found.', {
 			status: 400,
 		});
 	}
