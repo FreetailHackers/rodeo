@@ -1,5 +1,6 @@
 import { createSession, setSessionTokenCookie } from '$lib/authenticate';
-import { createGoogleClient } from '$lib/google';
+import { ObjectParser } from '@pilcrowjs/object-parser';
+import { createGoogleClient } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import { decodeIdToken } from 'arctic';
 
@@ -11,19 +12,18 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	const redirectUri = `${baseUrl}/login/oauth/google/callback`;
 
 	const google = createGoogleClient(redirectUri);
-
 	const code = event.url.searchParams.get('code');
 	const state = event.url.searchParams.get('state');
 	const storedState = event.cookies.get('google_oauth_state') ?? null;
 	const codeVerifier = event.cookies.get('google_code_verifier') ?? null;
 
-	if (code === null || state === null || storedState === null || codeVerifier === null) {
-		return new Response(null, {
+	if (storedState === null || codeVerifier === null || code === null || state === null) {
+		return new Response('Please restart the process.', {
 			status: 400,
 		});
 	}
-	if (state !== storedState) {
-		return new Response(null, {
+	if (storedState !== state) {
+		return new Response('Please restart the process.', {
 			status: 400,
 		});
 	}
@@ -32,36 +32,22 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	try {
 		tokens = await google.validateAuthorizationCode(code, codeVerifier);
 	} catch (e) {
-		return new Response(null, {
+		console.error('Error validating Google authorization code:', e);
+		return new Response('Please restart the process.', {
 			status: 400,
 		});
 	}
 
-	const claims = decodeIdToken(tokens.idToken()) as any;
-	const googleUserId = claims.sub as string;
-	const username = (claims.name as string) || '';
-	let googleEmail = (claims.email as string) || '';
+	const claims = decodeIdToken(tokens.idToken());
+	const claimsParser = new ObjectParser(claims);
 
-	// TODO: Clean
-	if (!googleEmail) {
-		try {
-			const userinfoResponse = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-				headers: {
-					Authorization: `Bearer ${tokens.accessToken()}`,
-				},
-			});
-			const userinfo = await userinfoResponse.json();
-			googleEmail = userinfo.email || '';
-		} catch (e) {
-			throw e;
-		}
-	}
-
-	const existingUser = await trpc(event).users.getUserFromGoogleId(googleUserId);
-
-	if (existingUser) {
-		const sessionToken = await createSession(existingUser.id);
-		setSessionTokenCookie(event, sessionToken.id, sessionToken.expiresAt);
+	const googleId = claimsParser.getString('sub');
+	const name = claimsParser.getString('name');
+	const email = claimsParser.getString('email');
+	const existingUser = await trpc(event).users.getUserFromGoogleId(googleId);
+	if (existingUser !== null) {
+		const session = await createSession(existingUser.id);
+		setSessionTokenCookie(event, session.id, session.expiresAt);
 		return new Response(null, {
 			status: 302,
 			headers: {
@@ -70,16 +56,11 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		});
 	}
 
-	const registrationResult = await trpc(event).users.registerGoogle({
-		id: googleUserId,
-		username: username,
-		email: googleEmail,
+	await trpc(event).users.registerGoogle({
+		id: googleId,
+		username: name,
+		email: email,
 	});
-
-	if (!registrationResult) {
-		console.error('Registration failed - no session returned');
-		return new Response('Registration failed', { status: 500 });
-	}
 
 	return new Response(null, {
 		status: 302,

@@ -1,39 +1,36 @@
-import { createGitHubClient } from '$lib/github';
+import { createGitHubClient } from '$lib/authenticate';
 import { generateState } from 'arctic';
-import type { RequestEvent } from '@sveltejs/kit';
 
-const PRIMARY_DOMAIN = 'rodeo.freetailhackers.com';
+import type { RequestEvent } from './$types';
 
-export const GET = async (event: RequestEvent) => {
-	const hostname = event.url.hostname;
-	const github = createGitHubClient();
+const PRIMARY_DOMAIN = 'https://rodeo.freetailhackers.com';
 
-	if (hostname !== PRIMARY_DOMAIN) {
-		event.cookies.set('github_oauth_origin', hostname, {
-			path: '/',
-			httpOnly: true,
-			sameSite: import.meta.env.PROD ? 'none' : 'lax',
-			maxAge: 60 * 10,
-			secure: import.meta.env.PROD,
-		});
+export function GET(event: RequestEvent): Response {
+	const baseUrl = import.meta.env.PROD
+		? PRIMARY_DOMAIN
+		: `${event.url.protocol}//${event.url.hostname}${event.url.port ? ':' + event.url.port : ''}`;
+	const redirectUri = `${baseUrl}/login/oauth/github/callback`;
 
-		return new Response(null, {
-			status: 302,
-			headers: {
-				Location: `https://${PRIMARY_DOMAIN}/login/oauth/github`,
-			},
-		});
-	}
-
+	const github = createGitHubClient(redirectUri);
 	const state = generateState();
 	const url = github.createAuthorizationURL(state, ['user:email']);
 
+	if (import.meta.env.PROD) {
+		event.cookies.set('github_oauth_origin', event.url.hostname, {
+			path: '/',
+			httpOnly: true,
+			sameSite: 'none',
+			maxAge: 60 * 10,
+			secure: true,
+		});
+	}
+
 	event.cookies.set('github_oauth_state', state, {
-		path: '/',
 		httpOnly: true,
-		sameSite: import.meta.env.PROD ? 'none' : 'lax',
 		maxAge: 60 * 10,
 		secure: import.meta.env.PROD,
+		path: '/',
+		sameSite: 'lax',
 	});
 
 	return new Response(null, {
@@ -42,4 +39,4 @@ export const GET = async (event: RequestEvent) => {
 			Location: url.toString(),
 		},
 	});
-};
+}

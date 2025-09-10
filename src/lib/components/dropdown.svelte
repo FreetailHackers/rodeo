@@ -96,3 +96,34 @@
 		{item.label}
 	</div>
 </Select>
+
+<style>
+	:global(.svelte-select .item) {
+		color: var(--accent) !important;
+		background-color: var(--background) !important;
+	}
+
+	:global(.svelte-select .item:hover) {
+		background-color: var(--light-grey) !important;
+		color: var(--accent) !important;
+	}
+
+	:global(.svelte-select .item.highlighted) {
+		background-color: var(--accent) !important;
+		color: var(--background) !important;
+	}
+
+	:global(.svelte-select .selected-item) {
+		background-color: var(--accent) !important;
+		color: var(--background) !important;
+	}
+
+	:global(.svelte-select input) {
+		color: var(--accent) !important;
+	}
+
+	:global(.svelte-select .multi-item) {
+		background-color: var(--accent) !important;
+		color: var(--background) !important;
+	}
+</style>
