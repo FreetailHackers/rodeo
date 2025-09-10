@@ -10,8 +10,8 @@ export const load = async (event) => {
 	}
 	return {
 		providers: {
-			google: auth.googleAuth !== null,
-			github: auth.githubAuth !== null,
+			google: auth.google !== null,
+			github: auth.github !== null,
 		},
 	};
 };

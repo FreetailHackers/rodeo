@@ -392,31 +392,17 @@ export const usersRouter = t.router({
 				}
 				throw e;
 			}
-		}) /**
+		}),
+
+	/**
 	 * Gets the user with the given GitHub ID, or null if no such user exists.
-	 *  */,
+	 **/
 	getUserFromGitHubId: t.procedure
 		.input(z.number())
 		.query(async (req): Promise<AuthUser | null> => {
 			try {
 				const user = await prisma.authUser.findFirst({
 					where: { githubId: req.input },
-				});
-				return user;
-			} catch (e) {
-				return null;
-			}
-		}),
-
-	/**
-	 * Gets the user with the given Google ID, or null if no such user exists.
-	 */
-	getUserFromGoogleId: t.procedure
-		.input(z.string())
-		.query(async (req): Promise<AuthUser | null> => {
-			try {
-				const user = await prisma.authUser.findFirst({
-					where: { googleId: req.input },
 				});
 				return user;
 			} catch (e) {
@@ -434,32 +420,6 @@ export const usersRouter = t.router({
 		.mutation(async (req): Promise<AuthSession | null> => {
 			try {
 				const email = req.input.email || '';
-
-				if (email) {
-					const existingUserByEmail = await prisma.authUser.findUnique({
-						where: { email },
-					});
-
-					if (existingUserByEmail && !existingUserByEmail.googleId) {
-						const updatedUser = await prisma.authUser.update({
-							where: { email },
-							data: {
-								googleId: req.input.id,
-								goodleUsername: req.input.username,
-								verifiedEmail: true,
-							},
-						});
-
-						const session = await auth.createSession(updatedUser.id);
-						auth.setSessionTokenCookie(req.ctx, session.id, session.expiresAt);
-						return session;
-					} else if (existingUserByEmail && existingUserByEmail.googleId) {
-						const session = await auth.createSession(existingUserByEmail.id);
-						auth.setSessionTokenCookie(req.ctx, session.id, session.expiresAt);
-						return session;
-					}
-				}
-
 				const user = await prisma.authUser.create({
 					data: {
 						id: crypto.randomUUID(),
@@ -473,15 +433,80 @@ export const usersRouter = t.router({
 				});
 				const session = await auth.createSession(user.id);
 				auth.setSessionTokenCookie(req.ctx, session.id, session.expiresAt);
-
 				return session;
 			} catch (e) {
-				console.error('Google registration error:', e);
 				if (e instanceof PrismaClientKnownRequestError && e.code === 'P2002') {
-					console.error('Unexpected email conflict in Google registration');
 					return null;
 				}
 				throw e;
+			}
+
+			// 	try {
+			// 		const email = req.input.email || '';
+
+			// 		if (email) {
+			// 			const existingUserByEmail = await prisma.authUser.findUnique({
+			// 				where: { email },
+			// 			});
+
+			// 			if (existingUserByEmail && !existingUserByEmail.googleId) {
+			// 				const updatedUser = await prisma.authUser.update({
+			// 					where: { email },
+			// 					data: {
+			// 						googleId: req.input.id,
+			// 						goodleUsername: req.input.username,
+			// 						verifiedEmail: true,
+			// 					},
+			// 				});
+
+			// 				const session = await auth.createSession(updatedUser.id);
+			// 				auth.setSessionTokenCookie(req.ctx, session.id, session.expiresAt);
+			// 				return session;
+			// 			} else if (existingUserByEmail && existingUserByEmail.googleId) {
+			// 				const session = await auth.createSession(existingUserByEmail.id);
+			// 				auth.setSessionTokenCookie(req.ctx, session.id, session.expiresAt);
+			// 				return session;
+			// 			}
+			// 		}
+
+			// 		const user = await prisma.authUser.create({
+			// 			data: {
+			// 				id: crypto.randomUUID(),
+			// 				email: email,
+			// 				googleId: req.input.id,
+			// 				goodleUsername: req.input.username,
+			// 				roles: ['UNDECLARED'],
+			// 				status: 'CREATED',
+			// 				verifiedEmail: true,
+			// 			},
+			// 		});
+			// 		const session = await auth.createSession(user.id);
+			// 		auth.setSessionTokenCookie(req.ctx, session.id, session.expiresAt);
+
+			// 		return session;
+			// 	} catch (e) {
+			// 		console.error('Google registration error:', e);
+			// 		if (e instanceof PrismaClientKnownRequestError && e.code === 'P2002') {
+			// 			console.error('Unexpected email conflict in Google registration');
+			// 			return null;
+			// 		}
+			// 		throw e;
+			// 	}
+		}),
+
+	/**
+	 * Gets the user with the given Google ID, or null if no such user exists.
+	 */
+	getUserFromGoogleId: t.procedure
+		.input(z.string())
+		.query(async (req): Promise<AuthUser | null> => {
+			try {
+				const user = await prisma.authUser.findFirst({
+					where: { googleId: req.input },
+				});
+				return user;
+			} catch (e) {
+				return null;
 			}
 		}),
 

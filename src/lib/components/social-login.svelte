@@ -7,22 +7,19 @@
 </script>
 
 <div id="social-logins">
-	{#if providers.google}
-		<a href="/login/oauth/google" class="social">
-			<button>
-				<img src="/auth-assets/google.svg" alt="Google Logo" />
-				<span>Continue with Google</span>
-			</button>
-		</a>
-	{/if}
-	{#if providers.github}
-		<a href="/login/oauth/github" class="social">
-			<button>
-				<img src="/auth-assets/github.svg" alt="GitHub Logo" />
-				<span>Continue with GitHub</span>
-			</button>
-		</a>
-	{/if}
+	<a href="/login/oauth/google" class="social" data-sveltekit-reload>
+		<button>
+			<img src="/auth-assets/google.svg" alt="Google Logo" />
+			<span>Continue with Google</span>
+		</button>
+	</a>
+
+	<a href="/login/oauth/github" class="social" data-sveltekit-reload>
+		<button>
+			<img src="/auth-assets/github.svg" alt="GitHub Logo" />
+			<span>Continue with GitHub</span>
+		</button>
+	</a>
 </div>
 
 <style>
