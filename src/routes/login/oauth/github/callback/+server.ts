@@ -14,6 +14,13 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	const state = event.url.searchParams.get('state');
 	const originalHostname = event.cookies.get('github_oauth_origin') ?? null;
 
+	console.log('GitHub OAuth Callback Debugging:');
+	console.log('Code:', code);
+	console.log('State:', state);
+	console.log('Stored State:', storedState);
+	console.log('Original Hostname:', originalHostname);
+	console.log('Current Hostname:', hostname);
+
 	if (code === null || state === null || storedState === null) {
 		return new Response('Please restart the process.', {
 			status: 400,
