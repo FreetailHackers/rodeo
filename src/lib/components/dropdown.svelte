@@ -76,7 +76,7 @@
 	{multiple}
 	closeListOnChange={!multiple}
 	containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem; min-width: 60%"
-	inputStyles="margin: 0; height: initial"
+	inputStyles="margin: 0;"
 >
 	<!-- Horrible hack to make svelte-select submit just the values without the container object -->
 	<div slot="input-hidden" let:value>
@@ -96,34 +96,3 @@
 		{item.label}
 	</div>
 </Select>
-
-<style>
-	:global(.svelte-select .item) {
-		color: var(--accent) !important;
-		background-color: var(--background) !important;
-	}
-
-	:global(.svelte-select .item:hover) {
-		background-color: var(--light-grey) !important;
-		color: var(--accent) !important;
-	}
-
-	:global(.svelte-select .item.highlighted) {
-		background-color: var(--accent) !important;
-		color: var(--background) !important;
-	}
-
-	:global(.svelte-select .selected-item) {
-		background-color: var(--accent) !important;
-		color: var(--background) !important;
-	}
-
-	:global(.svelte-select input) {
-		color: var(--accent) !important;
-	}
-
-	:global(.svelte-select .multi-item) {
-		background-color: var(--accent) !important;
-		color: var(--background) !important;
-	}
-</style>

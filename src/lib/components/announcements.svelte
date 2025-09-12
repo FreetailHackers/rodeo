@@ -37,34 +37,39 @@
 		>
 	</form>
 {/if}
-<ul>
-	{#each announcements as announcement}
-		<li class="card text">
-			<span class="date">
-				<p class="month-day">
-					{announcement.published.toLocaleDateString('en-us', {
-						month: 'long',
-						day: 'numeric',
-					})}
-				</p>
-				<span class="time">
-					{announcement.published.toLocaleTimeString('en-us', {
-						hour: 'numeric',
-						minute: 'numeric',
-					})}
-				</span>
-			</span>
 
-			<SvelteMarkdown source={announcement.body} />
-			{#if admin}
-				<form class="delete-message" method="POST" action="?/unannounce" use:enhance>
-					<input type="hidden" name="id" value={announcement.id} />
-					<button class="delete-button-label">X</button>
-				</form>
-			{/if}
-		</li>
-	{/each}
-</ul>
+{#if announcements.length === 0}
+	<p>No announcements now, check back soon!</p>
+{:else}
+	<ul>
+		{#each announcements as announcement}
+			<li class="card text">
+				<span class="date">
+					<p class="month-day">
+						{announcement.published.toLocaleDateString('en-us', {
+							month: 'long',
+							day: 'numeric',
+						})}
+					</p>
+					<span class="time">
+						{announcement.published.toLocaleTimeString('en-us', {
+							hour: 'numeric',
+							minute: 'numeric',
+						})}
+					</span>
+				</span>
+
+				<SvelteMarkdown source={announcement.body} />
+				{#if admin}
+					<form class="delete-message" method="POST" action="?/unannounce" use:enhance>
+						<input type="hidden" name="id" value={announcement.id} />
+						<button class="delete-button-label">X</button>
+					</form>
+				{/if}
+			</li>
+		{/each}
+	</ul>
+{/if}
 
 <style>
 	:root {
@@ -108,7 +113,7 @@
 	}
 
 	.card :global(p) {
-		color: var(--light-background); /* changed for dark mode */
+		color: var(--blue); /* changed for dark mode */
 	}
 
 	.delete-message {
@@ -129,6 +134,9 @@
 		color: var(--white);
 	}
 
+	p {
+		text-align: center;
+	}
 	.date p {
 		margin: 0;
 	}
@@ -138,7 +146,7 @@
 		top: -1em;
 		left: 1rem;
 		background-color: var(--accent);
-		color: var(--light-background);
+		color: var(--blue);
 		border-radius: var(--border-radius);
 		display: flex;
 		align-items: center;
@@ -151,7 +159,7 @@
 		display: flex;
 		align-items: center;
 		white-space: nowrap;
-		color: var(--light-background);
+		color: var(--blue);
 	}
 
 	.time {

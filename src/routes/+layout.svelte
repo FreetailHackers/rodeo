@@ -119,7 +119,7 @@
 		height: 100vh;
 		backdrop-filter: blur(2px) brightness(0.9);
 		z-index: 200;
-		background-color: var(--background); /* changed for dark mode */
+		background-color: var(--dark-blue); /* changed for dark mode */
 	}
 
 	.container {
@@ -132,7 +132,7 @@
 		position: fixed;
 		top: 0;
 		margin: 0;
-		background-color: var(--background); /* changed for dark mode */
+		background-color: var(--dark-blue); /* changed for dark mode */
 		z-index: 10;
 	}
 
@@ -168,12 +168,12 @@
 
 	.navbar a:hover,
 	.navbar form button:hover {
-		background-color: var(--light-background);
+		background-color: var(--blue);
 		font-weight: normal;
 	}
 
 	.navbar a:active {
-		background-color: var(--light-background);
+		background-color: var(--blue);
 		font-weight: bold;
 	}
 	@media (max-width: 780px) {

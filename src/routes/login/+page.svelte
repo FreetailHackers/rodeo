@@ -76,7 +76,7 @@
 
 	label,
 	.register {
-		color: var(--accent); /* changed for dark mode */
+		color: var(--white); /* changed for dark mode */
 		margin-top: 0.5em;
 	}
 
