@@ -27,8 +27,8 @@
 		margin-bottom: 1em;
 		width: 100%;
 		background-color: transparent;
-		color: #bbbbbb;
-		border: 1px solid #bbbbbb;
+		color: var(--grey);
+		border: 1px solid var(--grey);
 		border-radius: var(--border-radius);
 		padding: 0.5em 1em;
 	}

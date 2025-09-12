@@ -37,34 +37,39 @@
 		>
 	</form>
 {/if}
-<ul>
-	{#each announcements as announcement}
-		<li class="card text">
-			<span class="date">
-				<p class="month-day">
-					{announcement.published.toLocaleDateString('en-us', {
-						month: 'long',
-						day: 'numeric',
-					})}
-				</p>
-				<span class="time">
-					{announcement.published.toLocaleTimeString('en-us', {
-						hour: 'numeric',
-						minute: 'numeric',
-					})}
-				</span>
-			</span>
 
-			<SvelteMarkdown source={announcement.body} />
-			{#if admin}
-				<form class="delete-message" method="POST" action="?/unannounce" use:enhance>
-					<input type="hidden" name="id" value={announcement.id} />
-					<button class="delete-button-label">X</button>
-				</form>
-			{/if}
-		</li>
-	{/each}
-</ul>
+{#if announcements.length === 0}
+	<p>No announcements now, check back soon!</p>
+{:else}
+	<ul>
+		{#each announcements as announcement}
+			<li class="card text">
+				<span class="date">
+					<p class="month-day">
+						{announcement.published.toLocaleDateString('en-us', {
+							month: 'long',
+							day: 'numeric',
+						})}
+					</p>
+					<span class="time">
+						{announcement.published.toLocaleTimeString('en-us', {
+							hour: 'numeric',
+							minute: 'numeric',
+						})}
+					</span>
+				</span>
+
+				<SvelteMarkdown source={announcement.body} />
+				{#if admin}
+					<form class="delete-message" method="POST" action="?/unannounce" use:enhance>
+						<input type="hidden" name="id" value={announcement.id} />
+						<button class="delete-button-label">X</button>
+					</form>
+				{/if}
+			</li>
+		{/each}
+	</ul>
+{/if}
 
 <style>
 	:root {
@@ -129,6 +134,9 @@
 		color: var(--white);
 	}
 
+	p {
+		text-align: center;
+	}
 	.date p {
 		margin: 0;
 	}
