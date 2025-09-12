@@ -91,7 +91,13 @@ export const actions = {
 				headers: { location: '/apply' },
 			});
 		}
+
+		const user = await trpc(event).users.get();
+		const originalRole = user.authUser.roles[0] || 'UNDECLARED';
+
 		await trpc(event).users.withdrawApplication();
+
+		await trpc(event).users.update({ selectedRole: originalRole });
 	},
 
 	confirm: async (event) => {
