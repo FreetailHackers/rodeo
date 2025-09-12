@@ -21,6 +21,7 @@ export function authenticate(roles?: Role[]) {
 		}
 
 		if (roles !== undefined && !hasAnyRole(user?.roles, roles)) {
+			console.log('User roles:', user?.roles, 'Required roles:', roles);
 			throw new Error('Forbidden');
 		}
 		return next({

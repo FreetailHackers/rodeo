@@ -75,9 +75,10 @@ export const actions = {
 
 		await trpc(event).users.update(formToApplication(await trpc(event).questions.get(), formData));
 		if (allowedRoles.includes(selectedRole as any)) {
-			return await trpc(event).users.submitApplication(
+			const application = await trpc(event).users.submitApplication(
 				selectedRole as (typeof allowedRoles)[number],
 			);
+			return application;
 		} else {
 			return new Response('Invalid role selected', { status: 400 });
 		}
