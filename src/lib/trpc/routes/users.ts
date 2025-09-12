@@ -103,7 +103,7 @@ export const usersRouter = t.router({
 	 * Maybe it should?
 	 */
 	update: t.procedure
-		.use(authenticate(['HACKER', 'UNDECLARED']))
+		.use(authenticate(['HACKER', 'UNDECLARED', 'MENTOR', 'JUDGE', 'VOLUNTEER']))
 		.input(z.record(z.any()))
 		.mutation(async (req): Promise<void> => {
 			if (!(await canApply()) || req.ctx.user.status !== 'CREATED') {
@@ -440,58 +440,6 @@ export const usersRouter = t.router({
 				}
 				throw e;
 			}
-
-			// 	try {
-			// 		const email = req.input.email || '';
-
-			// 		if (email) {
-			// 			const existingUserByEmail = await prisma.authUser.findUnique({
-			// 				where: { email },
-			// 			});
-
-			// 			if (existingUserByEmail && !existingUserByEmail.googleId) {
-			// 				const updatedUser = await prisma.authUser.update({
-			// 					where: { email },
-			// 					data: {
-			// 						googleId: req.input.id,
-			// 						goodleUsername: req.input.username,
-			// 						verifiedEmail: true,
-			// 					},
-			// 				});
-
-			// 				const session = await auth.createSession(updatedUser.id);
-			// 				auth.setSessionTokenCookie(req.ctx, session.id, session.expiresAt);
-			// 				return session;
-			// 			} else if (existingUserByEmail && existingUserByEmail.googleId) {
-			// 				const session = await auth.createSession(existingUserByEmail.id);
-			// 				auth.setSessionTokenCookie(req.ctx, session.id, session.expiresAt);
-			// 				return session;
-			// 			}
-			// 		}
-
-			// 		const user = await prisma.authUser.create({
-			// 			data: {
-			// 				id: crypto.randomUUID(),
-			// 				email: email,
-			// 				googleId: req.input.id,
-			// 				goodleUsername: req.input.username,
-			// 				roles: ['UNDECLARED'],
-			// 				status: 'CREATED',
-			// 				verifiedEmail: true,
-			// 			},
-			// 		});
-			// 		const session = await auth.createSession(user.id);
-			// 		auth.setSessionTokenCookie(req.ctx, session.id, session.expiresAt);
-
-			// 		return session;
-			// 	} catch (e) {
-			// 		console.error('Google registration error:', e);
-			// 		if (e instanceof PrismaClientKnownRequestError && e.code === 'P2002') {
-			// 			console.error('Unexpected email conflict in Google registration');
-			// 			return null;
-			// 		}
-			// 		throw e;
-			// 	}
 		}),
 
 	/**

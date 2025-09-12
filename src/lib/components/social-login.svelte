@@ -16,7 +16,7 @@
 
 	<a href="/login/oauth/github" class="social" data-sveltekit-reload>
 		<button>
-			<img src="/auth-assets/github.svg" alt="GitHub Logo" />
+			<img src="/auth-assets/github_light.svg" alt="GitHub Logo" />
 			<span>Continue with GitHub</span>
 		</button>
 	</a>
@@ -27,8 +27,8 @@
 		margin-bottom: 1em;
 		width: 100%;
 		background-color: transparent;
-		color: grey;
-		border: 1px solid grey;
+		color: var(--grey);
+		border: 1px solid var(--grey);
 		border-radius: var(--border-radius);
 		padding: 0.5em 1em;
 	}
