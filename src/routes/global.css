@@ -124,6 +124,7 @@ a.button:not(:disabled):hover {
 	cursor: pointer;
 	background-color: var(--other-accent);
 	color: var(--accent);
+	border: 1px solid var(--accent);
 }
 
 button:not(:disabled):active,
@@ -144,8 +145,9 @@ a.button[disabled] {
 }
 
 .negative-button:not(:disabled):hover {
-	background-color: var(--accent);
-	color: var(--white);
+	background-color: var(--dark-blue);
+	color: var(--accent);
+	border: 1px solid var(--accent);
 }
 
 .user-button {

@@ -506,6 +506,7 @@
 
 	.applyButtons button {
 		min-width: 15rem;
+		border: 1px solid var(--accent);
 	}
 
 	h5 {
