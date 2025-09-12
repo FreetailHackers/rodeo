@@ -108,7 +108,7 @@
 	}
 
 	.card :global(p) {
-		color: var(--light-background); /* changed for dark mode */
+		color: var(--blue); /* changed for dark mode */
 	}
 
 	.delete-message {
@@ -138,7 +138,7 @@
 		top: -1em;
 		left: 1rem;
 		background-color: var(--accent);
-		color: var(--light-background);
+		color: var(--blue);
 		border-radius: var(--border-radius);
 		display: flex;
 		align-items: center;
@@ -151,7 +151,7 @@
 		display: flex;
 		align-items: center;
 		white-space: nowrap;
-		color: var(--light-background);
+		color: var(--blue);
 	}
 
 	.time {

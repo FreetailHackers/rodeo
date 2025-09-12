@@ -427,10 +427,6 @@
 		color: var(--accent); /* changed for dark mode */
 	}
 
-	.question input {
-		color: var(--accent);
-	}
-
 	.question label {
 		color: var(--accent);
 	}
@@ -456,7 +452,7 @@
 	#actions-container {
 		position: sticky;
 		bottom: 0;
-		background: linear-gradient(transparent, var(--light-background));
+		background: linear-gradient(transparent, var(--blue));
 	}
 
 	#actions {
@@ -466,7 +462,7 @@
 		gap: 0.5rem;
 		position: sticky;
 		padding-bottom: 1rem;
-		background: var(--light-background);
+		background: var(--blue);
 	}
 
 	#actions > * {
@@ -475,7 +471,7 @@
 
 	.negative-button {
 		background-color: var(--accent);
-		color: var(--background);
+		color: var(--dark-blue);
 	}
 
 	/* #status button {

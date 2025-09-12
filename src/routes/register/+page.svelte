@@ -70,6 +70,7 @@
 	label,
 	.login {
 		margin-top: 0.5em;
+		color: var(--grey);
 	}
 
 	.login {

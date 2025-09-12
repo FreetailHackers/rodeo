@@ -65,7 +65,7 @@
 	}
 
 	.empty {
-		color: gray;
+		color: var(--grey);
 	}
 
 	.error {
