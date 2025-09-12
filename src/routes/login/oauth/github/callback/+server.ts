@@ -7,26 +7,16 @@ import type { RequestEvent } from './$types';
 import type { OAuth2Tokens } from 'arctic';
 
 export async function GET(event: RequestEvent): Promise<Response> {
-	const hostname = event.url.hostname;
-
 	const storedState = event.cookies.get('github_oauth_state') ?? null;
 	const code = event.url.searchParams.get('code');
 	const state = event.url.searchParams.get('state');
-	const originalHostname = event.cookies.get('github_oauth_origin') ?? null;
 
-	console.log('GitHub OAuth Callback Debugging:');
-	console.log('Code:', code);
-	console.log('State:', state);
-	console.log('Stored State:', storedState);
-	console.log('Original Hostname:', originalHostname);
-	console.log('Current Hostname:', hostname);
-
-	if (code === null || state === null || storedState === null) {
+	if (storedState === null || code === null || state === null) {
 		return new Response('Please restart the process.', {
 			status: 400,
 		});
 	}
-	if (state !== storedState) {
+	if (storedState !== state) {
 		return new Response('Please restart the process.', {
 			status: 400,
 		});
@@ -34,9 +24,12 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
 	let tokens: OAuth2Tokens;
 	try {
+		if (github === null) {
+			throw new Error('GitHub OAuth is not configured.');
+		}
 		tokens = await github.validateAuthorizationCode(code);
 	} catch (e) {
-		return new Response("Couldn't give Authorization token.", {
+		return new Response('Please restart the process.', {
 			status: 400,
 		});
 	}
@@ -54,9 +47,6 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
 	const existingUser = await trpc(event).users.getUserFromGitHubId(githubUserId);
 
-	const redirectDomain = originalHostname || hostname;
-	const redirectUrl = redirectDomain !== hostname ? `https://${redirectDomain}/` : '/';
-
 	if (existingUser) {
 		const sessionToken = await createSession(existingUser.id);
 		setSessionTokenCookie(event, sessionToken.id, sessionToken.expiresAt);
@@ -67,7 +57,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 		return new Response(null, {
 			status: 302,
 			headers: {
-				Location: redirectUrl,
+				Location: '/',
 			},
 		});
 	}
@@ -77,7 +67,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	const emailListResponse = await fetch(emailListRequest);
 	const emailListResult: unknown = await emailListResponse.json();
 	if (!Array.isArray(emailListResult) || emailListResult.length < 1) {
-		return new Response('No email address found.', {
+		return new Response('Please restart the process.', {
 			status: 400,
 		});
 	}
@@ -105,7 +95,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 	return new Response(null, {
 		status: 302,
 		headers: {
-			Location: redirectUrl,
+			Location: '/',
 		},
 	});
 }

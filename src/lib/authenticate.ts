@@ -341,11 +341,14 @@ export async function hashPassword(password: string): Promise<string> {
 /**
  * GitHub OAuth client instance.
  */
-export const github = new GitHub(
-	process.env.GITHUB_CLIENT_ID!,
-	process.env.GITHUB_CLIENT_SECRET!,
-	`${process.env.DOMAIN_NAME}/login/oauth/github/callback`,
-);
+export const github =
+	process.env.NODE_ENV === 'production'
+		? new GitHub(
+				process.env.GITHUB_CLIENT_ID!,
+				process.env.GITHUB_CLIENT_SECRET!,
+				`${process.env.DOMAIN_NAME}/login/oauth/github/callback`,
+			)
+		: null;
 
 /**
  * Google OAuth client instance.
