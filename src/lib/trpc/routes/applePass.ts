@@ -3,6 +3,7 @@ import fs from 'node:fs/promises';
 import { PKPass } from 'passkit-generator';
 import { t } from '../t';
 import { z } from 'zod';
+import { fileURLToPath } from 'node:url';
 
 /**
  * method to get the certificates needed to create the pass
@@ -46,33 +47,11 @@ function getObjectFromModelFile(filePath: string, content: Buffer, depthFromEnd:
  * @returns Promise<PKPass>
  */
 const createPass = async (uid: string, group: string) => {
-	// console.log(process.cwd());
 
-	async function traverseDirectory(dirPath: string, depth = 0) {
-		try {
-			const files = await fs.readdir(dirPath);
-			for (const file of files) {
-				const fullPath = path.join(dirPath, file);
-				try {
-					const stat = await fs.stat(fullPath);
-					if (stat.isDirectory() && !file.includes('node_modules') && !file.startsWith('.')) {
-						console.log(''.padStart(depth * 2) + '📁 ' + file);
-						await traverseDirectory(fullPath, depth + 1);
-					} else if (stat.isFile()) {
-						console.log(''.padStart(depth * 2) + '📄 ' + file);
-					}
-				} catch (error) {
-					console.error(`Error accessing ${fullPath}:`, error);
-				}
-			}
-		} catch (error) {
-			console.error(`Error reading directory ${dirPath}:`, error);
-		}
-	}
-
-	await traverseDirectory(process.cwd());
-
-	const modelPath = path.resolve(process.cwd() + '/src/lib/ticket.pass');
+	// Get the directory of the current file and resolve the ticket.pass path relative to it
+	const __filename = fileURLToPath(import.meta.url);
+	const __dirname = path.dirname(__filename);
+	const modelPath = path.resolve(__dirname, '../../ticket.pass');
 	const [modelFilesList, certificates] = await Promise.all([
 		fs.readdir(modelPath),
 		getCertificates(),
