@@ -47,7 +47,6 @@ function getObjectFromModelFile(filePath: string, content: Buffer, depthFromEnd:
  * @returns Promise<PKPass>
  */
 const createPass = async (uid: string, group: string) => {
-
 	// Get the directory of the current file and resolve the ticket.pass path relative to it
 	const __filename = fileURLToPath(import.meta.url);
 	const __dirname = path.dirname(__filename);
