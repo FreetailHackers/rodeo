@@ -46,7 +46,7 @@ function getObjectFromModelFile(filePath: string, content: Buffer, depthFromEnd:
  * @returns Promise<PKPass>
  */
 const createPass = async (uid: string, group: string) => {
-	console.log(process.cwd());
+	// console.log(process.cwd());
 
 	async function traverseDirectory(dirPath: string, depth = 0) {
 		try {
@@ -72,7 +72,7 @@ const createPass = async (uid: string, group: string) => {
 
 	await traverseDirectory(process.cwd());
 
-	const modelPath = path.resolve(process.cwd() + '/static/ticket.pass');
+	const modelPath = path.resolve(process.cwd() + '/src/lib/ticket.pass');
 	const [modelFilesList, certificates] = await Promise.all([
 		fs.readdir(modelPath),
 		getCertificates(),
