@@ -1,10 +1,10 @@
-import path from 'node:path';
-import fs from 'node:fs/promises';
+//import path from 'node:path';
+//import fs from 'node:fs/promises';
 import { PKPass } from 'passkit-generator';
 import { t } from '../t';
 import { z } from 'zod';
-import { fileURLToPath } from 'node:url';
-
+// import { fileURLToPath } from 'node:url';
+import { test } from './modelRecords';
 /**
  * method to get the certificates needed to create the pass
  *
@@ -34,12 +34,12 @@ const getCertificates = async () => {
  * @param depthFromEnd - used to preserve localization lproj content
  * @returns
  */
-function getObjectFromModelFile(filePath: string, content: Buffer, depthFromEnd: number) {
-	const fileComponents = filePath.split(path.sep);
-	const fileName = fileComponents.slice(fileComponents.length - depthFromEnd).join('/');
+// function getObjectFromModelFile(filePath: string, content: Buffer, depthFromEnd: number) {
+// 	const fileComponents = filePath.split(path.sep);
+// 	const fileName = fileComponents.slice(fileComponents.length - depthFromEnd).join('/');
 
-	return { [fileName]: content };
-}
+// 	return { [fileName]: content };
+// }
 
 /**
  * Returns a PKPass object based off of the model files.
@@ -48,26 +48,44 @@ function getObjectFromModelFile(filePath: string, content: Buffer, depthFromEnd:
  */
 const createPass = async (uid: string, group: string) => {
 	// Get the directory of the current file and resolve the ticket.pass path relative to it
-	const __filename = fileURLToPath(import.meta.url);
-	const __dirname = path.dirname(__filename);
-	const modelPath = path.resolve(__dirname, '../../ticket');
-	const [modelFilesList, certificates] = await Promise.all([
-		fs.readdir(modelPath),
-		getCertificates(),
-	]);
+	// const __filename = fileURLToPath(import.meta.url);
+	// const __dirname = path.dirname(__filename);
+	// const modelPath = path.resolve(__dirname, '../../ticket');
+	// console.log( path.resolve(__dirname, '../../ticket/pass.json'));
+	const [certificates] = await Promise.all([getCertificates()]);
 
-	const modelRecords = (
-		await Promise.all(
-			modelFilesList.map(async (fileOrDirectoryPath) => {
-				const fullPath = path.resolve(modelPath, fileOrDirectoryPath);
-				return fs
-					.readFile(fullPath)
-					.then((content) => getObjectFromModelFile(fullPath, content, 1));
-			})
-		)
-	).reduce((acc, current) => ({ ...acc, ...current }), {});
+	// console.log(modelFilesList);
 
-	const pass = new PKPass(modelRecords, {
+	// const modelRecords = (
+	// 	await Promise.all(
+	// 		modelFilesList.map(async (fileOrDirectoryPath) => {
+	// 			const fullPath = path.resolve(modelPath, fileOrDirectoryPath);
+	// 			return fs
+	// 				.readFile(fullPath)
+	// 				.then((content) => getObjectFromModelFile(fullPath, content, 1));
+	// 		})
+	// 	)
+	// ).reduce((acc, current) => ({ ...acc, ...current }), {});
+	// console.log('modelRecords');
+	// console.log(modelRecords["icon.png"]);
+
+	// Convert base64 strings back to Buffers
+	const modelRecordsFromJson: Record<string, Buffer> = {};
+	for (const [key, value] of Object.entries(test)) {
+		console.log(key);
+		if (key !== 'pass.json') {
+			if (typeof value === 'string' && key.endsWith('.png')) {
+				modelRecordsFromJson[key] = Buffer.from(value, 'base64');
+			} else if (typeof value === 'string') {
+				modelRecordsFromJson[key] = Buffer.from(value, 'utf-8');
+			}
+		} else {
+			// pass.json is already a parsed object, convert to JSON string then to Buffer
+			modelRecordsFromJson[key] = Buffer.from(JSON.stringify(value), 'utf-8');
+		}
+	}
+	//console.log(modelRecordsFromJson);
+	const pass = new PKPass(modelRecordsFromJson, {
 		wwdr: certificates.wwdr,
 		signerCert: certificates.signerCert,
 		signerKey: certificates.signerKey,
