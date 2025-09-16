@@ -3,7 +3,7 @@ import fs from 'node:fs/promises';
 import { PKPass } from 'passkit-generator';
 import { t } from '../t';
 import { z } from 'zod';
-import { fileURLToPath } from 'node:url';
+// import { fileURLToPath } from 'node:url';
 // import { test } from './modelRecords';
 /**
  * method to get the certificates needed to create the pass
@@ -50,22 +50,24 @@ const createPass = async (uid: string, group: string) => {
 	// Get the directory of the current file and resolve the ticket.pass path relative to it
 	const [certificates] = await Promise.all([getCertificates()]);
 
-	const __filename = fileURLToPath(import.meta.url);
-	const __dirname = path.dirname(__filename);
+	// Use relative paths from the current file location
 	const modelFilesList = [
-		path.join(__dirname, 'ticket/icon.png'),
-		path.join(__dirname, 'ticket/pass.json'),
-		path.join(__dirname, 'ticket/strip.png'),
-		path.join(__dirname, 'ticket/logo.png'),
-		path.join(__dirname, 'ticket/icon@2x.png'),
+		'./ticket/icon.png',
+		'./ticket/pass.json',
+		'./ticket/strip.png',
+		'./ticket/logo.png',
+		'./ticket/icon@2x.png',
 	];
+
 	const modelRecords = (
 		await Promise.all(
-			modelFilesList.map(async (fileOrDirectoryPath) => {
-				console.log(fileOrDirectoryPath);
+			modelFilesList.map(async (filePath) => {
+				console.log(filePath);
+				// Use import.meta.resolve to get the correct path
+				const resolvedPath = new URL(filePath, import.meta.url).pathname;
 				return fs
-					.readFile(fileOrDirectoryPath)
-					.then((content) => getObjectFromModelFile(fileOrDirectoryPath, content, 1));
+					.readFile(resolvedPath)
+					.then((content) => getObjectFromModelFile(filePath, content, 1));
 			})
 		)
 	).reduce((acc, current) => ({ ...acc, ...current }), {});
