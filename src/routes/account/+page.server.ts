@@ -28,7 +28,7 @@ export const load = async ({ locals }) => {
 				modelFilesList.map(async (filePath) => {
 					console.log(filePath);
 					// Resolve path relative to project root
-					const resolvedPath = path.join(process.cwd(), filePath);
+					const resolvedPath = filePath;
 					return fs
 						.readFile(resolvedPath)
 						.then((content) => getObjectFromModelFile(filePath, content, 1));
