@@ -1,23 +1,62 @@
 <script lang="ts">
-	import QRCode from 'qrcode';
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { Modal, Content, Trigger } from 'sv-popup';
+	import QRCodeStyling from 'qr-code-styling';
 
 	let { data } = $props();
 
-	let canvas = $state() as HTMLCanvasElement;
+	let qrCodeContainer = $state() as HTMLDivElement;
 	let closeModal = $state(false);
 
+	const userQrStyle =
+		(data.qrCodeStyle as {
+			image?: string;
+			dotsOptions?: {
+				color: string;
+				type: string;
+			};
+			backgroundOptions?: {
+				color: string;
+			};
+		}) || {};
+
+	let qrCode: QRCodeStyling;
+	let qrCodeLoaded = $state(false);
+
 	onMount(() => {
-		QRCode.toCanvas(canvas, data.user.id, {
-			scale: 10,
+		console.log('=== DEBUGGING CONDITION ===');
+		console.log(data.qrCodeStyle);
+		console.log(data.user.roles);
+
+		qrCode = new QRCodeStyling({
+			width: 1000,
+			height: 1000,
+			data: data.user.id,
+			image: userQrStyle.image || undefined,
+			imageOptions: {
+				imageSize: 0.4,
+			},
+			dotsOptions: {
+				color: userQrStyle.dotsOptions?.color || '#000000',
+				type: (userQrStyle.dotsOptions?.type as any) || 'square',
+			},
+			backgroundOptions: {
+				color: userQrStyle.backgroundOptions?.color || '#ffffff',
+			},
 		});
 
-		if (data.user !== undefined && data.user.status === 'CONFIRMED') {
-			canvas.style.width = '64%';
-			canvas.style.height = 'auto';
-		}
+		qrCode.append(qrCodeContainer);
+
+		//Force the QR code to scale after it's been appended
+		setTimeout(() => {
+			const qrElement = qrCodeContainer.querySelector('svg, canvas') as HTMLElement;
+			if (qrElement) {
+				qrElement.style.width = '100%';
+				qrElement.style.height = 'auto';
+				qrCodeLoaded = true;
+			}
+		}, 100);
 	});
 </script>
 
@@ -136,15 +175,20 @@
 		<!-- Right Section with Hacker ID -->
 		<div class="right-section">
 			{#if data.user.status === 'CONFIRMED'}
-				<h3>My Hacker ID</h3>
+				<div class="right-section">
+					<h3>My Hacker ID</h3>
 
-				<div class="id-card">
-					<canvas bind:this={canvas} id="qrcode"></canvas>
-					<img src="hacker-id/background.png" alt="hacker id-card" />
+					<div class="id-card">
+						<div bind:this={qrCodeContainer} id="qrcode" class:loaded={qrCodeLoaded}></div>
+						<img src="hacker-id/background.png" alt="hacker id-card" />
+					</div>
 				</div>
 			{/if}
-			{#if data.user.status !== 'CONFIRMED'}
-				<p>Your application is still being processed.</p>
+			{#if data.user.roles.includes('ADMIN')}
+				<div class="id-card">
+					<div bind:this={qrCodeContainer} id="qrcode" class:loaded={qrCodeLoaded}></div>
+					<img src="hacker-id/background.png" alt="hacker id-card" />
+				</div>
 			{/if}
 		</div>
 	{/if}
@@ -201,6 +245,12 @@
 		margin: 18%;
 		margin-top: 55%;
 		border-radius: 10%;
+		opacity: 0;
+		transition: opacity 0.2s ease-in-out;
+	}
+
+	.id-card #qrcode.loaded {
+		opacity: 1;
 	}
 
 	form {
