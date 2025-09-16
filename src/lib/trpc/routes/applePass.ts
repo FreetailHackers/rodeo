@@ -50,7 +50,7 @@ const createPass = async (uid: string, group: string) => {
 	// Get the directory of the current file and resolve the ticket.pass path relative to it
 	const __filename = fileURLToPath(import.meta.url);
 	const __dirname = path.dirname(__filename);
-	const modelPath = path.resolve(__dirname, '../../ticket.pass');
+	const modelPath = path.resolve(__dirname, '../../ticket');
 	const [modelFilesList, certificates] = await Promise.all([
 		fs.readdir(modelPath),
 		getCertificates(),
