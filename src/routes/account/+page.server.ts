@@ -16,11 +16,11 @@ export const load = async ({ locals }) => {
 	if (user.roles.includes('HACKER')) {
 		const group = await trpc(locals.auth).users.getGroup();
 		const modelFilesList = [
-			'static/ticket.pass/icon.png',
-			'static/ticket.pass/pass.json',
-			'static/ticket.pass/strip.png',
-			'static/ticket.pass/logo.png',
-			'static/ticket.pass/icon@2x.png',
+			'static/media/icon.png',
+			'static/media/pass.json',
+			'static/media/strip.png',
+			'static/media/logo.png',
+			'static/media/icon@2x.png',
 		];
 
 		const modelRecords = (
