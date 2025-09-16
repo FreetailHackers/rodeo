@@ -1114,6 +1114,52 @@ export const usersRouter = t.router({
 				return false;
 			}
 		}),
+
+	/**
+	 * Updates the QRCode Style. Input handling it handled form-side.
+	 * Fetches all the users and saves the QRCode JSON data.
+	 * Json data is formated for the package qr-code-style
+	 */
+	updateQRCodeStyle: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(
+			z.object({
+				image: z.string().optional(),
+				dotsOptions: z.object({
+					color: z.string(),
+					type: z.string(),
+				}),
+				backgroundOptions: z.object({
+					color: z.string(),
+				}),
+			}),
+		)
+		.mutation(async ({ input }): Promise<{ success: boolean; updatedCount: number }> => {
+			const result = await prisma.user.updateMany({
+				data: {
+					qrCodeStyle: input,
+				},
+			});
+
+			return {
+				success: true,
+				updatedCount: result.count,
+			};
+		}),
+
+	// Fetches the json format for qr-code-style
+	getQRCodeStyle: t.procedure
+		.use(authenticate(['HACKER', 'ADMIN']))
+		.query(async (req): Promise<Prisma.JsonValue | null> => {
+			return (
+				(
+					await prisma.user.findUnique({
+						where: { authUserId: req.ctx.user.id },
+						select: { qrCodeStyle: true },
+					})
+				)?.qrCodeStyle ?? null
+			);
+		}),
 });
 
 async function getWhereCondition(

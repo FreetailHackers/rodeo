@@ -10,11 +10,13 @@ export const load = async (event) => {
 			team: await trpc(event).team.getTeam(),
 			invitations: await trpc(event).team.getTeamInvitations(),
 			group: await trpc(event).users.getGroup(),
+			qrCodeStyle: await trpc(event).users.getQRCodeStyle(),
 		};
 	}
 
 	return {
 		user: user,
+		qrCodeStyle: await trpc(event).users.getQRCodeStyle(),
 	};
 };
 

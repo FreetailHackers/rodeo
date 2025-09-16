@@ -125,6 +125,43 @@
 	<button type="submit">Split Groups</button>
 </form>
 
+<h2>Customize QR Codes</h2>
+
+<form method="POST" action="?/qrCodeSettings" class="qr-form" use:enhance>
+	<h3>QR Code Styling</h3>
+
+	<div class="qr-grid">
+		<div class="qr-field">
+			<label for="imageUrl">Logo Image URL (leave empty for no image)</label>
+			<input type="url" id="imageUrl" name="imageUrl" placeholder="https://example.com/logo.png" />
+		</div>
+
+		<div class="qr-field">
+			<label for="dotsType">Dots Style</label>
+			<select id="dotsType" name="dotsType">
+				<option value="rounded">Rounded</option>
+				<option value="dots">Dots</option>
+				<option value="classy">Classy</option>
+				<option value="classy-rounded">Classy Rounded</option>
+				<option value="square">Square</option>
+				<option value="extra-rounded">Extra Rounded</option>
+			</select>
+		</div>
+
+		<div class="qr-field">
+			<label for="dotsColor">Dots Color</label>
+			<input type="color" id="dotsColor" name="dotsColor" value="#000000" />
+		</div>
+
+		<div class="qr-field">
+			<label for="backgroundColor">Background Color</label>
+			<input type="color" id="backgroundColor" name="backgroundColor" value="#ffffff" />
+		</div>
+	</div>
+
+	<button type="submit"> Update QR Code Style </button>
+</form>
+
 <h2>Pending Decisions</h2>
 <form method="POST" action="?/release" use:enhance>
 	<button
@@ -187,6 +224,54 @@
 	status-container {
 		margin-top: 1rem;
 	}
+	.qr-form {
+		margin: 20px 0;
+		padding: 20px;
+		border: 1px solid #e5e5e5;
+		border-radius: 6px;
+	}
+
+	.qr-form h3 {
+		margin: 0 0 16px 0;
+		font-size: 18px;
+		font-weight: 600;
+	}
+
+	.qr-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 16px;
+		margin-bottom: 16px;
+	}
+
+	.qr-field label {
+		display: block;
+		font-size: 14px;
+		font-weight: 500;
+		margin-bottom: 4px;
+	}
+
+	.qr-field input,
+	.qr-field select {
+		width: 100%;
+		padding: 8px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		font-size: 14px;
+	}
+
+	.qr-field input[type='color'] {
+		height: 40px;
+		cursor: pointer;
+		max-width: 25%;
+	}
+
+	@media (max-width: 768px) {
+		.qr-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
 	select {
 		width: 100%;
 	}
