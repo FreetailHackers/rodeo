@@ -1,5 +1,5 @@
-import path from 'node:path';
-import fs from 'node:fs/promises';
+// import path from 'node:path';
+// import fs from 'node:fs/promises';
 import { PKPass } from 'passkit-generator';
 import { t } from '../t';
 import { z } from 'zod';
@@ -34,43 +34,43 @@ const getCertificates = async () => {
  * @param depthFromEnd - used to preserve localization lproj content
  * @returns
  */
-function getObjectFromModelFile(filePath: string, content: Buffer, depthFromEnd: number) {
-	const fileComponents = filePath.split(path.sep);
-	const fileName = fileComponents.slice(fileComponents.length - depthFromEnd).join('/');
+// function getObjectFromModelFile(filePath: string, content: Buffer, depthFromEnd: number) {
+// 	const fileComponents = filePath.split(path.sep);
+// 	const fileName = fileComponents.slice(fileComponents.length - depthFromEnd).join('/');
 
-	return { [fileName]: content };
-}
+// 	return { [fileName]: content };
+// }
 
 /**
  * Returns a PKPass object based off of the model files.
  *
  * @returns Promise<PKPass>
  */
-const createPass = async (uid: string, group: string) => {
+const createPass = async (uid: string, group: string, modelRecords: Record<string, Buffer>) => {
 	// Get the directory of the current file and resolve the ticket.pass path relative to it
 	const [certificates] = await Promise.all([getCertificates()]);
 
 	// Use relative paths from the current file location
-	const modelFilesList = [
-		'./ticket/icon.png',
-		'./ticket/pass.json',
-		'./ticket/strip.png',
-		'./ticket/logo.png',
-		'./ticket/icon@2x.png',
-	];
+	// const modelFilesList = [
+	// 	'./ticket/icon.png',
+	// 	'./ticket/pass.json',
+	// 	'./ticket/strip.png',
+	// 	'./ticket/logo.png',
+	// 	'./ticket/icon@2x.png',
+	// ];
 
-	const modelRecords = (
-		await Promise.all(
-			modelFilesList.map(async (filePath) => {
-				console.log(filePath);
-				// Use import.meta.resolve to get the correct path
-				const resolvedPath = new URL(filePath, import.meta.url).pathname;
-				return fs
-					.readFile(resolvedPath)
-					.then((content) => getObjectFromModelFile(filePath, content, 1));
-			})
-		)
-	).reduce((acc, current) => ({ ...acc, ...current }), {});
+	// const modelRecords = (
+	// 	await Promise.all(
+	// 		modelFilesList.map(async (filePath) => {
+	// 			console.log(filePath);
+	// 			// Use import.meta.resolve to get the correct path
+	// 			const resolvedPath = new URL(filePath, import.meta.url).pathname;
+	// 			return fs
+	// 				.readFile(resolvedPath)
+	// 				.then((content) => getObjectFromModelFile(filePath, content, 1));
+	// 		})
+	// 	)
+	// ).reduce((acc, current) => ({ ...acc, ...current }), {});
 	// console.log('modelRecords');
 	// console.log(modelRecords["icon.png"]);
 
@@ -122,10 +122,11 @@ export const passRouter = t.router({
 			z.object({
 				uid: z.string().min(1),
 				group: z.string().min(1),
+				modelRecords: z.record(z.any()).nullable(),
 			})
 		)
 		.mutation(async ({ input }) => {
-			const pass = await createPass(input.uid, input.group);
+			const pass = await createPass(input.uid, input.group, input.modelRecords || {});
 			const buffer = pass.getAsBuffer();
 			return {
 				data: Array.from(buffer),
