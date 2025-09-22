@@ -2,10 +2,20 @@
 	import { enhance } from '$app/forms';
 	import { confirmationDialog } from '$lib/actions';
 	import Toggle from '$lib/components/toggle.svelte';
+	import { toasts } from '$lib/stores';
 	import Graph from './line-graph.svelte';
 	let { data } = $props();
 
 	let applicationOpenStatus = $state(data.settings.applicationOpen);
+
+	function handleFileChange(event: Event) {
+		const input = event.target as HTMLInputElement;
+		if (input.files && input.files.length > 0) {
+			if (input.files[0].size > 1024 * 1024) {
+				toasts.notify('Error: File size must be under 1MB.');
+			}
+		}
+	}
 </script>
 
 <svelte:head>
@@ -127,13 +137,25 @@
 
 <h2>Customize QR Codes</h2>
 
-<form method="POST" action="?/qrCodeSettings" class="qr-form" use:enhance>
+<form
+	method="POST"
+	action="?/qrCodeSettings"
+	class="qr-form"
+	enctype="multipart/form-data"
+	use:enhance
+>
 	<h3>QR Code Styling</h3>
 
 	<div class="qr-grid">
 		<div class="qr-field">
-			<label for="imageUrl">Logo Image URL (leave empty for no image)</label>
-			<input type="url" id="imageUrl" name="imageUrl" placeholder="https://example.com/logo.png" />
+			<label for="qr-image">QR Code Image (leave empty for no image)</label>
+			<input
+				type="file"
+				id="qr-image"
+				name="qr-image"
+				accept=".jpg, .jpeg, .png, .webp"
+				onchange={handleFileChange}
+			/>
 		</div>
 
 		<div class="qr-field">
