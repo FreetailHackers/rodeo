@@ -25,26 +25,42 @@
 	let qrCodeLoaded = $state(false);
 
 	onMount(() => {
-		console.log('=== DEBUGGING CONDITION ===');
-		console.log(data.qrCodeStyle);
-		console.log(data.user.roles);
-
-		qrCode = new QRCodeStyling({
-			width: 1000,
-			height: 1000,
-			data: data.user.id,
-			image: userQrStyle.image || undefined,
-			imageOptions: {
-				imageSize: 0.4,
-			},
-			dotsOptions: {
-				color: userQrStyle.dotsOptions?.color || '#000000',
-				type: (userQrStyle.dotsOptions?.type as any) || 'square',
-			},
-			backgroundOptions: {
-				color: userQrStyle.backgroundOptions?.color || '#ffffff',
-			},
-		});
+		try {
+			qrCode = new QRCodeStyling({
+				width: 1000,
+				height: 1000,
+				data: data.user.id,
+				image: data.imageUrl || undefined,
+				imageOptions: {
+					imageSize: 0.4,
+				},
+				dotsOptions: {
+					color: userQrStyle.dotsOptions?.color || '#000000',
+					type: (userQrStyle.dotsOptions?.type as any) || 'square',
+				},
+				backgroundOptions: {
+					color: userQrStyle.backgroundOptions?.color || '#ffffff',
+				},
+			});
+			console.log(data.imageUrl);
+		} catch (error) {
+			qrCode = new QRCodeStyling({
+				width: 1000,
+				height: 1000,
+				data: data.user.id,
+				imageOptions: {
+					imageSize: 0.4,
+				},
+				dotsOptions: {
+					color: userQrStyle.dotsOptions?.color || '#000000',
+					type: (userQrStyle.dotsOptions?.type as any) || 'square',
+				},
+				backgroundOptions: {
+					color: userQrStyle.backgroundOptions?.color || '#ffffff',
+				},
+			});
+			console.log(error);
+		}
 
 		qrCode.append(qrCodeContainer);
 

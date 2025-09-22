@@ -3,6 +3,7 @@ import { trpc } from '$lib/trpc/router';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import { s3Delete, s3Upload } from '$lib/s3Handler';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -86,18 +87,46 @@ export const actions = {
 
 	qrCodeSettings: async (event) => {
 		const formData = await event.request.formData();
-		const qrConfig = {
-			image: formData.get('imageUrl') as string,
-			dotsOptions: {
-				color: formData.get('dotsColor') as string,
-				type: formData.get('dotsType') as string,
-			},
-			backgroundOptions: {
-				color: formData.get('backgroundColor') as string,
-			},
-		};
 
-		await trpc(event).users.updateQRCodeStyle(qrConfig);
-		return 'QR Code successfully changed!';
+		const qrIamge = formData.get('qr-image') as File;
+
+		if (qrIamge) {
+			if (qrIamge.size <= 1024 * 1024) {
+				const key = `qr-code/qr-image`;
+
+				//delete any existing images
+				s3Delete(key);
+				//upload new image
+				s3Upload(key, qrIamge);
+
+				const qrConfig = {
+					imageKey: key,
+					dotsOptions: {
+						color: formData.get('dotsColor') as string,
+						type: formData.get('dotsType') as string,
+					},
+					backgroundOptions: {
+						color: formData.get('backgroundColor') as string,
+					},
+				};
+				await trpc(event).users.updateQRCodeStyle(qrConfig);
+				return 'QR Code successfully changed!';
+			} else {
+				return 'Error in updating sponsor! Check your file!';
+			}
+		} else {
+			const qrConfig = {
+				imageKey: undefined,
+				dotsOptions: {
+					color: formData.get('dotsColor') as string,
+					type: formData.get('dotsType') as string,
+				},
+				backgroundOptions: {
+					color: formData.get('backgroundColor') as string,
+				},
+			};
+			await trpc(event).users.updateQRCodeStyle(qrConfig);
+			return 'QR Code successfully changed!';
+		}
 	},
 };

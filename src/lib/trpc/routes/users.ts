@@ -7,7 +7,13 @@ import { t } from '../t';
 import { getQuestions } from './questions';
 import { getSettings } from './settings';
 import type { AuthSession, User, AuthUser, StatusChange } from '@prisma/client';
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {
+	DeleteObjectCommand,
+	PutObjectCommand,
+	S3Client,
+	GetObjectCommand,
+} from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { canApply } from './admissions';
 import { removeInvalidTeamMembers } from './team';
@@ -1124,7 +1130,7 @@ export const usersRouter = t.router({
 		.use(authenticate(['ADMIN']))
 		.input(
 			z.object({
-				image: z.string().optional(),
+				imageKey: z.string().optional(),
 				dotsOptions: z.object({
 					color: z.string(),
 					type: z.string(),
@@ -1160,6 +1166,24 @@ export const usersRouter = t.router({
 				)?.qrCodeStyle ?? null
 			);
 		}),
+
+	getQRCodeImageURL: t.procedure.input(z.string()).query(async (req): Promise<string | null> => {
+		const imageKey = req.input;
+
+		try {
+			const url = await getSignedUrl(
+				s3Client,
+				new GetObjectCommand({
+					Bucket: process.env.S3_BUCKET,
+					Key: imageKey,
+				}),
+			);
+			return url;
+		} catch (error) {
+			console.error(`Error fetching signed URL for qr-code image`, error);
+			return null;
+		}
+	}),
 });
 
 async function getWhereCondition(
