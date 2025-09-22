@@ -4,19 +4,39 @@ import { trpc } from '$lib/trpc/router';
 export const load = async (event) => {
 	const user = await authenticate(event.locals.session, []);
 
-	if (user.roles.includes('HACKER')) {
-		return {
-			user: user,
-			team: await trpc(event).team.getTeam(),
-			invitations: await trpc(event).team.getTeamInvitations(),
-			group: await trpc(event).users.getGroup(),
-			qrCodeStyle: await trpc(event).users.getQRCodeStyle(),
+	const qrCodeStyle = (await trpc(event).users.getQRCodeStyle()) as {
+		imageKey?: string;
+		dotsOptions?: {
+			color: string;
+			type: string;
 		};
+		backgroundOptions?: {
+			color: string;
+		};
+	};
+	let imageUrl = null;
+
+	if (qrCodeStyle.imageKey) {
+		imageUrl = await trpc(event).users.getQRCodeImageURL(qrCodeStyle.imageKey);
+		console.log(imageUrl);
 	}
+
+	if (qrCodeStyle?.imageKey)
+		if (user.roles.includes('HACKER')) {
+			return {
+				user: user,
+				team: await trpc(event).team.getTeam(),
+				invitations: await trpc(event).team.getTeamInvitations(),
+				group: await trpc(event).users.getGroup(),
+				qrCodeStyle: await trpc(event).users.getQRCodeStyle(),
+				imageUrl: imageUrl,
+			};
+		}
 
 	return {
 		user: user,
 		qrCodeStyle: await trpc(event).users.getQRCodeStyle(),
+		imageUrl: imageUrl,
 	};
 };
 

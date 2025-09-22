@@ -27,5 +27,6 @@ export async function s3Upload(key: string, file: File): Promise<void> {
 		Body: Buffer.from(await file.arrayBuffer()),
 		ContentType: file.type,
 	});
-	await s3Client.send(putObjectCommand);
+	const result = await s3Client.send(putObjectCommand);
+	console.log(result);
 }
