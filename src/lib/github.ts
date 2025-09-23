@@ -1,6 +1,7 @@
 import { GitHub } from 'arctic';
 
 if (!process.env.GITHUB_CLIENT_ID) {
+	console.log('Environment Variables:', process.env.GITHUB_CLIENT_ID);
 	throw new Error('GitHub OAuth client ID is not set in environment variables.');
 }
 
