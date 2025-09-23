@@ -434,3 +434,43 @@ img {
 footer {
 	padding: 1em 0;
 }
+
+.badge {
+	display: inline-block;
+	padding: 0.2em 0.7em;
+	border-radius: 0.7em;
+	font-size: 0.9em;
+	font-weight: 600;
+	margin-right: 0.5em;
+	color: #fff;
+	text-transform: uppercase;
+}
+
+.badge.filled.gray {
+	background: #e0e0e0;
+	color: #222;
+} /* Created */
+.badge.filled.dark {
+	background: #444;
+	color: #fff;
+} /* Applied */
+.badge.filled.green {
+	background: #5dc65d;
+	color: #fff;
+} /* Accepted */
+.badge.filled.red {
+	background: #ff4e4e;
+	color: #fff;
+} /* Rejected */
+.badge.filled.orange {
+	background: orange;
+	color: #fff;
+} /* Waitlisted */
+.badge.filled.teal {
+	background: teal;
+	color: #fff;
+} /* Confirmed */
+.badge.filled.pink {
+	background: #e75480;
+	color: #fff;
+} /* Declined */
