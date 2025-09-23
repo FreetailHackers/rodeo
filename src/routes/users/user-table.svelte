@@ -1,19 +1,24 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import UserCard from '$lib/components/user-card.svelte';
-	import type { Prisma, Question, AuthUser } from '@prisma/client';
+	import type { Prisma, Question, AuthUser, Role, Status } from '@prisma/client';
 
-	interface Props {
-		users: (Prisma.UserGetPayload<{
-			include: { authUser: true; decision: true };
-		}> & {
-			teammates: { email: string; status: string }[];
-		})[];
+	// Your enriched row type (includes teammates + optional isBlacklisted)
+	export type UserRow = Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }> & {
+		teammates: { email: string; status: string }[];
+		isBlacklisted?: boolean;
+	};
+
+	// ✅ Use ONE prop shape: UserRow[] for users
+	let {
+		users,
+		self,
+		questions,
+	}: {
+		users: UserRow[];
 		self: AuthUser;
 		questions: Question[];
-	}
-
-	let { users, self, questions }: Props = $props();
+	} = $props();
 
 	let action = $state('admissions');
 	let selected = $state(users.map(() => false));
@@ -21,14 +26,13 @@
 
 	$effect(() => {
 		if (selectAll) {
-			selectAll.indeterminate =
-				selected.filter(Boolean).length > 0 && selected.filter(Boolean).length < users.length;
-			selectAll.checked = selected.filter(Boolean).length === users.length;
+			const picked = selected.filter(Boolean).length;
+			selectAll.indeterminate = picked > 0 && picked < users.length;
+			selectAll.checked = picked === users.length;
 		}
 	});
 
 	// Validate that the selected action can be applied to the selected users
-	// Throws an error if the action is invalid, otherwise returns a string
 	function validateSelection(action: string, selected: boolean[]) {
 		const selectedUsers = users.filter((_, i) => selected[i]);
 		if (action === '') {
@@ -39,44 +43,36 @@
 		}
 		if (action === 'admissions') {
 			if (
-				selectedUsers.filter(
-					(user) => user.authUser.status !== 'APPLIED' && user.authUser.status !== 'WAITLISTED',
-				).length > 0
+				selectedUsers.some(
+					(u) => u.authUser.status !== 'APPLIED' && u.authUser.status !== 'WAITLISTED',
+				)
 			) {
 				throw 'You can only perform admissions on users that have applied or are waitlisted.';
 			}
-			return `${
-				selected.filter(Boolean).length
-			} selected users will be added to the pending decisions pool.
-						These decisions will NOT be visible until you release them.`;
+			return `${selected.filter(Boolean).length} selected users will be added to the pending decisions pool.
+              These decisions will NOT be visible until you release them.`;
 		}
 		if (action === 'status') {
-			return `${
-				selected.filter(Boolean).length
-			} selected users will have their status immediately set.
-					This will NOT send any notifications and WILL delete any pending (unreleased) decisions.`;
+			return `${selected.filter(Boolean).length} selected users will have their status immediately set.
+              This will NOT send any notifications and WILL delete any pending (unreleased) decisions.`;
 		}
 		if (action === 'add-role') {
-			if (selectedUsers.filter((user) => user.authUserId === self.id).length > 0) {
+			if (selectedUsers.some((u) => u.authUserId === self.id)) {
 				throw 'You cannot change your own role.';
 			}
-			return `${
-				selected.filter(Boolean).length
-			} selected users will have the chosen role assigned to them.`;
+			return `${selected.filter(Boolean).length} selected users will have the chosen role assigned to them.`;
 		}
 		if (action === 'remove-role') {
-			if (selectedUsers.filter((user) => user.authUserId === self.id).length > 0) {
+			if (selectedUsers.some((u) => u.authUserId === self.id)) {
 				throw 'You cannot change your own role.';
 			}
 			return `${selected.filter(Boolean).length} selected users will have the chosen role removed.`;
 		}
 		if (action === 'release') {
-			if (selectedUsers.filter((user) => user.decision === null).length > 0) {
+			if (selectedUsers.some((u) => u.decision === null)) {
 				throw 'You can only release decisions for users with a pending decision.';
 			}
-			return `${
-				selected.filter(Boolean).length
-			} selected users will have their decisions released.`;
+			return `${selected.filter(Boolean).length} selected users will have their decisions released.`;
 		}
 	}
 </script>
@@ -215,13 +211,22 @@
 								onclick={() => (selected[i] = !selected[i])}
 							/>
 						{/if}
-						<a href="mailto:{user.authUser.email}">{user.authUser.email}</a>
+
+						<a href={'mailto:' + user.authUser.email}>{user.authUser.email}</a>
+
+						{#if user.isBlacklisted}
+							<span class="bl-tag" data-testid="blacklist-badge" title="This user is blacklisted">
+								Blacklisted
+							</span>
+						{/if}
+
 						<span class="grow"></span>
 						<span
 							class="{user.authUser.status.toLowerCase()} dot"
 							title={user.decision?.status ?? user.authUser.status}
 						></span>
 					</summary>
+
 					<div class="user">
 						<UserCard {user} {questions} teammates={user.teammates} />
 					</div>
@@ -352,5 +357,16 @@
 
 	label {
 		color: var(--accent);
+	}
+
+	.bl-tag {
+		margin-left: 0.5rem;
+		font-size: 0.75rem;
+		padding: 0.15rem 0.4rem;
+		border-radius: 0.375rem;
+		background: #fee2e2;
+		color: #7f1d1d;
+		border: 1px solid #fecaca;
+		vertical-align: middle;
 	}
 </style>

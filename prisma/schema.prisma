@@ -111,6 +111,8 @@ model Settings {
   waitlistIsHTML            Boolean   @default(false)
   withdrawIsHTML            Boolean   @default(false)
   hackathonStartDate        DateTime?
+  blacklistEmails           String[]  @db.Text
+  blacklistNames            String[]  @db.Text
 }
 
 model Question {
