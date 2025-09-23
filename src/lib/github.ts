@@ -1,7 +1,11 @@
 import { GitHub } from 'arctic';
 
-if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {
-	throw new Error('GitHub OAuth client ID or client secret is not set in environment variables.');
+if (!process.env.GITHUB_CLIENT_ID) {
+	throw new Error('GitHub OAuth client ID is not set in environment variables.');
+}
+
+if (!process.env.GITHUB_CLIENT_SECRET) {
+	throw new Error('GitHub client secret is not set in environment variables.');
 }
 
 // GitHub OAuth apps only allow one redirect URI per app
