@@ -2,6 +2,7 @@
 	import { enhance } from '$app/forms';
 	import UserCard from '$lib/components/user-card.svelte';
 	import type { Prisma, Question, AuthUser } from '@prisma/client';
+	import Badge from '$lib/components/Badge.svelte';
 
 	interface Props {
 		users: (Prisma.UserGetPayload<{
@@ -81,6 +82,18 @@
 	}
 </script>
 
+<!-- Status Legend -->
+<div style="margin-bottom: 1rem;">
+	<strong>Status Legend:</strong>
+	<Badge color="gray" variant="filled">Created</Badge>
+	<Badge color="dark" variant="filled">Applied</Badge>
+	<Badge color="green" variant="filled">Accepted</Badge>
+	<Badge color="red" variant="filled">Rejected</Badge>
+	<Badge color="orange" variant="filled">Waitlisted</Badge>
+	<Badge color="teal" variant="filled">Confirmed</Badge>
+	<Badge color="pink" variant="filled">Declined</Badge>
+</div>
+
 <form
 	method="POST"
 	use:enhance={() => {
@@ -105,99 +118,7 @@
 					Select an action:
 				</div>
 				<div id="actions">
-					<div class="flex-align-center">
-						<input
-							type="radio"
-							name="action"
-							id="user-admissions"
-							bind:group={action}
-							value="admissions"
-						/>
-						<label for="user-admissions">Admissions:&nbsp;</label>
-						<span class="grow"></span>
-						<select name="user-admissions">
-							<option value="ACCEPTED">Accept</option>
-							<option value="REJECTED">Reject</option>
-							<option value="WAITLISTED">Waitlist</option>
-						</select>
-					</div>
-					<div class="flex-align-center">
-						<input type="radio" name="action" id="user-status" bind:group={action} value="status" />
-						<label for="user-status">Set status:&nbsp;</label>
-						<span class="grow"></span>
-						<select name="user-status">
-							<option value="CREATED">Created</option>
-							<option value="APPLIED">Applied</option>
-							<option value="ACCEPTED">Accepted</option>
-							<option value="REJECTED">Rejected</option>
-							<option value="WAITLISTED">Waitlisted</option>
-							<option value="CONFIRMED">Confirmed</option>
-							<option value="DECLINED">Declined</option>
-						</select>
-					</div>
-					<div class="flex-align-center">
-						<input type="radio" name="action" id="add-role" bind:group={action} value="add-role" />
-						<label for="add-role">Add role:&nbsp;</label>
-						<span class="grow"></span>
-						<select name="role-to-add">
-							<option value="HACKER">Hacker</option>
-							<option value="ADMIN">Admin</option>
-							<option value="ORGANIZER">Organizer</option>
-							<option value="JUDGE">Judge</option>
-							<option value="VOLUNTEER">Volunteer</option>
-							<option value="SPONSOR">Sponsor</option>
-						</select>
-					</div>
-					<div class="flex-align-center">
-						<input
-							type="radio"
-							name="action"
-							id="remove-role"
-							bind:group={action}
-							value="remove-role"
-						/>
-						<label for="remove-role">Remove role:&nbsp;</label>
-						<span class="grow"></span>
-						<select name="role-to-remove">
-							<option value="UNDECLARED">Undeclared</option>
-							<option value="HACKER">Hacker</option>
-							<option value="ADMIN">Admin</option>
-							<option value="ORGANIZER">Organizer</option>
-							<option value="JUDGE">Judge</option>
-							<option value="VOLUNTEER">Volunteer</option>
-							<option value="SPONSOR">Sponsor</option>
-						</select>
-					</div>
-					<div class="flex-align-center">
-						<input
-							type="radio"
-							name="action"
-							id="user-release"
-							bind:group={action}
-							value="release"
-						/>
-						<label for="user-release">Release decisions</label>
-					</div>
-					{(() => {
-						try {
-							return validateSelection(action, selected);
-						} catch (e) {
-							return e;
-						}
-					})()}
-					<button
-						type="submit"
-						disabled={(() => {
-							try {
-								validateSelection(action, selected);
-								return false;
-							} catch (e) {
-								return true;
-							}
-						})()}
-					>
-						Confirm
-					</button>
+					<!-- ...existing code... -->
 				</div>
 			</li>
 		{/if}
@@ -217,10 +138,28 @@
 						{/if}
 						<a href="mailto:{user.authUser.email}">{user.authUser.email}</a>
 						<span class="grow"></span>
-						<span
-							class="{user.authUser.status.toLowerCase()} dot"
+						<Badge
+							color={user.authUser.status === 'CREATED'
+								? 'gray'
+								: user.authUser.status === 'APPLIED'
+									? 'dark'
+									: user.authUser.status === 'ACCEPTED'
+										? 'green'
+										: user.authUser.status === 'REJECTED'
+											? 'red'
+											: user.authUser.status === 'WAITLISTED'
+												? 'orange'
+												: user.authUser.status === 'CONFIRMED'
+													? 'teal'
+													: user.authUser.status === 'DECLINED'
+														? 'pink'
+														: 'gray'}
+							variant="filled"
 							title={user.decision?.status ?? user.authUser.status}
-						></span>
+							style="margin-left: 1rem;"
+						>
+							{user.authUser.status.charAt(0) + user.authUser.status.slice(1).toLowerCase()}
+						</Badge>
 					</summary>
 					<div class="user">
 						<UserCard {user} {questions} teammates={user.teammates} />
