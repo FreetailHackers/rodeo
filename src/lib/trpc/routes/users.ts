@@ -9,7 +9,6 @@ import { getSettings } from './settings';
 import type { AuthSession, User, AuthUser, StatusChange } from '@prisma/client';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { canApply } from './admissions';
 import { removeInvalidTeamMembers } from './team';
 import natural from 'natural';
 const { WordTokenizer } = natural;
@@ -19,6 +18,7 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import { hash } from '@node-rs/argon2';
 import * as auth from '$lib/authenticate';
+import { canApplyWindowOk } from './admissions';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -106,7 +106,7 @@ export const usersRouter = t.router({
 		.use(authenticate(['HACKER', 'UNDECLARED', 'MENTOR', 'JUDGE', 'VOLUNTEER']))
 		.input(z.record(z.any()))
 		.mutation(async (req): Promise<void> => {
-			if (!(await canApply()) || req.ctx.user.status !== 'CREATED') {
+			if (!(await canApplyWindowOk()) || req.ctx.user.status !== 'CREATED') {
 				return;
 			}
 			// Validate application
@@ -166,7 +166,7 @@ export const usersRouter = t.router({
 		.input(z.enum(['HACKER', 'MENTOR', 'JUDGE', 'VOLUNTEER']))
 		.mutation(async (req): Promise<Record<string, string>> => {
 			// Ensure applications are open and the user has not received a decision yet
-			if (!(await canApply()) || req.ctx.user.status !== 'CREATED') {
+			if (!(await canApplyWindowOk()) || req.ctx.user.status !== 'CREATED') {
 				return {};
 			}
 			// Validate the user's data
@@ -262,7 +262,7 @@ export const usersRouter = t.router({
 	withdrawApplication: t.procedure
 		.use(authenticate(['UNDECLARED', 'HACKER', 'MENTOR', 'JUDGE', 'VOLUNTEER']))
 		.mutation(async (req): Promise<void> => {
-			if (!(await canApply()) || req.ctx.user.status !== 'APPLIED') {
+			if (!(await canApplyWindowOk()) || req.ctx.user.status !== 'APPLIED') {
 				return;
 			}
 			await prisma.authUser.update({
