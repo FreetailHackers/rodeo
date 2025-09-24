@@ -46,7 +46,6 @@
 					color: userQrStyle.backgroundOptions?.color || '#ffffff',
 				},
 			});
-			console.log(proxiedImageUrl);
 		} catch (error) {
 			qrCode = new QRCodeStyling({
 				width: 1000,
@@ -63,7 +62,6 @@
 					color: userQrStyle.backgroundOptions?.color || '#ffffff',
 				},
 			});
-			console.log(error);
 		}
 
 		qrCode.append(qrCodeContainer);
