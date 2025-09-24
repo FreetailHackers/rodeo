@@ -18,7 +18,6 @@ export const load = async (event) => {
 
 	if (qrCodeStyle.imageKey) {
 		imageUrl = await trpc(event).users.getQRCodeImageURL(qrCodeStyle.imageKey);
-		console.log(imageUrl);
 	}
 
 	if (qrCodeStyle?.imageKey)
