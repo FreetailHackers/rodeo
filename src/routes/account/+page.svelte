@@ -24,13 +24,17 @@
 	let qrCode: QRCodeStyling;
 	let qrCodeLoaded = $state(false);
 
+	const proxiedImageUrl = data.imageUrl
+		? `/api/proxy-image?url=${encodeURIComponent(data.imageUrl)}`
+		: undefined;
+
 	onMount(() => {
 		try {
 			qrCode = new QRCodeStyling({
 				width: 1000,
 				height: 1000,
 				data: data.user.id,
-				image: data.imageUrl || undefined,
+				image: proxiedImageUrl || undefined,
 				imageOptions: {
 					imageSize: 0.4,
 				},
@@ -42,7 +46,7 @@
 					color: userQrStyle.backgroundOptions?.color || '#ffffff',
 				},
 			});
-			console.log(data.imageUrl);
+			console.log(proxiedImageUrl);
 		} catch (error) {
 			qrCode = new QRCodeStyling({
 				width: 1000,
