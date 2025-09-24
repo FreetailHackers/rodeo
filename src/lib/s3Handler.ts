@@ -1,4 +1,6 @@
 import { PutObjectCommand, S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3';
+import { error } from '@sveltejs/kit';
+
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
 /*
@@ -28,5 +30,4 @@ export async function s3Upload(key: string, file: File): Promise<void> {
 		ContentType: file.type,
 	});
 	const result = await s3Client.send(putObjectCommand);
-	console.log(result);
 }
