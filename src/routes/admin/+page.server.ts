@@ -88,16 +88,15 @@ export const actions = {
 	qrCodeSettings: async (event) => {
 		const formData = await event.request.formData();
 
-		const qrIamge = formData.get('qr-image') as File;
+		const qrImage = formData.get('qr-image') as File;
+		const key = `qr-code/qr-image`;
 
-		if (qrIamge) {
-			if (qrIamge.size <= 1024 * 1024) {
-				const key = `qr-code/qr-image`;
-
+		if (qrImage.size != 0) {
+			if (qrImage.size <= 1024 * 1024) {
 				//delete any existing images
 				s3Delete(key);
 				//upload new image
-				s3Upload(key, qrIamge);
+				s3Upload(key, qrImage);
 
 				const qrConfig = {
 					imageKey: key,
@@ -115,6 +114,7 @@ export const actions = {
 				return 'Error in updating sponsor! Check your file!';
 			}
 		} else {
+			s3Delete(key);
 			const qrConfig = {
 				imageKey: undefined,
 				dotsOptions: {
