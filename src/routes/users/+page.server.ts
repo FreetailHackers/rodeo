@@ -1,15 +1,12 @@
 import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import type { Role, Status } from '@prisma/client';
-
-// ✨ add these
 import { getSettings } from '$lib/trpc/routes/settings';
-import { norm, nameLikelyMatches } from '$lib/blacklist';
+import { checkWatchlist } from '$lib/blacklist';
 
 export const load = async (event) => {
 	const user = await authenticate(event.locals.session, ['ADMIN', 'SPONSOR']);
 
-	// existing data fetches
 	const results = await trpc(event).users.search({
 		page: Number(event.url.searchParams.get('page') ?? 1),
 		key: event.url.searchParams.get('key') ?? '',
@@ -20,20 +17,31 @@ export const load = async (event) => {
 
 	const questions = await trpc(event).questions.get();
 
-	// ✨ load blacklist settings server-side (not getPublic)
+	// load blacklist arrays (emails / names)
 	const settings = await getSettings();
-	const blEmails = (settings.blacklistEmails ?? []).map(norm);
-	const blNames = settings.blacklistNames ?? [];
 
-	// attach teammates + isBlacklisted per row
 	const users = await Promise.all(
 		results.users.map(async (hacker) => {
-			const email = hacker.authUser?.email ?? '';
-			const name = hacker.authUser?.githubUsername ?? hacker.authUser?.email ?? '';
+			// normalize application payload (could be object or JSON string)
+			const app = (hacker.application ?? null) as Record<string, any> | null;
 
-			const isBlacklisted =
-				blEmails.includes(norm(email)) ||
-				(!!name && blNames.some((w) => nameLikelyMatches(name, w)));
+			const answersJoined = app ? JSON.stringify(app) : String(hacker.application ?? '');
+
+			const first =
+				app?.firstName ??
+				app?.name ?? // some forms store a single "name"
+				'';
+			const last = app?.lastName ?? '';
+
+			// fullName from application; fallback to authUser github/email (since authUser.name does not exist)
+			const fullName =
+				[first, last].filter(Boolean).join(' ').trim() ||
+				(hacker.authUser?.githubUsername ?? hacker.authUser?.email ?? '');
+
+			const isBlacklisted = checkWatchlist(hacker.authUser?.email, fullName, answersJoined, {
+				blacklistEmails: settings.blacklistEmails ?? [],
+				blacklistNames: settings.blacklistNames ?? [],
+			});
 
 			return {
 				...hacker,
@@ -46,7 +54,7 @@ export const load = async (event) => {
 	);
 
 	return {
-		settings: await trpc(event).settings.getPublic(), // keep your existing public settings for UI
+		settings: await trpc(event).settings.getPublic(),
 		questions: event.locals.user.roles.includes('ADMIN')
 			? questions
 			: questions.filter((q) => q.sponsorView),
