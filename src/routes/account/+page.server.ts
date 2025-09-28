@@ -3,13 +3,16 @@ import { trpc } from '$lib/trpc/router';
 
 export const load = async (event) => {
 	const user = await authenticate(event.locals.session, []);
-
 	if (user.roles.includes('HACKER')) {
 		return {
 			user: user,
 			team: await trpc(event).team.getTeam(),
 			invitations: await trpc(event).team.getTeamInvitations(),
 			group: await trpc(event).users.getGroup(),
+			pass: await trpc(event).pass.getPass({
+				uid: user.id,
+				group: (await trpc(event).users.getGroup()) || 'N/A',
+			}),
 		};
 	}
 

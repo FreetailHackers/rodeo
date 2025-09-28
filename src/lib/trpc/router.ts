@@ -8,6 +8,7 @@ import { questionsRouter } from './routes/questions';
 import { settingsRouter } from './routes/settings';
 import { usersRouter } from './routes/users';
 import { teamRouter } from './routes/team';
+import { passRouter } from './routes/applePass';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import { createContext, createContextTest, t, tTest } from './t';
 import type { RequestEvent } from '@sveltejs/kit';
@@ -24,6 +25,7 @@ const routes = {
 	settings: settingsRouter,
 	users: usersRouter,
 	team: teamRouter,
+	pass: passRouter,
 };
 
 export const router = t.router(routes);

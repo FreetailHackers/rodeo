@@ -6,6 +6,20 @@
 
 	let { data } = $props();
 
+	// all the download logic for the apple wallet pass
+	function downloadPass() {
+		if (data.pass === undefined) return;
+		const blob = new Blob([new Uint8Array(data.pass.data)], { type: data.pass.mimeType });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'hacktx-2025.pkpass';
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+		URL.revokeObjectURL(url);
+	}
+
 	let canvas = $state() as HTMLCanvasElement;
 	let closeModal = $state(false);
 
@@ -132,6 +146,7 @@
 			{/if}
 		</div>
 	{/if}
+
 	{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
 		<!-- Right Section with Hacker ID -->
 		<div class="right-section">
@@ -142,6 +157,11 @@
 					<canvas bind:this={canvas} id="qrcode"></canvas>
 					<img src="hacker-id/background.png" alt="hacker id-card" />
 				</div>
+				{#if data.pass}
+					<button class="wallet-download-button" onclick={downloadPass}>
+						<img src="appleWalletDownload.png" alt="apple wallet download" />
+					</button>
+				{/if}
 			{/if}
 			{#if data.user.status !== 'CONFIRMED'}
 				<p>Your application is still being processed.</p>
@@ -153,6 +173,19 @@
 <style>
 	h3 {
 		margin-bottom: 0.5em;
+	}
+
+	.wallet-download-button {
+		border: none;
+		padding: 0 0;
+		text-decoration: none;
+		cursor: pointer;
+		transition: all 0.1s;
+		background-color: var(--blue);
+		margin-top: 1.5rem;
+	}
+	.wallet-download-button img {
+		width: 10rem;
 	}
 
 	.container {
