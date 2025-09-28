@@ -9,7 +9,7 @@
 		isBlacklisted?: boolean;
 	};
 
-	// ✅ Use ONE prop shape: UserRow[] for users
+	// Use ONE prop shape: UserRow[] for users
 	let {
 		users,
 		self,
