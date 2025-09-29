@@ -10,7 +10,7 @@ export const load = async (event) => {
 		let imageUrl = null;
 
 		if (groupName) {
-			qrCodeStyle = (await trpc(event).qrCodeStyle.get(groupName)) as {
+			qrCodeStyle = (await trpc(event).group.getQRCode(groupName)) as {
 				imageKey?: string;
 				dotsOptions?: {
 					color: string;
@@ -22,7 +22,7 @@ export const load = async (event) => {
 			};
 
 			if (qrCodeStyle?.imageKey) {
-				imageUrl = await trpc(event).qrCodeStyle.getImageUrl(qrCodeStyle.imageKey);
+				imageUrl = await trpc(event).group.getImageUrl(qrCodeStyle.imageKey);
 			}
 		}
 
