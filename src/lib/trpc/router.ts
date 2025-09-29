@@ -14,6 +14,7 @@ import type { RequestEvent } from '@sveltejs/kit';
 import type { AuthUser } from '@prisma/client';
 import { blacklistRouter } from './routes/blacklist';
 import { QrCodeStyleRouter } from './routes/qrCodeStyle';
+import { groupRouter } from './routes/group';
 
 const routes = {
 	admissions: admissionsRouter,

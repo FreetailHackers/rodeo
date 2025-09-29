@@ -8,13 +8,22 @@ import { s3Delete, s3Upload } from '$lib/s3Handler';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+interface GroupWithQRCode {
+	id: string;
+	qrCodeStyle: {
+		dotsOptions?: { color?: string; type?: string };
+		backgroundOptions?: { color?: string };
+		imageKey?: string;
+	} | null;
+}
+
 export const load = async (event) => {
 	await authenticate(event.locals.session, ['ADMIN']);
 	return {
 		decisions: await trpc(event).admissions.getDecisions(),
 		settings: await trpc(event).settings.getAll(),
 		graph: await trpc(event).users.getStatusChanges(),
-		groups: await trpc(event).users.getAllGroups(),
+		groups: (await trpc(event).group.getGroups()) as GroupWithQRCode[],
 	};
 };
 
@@ -82,6 +91,7 @@ export const actions = {
 			return 'Please enter valid group names separated by commas.';
 		}
 
+		await trpc(event).group.createGroups(groupNames);
 		await trpc(event).users.splitGroups(groupNames);
 		return 'Groups successfully split and updated!';
 	},
@@ -110,7 +120,7 @@ export const actions = {
 						color: formData.get('backgroundColor') as string,
 					},
 				};
-				await trpc(event).qrCodeStyle.update(qrConfig);
+				await trpc(event).group.updateQRCode(qrConfig);
 				return 'QR Code successfully changed!';
 			} else {
 				return 'Error in updating sponsor! Check your file!';
@@ -128,7 +138,7 @@ export const actions = {
 					color: formData.get('backgroundColor') as string,
 				},
 			};
-			await trpc(event).qrCodeStyle.update(qrConfig);
+			await trpc(event).group.updateQRCode(qrConfig);
 			return 'QR Code successfully changed!';
 		}
 	},

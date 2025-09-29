@@ -60,17 +60,19 @@ model User {
   scanCount     Json           @default("{}")
   application   Json           @default("{}")
   teamId        Int?
-  mealGroup     String?
+  groupId       String?
   decision      Decision?
   scans         Scan[]
   statusChanges StatusChange[]
   authUser      AuthUser       @relation(fields: [authUserId], references: [id], onDelete: Cascade)
   team          Team?          @relation(fields: [teamId], references: [id])
+  group         Group?         @relation(fields: [groupId], references: [id])
 }
 
-model QrCodeStyle{ 
+model Group{ 
   id String @id @unique 
   qrCodeStyle Json? @default("{}") 
+  users User[]
 }
 
 model Announcement {
