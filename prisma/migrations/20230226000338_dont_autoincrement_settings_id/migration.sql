@@ -1,4 +1,0 @@
--- AlterTable
-ALTER TABLE "Settings" ALTER COLUMN "id" SET DEFAULT 0,
-ALTER COLUMN "id" DROP DEFAULT;
-DROP SEQUENCE "Settings_id_seq";
