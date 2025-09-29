@@ -8,6 +8,25 @@
 
 	let applicationOpenStatus = $state(data.settings.applicationOpen);
 
+	let selectedGroupId = $state(data.groups.length > 0 ? data.groups[0].id : '');
+
+	// Reactive values for colors based on selected group
+	let dotsColor = $derived(() => {
+		const group = data.groups.find((g) => g.id === selectedGroupId);
+		console.log(group?.qrCodeStyle?.dotsOptions?.color);
+		return group?.qrCodeStyle?.dotsOptions?.color || '#000000';
+	});
+
+	let backgroundColor = $derived(() => {
+		const group = data.groups.find((g) => g.id === selectedGroupId);
+		return group?.qrCodeStyle?.backgroundOptions?.color || '#ffffff';
+	});
+
+	let dotsType = $derived(() => {
+		const group = data.groups.find((g) => g.id === selectedGroupId);
+		return group?.qrCodeStyle?.dotsOptions?.type || 'rounded';
+	});
+
 	function handleFileChange(event: Event) {
 		const input = event.target as HTMLInputElement;
 		if (input.files && input.files.length > 0) {
@@ -146,13 +165,15 @@
 >
 	<h3>QR Code Styling</h3>
 
-	<div class="flex-row-left">
-		<select id="group" name="group" class="group-dropdown">
-			{#each data.groups as group}
-				<option value={group.mealGroup}>{group.mealGroup}</option>
-			{/each}
-		</select>
-	</div>
+	{#if data.groups.length >= 1}
+		<div class="flex-row-left">
+			<select id="group" name="group" class="group-dropdown" bind:value={selectedGroupId}>
+				{#each data.groups as group}
+					<option value={group.id}>{group.id}</option>
+				{/each}
+			</select>
+		</div>
+	{/if}
 
 	<div class="qr-grid">
 		<div class="qr-field">
@@ -168,7 +189,7 @@
 
 		<div class="qr-field">
 			<label for="dotsType">Dots Style</label>
-			<select id="dotsType" name="dotsType">
+			<select id="dotsType" name="dotsType" value={dotsType()}>
 				<option value="rounded">Rounded</option>
 				<option value="dots">Dots</option>
 				<option value="classy">Classy</option>
@@ -180,12 +201,12 @@
 
 		<div class="qr-field">
 			<label for="dotsColor">Dots Color</label>
-			<input type="color" id="dotsColor" name="dotsColor" value="#000000" />
+			<input type="color" id="dotsColor" name="dotsColor" value={dotsColor()} />
 		</div>
 
 		<div class="qr-field">
 			<label for="backgroundColor">Background Color</label>
-			<input type="color" id="backgroundColor" name="backgroundColor" value="#ffffff" />
+			<input type="color" id="backgroundColor" name="backgroundColor" value={backgroundColor()} />
 		</div>
 	</div>
 

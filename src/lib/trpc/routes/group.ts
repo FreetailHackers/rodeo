@@ -8,8 +8,19 @@ import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
-export const QrCodeStyleRouter = t.router({
-	update: t.procedure
+export const groupRouter = t.router({
+	createGroups: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(z.array(z.string()))
+		.mutation(async ({ input }): Promise<void> => {
+			await prisma.group.deleteMany({});
+
+			await prisma.group.createMany({
+				data: input.map((group) => ({ id: group })),
+			});
+		}),
+
+	updateQRCode: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(
 			z.object({
@@ -26,7 +37,7 @@ export const QrCodeStyleRouter = t.router({
 		)
 		.mutation(async ({ input }): Promise<void> => {
 			try {
-				const group = await prisma.qrCodeStyle.upsert({
+				const group = await prisma.group.upsert({
 					where: {
 						id: input.group,
 					},
@@ -46,20 +57,27 @@ export const QrCodeStyleRouter = t.router({
 						},
 					},
 				});
-
-				console.log(group);
 			} catch (error) {
 				console.error('Failed to update QR code style:', error);
 			}
 		}),
 
-	get: t.procedure
+	getGroups: t.procedure
+		.use(authenticate(['ADMIN']))
+		.query(async (req): Promise<{ id: string; qrCodeStyle: Prisma.JsonValue }[]> => {
+			const groups = await prisma.group.findMany({
+				select: { id: true, qrCodeStyle: true },
+			});
+			return groups;
+		}),
+
+	getQRCode: t.procedure
 		.use(authenticate(['HACKER', 'ADMIN']))
 		.input(z.string())
 		.query(async ({ input }): Promise<Prisma.JsonValue | null> => {
 			return (
 				(
-					await prisma.qrCodeStyle.findUnique({
+					await prisma.group.findUnique({
 						where: { id: input },
 					})
 				)?.qrCodeStyle ?? null
