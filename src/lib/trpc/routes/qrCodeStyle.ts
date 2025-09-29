@@ -1,4 +1,4 @@
-import type { Prisma, QrCodeStyle } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
 import { authenticate } from '../middleware';

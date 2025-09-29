@@ -68,9 +68,9 @@ model User {
   team          Team?          @relation(fields: [teamId], references: [id])
 }
 
-model QrCodeStyle{
-  id String @id @unique
-  qrCodeStyle Json? @default("{}")
+model QrCodeStyle{ 
+  id String @id @unique 
+  qrCodeStyle Json? @default("{}") 
 }
 
 model Announcement {
@@ -78,7 +78,7 @@ model Announcement {
   body      String
   published DateTime @default(now())
 }
-
+ 
 model Decision {
   userId String @id @unique
   status Status
