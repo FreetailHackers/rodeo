@@ -14,6 +14,7 @@ export const load = async (event) => {
 		decisions: await trpc(event).admissions.getDecisions(),
 		settings: await trpc(event).settings.getAll(),
 		graph: await trpc(event).users.getStatusChanges(),
+		groups: await trpc(event).users.getAllGroups(),
 	};
 };
 
@@ -99,6 +100,7 @@ export const actions = {
 				s3Upload(key, qrImage);
 
 				const qrConfig = {
+					group: formData.get('group') as string,
 					imageKey: key,
 					dotsOptions: {
 						color: formData.get('dotsColor') as string,
@@ -108,7 +110,7 @@ export const actions = {
 						color: formData.get('backgroundColor') as string,
 					},
 				};
-				await trpc(event).users.updateQRCodeStyle(qrConfig);
+				await trpc(event).qrCodeStyle.update(qrConfig);
 				return 'QR Code successfully changed!';
 			} else {
 				return 'Error in updating sponsor! Check your file!';
@@ -116,6 +118,7 @@ export const actions = {
 		} else {
 			s3Delete(key);
 			const qrConfig = {
+				group: formData.get('group') as string,
 				imageKey: undefined,
 				dotsOptions: {
 					color: formData.get('dotsColor') as string,
@@ -125,7 +128,7 @@ export const actions = {
 					color: formData.get('backgroundColor') as string,
 				},
 			};
-			await trpc(event).users.updateQRCodeStyle(qrConfig);
+			await trpc(event).qrCodeStyle.update(qrConfig);
 			return 'QR Code successfully changed!';
 		}
 	},
