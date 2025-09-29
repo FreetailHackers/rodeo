@@ -12,6 +12,7 @@ import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import { createContext, createContextTest, t, tTest } from './t';
 import type { RequestEvent } from '@sveltejs/kit';
 import type { AuthUser } from '@prisma/client';
+import { QrCodeStyleRouter } from './routes/qrCodeStyle';
 
 const routes = {
 	admissions: admissionsRouter,
@@ -24,6 +25,7 @@ const routes = {
 	settings: settingsRouter,
 	users: usersRouter,
 	team: teamRouter,
+	qrCodeStyle: QrCodeStyleRouter,
 };
 
 export const router = t.router(routes);

@@ -146,6 +146,14 @@
 >
 	<h3>QR Code Styling</h3>
 
+	<div class="flex-row-left">
+		<select id="group" name="group" class="group-dropdown">
+			{#each data.groups as group}
+				<option value={group.mealGroup}>{group.mealGroup}</option>
+			{/each}
+		</select>
+	</div>
+
 	<div class="qr-grid">
 		<div class="qr-field">
 			<label for="qr-image">QR Code Image (leave empty for no image)</label>
@@ -206,6 +214,13 @@
 	.flex-row {
 		display: flex;
 		justify-content: flex-end;
+		align-items: center;
+		gap: 1em;
+	}
+
+	.flex-row-left {
+		display: flex;
+		justify-content: flex-start;
 		align-items: center;
 		gap: 1em;
 	}
@@ -296,6 +311,18 @@
 
 	select {
 		width: 100%;
+	}
+
+	.group-dropdown {
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		font-size: 14px;
+		padding: 8px 12px;
+		background-color: white;
+		cursor: pointer;
+		width: 25%;
+		font-weight: bold;
+		color: black;
 	}
 
 	input[readonly] {
