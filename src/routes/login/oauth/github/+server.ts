@@ -1,39 +1,22 @@
-import { createGitHubClient } from '$lib/github';
+import { github } from '$lib/authenticate';
 import { generateState } from 'arctic';
-import type { RequestEvent } from '@sveltejs/kit';
-
-const PRIMARY_DOMAIN = 'rodeo.freetailhackers.com';
+import type { RequestEvent } from './$types';
 
 export const GET = async (event: RequestEvent) => {
-	const hostname = event.url.hostname;
-	const github = createGitHubClient();
-
-	if (hostname !== PRIMARY_DOMAIN) {
-		event.cookies.set('github_oauth_origin', hostname, {
-			path: '/',
-			httpOnly: true,
-			sameSite: import.meta.env.PROD ? 'none' : 'lax',
-			maxAge: 60 * 10,
-			secure: import.meta.env.PROD,
-		});
-
-		return new Response(null, {
-			status: 302,
-			headers: {
-				Location: `https://${PRIMARY_DOMAIN}/login/oauth/github`,
-			},
+	const state = generateState();
+	if (github === null) {
+		return new Response('GitHub OAuth is not configured.', {
+			status: 500,
 		});
 	}
-
-	const state = generateState();
 	const url = github.createAuthorizationURL(state, ['user:email']);
 
 	event.cookies.set('github_oauth_state', state, {
-		path: '/',
 		httpOnly: true,
-		sameSite: import.meta.env.PROD ? 'none' : 'lax',
 		maxAge: 60 * 10,
 		secure: import.meta.env.PROD,
+		path: '/',
+		sameSite: 'lax',
 	});
 
 	return new Response(null, {

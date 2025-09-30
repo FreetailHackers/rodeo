@@ -7,22 +7,19 @@
 </script>
 
 <div id="social-logins">
-	{#if providers.google}
-		<a href="/login/oauth/google" class="social">
-			<button>
-				<img src="/auth-assets/google.svg" alt="Google Logo" />
-				<span>Continue with Google</span>
-			</button>
-		</a>
-	{/if}
-	{#if providers.github}
-		<a href="/login/oauth/github" class="social">
-			<button>
-				<img src="/auth-assets/github.svg" alt="GitHub Logo" />
-				<span>Continue with GitHub</span>
-			</button>
-		</a>
-	{/if}
+	<a href="/login/oauth/google" class="social" data-sveltekit-reload>
+		<button>
+			<img src="/auth-assets/google.svg" alt="Google Logo" />
+			<span>Continue with Google</span>
+		</button>
+	</a>
+
+	<a href="/login/oauth/github" class="social" data-sveltekit-reload>
+		<button>
+			<img src="/auth-assets/github_light.svg" alt="GitHub Logo" />
+			<span>Continue with GitHub</span>
+		</button>
+	</a>
 </div>
 
 <style>
@@ -30,8 +27,8 @@
 		margin-bottom: 1em;
 		width: 100%;
 		background-color: transparent;
-		color: grey;
-		border: 1px solid grey;
+		color: var(--grey);
+		border: 1px solid var(--grey);
 		border-radius: var(--border-radius);
 		padding: 0.5em 1em;
 	}

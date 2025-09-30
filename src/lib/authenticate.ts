@@ -136,12 +136,6 @@ export function setSessionTokenCookie(event: RequestEvent, token: string, expire
 export function deleteSessionTokenCookie(event: RequestEvent) {
 	const isProduction = process.env.NODE_ENV === 'production' || event.url.hostname !== 'localhost';
 
-	console.log('Deleting session cookie:', {
-		hostname: event.url.hostname,
-		isProduction,
-		cookieName: sessionCookieName,
-	});
-
 	event.cookies.delete(sessionCookieName, {
 		httpOnly: true,
 		sameSite: isProduction ? 'none' : 'lax',
@@ -324,80 +318,6 @@ export async function createGitHubUser(
 }
 
 /**
- * GitHub authentication instance for use with the Arctic library.
- * Note: This uses a static domain and is mainly for checking if GitHub is configured.
- * For OAuth flows, use createGitHubClient() instead to get dynamic hostname support.
- */
-export const githubAuth = new GitHub(
-	process.env.GITHUB_CLIENT_ID!,
-	process.env.GITHUB_CLIENT_SECRET!,
-	`${process.env.DOMAIN_NAME}/login/oauth/github/callback`,
-);
-
-/**
- * Helper function to find user using their Google ID.
- */
-export async function getUserFromGoogleId(googleId: string): Promise<AuthUser | null> {
-	const users = await prisma.authUser.findMany({
-		where: { googleId: googleId },
-	});
-	return users.length > 0 ? users[0] : null;
-}
-
-/**
- * Creates a new user in the database with the given Google ID, username, and email.
- */
-export async function createGoogleUser(
-	googleId: string,
-	googleUsername: string,
-	email: string,
-): Promise<AuthUser> {
-	const userId = crypto.randomUUID();
-
-	const existingUserByEmail = await prisma.authUser.findUnique({
-		where: { email },
-	});
-
-	if (existingUserByEmail) {
-		throw new Error(
-			`User with email ${email} already exists. Cannot create new user with this Google account.`,
-		);
-	}
-
-	const newUser = await prisma.authUser.create({
-		data: {
-			id: userId,
-			email: email,
-			googleId: googleId,
-			goodleUsername: googleUsername,
-			roles: ['UNDECLARED'],
-			status: 'CREATED',
-			verifiedEmail: false,
-		},
-	});
-
-	// Create the corresponding User record in the User table
-	await prisma.user.create({
-		data: {
-			authUserId: newUser.id,
-			application: {},
-			scanCount: {},
-		},
-	});
-
-	return newUser;
-}
-
-/**
- * Google authentication instance for use with the Arctic library.
- */
-export const googleAuth = new Google(
-	import.meta.env.VITE_GOOGLE_CLIENT_ID,
-	import.meta.env.VITE_GOOGLE_CLIENT_SECRET,
-	`${process.env.DOMAIN_NAME}/login/google/callback`,
-);
-
-/**
  * Verifies if the provided email is valid and meets basic criteria.
  * Returns true if valid, false otherwise.
  */
@@ -416,4 +336,33 @@ export async function hashPassword(password: string): Promise<string> {
 		outputLen: 32,
 		parallelism: 1,
 	});
+}
+
+/**
+ * GitHub OAuth client instance.
+ */
+export const github =
+	process.env.NODE_ENV === 'production'
+		? new GitHub(
+				process.env.GITHUB_CLIENT_ID!,
+				process.env.GITHUB_CLIENT_SECRET!,
+				`${process.env.DOMAIN_NAME}/login/oauth/github/callback`,
+			)
+		: null;
+
+/**
+ * Google OAuth client instance.
+ */
+export const google = new Google(
+	process.env.GOOGLE_CLIENT_ID!,
+	process.env.GOOGLE_CLIENT_SECRET!,
+	`${process.env.DOMAIN_NAME}/login/oauth/google/callback`,
+);
+
+export function createGitHubClient(redirectUri: string) {
+	return new GitHub(process.env.GITHUB_CLIENT_ID!, process.env.GITHUB_CLIENT_SECRET!, redirectUri);
+}
+
+export function createGoogleClient(redirectUri: string) {
+	return new Google(process.env.GOOGLE_CLIENT_ID!, process.env.GOOGLE_CLIENT_SECRET!, redirectUri);
 }
