@@ -1,11 +1,11 @@
-import type { Prisma, Status } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
 import { prisma } from '../db';
 import { sendEmail } from '../email';
 import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getSettings } from './settings';
-import { Role } from '@prisma/client';
+import { Role, Status } from '@prisma/client';
 
 /**
  * Considers applicationOpen, applicationDeadline, and applicationLimit
@@ -158,18 +158,26 @@ export const admissionsRouter = t.router({
 	 */
 	getAppliedUser: t.procedure
 		.use(authenticate(['ADMIN']))
-		.input(z.object({ role: z.nativeEnum(Role) }))
+		.input(
+			z.object({
+				role: z.nativeEnum(Role),
+				status: z.nativeEnum(Status).optional(),
+			}),
+		)
 		.query(
 			async (
 				req,
 			): Promise<Prisma.UserGetPayload<{
 				include: { authUser: true; decision: true };
 			}> | null> => {
+				const statusFilter = req.input.status
+					? [req.input.status]
+					: [Status.APPLIED, Status.WAITLISTED];
 				return await prisma.user.findFirst({
 					where: {
 						authUser: {
 							roles: { has: req.input.role },
-							status: { in: ['APPLIED', 'WAITLISTED'] },
+							status: { in: statusFilter },
 						},
 						decision: null,
 					},
