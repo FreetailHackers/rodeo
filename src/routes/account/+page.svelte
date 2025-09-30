@@ -147,12 +147,10 @@
 				<h3>RSVP Required</h3>
 				<p>Click here to RSVP for the event!</p>
 				<a href="/apply" class="user-button">RSVP Now</a>
-			{/if}
-			{#if data.user.status === 'DECLINED'}
+			{:else if data.user.status === 'DECLINED'}
 				<h3>Invitation Declined</h3>
 				<p>You have declined your invitation.</p>
-			{/if}
-			{#if data.user.status !== 'CONFIRMED' && data.user.status !== 'ACCEPTED' && data.user.status !== 'DECLINED'}
+			{:else}
 				<p>Your application is still being processed.</p>
 			{/if}
 		</div>
