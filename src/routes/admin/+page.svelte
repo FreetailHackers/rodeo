@@ -14,7 +14,7 @@
 	let dotsColor = $derived(() => {
 		const group = data.groups.find((g) => g.id === selectedGroupId);
 		console.log(group?.qrCodeStyle?.dotsOptions?.color);
-		return group?.qrCodeStyle?.dotsOptions?.color || '#000000';
+		return group?.qrCodeStyle?.dotsOptions?.color || '#`000000`';
 	});
 
 	let backgroundColor = $derived(() => {
