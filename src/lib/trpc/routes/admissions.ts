@@ -8,63 +8,56 @@ import { t } from '../t';
 import { getSettings } from './settings';
 import { Role } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import { checkWatchlist } from '../../blacklist';
+import { checkBlacklist } from '../../blacklist';
 
 type AppliedUser = Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }> & {
 	isBlacklisted: boolean;
 };
 
-/** Helper: are applications open given deadline/limit? */
-export async function canApplyWindowOk(): Promise<boolean> {
+/**
+ * Considers applicationOpen, applicationDeadline, and applicationLimit
+ * to determine whether or not new users can apply.
+ * User must be an admin.
+ */
+export const canApply = async (): Promise<boolean> => {
 	const settings = await getSettings();
 	const count = await prisma.authUser.count({
-		where: { status: { in: ['APPLIED', 'ACCEPTED', 'CONFIRMED'] } },
+		where: {
+			status: { in: ['APPLIED', 'ACCEPTED', 'CONFIRMED'] },
+		},
 	});
-
-	const deadlineOk =
-		settings.applicationDeadline === null ||
-		settings.applicationDeadline === undefined ||
-		settings.applicationDeadline > new Date();
-
-	const limitOk =
-		settings.applicationLimit === null ||
-		settings.applicationLimit === undefined ||
-		count <= settings.applicationLimit;
-
-	return Boolean(settings.applicationOpen && deadlineOk && limitOk);
-}
+	return (
+		settings.applicationOpen &&
+		(settings.applicationDeadline === null || settings.applicationDeadline > new Date()) &&
+		(settings.applicationLimit === null || count <= settings.applicationLimit)
+	);
+};
 
 async function releaseDecisions(ids?: string[]): Promise<void> {
 	const hackers = await prisma.user.findMany({
 		include: { authUser: true, decision: true },
 		where: ids === undefined ? {} : { authUserId: { in: ids } },
 	});
-
-	// Safety: decisions should only exist for APPLIED/WAITLISTED
+	// The codebase should already enforce that decisions can only exist
+	// for users with status APPLIED or WAITLISTED, but check for safety
 	const invalid = hackers
-		.filter((h) => !['APPLIED', 'WAITLISTED'].includes(h.authUser.status))
-		.map((h) => h.authUserId);
-
+		.filter((hacker) => !['APPLIED', 'WAITLISTED'].includes(hacker.authUser.status))
+		.map((hacker) => hacker.authUserId);
 	await prisma.decision.deleteMany({ where: { userId: { in: invalid } } });
-
-	for (const decision of ['ACCEPTED', 'REJECTED', 'WAITLISTED'] as const) {
-		const decisions = hackers.filter((h) => h.decision?.status === decision);
-
+	for (const decision of ['ACCEPTED', 'REJECTED', 'WAITLISTED']) {
+		const decisions = hackers.filter((hacker) => hacker.decision?.status === decision);
 		const updateStatus = prisma.authUser.updateMany({
-			where: { id: { in: decisions.map((d) => d.authUserId) } },
+			where: { id: { in: decisions.map((decision) => decision.authUserId) } },
 			data: { status: decision as Status },
 		});
-
 		const deleteDecision = prisma.decision.deleteMany({
-			where: { userId: { in: decisions.map((d) => d.authUserId) } },
+			where: { userId: { in: decisions.map((decision) => decision.authUserId) } },
 		});
-
 		await prisma.$transaction([updateStatus, deleteDecision]);
 
-		// email template selection
-		const settings = await getSettings();
 		let template = '';
-		let isHTML = false;
+		let isHTML: boolean = false;
+		const settings = await getSettings();
 		if (decision === 'ACCEPTED') {
 			template = settings.acceptTemplate;
 			isHTML = settings.acceptIsHTML;
@@ -90,9 +83,15 @@ async function releaseDecisions(ids?: string[]): Promise<void> {
 }
 
 export const admissionsRouter = t.router({
-	canApply: t.procedure.query(async ({ ctx }) => {
+	/**
+	 * Determines if the current user is allowed to apply:
+	 * - Respects application window/deadline/limit (via canApply helper)
+	 * - Returns false if user’s email or name matches blacklist rules
+	 */
+
+	checkIfBlacklisted: t.procedure.query(async ({ ctx }) => {
 		// 1) window/limit
-		const windowOk = await canApplyWindowOk();
+		const windowOk = await canApply();
 		if (!windowOk) return false;
 
 		// 2) blacklist via Settings arrays
@@ -151,15 +150,15 @@ export const admissionsRouter = t.router({
 				const last = (hacker.application as any)?.lastName || '';
 				const fullName = [first, last].filter(Boolean).join(' ').trim();
 
-				const isWatchlisted = checkWatchlist(
+				const isBlacklisted = checkBlacklist(
 					hacker.authUser?.email,
 					fullName,
 					answersJoined,
 					lists,
 				);
 
-				// HARD BLOCK accept for watchlisted
-				if (req.input.decision === 'ACCEPTED' && isWatchlisted) {
+				// HARD BLOCK accept for blacklisted
+				if (req.input.decision === 'ACCEPTED' && isBlacklisted) {
 					blocked.push({ id, email: hacker.authUser?.email });
 					continue;
 				}
@@ -178,7 +177,7 @@ export const admissionsRouter = t.router({
 				const list = blocked.map((b) => b.email ?? b.id).join(', ');
 				throw new TRPCError({
 					code: 'FORBIDDEN',
-					message: `Watchlisted applicant(s) cannot be accepted: ${list}`,
+					message: `Blacklisted applicant(s) cannot be accepted: ${list}`,
 				});
 			}
 		}),
@@ -207,14 +206,21 @@ export const admissionsRouter = t.router({
 		},
 	),
 
-	/** Releases all decisions. User must be an admin. */
+	/**
+	 * Releases all decisions. User must be an admin. This will empty
+	 * the decisions table, apply all pending decisions to the users
+	 * table, and send out email notifications.
+	 */
 	releaseAllDecisions: t.procedure
 		.use(authenticate(['ADMIN']))
 		.mutation(async (): Promise<void> => {
 			await releaseDecisions();
 		}),
 
-	/** Bulk releases a list of pending decisions by user ID. Admin only. */
+	/**
+	 * Bulk releases a list of pending decisions by user ID. User must
+	 * be an admin. This will send out email notifications.
+	 */
 	releaseDecisions: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(z.array(z.string()))
@@ -222,7 +228,10 @@ export const admissionsRouter = t.router({
 			await releaseDecisions(req.input);
 		}),
 
-	/** Gets one user who submitted an application. Admin only. */
+	/**
+	 * Gets one user that has submitted their application. User must be
+	 * an admin.
+	 */
 	getAppliedUser: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(z.object({ role: z.nativeEnum(Role) }))
@@ -252,7 +261,7 @@ export const admissionsRouter = t.router({
 			const last = (user.application as any)?.lastName || '';
 			const fullName = [first, last].filter(Boolean).join(' ').trim();
 
-			const isBlacklisted = checkWatchlist(
+			const isBlacklisted = checkBlacklist(
 				user.authUser?.email,
 				fullName || user.authUser?.githubUsername || user.authUser?.email || '',
 				answersJoined,

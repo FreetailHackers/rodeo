@@ -43,6 +43,10 @@ html {
 	/* Specify new rules only for special cases */
 	font-family: var(--font-standard), serif;
 	font-weight: 400;
+
+	/* Status/UI feedback colors for error/loading messages*/
+	--error-color: #e66;
+	--muted-color: var(--grey);
 }
 
 p {
@@ -356,6 +360,14 @@ dialog button {
 	align-items: center;
 	justify-content: center;
 	padding: 1rem;
+}
+
+.error {
+	color: var(--error-color);
+}
+
+.muted {
+	color: var(--muted-color);
 }
 
 /* Login, Register, Reset Password */

@@ -21,7 +21,7 @@ export const load = async (event) => {
 		rsvpDeadline: deadline,
 		questions: await trpc(event).questions.get(),
 		settings: settings,
-		canApply: await trpc(event).admissions.canApply(),
+		canApply: await trpc(event).admissions.checkIfBlacklisted(),
 	};
 };
 
@@ -66,7 +66,7 @@ export const actions = {
 	},
 
 	finish: async (event) => {
-		if (!(await trpc(event).admissions.canApply())) {
+		if (!(await trpc(event).admissions.checkIfBlacklisted())) {
 			throw redirect(301, '/apply');
 		}
 		const formData = await event.request.formData();
@@ -85,7 +85,7 @@ export const actions = {
 	},
 
 	withdraw: async (event) => {
-		if (!(await trpc(event).admissions.canApply())) {
+		if (!(await trpc(event).admissions.checkIfBlacklisted())) {
 			return new Response(null, {
 				status: 301,
 				headers: { location: '/apply' },

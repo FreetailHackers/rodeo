@@ -57,7 +57,7 @@
               This will NOT send any notifications and WILL delete any pending (unreleased) decisions.`;
 		}
 		if (action === 'add-role') {
-			if (selectedUsers.some((u) => u.authUserId === self.id)) {
+			if (selectedUsers.filter((user) => user.authUserId === self.id).length > 0) {
 				throw 'You cannot change your own role.';
 			}
 			return `${selected.filter(Boolean).length} selected users will have the chosen role assigned to them.`;
@@ -69,10 +69,12 @@
 			return `${selected.filter(Boolean).length} selected users will have the chosen role removed.`;
 		}
 		if (action === 'release') {
-			if (selectedUsers.some((u) => u.decision === null)) {
+			if (selectedUsers.filter((user) => user.decision === null).length > 0) {
 				throw 'You can only release decisions for users with a pending decision.';
 			}
-			return `${selected.filter(Boolean).length} selected users will have their decisions released.`;
+			return `${
+				selected.filter(Boolean).length
+			} selected users will have their decisions released.`;
 		}
 	}
 </script>

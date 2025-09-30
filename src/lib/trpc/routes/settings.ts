@@ -117,4 +117,36 @@ export const settingsRouter = t.router({
 				create: { id: 0, ...req.input },
 			});
 		}),
+
+	/**
+	 * Admin-only TRPC mutation to update blacklist settings
+	 * Cleans (trim/lowercase), removes duplicates, and saves emails/names to the settings table
+	 */
+
+	updateBlacklist: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(
+			z.object({
+				emails: z.array(z.string()).default([]),
+				names: z.array(z.string()).default([]),
+			}),
+		)
+		.mutation(async (req) => {
+			// normalize and remove duplicates
+			const normEmail = (s: string) => s.trim().toLowerCase();
+			const normName = (s: string) => s.trim();
+
+			const emails = Array.from(new Set(req.input.emails.map(normEmail))).filter(Boolean);
+			const names = Array.from(new Set(req.input.names.map(normName))).filter(Boolean);
+
+			// save to settings row
+			await prisma.settings.upsert({
+				where: { id: 0 },
+				update: { blacklistEmails: emails, blacklistNames: names },
+				create: { id: 0, blacklistEmails: emails, blacklistNames: names },
+			});
+
+			// return cleaned arrays
+			return { emails, names };
+		}),
 });

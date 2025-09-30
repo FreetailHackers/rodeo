@@ -19,7 +19,7 @@ export function nameLikelyMatches(candidate: string, watch: string) {
 	return (af === bf && al === bl) || (a.includes(bf) && a.includes(bl));
 }
 
-export function checkWatchlist(
+export function checkBlacklist(
 	email: string | undefined,
 	fullName: string | undefined,
 	answersJoined: string | undefined,
@@ -34,7 +34,7 @@ export function checkWatchlist(
 		settings.blacklistEmails?.some((e) => e && answers.includes(e));
 
 	const nameHit =
-		(!!name && settings.blacklistNames?.some((w) => nameLikelyMatches(name, w))) ||
+		(name && settings.blacklistNames?.some((w) => nameLikelyMatches(name, w))) ||
 		settings.blacklistNames?.some((w) => {
 			const wNorm = norm(w);
 			return (
@@ -42,5 +42,5 @@ export function checkWatchlist(
 			);
 		});
 
-	return !!(emailHit || nameHit);
+	return emailHit || nameHit;
 }

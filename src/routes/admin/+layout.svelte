@@ -23,6 +23,11 @@
 		<li>
 			<a href="/admin/homepage" class:active={page.url.pathname === '/admin/homepage'}>Homepage</a>
 		</li>
+		<li>
+			<a href="/admin/blacklist" class:active={page.url.pathname === '/admin/blacklist'}
+				>BlackList</a
+			>
+		</li>
 	</ul>
 
 	{@render children?.()}

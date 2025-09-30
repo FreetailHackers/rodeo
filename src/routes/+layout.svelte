@@ -76,11 +76,6 @@
 							>Admissions</a
 						>
 					</li>
-					<li>
-						<a href="/blacklist" class:active={page.url.pathname.startsWith('/blacklist')}
-							>Blacklist</a
-						>
-					</li>
 				{/if}
 			{/if}
 

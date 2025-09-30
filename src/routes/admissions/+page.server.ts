@@ -12,10 +12,12 @@ export const load = async (event) => {
 	const roleParam = event.url.searchParams.get('role');
 	const selectedRole = (roleParam as Role) || Role.HACKER;
 
-	const admissionRelevantQuestions = questions.filter((q) => {
-		if (q.hideAdmission) return false;
-		if (!q.targetGroup?.length) return true;
-		return q.targetGroup.some((r) => r.toLowerCase() === selectedRole.toLowerCase());
+	const admissionRelevantQuestions = questions.filter((question) => {
+		if (question.hideAdmission) return false;
+		if (!question.targetGroup?.length) return true;
+		return question.targetGroup.some(
+			(targetRole) => targetRole.toLowerCase() === selectedRole.toLowerCase(),
+		);
 	});
 
 	const user = await trpc(event).admissions.getAppliedUser({ role: selectedRole });
@@ -46,7 +48,7 @@ export const load = async (event) => {
 			// ignore
 		}
 		const emailHitA = emailsFromSettings.includes(norm(email));
-		const nameHitA = !!name && namesFromSettings.some((w) => nameLikelyMatches(name, w));
+		const nameHitA = name && namesFromSettings.some((w) => nameLikelyMatches(name, w));
 
 		// TRPC blacklist router (if present)
 		let trpcHit = false;
@@ -83,17 +85,18 @@ export const load = async (event) => {
 };
 
 export const actions = {
-	// One handler for Accept / Reject / Waitlist
-	default: async (event) => {
-		const fd = await event.request.formData();
-		const id = fd.get('id') as string | null;
-		const decision = fd.get('decision') as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' | null;
+	accept: async (event) => {
+		const id = (await event.request.formData()).get('id') as string;
+		await trpc(event).admissions.decide({ decision: 'ACCEPTED', ids: [id] });
+	},
 
-		if (!id || !decision) return {};
+	reject: async (event) => {
+		const id = (await event.request.formData()).get('id') as string;
+		await trpc(event).admissions.decide({ decision: 'REJECTED', ids: [id] });
+	},
 
-		// Calls your existing TRPC mutation (blocks ACCEPTED if blacklisted)
-		await trpc(event).admissions.decide({ decision, ids: [id] });
-
-		return { ok: true };
+	waitlist: async (event) => {
+		const id = (await event.request.formData()).get('id') as string;
+		await trpc(event).admissions.decide({ decision: 'WAITLISTED', ids: [id] });
 	},
 };

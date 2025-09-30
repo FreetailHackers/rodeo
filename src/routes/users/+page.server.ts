@@ -2,7 +2,7 @@ import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import type { Role, Status } from '@prisma/client';
 import { getSettings } from '$lib/trpc/routes/settings';
-import { checkWatchlist } from '$lib/blacklist';
+import { checkBlacklist } from '$lib/blacklist';
 
 export const load = async (event) => {
 	const user = await authenticate(event.locals.session, ['ADMIN', 'SPONSOR']);
@@ -38,7 +38,7 @@ export const load = async (event) => {
 				[first, last].filter(Boolean).join(' ').trim() ||
 				(hacker.authUser?.githubUsername ?? hacker.authUser?.email ?? '');
 
-			const isBlacklisted = checkWatchlist(hacker.authUser?.email, fullName, answersJoined, {
+			const isBlacklisted = checkBlacklist(hacker.authUser?.email, fullName, answersJoined, {
 				blacklistEmails: settings.blacklistEmails ?? [],
 				blacklistNames: settings.blacklistNames ?? [],
 			});

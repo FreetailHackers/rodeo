@@ -16,7 +16,9 @@
 	}
 </script>
 
-<svelte:head><title>Rodeo | Admissions</title></svelte:head>
+<svelte:head>
+	<title>Rodeo | Admissions</title>
+</svelte:head>
 
 <div class="main-content">
 	{#if data.user === null}
@@ -52,22 +54,23 @@
 				<form method="POST" use:enhance>
 					<input type="hidden" name="id" value={data.user.authUserId} />
 
+					<!-- Accept -->
 					<button
 						type="submit"
-						name="decision"
-						value="ACCEPTED"
+						formaction="?/accept"
 						disabled={data.blacklistHit}
 						title={data.blacklistHit ? 'Blacklisted — action disabled' : 'Accept'}
 					>
 						Accept
 					</button>
 
-					<button type="submit" name="decision" value="REJECTED"> Reject </button>
+					<!-- Reject -->
+					<button type="submit" formaction="?/reject">Reject</button>
 
+					<!-- Waitlist -->
 					<button
 						type="submit"
-						name="decision"
-						value="WAITLISTED"
+						formaction="?/waitlist"
 						disabled={data.blacklistHit}
 						title={data.blacklistHit ? 'Blacklisted — action disabled' : 'Waitlist'}
 					>
