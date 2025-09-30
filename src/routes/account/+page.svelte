@@ -132,7 +132,7 @@
 			{/if}
 		</div>
 	{/if}
-	{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED')}
+	{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED' || data.user.status === 'ACCEPTED' || data.user.status === 'DECLINED')}
 		<!-- Right Section with Hacker ID -->
 		<div class="right-section">
 			{#if data.user.status === 'CONFIRMED'}
@@ -143,7 +143,14 @@
 					<img src="hacker-id/background.png" alt="hacker id-card" />
 				</div>
 			{/if}
-			{#if data.user.status !== 'CONFIRMED'}
+			{#if data.user.status === 'ACCEPTED'}
+				<h3>RSVP Required</h3>
+				<p>Click here to RSVP for the event!</p>
+				<a href="/apply" class="user-button">RSVP Now</a>
+			{:else if data.user.status === 'DECLINED'}
+				<h3>Invitation Declined</h3>
+				<p>You have declined your invitation.</p>
+			{:else}
 				<p>Your application is still being processed.</p>
 			{/if}
 		</div>
