@@ -8,11 +8,23 @@
 	let { data } = $props();
 
 	let selectedRole = $state(data.selectedRole) as Role;
+	let selectedStatus = $state(data.selectedStatus) as 'APPLIED' | 'WAITLISTED' | undefined;
 
 	function lookingAt(role: Role) {
 		selectedRole = role;
 		const url = new URL(page.url);
 		url.searchParams.set('role', role);
+		goto(url.toString(), { replaceState: true });
+	}
+
+	function filterByStatus(status?: 'APPLIED' | 'WAITLISTED') {
+		selectedStatus = status;
+		const url = new URL(page.url);
+		if (status) {
+			url.searchParams.set('status', status);
+		} else {
+			url.searchParams.delete('status');
+		}
 		goto(url.toString(), { replaceState: true });
 	}
 </script>
@@ -21,19 +33,34 @@
 	<title>Rodeo | Admissions</title>
 </svelte:head>
 <div class="main-content">
-	{#if data.user === null}
-		<p>Congratulations! You've read every application.</p>
-	{:else}
-		<div class="role-buttons">
-			<button onclick={() => lookingAt(Role.HACKER)}>Hackers</button>
-			<button onclick={() => lookingAt(Role.JUDGE)}>Judges</button>
-			<button onclick={() => lookingAt(Role.MENTOR)}>Mentors</button>
-			<button onclick={() => lookingAt(Role.VOLUNTEER)}>Volunteers</button>
-		</div>
+	<div class="role-buttons">
+		<button onclick={() => lookingAt(Role.HACKER)}>Hackers</button>
+		<button onclick={() => lookingAt(Role.JUDGE)}>Judges</button>
+		<button onclick={() => lookingAt(Role.MENTOR)}>Mentors</button>
+		<button onclick={() => lookingAt(Role.VOLUNTEER)}>Volunteers</button>
+	</div>
 
-		<!-- Display the selected role -->
+	<div class="status-buttons">
+		<button onclick={() => filterByStatus()}> All </button>
+		<button onclick={() => filterByStatus('APPLIED')}> Applied </button>
+		<button onclick={() => filterByStatus('WAITLISTED')}> Waitlisted </button>
+	</div>
+
+	{#if data.user === null}
+		<p>
+			No more unread <strong>{data.selectedStatus?.toLowerCase()}</strong>
+			<strong>{data.selectedRole.toLowerCase()}</strong> applications found.
+		</p>
+		<p>Select "All" to see both applied and waitlisted applicants, or choose a different role.</p>
+	{:else}
+		<!-- Display the selected role and status -->
 		{#if selectedRole}
-			<p>You are looking at <strong>{selectedRole}</strong> applicants</p>
+			<p>
+				You are looking at <strong>{selectedRole}</strong> applicants
+				{#if selectedStatus}
+					with status <strong>{selectedStatus}</strong>
+				{/if}
+			</p>
 		{/if}
 
 		{#if data.user.authUser.roles?.includes(selectedRole)}
@@ -65,7 +92,12 @@
 		background: linear-gradient(transparent, var(--blue)); /* changed for dark mode */
 	}
 
-	.role-buttons {
+	.status-buttons {
+		margin-top: 2rem;
+	}
+
+	.role-buttons,
+	.status-buttons {
 		display: flex;
 		justify-content: space-between;
 		gap: 1rem;
