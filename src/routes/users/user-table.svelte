@@ -144,6 +144,8 @@
 							<option value="JUDGE">Judge</option>
 							<option value="VOLUNTEER">Volunteer</option>
 							<option value="SPONSOR">Sponsor</option>
+							<option value="MENTOR">Mentor</option>
+							<option value="UNDECLARED">Undeclared</option>
 						</select>
 					</div>
 					<div class="flex-align-center">
@@ -164,6 +166,8 @@
 							<option value="JUDGE">Judge</option>
 							<option value="VOLUNTEER">Volunteer</option>
 							<option value="SPONSOR">Sponsor</option>
+							<option value="MENTOR">Mentor</option>
+							<option value="UNDECLARED">Undeclared</option>
 						</select>
 					</div>
 					<div class="flex-align-center">
