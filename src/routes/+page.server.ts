@@ -12,7 +12,7 @@ export const load = async (event) => {
 		faq: await trpc(event).faq.getAll(),
 		challenges: await trpc(event).challenges.getAll(),
 		sponsors: await trpc(event).sponsors.getSponsorsWithImageValues(),
-		canApply: await trpc(event).admissions.checkIfBlacklisted(),
+		canApply: await trpc(event).admissions.canApply(),
 	};
 };
 
