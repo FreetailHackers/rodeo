@@ -1,7 +1,6 @@
-// src/routes/admissions/+page.server.ts
 import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
-import { Role } from '@prisma/client';
+import { Role, Status } from '@prisma/client';
 import { norm, nameLikelyMatches } from '$lib/blacklist';
 import { prisma } from '$lib/trpc/db';
 
@@ -10,7 +9,9 @@ export const load = async (event) => {
 	const questions = await trpc(event).questions.get();
 
 	const roleParam = event.url.searchParams.get('role');
+	const statusParam = event.url.searchParams.get('status');
 	const selectedRole = (roleParam as Role) || Role.HACKER;
+	const selectedStatus = statusParam ? (statusParam as Status) : undefined;
 
 	const admissionRelevantQuestions = questions.filter((question) => {
 		if (question.hideAdmission) return false;
@@ -20,7 +21,10 @@ export const load = async (event) => {
 		);
 	});
 
-	const user = await trpc(event).admissions.getAppliedUser({ role: selectedRole });
+	const user = await trpc(event).admissions.getAppliedUser({
+		role: selectedRole,
+		status: selectedStatus,
+	});
 
 	let blacklistHit = false;
 	if (user) {
@@ -81,6 +85,7 @@ export const load = async (event) => {
 		teammates: user !== null ? await trpc(event).team.getTeammates(user.authUserId) : [],
 		selectedRole,
 		blacklistHit: !!user?.isBlacklisted,
+		selectedStatus: selectedStatus,
 	};
 };
 
