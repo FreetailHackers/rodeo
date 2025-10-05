@@ -1,7 +1,7 @@
 import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import { Role, Status } from '@prisma/client';
-import { norm, nameLikelyMatches } from '$lib/blacklist';
+import { normalizeString, nameLikelyMatches } from '$lib/blacklist';
 import { prisma } from '$lib/trpc/db';
 
 export const load = async (event) => {
@@ -46,12 +46,12 @@ export const load = async (event) => {
 			const s = await prisma.settings.findFirst({
 				select: { blacklistEmails: true, blacklistNames: true },
 			});
-			emailsFromSettings = (s?.blacklistEmails ?? []).map(norm);
+			emailsFromSettings = (s?.blacklistEmails ?? []).map(normalizeString);
 			namesFromSettings = s?.blacklistNames ?? [];
 		} catch (_) {
 			// ignore
 		}
-		const emailHitA = emailsFromSettings.includes(norm(email));
+		const emailHitA = emailsFromSettings.includes(normalizeString(email));
 		const nameHitA = name && namesFromSettings.some((w) => nameLikelyMatches(name, w));
 
 		// TRPC blacklist router (if present)
@@ -68,7 +68,7 @@ export const load = async (event) => {
 					Array.isArray(list) &&
 					list.some(
 						(b) =>
-							(b.email && norm(String(b.email)) === norm(email)) ||
+							(b.email && normalizeString(String(b.email)) === normalizeString(email)) ||
 							(b.name && nameLikelyMatches(name, String(b.name))),
 					);
 			}

@@ -6,8 +6,8 @@ import type { Settings } from '@prisma/client';
  * - Removes diacritical marks (accents, tildes, etc.).
  * - Trims whitespace and lowercases the string.
  */
-export const norm = (s: string) =>
-	s
+export const normalizeString = (value: string) =>
+	value
 		.normalize('NFKD')
 		.replace(/[\u0300-\u036f]/g, '')
 		.trim()
@@ -16,19 +16,34 @@ export const norm = (s: string) =>
 /**
  * Normalize only whitespace for names
  */
-const normName = (s: string) => s.trim();
+const normalizeNameWhitespace = (s: string) => s.trim();
 
 /**
  * Check whether two names are likely the same person
  */
-export function nameLikelyMatches(candidate: string, watch: string) {
-	const a = normName(candidate).toLowerCase().split(/\s+/).filter(Boolean);
-	const b = normName(watch).toLowerCase().split(/\s+/).filter(Boolean);
-	if (!a.length || !b.length) return false;
-	if (a.join(' ') === b.join(' ')) return true;
-	const [af, al] = [a[0], a[a.length - 1]];
-	const [bf, bl] = [b[0], b[b.length - 1]];
-	return (af === bf && al === bl) || (a.includes(bf) && a.includes(bl));
+export function nameLikelyMatches(candidateName: string, blacklistName: string) {
+	const candidateParts = normalizeNameWhitespace(candidateName)
+		.toLowerCase()
+		.split(/\s+/)
+		.filter(Boolean);
+	const blacklistParts = normalizeNameWhitespace(blacklistName)
+		.toLowerCase()
+		.split(/\s+/)
+		.filter(Boolean);
+	if (!candidateParts.length || !blacklistParts.length) return false;
+	if (candidateParts.join(' ') === blacklistParts.join(' ')) return true;
+	const [candidateFirst, candidateLast] = [
+		candidateParts[0],
+		candidateParts[candidateParts.length - 1],
+	];
+	const [blacklistFirst, blacklistLast] = [
+		blacklistParts[0],
+		blacklistParts[blacklistParts.length - 1],
+	];
+	return (
+		(candidateFirst === blacklistFirst && candidateLast === blacklistLast) ||
+		(candidateParts.includes(blacklistFirst) && candidateParts.includes(blacklistLast))
+	);
 }
 
 /**
@@ -42,24 +57,29 @@ export function checkBlacklist(
 	answersJoined: string | undefined,
 	settings: Pick<Settings, 'blacklistEmails' | 'blacklistNames'>,
 ) {
-	const answers = norm(answersJoined || '');
-	const ne = norm(email || '');
-	const name = fullName || '';
+	const normalizedAnswers = normalizeString(answersJoined || '');
+	const normalizedEmail = normalizeString(email || '');
+	const nameToCheck = fullName || '';
 
 	//check email against blacklist
-	const emailHit =
-		settings.blacklistEmails?.some((e) => e === ne) ||
-		settings.blacklistEmails?.some((e) => e && answers.includes(e));
+	const emailMatch =
+		settings.blacklistEmails?.some((blacklistedEmail) => blacklistedEmail === normalizedEmail) ||
+		settings.blacklistEmails?.some(
+			(blacklistedEmail) => blacklistedEmail && normalizedAnswers.includes(blacklistedEmail),
+		);
 
 	//check name against blacklist
-	const nameHit =
-		(name && settings.blacklistNames?.some((w) => nameLikelyMatches(name, w))) ||
-		settings.blacklistNames?.some((w) => {
-			const wNorm = norm(w);
+	const nameMatch =
+		(nameToCheck && settings.blacklistNames?.some((w) => nameLikelyMatches(nameToCheck, w))) ||
+		settings.blacklistNames?.some((blacklistedName) => {
+			const normalizedBlacklistName = normalizeString(blacklistedName);
 			return (
-				wNorm && new RegExp(`\\b${wNorm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(answers)
+				normalizedBlacklistName &&
+				new RegExp(`\\b${normalizedBlacklistName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(
+					normalizedAnswers,
+				)
 			);
 		});
 
-	return emailHit || nameHit;
+	return emailMatch || nameMatch;
 }
