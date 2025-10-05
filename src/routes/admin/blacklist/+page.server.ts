@@ -3,11 +3,11 @@ import { trpc } from '$lib/trpc/router';
 
 export const load = async (event) => {
 	await authenticate(event.locals.session, ['ADMIN']);
-	const s = await trpc(event).settings.getAll();
+	const settings = await trpc(event).settings.getAll();
 
 	return {
-		emails: s.blacklistEmails ?? [],
-		names: s.blacklistNames ?? [],
+		emails: settings.blacklistEmails ?? [],
+		names: settings.blacklistNames ?? [],
 	};
 };
 
@@ -27,7 +27,6 @@ export const actions = {
 			// leave defaults
 		}
 
-		// go through TRPC
 		const res = await trpc(event).settings.updateBlacklist({ emails, names });
 		return { ok: true, emails: res.emails, names: res.names };
 	},
