@@ -75,9 +75,10 @@ export const actions = {
 
 		await trpc(event).users.update(formToApplication(await trpc(event).questions.get(), formData));
 		if (allowedRoles.includes(selectedRole as any)) {
-			return await trpc(event).users.submitApplication(
+			const application = await trpc(event).users.submitApplication(
 				selectedRole as (typeof allowedRoles)[number],
 			);
+			return application;
 		} else {
 			return new Response('Invalid role selected', { status: 400 });
 		}
@@ -90,7 +91,13 @@ export const actions = {
 				headers: { location: '/apply' },
 			});
 		}
+
+		const user = await trpc(event).users.get();
+		const originalRole = user.authUser.roles[0] || 'UNDECLARED';
+
 		await trpc(event).users.withdrawApplication();
+
+		await trpc(event).users.update({ selectedRole: originalRole });
 	},
 
 	confirm: async (event) => {

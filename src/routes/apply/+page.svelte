@@ -4,6 +4,7 @@
 	import FileInput from '$lib/components/file-input.svelte';
 	import { confirmationDialog } from '$lib/actions.js';
 	import Dropdown from '$lib/components/dropdown.svelte';
+	import { toasts } from '$lib/stores';
 
 	let { data, form } = $props();
 	const application = $state(data.user.application as Record<string, any>);
@@ -190,10 +191,11 @@
 				method="POST"
 				action="?/save"
 				use:enhance={({ action }) => {
-					return async ({ update }) => {
-						if (action.search === '?/finish') {
-							update({ reset: false });
-						} else {
+					return async ({ update, result }) => {
+						if (result.type === 'success') {
+							if (result.data && Object.keys(result.data).length > 0) {
+								toasts.notify('Please address the highlighted errors before submitting.');
+							}
 							update({ reset: false });
 						}
 					};
@@ -206,7 +208,14 @@
 					}
 					debounceTimer = setTimeout(async () => {
 						debounceTimer = undefined;
-						applicationForm.requestSubmit();
+
+						const formData = new FormData(applicationForm);
+
+						await fetch(applicationForm.action, {
+							method: 'POST',
+							body: formData,
+						});
+						9;
 						saveButton.disabled = false;
 						saveButton.textContent = 'Save and finish later';
 					}, 1000);
@@ -427,10 +436,6 @@
 		color: var(--accent); /* changed for dark mode */
 	}
 
-	.question input {
-		color: var(--accent);
-	}
-
 	.question label {
 		color: var(--accent);
 	}
@@ -456,7 +461,7 @@
 	#actions-container {
 		position: sticky;
 		bottom: 0;
-		background: linear-gradient(transparent, var(--light-background));
+		background: linear-gradient(transparent, var(--blue));
 	}
 
 	#actions {
@@ -466,7 +471,7 @@
 		gap: 0.5rem;
 		position: sticky;
 		padding-bottom: 1rem;
-		background: var(--light-background);
+		background: var(--blue);
 	}
 
 	#actions > * {
@@ -475,7 +480,7 @@
 
 	.negative-button {
 		background-color: var(--accent);
-		color: var(--background);
+		color: var(--dark-blue);
 	}
 
 	/* #status button {
@@ -490,7 +495,11 @@
 	}
 
 	.error {
-		color: red;
+		height: 40px;
+		background-color: var(--red);
+		padding: 8px;
+		border-radius: 10px;
+		color: var(--white);
 		margin: 0;
 		order: 1;
 	}
@@ -510,6 +519,7 @@
 
 	.applyButtons button {
 		min-width: 15rem;
+		border: 1px solid var(--accent);
 	}
 
 	h5 {

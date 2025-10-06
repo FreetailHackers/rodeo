@@ -12,12 +12,6 @@ export const load = async (event) => {
 		faq: await trpc(event).faq.getAll(),
 		challenges: await trpc(event).challenges.getAll(),
 		sponsors: await trpc(event).sponsors.getSponsorsWithImageValues(),
-		// Check whether various OAuth providers are set up in
-		// environment variables so we can show/hide buttons.
-		providers: {
-			google: auth.googleAuth !== null,
-			github: auth.githubAuth !== null,
-		},
 		canApply: await trpc(event).admissions.canApply(),
 	};
 };

@@ -12,7 +12,7 @@
 </svelte:head>
 <main class="vert-center">
 	<div class="auth-content">
-		<img class="mascot" src="/auth-assets/hacktxlogo.png" alt="RecordHacks Mascot" />
+		<img class="mascot" src="/auth-assets/hacktxlogo.png" alt="HackTX Mascot" />
 		<h1>Register</h1>
 		<div class="socials">
 			<SocialLogin providers={data.providers} />
@@ -70,6 +70,7 @@
 	label,
 	.login {
 		margin-top: 0.5em;
+		color: var(--grey);
 	}
 
 	.login {

@@ -1,7 +1,7 @@
 /* Import local fonts */
 @font-face {
 	font-family: 'RELIGATH';
-	src: url('/fonts/RELIGATH-Demo.otf') format('opentype');
+	src: url('/fonts/RELIGATH-Regular.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -28,10 +28,10 @@ html {
 	--accent: #e8d8a1;
 	--other-accent: #01051a;
 	--dark-grey: #757575;
-	--grey: #bbb;
+	--grey: #bbbbbb;
 	--light-grey: #ebebeb;
-	--background: #01051a;
-	--light-background: #000c44;
+	--dark-blue: #01051a;
+	--blue: #000c44;
 	--red: #e53c09;
 
 	--border-radius: 15px;
@@ -96,7 +96,7 @@ html {
 body {
 	margin: 0 auto;
 	overflow-wrap: anywhere;
-	background-color: var(--light-background); /* TODO: CHANGE BACKGROUND HERE */
+	background-color: var(--blue); /* TODO: CHANGE BACKGROUND HERE */
 }
 
 section {
@@ -110,7 +110,7 @@ nav {
 button,
 a.button {
 	background-color: var(--accent);
-	color: var(--light-background);
+	color: var(--blue);
 	border: none;
 	padding: 0.5em 1.5em;
 	text-decoration: none;
@@ -124,6 +124,7 @@ a.button:not(:disabled):hover {
 	cursor: pointer;
 	background-color: var(--other-accent);
 	color: var(--accent);
+	border: 1px solid var(--accent);
 }
 
 button:not(:disabled):active,
@@ -144,8 +145,9 @@ a.button[disabled] {
 }
 
 .negative-button:not(:disabled):hover {
-	background-color: var(--accent);
-	color: var(--white);
+	background-color: var(--dark-blue);
+	color: var(--accent);
+	border: 1px solid var(--accent);
 }
 
 .user-button {
@@ -163,8 +165,10 @@ label {
 
 input {
 	padding: 1rem;
-	border: 1px solid var(--grey);
+	border: 1px solid var(--accent);
 	border-radius: var(--border-radius);
+	background-color: var(--blue);
+	color: var(--grey);
 }
 
 input[type='checkbox'],
@@ -180,6 +184,8 @@ textarea {
 	padding: 1rem;
 	resize: vertical;
 	height: 10rem;
+	background-color: var(--blue);
+	color: var(--grey);
 }
 
 form {
@@ -193,7 +199,7 @@ a {
 
 ::selection {
 	background: var(--accent);
-	color: var(--white);
+	color: var(--dark-blue);
 }
 
 ::placeholder {
@@ -227,12 +233,53 @@ select {
 	/* Svelte's default css overwrites ours due to its specificity */
 	/* Use important to overwrite svelte's default css */
 	border-radius: var(--border-radius) !important;
-	border: 1px solid var(--grey) !important;
+	border: 1px solid var(--accent) !important;
+	background-color: var(--blue) !important;
+	color: var(--grey) !important;
+	height: 3.5rem !important;
+}
+
+.svelte-select input {
+	font-size: 1rem !important;
+}
+
+.svelte-select .item {
+	color: var(--grey) !important;
+	background-color: var(--dark-blue) !important;
+}
+
+.svelte-select .item:hover {
+	background-color: var(--accent) !important;
+	color: var(--dark-blue) !important;
+}
+
+.svelte-select .item.highlighted {
+	background-color: var(--accent) !important;
+	color: var(--dark-blue) !important;
+}
+
+.svelte-select .selected-item {
+	font-size: 1rem !important;
+	color: var(--grey) !important;
+}
+
+.svelte-select .multi-item {
+	background-color: var(--accent) !important;
+	color: var(--dark-blue) !important;
+}
+
+.svelte-select .clear-select {
+	background-color: transparent !important;
+	color: var(--grey) !important;
 }
 
 input[type='file'] {
 	padding-left: 0;
 	width: 100%; /* needed to prevent horizontal scrolling on iPhone 8 */
+}
+
+input[type='datetime-local']::-webkit-calendar-picker-indicator {
+	filter: invert(1);
 }
 
 ::file-selector-button {
