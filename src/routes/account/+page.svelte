@@ -6,7 +6,6 @@
 
 	let { data } = $props();
 
-	// all the download logic for the apple wallet pass
 	function downloadPass() {
 		if (data.pass === undefined) return;
 		const blob = new Blob([new Uint8Array(data.pass.data)], { type: data.pass.mimeType });
@@ -24,7 +23,6 @@
 	let closeModal = $state(false);
 
 	onMount(() => {
-		console.log('💔');
 		QRCode.toCanvas(canvas, data.user.id, {
 			scale: 10,
 		});
@@ -158,11 +156,16 @@
 					<canvas bind:this={canvas} id="qrcode"></canvas>
 					<img src="hacker-id/background.png" alt="hacker id-card" />
 				</div>
-				{#if data.pass}
-					<button class="wallet-download-button" onclick={downloadPass}>
-						<img src="appleWalletDownload.png" alt="apple wallet download" />
-					</button>
-				{/if}
+				<div class="wallet-download-buttons">
+					{#if data.pass}
+						<button class="wallet-download-button" onclick={downloadPass}>
+							<img src="appleWalletDownload.png" alt="apple wallet download" />
+						</button>
+						<button class="wallet-download-button" onclick={downloadPass}>
+							<img src="google_wallet_download.png" alt="google wallet download" />
+						</button>
+					{/if}
+				</div>
 			{/if}
 			{#if data.user.status !== 'CONFIRMED'}
 				<p>Your application is still being processed.</p>
@@ -184,11 +187,11 @@
 		transition: all 0.1s;
 		background-color: var(--blue);
 		margin-top: 1.5rem;
+		margin-right: 1rem;
 	}
 	.wallet-download-button img {
 		width: 10rem;
 	}
-
 	.container {
 		display: flex;
 		justify-content: space-between;
