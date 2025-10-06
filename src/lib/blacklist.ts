@@ -70,7 +70,10 @@ export function checkBlacklist(
 
 	//check name against blacklist
 	const nameMatch =
-		(nameToCheck && settings.blacklistNames?.some((w) => nameLikelyMatches(nameToCheck, w))) ||
+		(nameToCheck &&
+			settings.blacklistNames?.some((blacklistName) =>
+				nameLikelyMatches(nameToCheck, blacklistName),
+			)) ||
 		settings.blacklistNames?.some((blacklistedName) => {
 			const normalizedBlacklistName = normalizeString(blacklistedName);
 			return (
