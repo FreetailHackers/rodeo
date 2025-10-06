@@ -43,40 +43,20 @@ export const load = async (event) => {
 		let emailsFromSettings: string[] = [];
 		let namesFromSettings: string[] = [];
 		try {
-			const s = await prisma.settings.findFirst({
+			const settings = await prisma.settings.findFirst({
 				select: { blacklistEmails: true, blacklistNames: true },
 			});
-			emailsFromSettings = (s?.blacklistEmails ?? []).map(normalizeString);
-			namesFromSettings = s?.blacklistNames ?? [];
+			emailsFromSettings = (settings?.blacklistEmails ?? []).map(normalizeString);
+			namesFromSettings = settings?.blacklistNames ?? [];
 		} catch (_) {
 			// ignore
 		}
-		const emailHitA = emailsFromSettings.includes(normalizeString(email));
-		const nameHitA = name && namesFromSettings.some((w) => nameLikelyMatches(name, w));
+		const emailHit = emailsFromSettings.includes(normalizeString(email));
+		const nameHit =
+			Boolean(name) &&
+			namesFromSettings.some((blacklistName) => nameLikelyMatches(name, blacklistName));
 
-		// TRPC blacklist router (if present)
-		let trpcHit = false;
-		try {
-			const api = trpc(event) as any;
-			if (api?.blacklist?.check) {
-				trpcHit = !!(await api.blacklist.check({ email, name }));
-			} else if (api?.blacklist?.find) {
-				trpcHit = !!(await api.blacklist.find({ email, name }));
-			} else if (api?.blacklist?.list) {
-				const list = await api.blacklist.list();
-				trpcHit =
-					Array.isArray(list) &&
-					list.some(
-						(b) =>
-							(b.email && normalizeString(String(b.email)) === normalizeString(email)) ||
-							(b.name && nameLikelyMatches(name, String(b.name))),
-					);
-			}
-		} catch (_) {
-			// ignore
-		}
-
-		blacklistHit = emailHitA || nameHitA || trpcHit;
+		blacklistHit = emailHit || nameHit;
 	}
 
 	return {

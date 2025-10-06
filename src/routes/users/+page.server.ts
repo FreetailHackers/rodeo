@@ -57,8 +57,8 @@ export const load = async (event) => {
 		settings: await trpc(event).settings.getPublic(),
 		questions: event.locals.user.roles.includes('ADMIN')
 			? questions
-			: questions.filter((q) => q.sponsorView),
-		users,
+			: questions.filter((question) => question.sponsorView),
+		users: users,
 		pages: results.pages,
 		start: results.start,
 		count: results.count,
@@ -73,7 +73,9 @@ export const actions = {
 		const action = formData.get('action') as string;
 		const ids: string[] = [];
 		for (const key of formData.keys()) {
-			if (key.startsWith('id')) ids.push(key.split(' ')[1]);
+			if (key.startsWith('id')) {
+				ids.push(key.split(' ')[1]);
+			}
 		}
 		if (action === 'admissions') {
 			const decision = formData.get('user-admissions') as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED';
