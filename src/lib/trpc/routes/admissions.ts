@@ -6,12 +6,7 @@ import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getSettings } from './settings';
 import { Role, Status } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
 import { checkBlacklist } from '../../blacklist';
-
-type AppliedUser = Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }> & {
-	isBlacklisted: boolean;
-};
 
 /**
  * Considers applicationOpen, applicationDeadline, and applicationLimit
@@ -128,7 +123,7 @@ export const admissionsRouter = t.router({
 					(req.input.decision === 'ACCEPTED' || req.input.decision === 'WAITLISTED') &&
 					isBlacklisted
 				) {
-					throw new TRPCError({ code: 'FORBIDDEN', message: 'Not allowed by admissions policy.' });
+					continue;
 				}
 
 				if (user.status === 'APPLIED' || user.status === 'WAITLISTED') {
@@ -201,44 +196,53 @@ export const admissionsRouter = t.router({
 				status: z.nativeEnum(Status).optional(),
 			}),
 		)
-		.query(async (req): Promise<AppliedUser | null> => {
-			const statusFilter = req.input.status
-				? [req.input.status]
-				: [Status.APPLIED, Status.WAITLISTED];
-			const user = await prisma.user.findFirst({
-				where: {
-					authUser: {
-						roles: { has: req.input.role },
-						status: { in: statusFilter },
+		.query(
+			async (
+				req,
+			): Promise<
+				| (Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }> & {
+						isBlacklisted: boolean;
+				  })
+				| null
+			> => {
+				const statusFilter = req.input.status
+					? [req.input.status]
+					: [Status.APPLIED, Status.WAITLISTED];
+				const user = await prisma.user.findFirst({
+					where: {
+						authUser: {
+							roles: { has: req.input.role },
+							status: { in: statusFilter },
+						},
+						decision: null,
 					},
-					decision: null,
-				},
-				include: { authUser: true, decision: true },
-				orderBy: [{ teamId: 'asc' }],
-			});
+					include: { authUser: true, decision: true },
+					orderBy: [{ teamId: 'asc' }],
+				});
 
-			if (!user) return null;
+				if (!user) return null;
 
-			// Compute blacklist flag for the admin UI
-			const settings = await getSettings();
-			const app = user.application as any;
-			const answersJoined = typeof app === 'object' ? JSON.stringify(app) : String(app ?? '');
-			const first = app?.firstName || app?.name || '';
-			const last = app?.lastName || '';
-			const fullName = [first, last].filter(Boolean).join(' ').trim();
+				// Compute blacklist flag for the admin UI
+				const settings = await getSettings();
+				const app = user.application as any;
+				const answersJoined = typeof app === 'object' ? JSON.stringify(app) : String(app ?? '');
+				const first = app?.firstName || app?.name || '';
+				const last = app?.lastName || '';
+				const fullName = [first, last].filter(Boolean).join(' ').trim();
 
-			const isBlacklisted = checkBlacklist(
-				user.authUser?.email,
-				fullName || user.authUser?.githubUsername || user.authUser?.email || '',
-				answersJoined,
-				{
-					blacklistEmails: settings.blacklistEmails ?? [],
-					blacklistNames: settings.blacklistNames ?? [],
-				},
-			);
+				const isBlacklisted = checkBlacklist(
+					user.authUser?.email,
+					fullName || user.authUser?.githubUsername || user.authUser?.email || '',
+					answersJoined,
+					{
+						blacklistEmails: settings.blacklistEmails ?? [],
+						blacklistNames: settings.blacklistNames ?? [],
+					},
+				);
 
-			return { ...user, isBlacklisted };
-		}),
+				return { ...user, isBlacklisted };
+			},
+		),
 
 	canApply: t.procedure.query(async (): Promise<boolean> => {
 		return await canApply();
