@@ -26,9 +26,9 @@
 
 	$effect(() => {
 		if (selectAll) {
-			const picked = selected.filter(Boolean).length;
-			selectAll.indeterminate = picked > 0 && picked < users.length;
-			selectAll.checked = picked === users.length;
+			selectAll.indeterminate =
+				selected.filter(Boolean).length > 0 && selected.filter(Boolean).length < users.length;
+			selectAll.checked = selected.filter(Boolean).length === users.length;
 		}
 	});
 

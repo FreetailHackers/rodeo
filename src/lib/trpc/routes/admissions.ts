@@ -6,7 +6,7 @@ import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getSettings } from './settings';
 import { Role, Status } from '@prisma/client';
-import { checkBlacklist } from '../../blacklist';
+import { checkIfBlacklisted } from './blacklist';
 
 /**
  * Considers applicationOpen, applicationDeadline, and applicationLimit
@@ -103,22 +103,15 @@ export const admissionsRouter = t.router({
 				});
 				if (!rec) continue;
 
-				const app = rec.application as any;
-				const answersJoined = typeof app === 'object' ? JSON.stringify(app) : String(app ?? '');
-				const first = app?.firstName || app?.name || '';
-				const last = app?.lastName || '';
-				const fullName = [first, last].filter(Boolean).join(' ').trim();
+				// build full name from application data
+				const application = rec.application as any;
+				const firstName = application?.firstName || application?.name || '';
+				const lastName = application?.lastName || '';
+				const fullName = [firstName, lastName].filter(Boolean).join(' ').trim();
 
-				// load lists
-				const settings = await getSettings();
-				const lists = {
-					blacklistEmails: settings.blacklistEmails ?? [],
-					blacklistNames: settings.blacklistNames ?? [],
-				};
+				const isBlacklisted = await checkIfBlacklisted(rec.authUser?.email, fullName);
 
-				const isBlacklisted = checkBlacklist(rec.authUser?.email, fullName, answersJoined, lists);
-
-				// block Accept and Waitlist
+				// block Accept and Waitlist if blacklisted
 				if (
 					(req.input.decision === 'ACCEPTED' || req.input.decision === 'WAITLISTED') &&
 					isBlacklisted
@@ -222,22 +215,15 @@ export const admissionsRouter = t.router({
 
 				if (!user) return null;
 
-				// Compute blacklist flag for the admin UI
-				const settings = await getSettings();
-				const app = user.application as any;
-				const answersJoined = typeof app === 'object' ? JSON.stringify(app) : String(app ?? '');
-				const first = app?.firstName || app?.name || '';
-				const last = app?.lastName || '';
-				const fullName = [first, last].filter(Boolean).join(' ').trim();
+				// build full name from application data
+				const application = user.application as any;
+				const firstName = application?.firstName || application?.name || '';
+				const lastName = application?.lastName || '';
+				const fullName = [firstName, lastName].filter(Boolean).join(' ').trim();
 
-				const isBlacklisted = checkBlacklist(
+				const isBlacklisted = await checkIfBlacklisted(
 					user.authUser?.email,
-					fullName || user.authUser?.githubUsername || user.authUser?.email || '',
-					answersJoined,
-					{
-						blacklistEmails: settings.blacklistEmails ?? [],
-						blacklistNames: settings.blacklistNames ?? [],
-					},
+					fullName || user.authUser?.githubUsername || user.authUser?.email,
 				);
 
 				return { ...user, isBlacklisted };

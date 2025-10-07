@@ -111,9 +111,17 @@ model Settings {
   waitlistIsHTML            Boolean   @default(false)
   withdrawIsHTML            Boolean   @default(false)
   hackathonStartDate        DateTime?
-  blacklistEmails           String[]  @db.Text @default([])
-  blacklistNames            String[]  @db.Text @default([])
 }
+
+model Blacklist {
+  id        String   @id @default(cuid())
+  type      String         // 'email' | 'name'
+  value     String
+  createdAt DateTime @default(now())
+
+  @@unique([type, value], name: "type_value")
+}
+
 
 model Question {
   id            String       @id @default(uuid())

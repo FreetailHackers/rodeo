@@ -25,8 +25,8 @@
 		pendingName = '';
 	}
 
-	const removeEmail = (toRemove: string) => (emails = emails.filter((e) => e !== toRemove));
-	const removeName = (toRemove: string) => (names = names.filter((n) => n !== toRemove));
+	const removeEmail = (toRemove: string) => (emails = emails.filter((email) => email !== toRemove));
+	const removeName = (toRemove: string) => (names = names.filter((name) => name !== toRemove));
 </script>
 
 <div class="main-content">
@@ -37,11 +37,9 @@
 			({ update }) =>
 				update({ reset: false })}
 	>
-		<!-- send arrays as hidden JSON inputs -->
 		<input type="hidden" name="emails" value={JSON.stringify(emails)} />
 		<input type="hidden" name="names" value={JSON.stringify(names)} />
 
-		<!-- Panel UI -->
 		<div class="grid">
 			<div>
 				<b>Emails</b>
@@ -49,7 +47,7 @@
 					<input
 						placeholder="Add email"
 						bind:value={pendingEmail}
-						onkeydown={(e) => e.key === 'Enter' && (e.preventDefault(), addEmail())}
+						onkeydown={(event) => event.key === 'Enter' && (event.preventDefault(), addEmail())}
 					/>
 					<button type="button" onclick={addEmail}>Add</button>
 				</div>
@@ -59,7 +57,7 @@
 				{#each emails as email}
 					<div class="row">
 						<span class="pill">{email}</span>
-						<button type="button" onclick={() => removeEmail(email)}>remove</button>
+						<button class="small-btn" type="button" onclick={() => removeEmail(email)}>X</button>
 					</div>
 				{/each}
 			</div>
@@ -70,7 +68,7 @@
 					<input
 						placeholder="Add full name"
 						bind:value={pendingName}
-						onkeydown={(e) => e.key === 'Enter' && (e.preventDefault(), addName())}
+						onkeydown={(event) => event.key === 'Enter' && (event.preventDefault(), addName())}
 					/>
 					<button type="button" onclick={addName}>Add</button>
 				</div>
@@ -80,7 +78,7 @@
 				{#each names as name}
 					<div class="row">
 						<span class="pill">{name}</span>
-						<button type="button" onclick={() => removeName(name)}>remove</button>
+						<button class="small-btn" type="button" onclick={() => removeName(name)}>X</button>
 					</div>
 				{/each}
 			</div>
@@ -123,7 +121,8 @@
 	.pill {
 		padding: 0.2rem 0.6rem;
 		border-radius: 999px;
-		background: #222;
+		background: var(--dark-blue);
+		color: var(--white);
 	}
 	.muted {
 		opacity: 0.7;
@@ -136,11 +135,26 @@
 		padding: 0.4rem 0.9rem;
 		font-size: 0.9rem;
 		background: var(--accent);
-		color: var(--dark-blue); /* use global color token */
+		color: var(--dark-blue);
 		border: 1px solid var(--accent);
 		cursor: pointer;
 	}
 	.save-btn:hover {
+		opacity: 0.9;
+	}
+
+	.small-btn {
+		padding: 0.4rem 0.6rem;
+		font-size: 0.75rem;
+		line-height: 1;
+		border: 1px solid var(--accent);
+		border-radius: 4px;
+		background: var(--accent);
+		color: var(--dark-blue);
+		cursor: pointer;
+	}
+
+	.small-btn:hover {
 		opacity: 0.9;
 	}
 </style>

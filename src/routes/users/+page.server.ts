@@ -1,8 +1,7 @@
 import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import type { Role, Status } from '@prisma/client';
-import { getSettings } from '$lib/trpc/routes/settings';
-import { checkBlacklist } from '$lib/blacklist';
+import { checkIfBlacklisted } from '$lib/trpc/routes/blacklist';
 
 export const load = async (event) => {
 	const user = await authenticate(event.locals.session, ['ADMIN', 'SPONSOR']);
@@ -17,15 +16,10 @@ export const load = async (event) => {
 
 	const questions = await trpc(event).questions.get();
 
-	// load blacklist arrays (emails / names)
-	const settings = await getSettings();
-
 	const users = await Promise.all(
 		results.users.map(async (hacker) => {
 			// normalize application payload (could be object or JSON string)
 			const app = (hacker.application ?? null) as Record<string, any> | null;
-
-			const answersJoined = app ? JSON.stringify(app) : String(hacker.application ?? '');
 
 			const first =
 				app?.firstName ??
@@ -38,10 +32,7 @@ export const load = async (event) => {
 				[first, last].filter(Boolean).join(' ').trim() ||
 				(hacker.authUser?.githubUsername ?? hacker.authUser?.email ?? '');
 
-			const isBlacklisted = checkBlacklist(hacker.authUser?.email, fullName, answersJoined, {
-				blacklistEmails: settings.blacklistEmails ?? [],
-				blacklistNames: settings.blacklistNames ?? [],
-			});
+			const isBlacklisted = await checkIfBlacklisted(hacker.authUser?.email, fullName);
 
 			return {
 				...hacker,

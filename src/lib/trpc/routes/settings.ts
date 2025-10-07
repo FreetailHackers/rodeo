@@ -118,35 +118,91 @@ export const settingsRouter = t.router({
 			});
 		}),
 
-	/**
-	 * Admin-only TRPC mutation to update blacklist settings
-	 * Cleans (trim/lowercase), removes duplicates, and saves emails/names to the settings table
-	 */
+	// 	/**
+	// 	 * Admin-only TRPC mutation to update blacklist settings
+	// 	 * Cleans (trim/lowercase), removes duplicates, and saves emails/names to the settings table
+	// 	 */
 
-	updateBlacklist: t.procedure
-		.use(authenticate(['ADMIN']))
-		.input(
-			z.object({
-				emails: z.array(z.string()).default([]),
-				names: z.array(z.string()).default([]),
-			}),
-		)
-		.mutation(async (req) => {
-			// normalize and remove duplicates
-			const normEmail = (s: string) => s.trim().toLowerCase();
-			const normName = (s: string) => s.trim();
+	// 	updateBlacklist: t.procedure
+	//   .use(authenticate(['ADMIN']))
+	//   .input(z.object({ emails: z.array(z.string()).default([]), names: z.array(z.string()).default([]) }))
+	//   .mutation(async (req) => {
+	//     const normEmail = (s: string) => s.trim().toLowerCase();
+	//     const normName  = (s: string) => s.trim();
 
-			const emails = Array.from(new Set(req.input.emails.map(normEmail))).filter(Boolean);
-			const names = Array.from(new Set(req.input.names.map(normName))).filter(Boolean);
+	//     const emails = Array.from(new Set(req.input.emails.map(normEmail))).filter(Boolean);
+	//     const names  = Array.from(new Set(req.input.names.map(normName))).filter(Boolean);
 
-			// save to settings row
-			await prisma.settings.upsert({
-				where: { id: 0 },
-				update: { blacklistEmails: emails, blacklistNames: names },
-				create: { id: 0, blacklistEmails: emails, blacklistNames: names },
-			});
+	//     await prisma.$transaction(async (tx) => {
+	//       await tx.blacklist.deleteMany({ where: { type: 'email', NOT: { value: { in: emails } } } });
+	//       await tx.blacklist.deleteMany({ where: { type: 'name',  NOT: { value: { in: names  } } } });
 
-			// return cleaned arrays
-			return { emails, names };
-		}),
+	//       await Promise.all(
+	//         emails.map((v) =>
+	//           tx.blacklist.upsert({ where: { type_value: { type: 'email', value: v } }, update: {}, create: { type: 'email', value: v } }),
+	//         ),
+	//       );
+	//       await Promise.all(
+	//         names.map((v) =>
+	//           tx.blacklist.upsert({ where: { type_value: { type: 'name', value: v } }, update: {}, create: { type: 'name', value: v } }),
+	//         ),
+	//       );
+
+	//       // optional: clear old columns so there's no drift
+	//     //   await tx.settings.upsert({
+	//     //     where: { id: 0 },
+	//     //     update: { blacklistEmails: [], blacklistNames: [] },
+	//     //     create: { id: 0, blacklistEmails: [], blacklistNames: [] },
+	//     //   });
+	//     });
+
+	//     return { emails, names };
+	//   }),
+
+	//    /**
+	//    * Returns blacklist as arrays, derived from the Blacklist table.
+	//    * Keeps the same shape (emails[], names[]) your UI expects.
+	//    */
+	// 		getBlacklist: t.procedure
+	// 		.use(authenticate(['ADMIN']))
+	// 		.query(async () => {
+	// 		  const rows = await prisma.blacklist.findMany();
+	// 		  const emails = rows.filter((r) => r.type === 'email').map((r) => r.value);
+	// 		  const names  = rows.filter((r) => r.type === 'name').map((r) => r.value);
+	// 		  return { emails, names };
+	// 		}),
+
+	// 	  /**
+	// 	   * Adds one entry to the Blacklist table (email or name).
+	// 	   * Uses composite unique (type,value) so upsert is safe/idempotent.
+	// 	   * Returns a short message so the client can raise a toast.
+	// 	   */
+	// 	  addToBlacklist: t.procedure
+	// 		.use(authenticate(['ADMIN']))
+	// 		.input(z.object({ kind: z.enum(['email', 'name']), value: z.string() }))
+	// 		.mutation(async (req) => {
+	// 		  const trimmed = req.input.value.trim();
+	// 		  await prisma.blacklist.upsert({
+	// 			where: { type_value: { type: req.input.kind, value: trimmed } },
+	// 			update: {},
+	// 			create: { type: req.input.kind, value: trimmed },
+	// 		  });
+	// 		  return 'Added to blacklist.';
+	// 		}),
+
+	// 	  /**
+	// 	   * Removes one entry from the Blacklist table by (type,value).
+	// 	   * Returns a short message so the client can raise a toast.
+	// 	   */
+	// 	  removeFromBlacklist: t.procedure
+	// 		.use(authenticate(['ADMIN']))
+	// 		.input(z.object({ kind: z.enum(['email', 'name']), value: z.string() }))
+	// 		.mutation(async (req) => {
+	// 		  const trimmed = req.input.value.trim();
+	// 		  await prisma.blacklist.delete({
+	// 			where: { type_value: { type: req.input.kind, value: trimmed } },
+	// 		  });
+	// 		  return 'Removed from blacklist.';
+	// 		}),
+	// });
 });
