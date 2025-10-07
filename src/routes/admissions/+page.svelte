@@ -72,7 +72,6 @@
 
 			<h1>
 				{data.user.authUser.email}
-				{#if data.blacklistHit}<span class="bl-tag">Blacklisted</span>{/if}
 			</h1>
 
 			<UserCard user={data.user} questions={data.questions} teammates={data.teammates} />
