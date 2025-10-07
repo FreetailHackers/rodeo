@@ -494,30 +494,36 @@ footer {
 }
 
 .badge.filled.gray {
-	background: #e0e0e0;
-	color: #222;
-} /* Created */
+	background: #6b7280; /* gray */
+	color: #fff;
+}
+
 .badge.filled.dark {
-	background: #444;
+	background: #1f2937; /* dark gray */
 	color: #fff;
-} /* Applied */
+}
+
 .badge.filled.green {
-	background: #5dc65d;
+	background: #16a34a; /* green */
 	color: #fff;
-} /* Accepted */
+}
+
 .badge.filled.red {
-	background: #ff4e4e;
+	background: #dc2626; /* red */
 	color: #fff;
-} /* Rejected */
+}
+
 .badge.filled.orange {
-	background: orange;
+	background: #f59e0b; /* orange */
 	color: #fff;
-} /* Waitlisted */
+}
+
 .badge.filled.teal {
-	background: teal;
+	background: #0d9488; /* teal */
 	color: #fff;
-} /* Confirmed */
+}
+
 .badge.filled.pink {
-	background: #e75480;
+	background: #be185d; /* pink/magenta */
 	color: #fff;
-} /* Declined */
+}

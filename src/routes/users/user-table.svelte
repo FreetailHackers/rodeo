@@ -4,6 +4,16 @@
 	import Badge from '$lib/components/Badge.svelte';
 	import type { Prisma, Question, AuthUser } from '@prisma/client';
 
+	const STATUS_COLOR_MAP: Record<string, string> = {
+		CREATED: 'gray',
+		APPLIED: 'dark',
+		ACCEPTED: 'green',
+		REJECTED: 'red',
+		WAITLISTED: 'orange',
+		CONFIRMED: 'teal',
+		DECLINED: 'pink',
+	};
+
 	interface Props {
 		users: (Prisma.UserGetPayload<{
 			include: { authUser: true; decision: true };
@@ -234,24 +244,9 @@
 						<a href="mailto:{user.authUser.email}">{user.authUser.email}</a>
 						<span class="grow"></span>
 						<Badge
-							color={user.authUser.status === 'CREATED'
-								? 'gray'
-								: user.authUser.status === 'APPLIED'
-									? 'dark'
-									: user.authUser.status === 'ACCEPTED'
-										? 'green'
-										: user.authUser.status === 'REJECTED'
-											? 'red'
-											: user.authUser.status === 'WAITLISTED'
-												? 'orange'
-												: user.authUser.status === 'CONFIRMED'
-													? 'teal'
-													: user.authUser.status === 'DECLINED'
-														? 'pink'
-														: 'gray'}
+							color={STATUS_COLOR_MAP[user.authUser.status] ?? 'gray'}
 							variant="filled"
 							title={user.decision?.status ?? user.authUser.status}
-							style="margin-left: 0.5rem;"
 						>
 							{user.authUser.status.charAt(0) + user.authUser.status.slice(1).toLowerCase()}
 						</Badge>
@@ -318,16 +313,6 @@
 		flex-grow: 1;
 	}
 
-	.dot {
-		border-radius: 50%;
-		display: inline-block;
-		margin: 0 1rem;
-		min-height: 20px;
-		max-height: 20px;
-		min-width: 20px;
-		max-width: 20px;
-	}
-
 	details[open] summary {
 		margin-bottom: 2rem;
 	}
@@ -354,34 +339,6 @@
 
 	details > div {
 		padding: 0 1rem 0 1rem;
-	}
-
-	.accepted {
-		background: rgb(93, 198, 93);
-	}
-
-	.rejected {
-		background: rgb(255, 78, 78);
-	}
-
-	.waitlisted {
-		background: orange;
-	}
-
-	.applied {
-		background: rgb(63, 63, 63);
-	}
-
-	.created {
-		background: lightgray;
-	}
-
-	.confirmed {
-		background: darkgreen;
-	}
-
-	.declined {
-		background: darkred;
 	}
 
 	label {
