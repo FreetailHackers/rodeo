@@ -103,14 +103,10 @@ export const admissionsRouter = t.router({
 				});
 				if (!rec) continue;
 
-				// build full name from application data
-				const application = rec.application as any;
-				const firstName = application?.firstName || application?.name || '';
-				const lastName = application?.lastName || '';
-				const fullName = [firstName, lastName].filter(Boolean).join(' ').trim();
+				const app = rec.application as any;
+				const answersJoined = typeof app === 'object' ? JSON.stringify(app) : String(app ?? '');
 
-				const isBlacklisted = await checkIfBlacklisted(rec.authUser?.email, fullName);
-
+				const isBlacklisted = await checkIfBlacklisted(rec.authUser?.email, answersJoined);
 				// block Accept and Waitlist if blacklisted
 				if (
 					(req.input.decision === 'ACCEPTED' || req.input.decision === 'WAITLISTED') &&
@@ -215,17 +211,10 @@ export const admissionsRouter = t.router({
 
 				if (!user) return null;
 
-				// build full name from application data
-				const application = user.application as any;
-				const firstName = application?.firstName || application?.name || '';
-				const lastName = application?.lastName || '';
-				const fullName = [firstName, lastName].filter(Boolean).join(' ').trim();
+				const app = user.application as any;
+				const answersJoined = typeof app === 'object' ? JSON.stringify(app) : String(app ?? '');
 
-				const isBlacklisted = await checkIfBlacklisted(
-					user.authUser?.email,
-					fullName || user.authUser?.githubUsername || user.authUser?.email,
-				);
-
+				const isBlacklisted = await checkIfBlacklisted(user.authUser?.email, answersJoined);
 				return { ...user, isBlacklisted };
 			},
 		),

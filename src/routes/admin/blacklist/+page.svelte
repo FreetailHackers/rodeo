@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 
-	let { data = $bindable() } = $props();
+	let { data } = $props();
 
 	let emails = $state<string[]>(data.emails ?? []);
 	let names = $state<string[]>(data.names ?? []);
@@ -9,20 +9,29 @@
 	let pendingEmail = $state('');
 	let pendingName = $state('');
 
-	function addEmail() {
-		const normalized = pendingEmail.trim().toLowerCase();
-		if (normalized && !emails.includes(normalized)) {
-			emails = [...emails, normalized];
-		}
-		pendingEmail = '';
-	}
+	const normalizeName = (s: string) =>
+		s
+			.normalize('NFKD')
+			.replace(/[\u0300-\u036f]/g, '')
+			.toLowerCase()
+			.trim()
+			.replace(/\s+/g, ' ');
 
-	function addName() {
-		const cleaned = pendingName.trim();
-		if (cleaned && !names.includes(cleaned)) {
-			names = [...names, cleaned];
+	const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+	function add(kind: 'email' | 'name') {
+		if (kind === 'email') {
+			const value = pendingEmail.trim().toLowerCase();
+			if (!value) return;
+			if (!emailRe.test(value)) return; // optional UX guard
+			if (!emails.includes(value)) emails = [...emails, value];
+			pendingEmail = '';
+		} else {
+			const value = normalizeName(pendingName);
+			if (!value) return;
+			if (!names.includes(value)) names = [...names, value];
+			pendingName = '';
 		}
-		pendingName = '';
 	}
 
 	const removeEmail = (toRemove: string) => (emails = emails.filter((email) => email !== toRemove));
@@ -45,11 +54,15 @@
 				<b>Emails</b>
 				<div class="row">
 					<input
+						type="email"
 						placeholder="Add email"
 						bind:value={pendingEmail}
-						onkeydown={(event) => event.key === 'Enter' && (event.preventDefault(), addEmail())}
+						oninput={(event) =>
+							(pendingEmail = (event.target as HTMLInputElement).value.toLowerCase())}
+						onkeydown={(event) => event.key === 'Enter' && (event.preventDefault(), add('email'))}
+						style="text-transform: lowercase;"
 					/>
-					<button type="button" onclick={addEmail}>Add</button>
+					<button type="button" onclick={() => add('email')}>Add</button>
 				</div>
 				{#if emails.length === 0}
 					<p class="muted">No emails</p>
@@ -68,9 +81,9 @@
 					<input
 						placeholder="Add full name"
 						bind:value={pendingName}
-						onkeydown={(event) => event.key === 'Enter' && (event.preventDefault(), addName())}
+						onkeydown={(event) => event.key === 'Enter' && (event.preventDefault(), add('name'))}
 					/>
-					<button type="button" onclick={addName}>Add</button>
+					<button type="button" onclick={() => add('name')}>Add</button>
 				</div>
 				{#if names.length === 0}
 					<p class="muted">No names</p>
@@ -125,6 +138,7 @@
 		color: var(--white);
 	}
 	.muted {
+		color: var(--grey);
 		opacity: 0.7;
 	}
 

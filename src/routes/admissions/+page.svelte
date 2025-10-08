@@ -155,14 +155,4 @@
 		border-radius: 0.5rem;
 		font-size: 0.95rem;
 	}
-	.bl-tag {
-		margin-left: 0.5rem;
-		font-size: 0.75rem;
-		padding: 0.15rem 0.4rem;
-		border-radius: 0.375rem;
-		background: #fee2e2;
-		color: #7f1d1d;
-		border: 1px solid #fecaca;
-		vertical-align: middle;
-	}
 </style>

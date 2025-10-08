@@ -18,21 +18,10 @@ export const load = async (event) => {
 
 	const users = await Promise.all(
 		results.users.map(async (hacker) => {
-			// normalize application payload (could be object or JSON string)
-			const app = (hacker.application ?? null) as Record<string, any> | null;
+			const app = hacker.application as any;
+			const answersJoined = typeof app === 'object' ? JSON.stringify(app) : String(app ?? '');
 
-			const first =
-				app?.firstName ??
-				app?.name ?? // some forms store a single "name"
-				'';
-			const last = app?.lastName ?? '';
-
-			// fullName from application; fallback to authUser github/email (since authUser.name does not exist)
-			const fullName =
-				[first, last].filter(Boolean).join(' ').trim() ||
-				(hacker.authUser?.githubUsername ?? hacker.authUser?.email ?? '');
-
-			const isBlacklisted = await checkIfBlacklisted(hacker.authUser?.email, fullName);
+			const isBlacklisted = await checkIfBlacklisted(hacker.authUser?.email, answersJoined);
 
 			return {
 				...hacker,
