@@ -1,7 +1,18 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import UserCard from '$lib/components/user-card.svelte';
+	import Badge from '$lib/components/Badge.svelte';
 	import type { Prisma, Question, AuthUser, Role, Status } from '@prisma/client';
+
+	const STATUS_COLOR_MAP: Record<string, string> = {
+		CREATED: 'gray',
+		APPLIED: 'dark',
+		ACCEPTED: 'green',
+		REJECTED: 'red',
+		WAITLISTED: 'orange',
+		CONFIRMED: 'teal',
+		DECLINED: 'pink',
+	};
 
 	// Your enriched row type (includes teammates + optional isBlacklisted)
 	export type UserRow = Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }> & {
@@ -84,6 +95,17 @@
 		}
 	}
 </script>
+
+<div style="margin-bottom: 1rem; color: white;">
+	<strong>Status Legend:</strong>
+	<Badge color="gray" variant="filled">Created</Badge>
+	<Badge color="dark" variant="filled">Applied</Badge>
+	<Badge color="green" variant="filled">Accepted</Badge>
+	<Badge color="red" variant="filled">Rejected</Badge>
+	<Badge color="orange" variant="filled">Waitlisted</Badge>
+	<Badge color="teal" variant="filled">Confirmed</Badge>
+	<Badge color="pink" variant="filled">Declined</Badge>
+</div>
 
 <form
 	method="POST"
@@ -233,10 +255,13 @@
 						{/if}
 
 						<span class="grow"></span>
-						<span
-							class="{user.authUser.status.toLowerCase()} dot"
+						<Badge
+							color={STATUS_COLOR_MAP[user.authUser.status] ?? 'gray'}
+							variant="filled"
 							title={user.decision?.status ?? user.authUser.status}
-						></span>
+						>
+							{user.authUser.status.charAt(0) + user.authUser.status.slice(1).toLowerCase()}
+						</Badge>
 					</summary>
 
 					<div class="user">
@@ -301,16 +326,6 @@
 		flex-grow: 1;
 	}
 
-	.dot {
-		border-radius: 50%;
-		display: inline-block;
-		margin: 0 1rem;
-		min-height: 20px;
-		max-height: 20px;
-		min-width: 20px;
-		max-width: 20px;
-	}
-
 	details[open] summary {
 		margin-bottom: 2rem;
 	}
@@ -337,34 +352,6 @@
 
 	details > div {
 		padding: 0 1rem 0 1rem;
-	}
-
-	.accepted {
-		background: rgb(93, 198, 93);
-	}
-
-	.rejected {
-		background: rgb(255, 78, 78);
-	}
-
-	.waitlisted {
-		background: orange;
-	}
-
-	.applied {
-		background: rgb(63, 63, 63);
-	}
-
-	.created {
-		background: lightgray;
-	}
-
-	.confirmed {
-		background: darkgreen;
-	}
-
-	.declined {
-		background: darkred;
 	}
 
 	label {
