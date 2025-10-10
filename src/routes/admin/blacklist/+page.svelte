@@ -19,17 +19,15 @@
 	const enhanceAndRefresh: SubmitFunction = () => {
 		return async ({ result, update }) => {
 			if (result.type === 'success') {
-				const data: any = result.data;
+				const data = result.data as { message?: string; emails?: string[]; names?: string[] };
+				if (data?.emails) emails = data.emails;
+				if (data?.names) names = data.names;
 				if (data?.message) toasts.notify(data.message);
-				await update({ reset: true });
-			} else if (result.type === 'failure') {
-				const msg = (result.data as any)?.message ?? 'Request failed.';
-				toasts.notify(msg);
-				await update({ reset: false });
 			} else {
-				toasts.notify('Unexpected response.');
-				await update({ reset: false });
+				toasts.notify('Request failed.');
 			}
+
+			await update({ reset: true });
 		};
 	};
 </script>
