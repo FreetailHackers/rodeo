@@ -97,16 +97,16 @@ export const admissionsRouter = t.router({
 				});
 
 				// fetch application + email to evaluate
-				const rec = await prisma.user.findUnique({
+				const record = await prisma.user.findUnique({
 					where: { authUserId: id },
 					include: { authUser: true },
 				});
-				if (!rec) continue;
+				if (!record) continue;
 
-				const app = rec.application as any;
+				const app = record.application as any;
 				const answersJoined = typeof app === 'object' ? JSON.stringify(app) : String(app ?? '');
 
-				const isBlacklisted = await checkIfBlacklisted(rec.authUser?.email, answersJoined);
+				const isBlacklisted = await checkIfBlacklisted(record.authUser?.email, answersJoined);
 				// block Accept and Waitlist if blacklisted
 				if (
 					(req.input.decision === 'ACCEPTED' || req.input.decision === 'WAITLISTED') &&
