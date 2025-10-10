@@ -2,7 +2,7 @@
 	import { enhance } from '$app/forms';
 	import UserCard from '$lib/components/user-card.svelte';
 	import Badge from '$lib/components/Badge.svelte';
-	import type { Prisma, Question, AuthUser, Role, Status } from '@prisma/client';
+	import type { Prisma, Question, AuthUser } from '@prisma/client';
 
 	const STATUS_COLOR_MAP: Record<string, string> = {
 		CREATED: 'gray',
@@ -14,7 +14,6 @@
 		DECLINED: 'pink',
 	};
 
-	// Your enriched row type (includes teammates + optional isBlacklisted)
 	export type UserRow = Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }> & {
 		teammates: { email: string; status: string }[];
 		isBlacklisted?: boolean;
@@ -249,8 +248,10 @@
 						<a href={'mailto:' + user.authUser.email}>{user.authUser.email}</a>
 
 						{#if user.isBlacklisted}
-							<span class="bl-tag" data-testid="blacklist-badge" title="This user is blacklisted">
-								Blacklisted
+							<span style="margin-left: 0.5rem;">
+								<Badge color="red" variant="filled" title="This user is blacklisted">
+									Blacklisted
+								</Badge>
 							</span>
 						{/if}
 
@@ -356,16 +357,5 @@
 
 	label {
 		color: var(--accent);
-	}
-
-	.bl-tag {
-		margin-left: 0.5rem;
-		font-size: 0.75rem;
-		padding: 0.15rem 0.4rem;
-		border-radius: 0.375rem;
-		background: #fee2e2;
-		color: #7f1d1d;
-		border: 1px solid #fecaca;
-		vertical-align: middle;
 	}
 </style>

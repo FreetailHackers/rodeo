@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { toasts } from '$lib/stores';
+	import type { SubmitFunction } from '@sveltejs/kit';
 
 	let { data } = $props();
 
@@ -9,98 +11,94 @@
 	let pendingEmail = $state('');
 	let pendingName = $state('');
 
-	const normalizeName = (s: string) =>
-		s
-			.normalize('NFKD')
-			.replace(/[\u0300-\u036f]/g, '')
-			.toLowerCase()
-			.trim()
-			.replace(/\s+/g, ' ');
+	$effect(() => {
+		emails = data.emails ?? [];
+		names = data.names ?? [];
+	});
 
-	const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
-	function add(kind: 'email' | 'name') {
-		if (kind === 'email') {
-			const value = pendingEmail.trim().toLowerCase();
-			if (!value) return;
-			if (!emailRe.test(value)) return; // optional UX guard
-			if (!emails.includes(value)) emails = [...emails, value];
-			pendingEmail = '';
-		} else {
-			const value = normalizeName(pendingName);
-			if (!value) return;
-			if (!names.includes(value)) names = [...names, value];
-			pendingName = '';
-		}
-	}
-
-	const removeEmail = (toRemove: string) => (emails = emails.filter((email) => email !== toRemove));
-	const removeName = (toRemove: string) => (names = names.filter((name) => name !== toRemove));
+	const enhanceAndRefresh: SubmitFunction = () => {
+		return async ({ result, update }) => {
+			if (result.type === 'success') {
+				const data: any = result.data;
+				if (data?.message) toasts.notify(data.message);
+				await update({ reset: true });
+			} else if (result.type === 'failure') {
+				const msg = (result.data as any)?.message ?? 'Request failed.';
+				toasts.notify(msg);
+				await update({ reset: false });
+			} else {
+				toasts.notify('Unexpected response.');
+				await update({ reset: false });
+			}
+		};
+	};
 </script>
 
 <div class="main-content">
-	<form
-		method="POST"
-		action="?/save"
-		use:enhance={() =>
-			({ update }) =>
-				update({ reset: false })}
-	>
-		<input type="hidden" name="emails" value={JSON.stringify(emails)} />
-		<input type="hidden" name="names" value={JSON.stringify(names)} />
+	<div class="grid">
+		<!-- Emails column -->
+		<div>
+			<b>Emails</b>
 
-		<div class="grid">
-			<div>
-				<b>Emails</b>
+			<form method="POST" action="?/add" use:enhance={enhanceAndRefresh}>
+				<input type="hidden" name="kind" value="email" />
+				<input type="hidden" name="value" value={pendingEmail.trim().toLowerCase()} />
 				<div class="row">
 					<input
 						type="email"
 						placeholder="Add email"
 						bind:value={pendingEmail}
-						oninput={(event) =>
-							(pendingEmail = (event.target as HTMLInputElement).value.toLowerCase())}
-						onkeydown={(event) => event.key === 'Enter' && (event.preventDefault(), add('email'))}
 						style="text-transform: lowercase;"
 					/>
-					<button type="button" onclick={() => add('email')}>Add</button>
+					<button type="submit">Add</button>
 				</div>
-				{#if emails.length === 0}
-					<p class="muted">No emails</p>
-				{/if}
-				{#each emails as email}
+			</form>
+
+			{#if emails.length === 0}
+				<p class="muted">No emails</p>
+			{/if}
+
+			{#each emails as email}
+				<form method="POST" action="?/remove" use:enhance={enhanceAndRefresh}>
+					<input type="hidden" name="kind" value="email" />
+					<input type="hidden" name="value" value={email} />
 					<div class="row">
 						<span class="pill">{email}</span>
-						<button class="small-btn" type="button" onclick={() => removeEmail(email)}>X</button>
+						<button class="small-btn" type="submit">X</button>
 					</div>
-				{/each}
-			</div>
+				</form>
+			{/each}
+		</div>
 
-			<div>
-				<b>Names</b>
+		<!-- Names column -->
+		<div>
+			<b>Names</b>
+
+			<form method="POST" action="?/add" use:enhance={enhanceAndRefresh}>
+				<input type="hidden" name="kind" value="name" />
+				<input type="hidden" name="value" value={pendingName} />
 				<div class="row">
-					<input
-						placeholder="Add full name"
-						bind:value={pendingName}
-						onkeydown={(event) => event.key === 'Enter' && (event.preventDefault(), add('name'))}
-					/>
-					<button type="button" onclick={() => add('name')}>Add</button>
+					<input placeholder="Add full name" bind:value={pendingName} />
+					<button type="submit">Add</button>
 				</div>
-				{#if names.length === 0}
-					<p class="muted">No names</p>
-				{/if}
-				{#each names as name}
+			</form>
+
+			{#if names.length === 0}
+				<p class="muted">No names</p>
+			{/if}
+
+			{#each names as name}
+				<form method="POST" action="?/remove" use:enhance={enhanceAndRefresh}>
+					<input type="hidden" name="kind" value="name" />
+					<input type="hidden" name="value" value={name} />
 					<div class="row">
 						<span class="pill">{name}</span>
-						<button class="small-btn" type="button" onclick={() => removeName(name)}>X</button>
+						<button class="small-btn" type="submit">X</button>
 					</div>
-				{/each}
-			</div>
+				</form>
+			{/each}
 		</div>
-
-		<div class="actions">
-			<button class="save-btn" type="submit">Save</button>
-		</div>
-	</form>
+	</div>
 </div>
 
 <style>
@@ -140,21 +138,6 @@
 	.muted {
 		color: var(--grey);
 		opacity: 0.7;
-	}
-
-	.actions {
-		margin: 0.5rem 0 1rem;
-	}
-	.save-btn {
-		padding: 0.4rem 0.9rem;
-		font-size: 0.9rem;
-		background: var(--accent);
-		color: var(--dark-blue);
-		border: 1px solid var(--accent);
-		cursor: pointer;
-	}
-	.save-btn:hover {
-		opacity: 0.9;
 	}
 
 	.small-btn {

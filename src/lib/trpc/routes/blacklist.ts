@@ -113,9 +113,13 @@ export const blacklistRouter = t.router({
 					? normalizeEmail(requestContext.input.value)
 					: normalizeName(requestContext.input.value);
 
-			await prisma.blacklist.delete({
-				where: { type_value: { type: requestContext.input.kind, value: normalizedValue } },
+			await prisma.blacklist.deleteMany({
+				where: {
+					type: requestContext.input.kind,
+					value: normalizedValue,
+				},
 			});
+
 			return 'Removed from blacklist.';
 		}),
 

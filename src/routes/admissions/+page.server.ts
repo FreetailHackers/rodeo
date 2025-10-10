@@ -24,13 +24,6 @@ export const load = async (event) => {
 		status: selectedStatus,
 	});
 
-	if (user) {
-		let blacklistHit = false;
-		if (user) {
-			blacklistHit = !!user.isBlacklisted;
-		}
-	}
-
 	return {
 		user,
 		questions: admissionRelevantQuestions,

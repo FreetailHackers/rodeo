@@ -10,22 +10,26 @@ export const load = async (event) => {
 };
 
 export const actions = {
-	save: async (event) => {
+	add: async (event) => {
 		await authenticate(event.locals.session, ['ADMIN']);
-
 		const formData = await event.request.formData();
+		const kind = formData.get('kind') as 'email' | 'name';
+		const value = (formData.get('value') as string) ?? '';
 
-		// arrays are serialized as JSON strings from the form
-		let emails: string[] = [];
-		let names: string[] = [];
-		try {
-			emails = JSON.parse((formData.get('emails') as string) ?? '[]');
-			names = JSON.parse((formData.get('names') as string) ?? '[]');
-		} catch {
-			// leave defaults
-		}
+		await trpc(event).blacklist.add({ kind, value });
 
-		const result = await trpc(event).blacklist.replace({ emails, names });
-		return { ok: true, emails: result.emails, names: result.names };
+		const fresh = await trpc(event).blacklist.get();
+		return { ok: true, message: `Added “${value}” to ${kind} blacklist`, ...fresh };
+	},
+
+	remove: async (event) => {
+		await authenticate(event.locals.session, ['ADMIN']);
+		const formData = await event.request.formData();
+		const kind = formData.get('kind') as 'email' | 'name';
+		const value = (formData.get('value') as string) ?? '';
+		await trpc(event).blacklist.remove({ kind, value });
+
+		const fresh = await trpc(event).blacklist.get();
+		return { ok: true, message: `Removed “${value}” from ${kind} blacklist`, ...fresh };
 	},
 };

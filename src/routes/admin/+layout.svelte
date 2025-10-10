@@ -25,7 +25,7 @@
 		</li>
 		<li>
 			<a href="/admin/blacklist" class:active={page.url.pathname === '/admin/blacklist'}
-				>BlackList</a
+				>Blacklist</a
 			>
 		</li>
 	</ul>
