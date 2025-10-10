@@ -245,14 +245,14 @@
 							/>
 						{/if}
 
-						<a href={'mailto:' + user.authUser.email}>{user.authUser.email}</a>
+						<a href={'mailto:' + user.authUser.email} style="margin-right: 0.5rem;">
+							{user.authUser.email}
+						</a>
 
 						{#if user.isBlacklisted}
-							<span style="margin-left: 0.5rem;">
-								<Badge color="red" variant="filled" title="This user is blacklisted">
-									Blacklisted
-								</Badge>
-							</span>
+							<Badge color="red" variant="filled" title="This user is blacklisted">
+								Blacklisted
+							</Badge>
 						{/if}
 
 						<span class="grow"></span>
