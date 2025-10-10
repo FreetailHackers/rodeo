@@ -245,7 +245,7 @@
 							/>
 						{/if}
 
-						<a href={'mailto:' + user.authUser.email} style="margin-right: 0.5rem;">
+						<a class="email-link" href={'mailto:' + user.authUser.email}>
 							{user.authUser.email}
 						</a>
 
@@ -357,5 +357,9 @@
 
 	label {
 		color: var(--accent);
+	}
+
+	.email-link {
+		margin-right: 0.5rem;
 	}
 </style>
