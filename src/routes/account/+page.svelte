@@ -39,11 +39,11 @@
 					imageSize: 0.4,
 				},
 				dotsOptions: {
-					color: userQrStyle.dotsOptions?.color || '#000000',
+					color: userQrStyle.dotsOptions?.color || '#ffffff',
 					type: (userQrStyle.dotsOptions?.type as any) || 'square',
 				},
 				backgroundOptions: {
-					color: userQrStyle.backgroundOptions?.color || '#ffffff',
+					color: userQrStyle.backgroundOptions?.color || '#000000',
 				},
 			});
 		} catch (error) {
@@ -201,14 +201,7 @@
 						<img src="hacker-id/background.png" alt="hacker id-card" />
 					</div>
 				</div>
-			{/if}
-			{#if data.user.roles.includes('ADMIN')}
-				<div class="id-card">
-					<div bind:this={qrCodeContainer} id="qrcode" class:loaded={qrCodeLoaded}></div>
-					<img src="hacker-id/background.png" alt="hacker id-card" />
-				</div>
-			{/if}
-			{#if data.user.status === 'ACCEPTED'}
+			{:else if data.user.status === 'ACCEPTED'}
 				<h3>RSVP Required</h3>
 				<p>Click here to RSVP for the event!</p>
 				<a href="/apply" class="user-button">RSVP Now</a>
@@ -217,6 +210,12 @@
 				<p>You have declined your invitation.</p>
 			{:else}
 				<p>Your application is still being processed.</p>
+			{/if}
+			{#if data.user.roles.includes('ADMIN')}
+				<div class="id-card">
+					<div bind:this={qrCodeContainer} id="qrcode" class:loaded={qrCodeLoaded}></div>
+					<img src="hacker-id/background.png" alt="hacker id-card" />
+				</div>
 			{/if}
 		</div>
 	{/if}

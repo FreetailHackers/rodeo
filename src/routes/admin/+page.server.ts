@@ -18,6 +18,7 @@ interface GroupWithQRCode {
 }
 
 export const load = async (event) => {
+	console.log('inside load');
 	await authenticate(event.locals.session, ['ADMIN']);
 	return {
 		decisions: await trpc(event).admissions.getDecisions(),
@@ -100,7 +101,7 @@ export const actions = {
 		const formData = await event.request.formData();
 
 		const qrImage = formData.get('qr-image') as File;
-		const key = `qr-code/qr-image`;
+		const key = `qr-code/qr-image-${formData.get('group') as string}`;
 
 		if (qrImage.size != 0) {
 			if (qrImage.size <= 1024 * 1024) {
@@ -126,10 +127,17 @@ export const actions = {
 				return 'Error in updating sponsor! Check your file!';
 			}
 		} else {
-			s3Delete(key);
+			const groups = await trpc(event).group.getGroups();
+			const currentGroup = groups.find(
+				(g) => g.id === (formData.get('group') as string),
+			) as GroupWithQRCode;
+			const existingImageKey = currentGroup?.qrCodeStyle?.imageKey;
+
+			console.log(formData.get('group') as string);
+
 			const qrConfig = {
 				group: formData.get('group') as string,
-				imageKey: undefined,
+				imageKey: existingImageKey || undefined,
 				dotsOptions: {
 					color: formData.get('dotsColor') as string,
 					type: formData.get('dotsType') as string,
@@ -138,6 +146,8 @@ export const actions = {
 					color: formData.get('backgroundColor') as string,
 				},
 			};
+
+			console.log(qrConfig);
 			await trpc(event).group.updateQRCode(qrConfig);
 			return 'QR Code successfully changed!';
 		}

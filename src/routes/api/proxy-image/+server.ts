@@ -1,6 +1,5 @@
 import { error } from '@sveltejs/kit';
 
-//delete this later
 export const GET = async ({ url }: { url: URL }) => {
 	const imageUrl = url.searchParams.get('url');
 	if (!imageUrl) throw error(400, 'Missing image URL');
