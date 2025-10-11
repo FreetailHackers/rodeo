@@ -6,28 +6,15 @@
 
 	let { data } = $props();
 
-	function downloadApplePass() {
-		if (isButtonsDisabled || data.pass === undefined) return;
-		const blob = new Blob([new Uint8Array(data.pass.data)], { type: data.pass.mimeType });
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = 'hacktx-2025.pkpass';
-		document.body.appendChild(a);
-		a.click();
-		document.body.removeChild(a);
-		URL.revokeObjectURL(url);
-	}
-
-	function downloadGooglePass() {
-		if (isButtonsDisabled || data.googlePass === undefined) return;
-		const blob = new Blob([new Uint8Array(data.googlePass.data)], {
-			type: data.googlePass.mimeType,
+	function downloadPass(passData: any, filename: string) {
+		if (isButtonsDisabled || passData === undefined) return;
+		const blob = new Blob([new Uint8Array(passData.data)], {
+			type: passData.mimeType,
 		});
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
 		a.href = url;
-		a.download = 'hacktx-2025-google.pkpass';
+		a.download = filename;
 		document.body.appendChild(a);
 		a.click();
 		document.body.removeChild(a);
@@ -180,7 +167,7 @@
 						<button
 							class="wallet-download-button"
 							class:disabled={isButtonsDisabled}
-							onclick={downloadApplePass}
+							onclick={() => downloadPass(data.pass, 'hacktx-2025.pkpass')}
 						>
 							<img src="appleWalletDownload.png" alt="apple wallet download" />
 						</button>
@@ -189,7 +176,7 @@
 						<button
 							class="wallet-download-button"
 							class:disabled={isButtonsDisabled}
-							onclick={downloadGooglePass}
+							onclick={() => downloadPass(data.googlePass, 'hacktx-2025-google.pkpass')}
 						>
 							<img src="google_wallet_download.png" alt="google wallet download" />
 						</button>
