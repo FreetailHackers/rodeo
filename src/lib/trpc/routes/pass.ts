@@ -26,13 +26,15 @@ const getCertificates = async () => {
 };
 
 /**
- * Fetches all files from the ticket.pass folder in S3
+ * Fetches all files from the specified prefix in S3
+ * @param prefix - The S3 prefix to use (defaults to 'ticket.pass/')
  * @returns Promise<Record<string, Buffer>>
  */
-async function fetchModelFilesFromS3(): Promise<Record<string, Buffer>> {
+async function fetchModelFilesFromS3(prefix?: string): Promise<Record<string, Buffer>> {
+	const prefixToUse = prefix || 'ticket.pass/';
 	const listCommand = new ListObjectsV2Command({
 		Bucket: process.env.S3_BUCKET,
-		Prefix: 'ticket.pass/',
+		Prefix: prefixToUse,
 	});
 
 	const listResponse = await s3Client.send(listCommand);
@@ -70,11 +72,14 @@ async function fetchModelFilesFromS3(): Promise<Record<string, Buffer>> {
 /**
  * Returns a PKPass object based off of the model files.
  *
+ * @param uid - User ID for the pass
+ * @param group - Group name for the pass
+ * @param prefix - Optional S3 prefix (defaults to 'ticket.pass/')
  * @returns Promise<PKPass>
  */
-const createPass = async (uid: string, group: string) => {
+const createPass = async (uid: string, group: string, prefix?: string) => {
 	const [modelRecords, certificates] = await Promise.all([
-		fetchModelFilesFromS3(),
+		fetchModelFilesFromS3(prefix),
 		getCertificates(),
 	]);
 
@@ -111,10 +116,11 @@ export const passRouter = t.router({
 			z.object({
 				uid: z.string().min(1),
 				group: z.string().min(1),
+				prefix: z.string().optional(),
 			}),
 		)
 		.mutation(async ({ input }) => {
-			const pass = await createPass(input.uid, input.group);
+			const pass = await createPass(input.uid, input.group, input.prefix);
 			const buffer = pass.getAsBuffer();
 			return {
 				data: Array.from(buffer),

@@ -4,14 +4,20 @@ import { trpc } from '$lib/trpc/router';
 export const load = async (event) => {
 	const user = await authenticate(event.locals.session, []);
 	if (user.roles.includes('HACKER')) {
+		const group = await trpc(event).users.getGroup();
 		return {
 			user: user,
 			team: await trpc(event).team.getTeam(),
 			invitations: await trpc(event).team.getTeamInvitations(),
-			group: await trpc(event).users.getGroup(),
+			group: group,
 			pass: await trpc(event).pass.getPass({
 				uid: user.id,
-				group: (await trpc(event).users.getGroup()) || 'N/A',
+				group: group || 'N/A',
+			}),
+			googlePass: await trpc(event).pass.getPass({
+				uid: user.id,
+				group: group || 'N/A',
+				prefix: 'google-ticket.pass/',
 			}),
 		};
 	}

@@ -6,8 +6,8 @@
 
 	let { data } = $props();
 
-	function downloadPass() {
-		if (data.pass === undefined) return;
+	function downloadApplePass() {
+		if (isButtonsDisabled || data.pass === undefined) return;
 		const blob = new Blob([new Uint8Array(data.pass.data)], { type: data.pass.mimeType });
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
@@ -19,8 +19,27 @@
 		URL.revokeObjectURL(url);
 	}
 
+	function downloadGooglePass() {
+		if (isButtonsDisabled || data.googlePass === undefined) return;
+		const blob = new Blob([new Uint8Array(data.googlePass.data)], {
+			type: data.googlePass.mimeType,
+		});
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'hacktx-2025-google.pkpass';
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+		URL.revokeObjectURL(url);
+	}
+
 	let canvas = $state() as HTMLCanvasElement;
 	let closeModal = $state(false);
+
+	// button is disabled until Oct 18, 2025 @ 8am (check in time)
+	const releaseDate = new Date('2025-10-18T08:00:00');
+	const isButtonsDisabled = new Date() < releaseDate;
 
 	onMount(() => {
 		QRCode.toCanvas(canvas, data.user.id, {
@@ -158,10 +177,20 @@
 				</div>
 				<div class="wallet-download-buttons">
 					{#if data.pass}
-						<button class="wallet-download-button" onclick={downloadPass}>
+						<button
+							class="wallet-download-button"
+							class:disabled={isButtonsDisabled}
+							onclick={downloadApplePass}
+						>
 							<img src="appleWalletDownload.png" alt="apple wallet download" />
 						</button>
-						<button class="wallet-download-button" onclick={downloadPass}>
+					{/if}
+					{#if data.googlePass}
+						<button
+							class="wallet-download-button"
+							class:disabled={isButtonsDisabled}
+							onclick={downloadGooglePass}
+						>
 							<img src="google_wallet_download.png" alt="google wallet download" />
 						</button>
 					{/if}
@@ -191,6 +220,13 @@
 	}
 	.wallet-download-button img {
 		width: 10rem;
+	}
+	.wallet-download-button.disabled {
+		opacity: 0.75;
+		cursor: not-allowed;
+	}
+	.wallet-download-button.disabled img {
+		filter: grayscale(100%);
 	}
 	.container {
 		display: flex;
