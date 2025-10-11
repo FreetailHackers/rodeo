@@ -192,6 +192,8 @@
 					<option value="JUDGE">JUDGE</option>
 					<option value="VOLUNTEER">VOLUNTEER</option>
 					<option value="SPONSOR">SPONSOR</option>
+					<option value="MENTOR">MENTOR</option>
+					<option value="UNDECLARED">UNDECLARED</option>
 				</select>
 			{:else if key === 'status'}
 				<select name="search" bind:value={search} class="search">
