@@ -12,9 +12,10 @@
 
 	// Reactive values for colors based on selected group
 	let dotsColor = $derived(() => {
+		console.log('inside dotsColor');
 		const group = data.groups.find((g) => g.id === selectedGroupId);
 		console.log(group?.qrCodeStyle?.dotsOptions?.color);
-		return group?.qrCodeStyle?.dotsOptions?.color || '#`000000`';
+		return group?.qrCodeStyle?.dotsOptions?.color || '#000000';
 	});
 
 	let backgroundColor = $derived(() => {
@@ -25,6 +26,11 @@
 	let dotsType = $derived(() => {
 		const group = data.groups.find((g) => g.id === selectedGroupId);
 		return group?.qrCodeStyle?.dotsOptions?.type || 'rounded';
+	});
+
+	let backgroundImage = $derived(() => {
+		const group = data.groups.find((g) => g.id === selectedGroupId);
+		return group?.qrCodeStyle?.imageKey || null;
 	});
 
 	function handleFileChange(event: Event) {
@@ -141,7 +147,21 @@
 
 <h2>Split Hackers Into Lunch Groups</h2>
 
-<form method="POST" action="?/splitGroups" use:enhance>
+<form
+	method="POST"
+	action="?/splitGroups"
+	use:enhance={() => {
+		return async ({ result, update }) => {
+			// Always update the page data to refresh the derived values
+			await update();
+
+			// Optionally show a success message
+			if (result.type === 'success') {
+				toasts.notify('QR Code settings updated successfully!');
+			}
+		};
+	}}
+>
 	<input
 		type="text"
 		id="splitGroups"
@@ -161,7 +181,11 @@
 	action="?/qrCodeSettings"
 	class="qr-form"
 	enctype="multipart/form-data"
-	use:enhance
+	use:enhance={() => {
+		return async ({ update }) => {
+			await update({ reset: false });
+		};
+	}}
 >
 	<h3>QR Code Styling</h3>
 
@@ -177,7 +201,11 @@
 
 	<div class="qr-grid">
 		<div class="qr-field">
-			<label for="qr-image">QR Code Image (leave empty for no image)</label>
+			{#if backgroundImage() == null}
+				<label for="qr-image">QR Code Image (leave empty for no image)</label>
+			{:else}
+				<label for="qr-image">Replace QR Code Image (leave empty for keep current image)</label>
+			{/if}
 			<input
 				type="file"
 				id="qr-image"
