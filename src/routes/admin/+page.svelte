@@ -12,9 +12,7 @@
 
 	// Reactive values for colors based on selected group
 	let dotsColor = $derived(() => {
-		console.log('inside dotsColor');
 		const group = data.groups.find((g) => g.id === selectedGroupId);
-		console.log(group?.qrCodeStyle?.dotsOptions?.color);
 		return group?.qrCodeStyle?.dotsOptions?.color || '#000000';
 	});
 
