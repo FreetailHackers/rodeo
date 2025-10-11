@@ -133,8 +133,6 @@ export const actions = {
 			) as GroupWithQRCode;
 			const existingImageKey = currentGroup?.qrCodeStyle?.imageKey;
 
-			console.log(formData.get('group') as string);
-
 			const qrConfig = {
 				group: formData.get('group') as string,
 				imageKey: existingImageKey || undefined,
@@ -147,7 +145,6 @@ export const actions = {
 				},
 			};
 
-			console.log(qrConfig);
 			await trpc(event).group.updateQRCode(qrConfig);
 			return 'QR Code successfully changed!';
 		}
