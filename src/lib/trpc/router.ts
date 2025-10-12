@@ -13,7 +13,6 @@ import { createContext, createContextTest, t, tTest } from './t';
 import type { RequestEvent } from '@sveltejs/kit';
 import type { AuthUser } from '@prisma/client';
 import { blacklistRouter } from './routes/blacklist';
-import { QrCodeStyleRouter } from './routes/qrCodeStyle';
 import { groupRouter } from './routes/group';
 
 const routes = {
@@ -28,7 +27,7 @@ const routes = {
 	users: usersRouter,
 	team: teamRouter,
 	blacklist: blacklistRouter,
-	qrCodeStyle: QrCodeStyleRouter,
+	group: groupRouter,
 };
 
 export const router = t.router(routes);
