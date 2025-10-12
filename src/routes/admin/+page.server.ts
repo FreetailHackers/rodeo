@@ -18,7 +18,6 @@ interface GroupWithQRCode {
 }
 
 export const load = async (event) => {
-	console.log('inside load');
 	await authenticate(event.locals.session, ['ADMIN']);
 	return {
 		decisions: await trpc(event).admissions.getDecisions(),
