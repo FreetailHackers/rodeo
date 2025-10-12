@@ -6,7 +6,6 @@
 	import { Role } from '@prisma/client';
 
 	let { data } = $props();
-
 	let selectedRole = $state(data.selectedRole) as Role;
 	let selectedStatus = $state(data.selectedStatus) as 'APPLIED' | 'WAITLISTED' | undefined;
 
@@ -32,6 +31,7 @@
 <svelte:head>
 	<title>Rodeo | Admissions</title>
 </svelte:head>
+
 <div class="main-content">
 	<div class="role-buttons">
 		<button onclick={() => lookingAt(Role.HACKER)}>Hackers</button>
@@ -64,15 +64,45 @@
 		{/if}
 
 		{#if data.user.authUser.roles?.includes(selectedRole)}
-			<h1>{data.user.authUser.email}</h1>
+			{#if data.blacklistHit}
+				<div class="bl-warning" role="alert" aria-live="polite">
+					⚠️ <strong>Warning:</strong> This person is blacklisted
+				</div>
+			{/if}
+
+			<h1>
+				{data.user.authUser.email}
+			</h1>
+
 			<UserCard user={data.user} questions={data.questions} teammates={data.teammates} />
+
 			<div id="form">
 				<div id="padding"></div>
 				<form method="POST" use:enhance>
 					<input type="hidden" name="id" value={data.user.authUserId} />
-					<button type="submit" formaction="?/accept">Accept</button>
+
+					<!-- Accept -->
+					<button
+						type="submit"
+						formaction="?/accept"
+						disabled={data.blacklistHit}
+						title={data.blacklistHit ? 'Blacklisted — action disabled' : 'Accept'}
+					>
+						Accept
+					</button>
+
+					<!-- Reject -->
 					<button type="submit" formaction="?/reject">Reject</button>
-					<button type="submit" formaction="?/waitlist">Waitlist</button>
+
+					<!-- Waitlist -->
+					<button
+						type="submit"
+						formaction="?/waitlist"
+						disabled={data.blacklistHit}
+						title={data.blacklistHit ? 'Blacklisted — action disabled' : 'Waitlist'}
+					>
+						Waitlist
+					</button>
 				</form>
 			</div>
 		{:else}
@@ -86,12 +116,10 @@
 		position: sticky;
 		bottom: 0;
 	}
-
 	#padding {
 		height: 1rem;
-		background: linear-gradient(transparent, var(--blue)); /* changed for dark mode */
+		background: linear-gradient(transparent, var(--blue));
 	}
-
 	.status-buttons {
 		margin-top: 2rem;
 	}
@@ -102,17 +130,29 @@
 		justify-content: space-between;
 		gap: 1rem;
 	}
-
 	form {
 		flex-direction: row;
 		justify-content: space-between;
 		gap: 1rem;
-		background: var(--blue); /* changed for dark mode */
+		background: var(--blue);
 		padding-bottom: 1rem;
 	}
-
 	button {
 		flex-grow: 1;
 		white-space: nowrap;
+	}
+	button[disabled] {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+
+	.bl-warning {
+		margin: 0.75rem 0 1rem;
+		padding: 0.75rem 1rem;
+		background: #fee2e2;
+		color: #7f1d1d;
+		border: 1px solid #fecaca;
+		border-radius: 0.5rem;
+		font-size: 0.95rem;
 	}
 </style>

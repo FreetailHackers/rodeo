@@ -113,6 +113,16 @@ model Settings {
   hackathonStartDate        DateTime?
 }
 
+model Blacklist {
+  id        String   @id @default(cuid())
+  type      String         // 'email' | 'name'
+  value     String
+  createdAt DateTime @default(now())
+
+  @@unique([type, value], name: "type_value")
+}
+
+
 model Question {
   id            String       @id @default(uuid())
   label         String

@@ -9,7 +9,6 @@ import { getSettings } from './settings';
 import type { AuthSession, User, AuthUser, StatusChange } from '@prisma/client';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
-import { canApply } from './admissions';
 import { removeInvalidTeamMembers } from './team';
 import natural from 'natural';
 const { WordTokenizer } = natural;
@@ -19,6 +18,7 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import { hash } from '@node-rs/argon2';
 import * as auth from '$lib/authenticate';
+import { canApply } from './admissions';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
