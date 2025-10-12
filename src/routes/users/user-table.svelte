@@ -14,17 +14,21 @@
 		DECLINED: 'pink',
 	};
 
-	interface Props {
-		users: (Prisma.UserGetPayload<{
-			include: { authUser: true; decision: true };
-		}> & {
-			teammates: { email: string; status: string }[];
-		})[];
+	export type UserRow = Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }> & {
+		teammates: { email: string; status: string }[];
+		isBlacklisted?: boolean;
+	};
+
+	// Use ONE prop shape: UserRow[] for users
+	let {
+		users,
+		self,
+		questions,
+	}: {
+		users: UserRow[];
 		self: AuthUser;
 		questions: Question[];
-	}
-
-	let { users, self, questions }: Props = $props();
+	} = $props();
 
 	let action = $state('admissions');
 	let selected = $state(users.map(() => false));
@@ -39,7 +43,6 @@
 	});
 
 	// Validate that the selected action can be applied to the selected users
-	// Throws an error if the action is invalid, otherwise returns a string
 	function validateSelection(action: string, selected: boolean[]) {
 		const selectedUsers = users.filter((_, i) => selected[i]);
 		if (action === '') {
@@ -241,7 +244,17 @@
 								onclick={() => (selected[i] = !selected[i])}
 							/>
 						{/if}
-						<a href="mailto:{user.authUser.email}">{user.authUser.email}</a>
+
+						<a class="email-link" href={'mailto:' + user.authUser.email}>
+							{user.authUser.email}
+						</a>
+
+						{#if user.isBlacklisted}
+							<Badge color="red" variant="filled" title="This user is blacklisted">
+								Blacklisted
+							</Badge>
+						{/if}
+
 						<span class="grow"></span>
 						<Badge
 							color={STATUS_COLOR_MAP[user.authUser.status] ?? 'gray'}
@@ -251,6 +264,7 @@
 							{user.authUser.status.charAt(0) + user.authUser.status.slice(1).toLowerCase()}
 						</Badge>
 					</summary>
+
 					<div class="user">
 						<UserCard {user} {questions} teammates={user.teammates} />
 					</div>
@@ -343,5 +357,9 @@
 
 	label {
 		color: var(--accent);
+	}
+
+	.email-link {
+		margin-right: 0.5rem;
 	}
 </style>

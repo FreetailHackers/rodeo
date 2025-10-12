@@ -6,6 +6,7 @@ import { authenticate } from '../middleware';
 import { t } from '../t';
 import { getSettings } from './settings';
 import { Role, Status } from '@prisma/client';
+import { checkIfBlacklisted } from './blacklist';
 
 /**
  * Considers applicationOpen, applicationDeadline, and applicationLimit
@@ -94,6 +95,26 @@ export const admissionsRouter = t.router({
 						id: id,
 					},
 				});
+
+				// fetch application + email to evaluate
+				const record = await prisma.user.findUnique({
+					where: { authUserId: id },
+					include: { authUser: true },
+				});
+				if (!record) continue;
+
+				const app = record.application as any;
+				const answersJoined = typeof app === 'object' ? JSON.stringify(app) : String(app ?? '');
+
+				const isBlacklisted = await checkIfBlacklisted(record.authUser?.email, answersJoined);
+				// block Accept and Waitlist if blacklisted
+				if (
+					(req.input.decision === 'ACCEPTED' || req.input.decision === 'WAITLISTED') &&
+					isBlacklisted
+				) {
+					continue;
+				}
+
 				if (user.status === 'APPLIED' || user.status === 'WAITLISTED') {
 					await prisma.decision.upsert({
 						where: { userId: id },
@@ -167,13 +188,16 @@ export const admissionsRouter = t.router({
 		.query(
 			async (
 				req,
-			): Promise<Prisma.UserGetPayload<{
-				include: { authUser: true; decision: true };
-			}> | null> => {
+			): Promise<
+				| (Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }> & {
+						isBlacklisted: boolean;
+				  })
+				| null
+			> => {
 				const statusFilter = req.input.status
 					? [req.input.status]
 					: [Status.APPLIED, Status.WAITLISTED];
-				return await prisma.user.findFirst({
+				const user = await prisma.user.findFirst({
 					where: {
 						authUser: {
 							roles: { has: req.input.role },
@@ -184,6 +208,14 @@ export const admissionsRouter = t.router({
 					include: { authUser: true, decision: true },
 					orderBy: [{ teamId: 'asc' }],
 				});
+
+				if (!user) return null;
+
+				const app = user.application as any;
+				const answersJoined = typeof app === 'object' ? JSON.stringify(app) : String(app ?? '');
+
+				const isBlacklisted = await checkIfBlacklisted(user.authUser?.email, answersJoined);
+				return { ...user, isBlacklisted };
 			},
 		),
 

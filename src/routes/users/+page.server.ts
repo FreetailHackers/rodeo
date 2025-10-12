@@ -1,9 +1,11 @@
 import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import type { Role, Status } from '@prisma/client';
+import { checkIfBlacklisted } from '$lib/trpc/routes/blacklist';
 
 export const load = async (event) => {
 	const user = await authenticate(event.locals.session, ['ADMIN', 'SPONSOR']);
+
 	const results = await trpc(event).users.search({
 		page: Number(event.url.searchParams.get('page') ?? 1),
 		key: event.url.searchParams.get('key') ?? '',
@@ -11,14 +13,24 @@ export const load = async (event) => {
 		limit: Number(event.url.searchParams.get('limit') ?? 10),
 		searchFilter: event.url.searchParams.get('searchFilter') ?? '',
 	});
+
 	const questions = await trpc(event).questions.get();
+
 	const users = await Promise.all(
-		results.users.map(async (hacker) => ({
-			...hacker,
-			teammates: event.locals.user.roles.includes('ADMIN')
-				? await trpc(event).team.getTeammates(hacker.authUserId)
-				: [],
-		})),
+		results.users.map(async (hacker) => {
+			const app = hacker.application as any;
+			const answersJoined = typeof app === 'object' ? JSON.stringify(app) : String(app ?? '');
+
+			const isBlacklisted = await checkIfBlacklisted(hacker.authUser?.email, answersJoined);
+
+			return {
+				...hacker,
+				isBlacklisted,
+				teammates: event.locals.user.roles.includes('ADMIN')
+					? await trpc(event).team.getTeammates(hacker.authUserId)
+					: [],
+			};
+		}),
 	);
 
 	return {

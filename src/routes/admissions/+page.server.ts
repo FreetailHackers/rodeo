@@ -25,10 +25,11 @@ export const load = async (event) => {
 	});
 
 	return {
-		user: user,
+		user,
 		questions: admissionRelevantQuestions,
 		teammates: user !== null ? await trpc(event).team.getTeammates(user.authUserId) : [],
-		selectedRole: selectedRole,
+		selectedRole,
+		blacklistHit: !!user?.isBlacklisted,
 		selectedStatus: selectedStatus,
 	};
 };
