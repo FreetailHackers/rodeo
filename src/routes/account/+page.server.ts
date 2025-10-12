@@ -36,8 +36,20 @@ export const load = async (event) => {
 		};
 	}
 
+	const qrCodeStyle = {
+		imageKey: null,
+		dotsOptions: {
+			color: 'black',
+			type: 'rounded',
+		},
+		backgroundOptions: {
+			color: 'white',
+		},
+	};
+
 	return {
 		user: user,
+		qrCodeStyle: qrCodeStyle,
 	};
 };
 
