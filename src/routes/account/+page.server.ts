@@ -10,7 +10,7 @@ export const load = async (event) => {
 			team: await trpc(event).team.getTeam(),
 			invitations: await trpc(event).team.getTeamInvitations(),
 			group: group,
-			pass: await trpc(event).pass.getPass({
+			applePass: await trpc(event).pass.getPass({
 				uid: user.id,
 				group: group || 'N/A',
 			}),
@@ -19,11 +19,13 @@ export const load = async (event) => {
 				group: group || 'N/A',
 				prefix: 'google-ticket.pass/',
 			}),
+			settings: await trpc(event).settings.getPublic(),
 		};
 	}
 
 	return {
 		user: user,
+		settings: await trpc(event).settings.getPublic(),
 	};
 };
 

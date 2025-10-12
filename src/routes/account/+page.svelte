@@ -24,9 +24,9 @@
 	let canvas = $state() as HTMLCanvasElement;
 	let closeModal = $state(false);
 
-	// button is disabled until Oct 18, 2025 @ 8am (check in time)
-	const releaseDate = new Date('2025-10-18T08:00:00');
-	const isButtonsDisabled = new Date() < releaseDate;
+	// button is disabled until hackathon start date (if set)
+	const startDate = data.settings?.hackathonStartDate;
+	const isButtonsDisabled = startDate ? new Date() < new Date(startDate) : false;
 
 	onMount(() => {
 		QRCode.toCanvas(canvas, data.user.id, {
@@ -162,13 +162,13 @@
 					<img src="hacker-id/background.png" alt="hacker id-card" />
 				</div>
 				<div class="wallet-download-buttons">
-					{#if data.pass}
+					{#if data.applePass}
 						<button
 							class="wallet-download-button"
 							class:disabled={isButtonsDisabled}
-							onclick={() => downloadPass(data.pass, 'hacktx-2025.pkpass')}
+							onclick={() => downloadPass(data.applePass, 'hacktx-2025-apple.pkpass')}
 						>
-							<img src="appleWalletDownload.png" alt="apple wallet download" />
+							<img src="apple-wallet-download.png" alt="apple wallet download" />
 						</button>
 					{/if}
 					{#if data.googlePass}
@@ -177,7 +177,7 @@
 							class:disabled={isButtonsDisabled}
 							onclick={() => downloadPass(data.googlePass, 'hacktx-2025-google.pkpass')}
 						>
-							<img src="google_wallet_download.png" alt="google wallet download" />
+							<img src="google-wallet-download.png" alt="google wallet download" />
 						</button>
 					{/if}
 				</div>
@@ -189,7 +189,7 @@
 			{:else if data.user.status === 'DECLINED'}
 				<h3>Invitation Declined</h3>
 				<p>You have declined your invitation.</p>
-			{:else}
+			{:else if data.user.status !== 'CONFIRMED'}
 				<p>Your application is still being processed.</p>
 			{/if}
 		</div>
