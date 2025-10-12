@@ -12,22 +12,22 @@
 
 	// Reactive values for colors based on selected group
 	let dotsColor = $derived(() => {
-		const group = data.groups.find((g) => g.id === selectedGroupId);
+		const group = data.groups.find((group) => group.id === selectedGroupId);
 		return group?.qrCodeStyle?.dotsOptions?.color || '#000000';
 	});
 
 	let backgroundColor = $derived(() => {
-		const group = data.groups.find((g) => g.id === selectedGroupId);
+		const group = data.groups.find((group) => group.id === selectedGroupId);
 		return group?.qrCodeStyle?.backgroundOptions?.color || '#ffffff';
 	});
 
 	let dotsType = $derived(() => {
-		const group = data.groups.find((g) => g.id === selectedGroupId);
+		const group = data.groups.find((group) => group.id === selectedGroupId);
 		return group?.qrCodeStyle?.dotsOptions?.type || 'rounded';
 	});
 
 	let backgroundImage = $derived(() => {
-		const group = data.groups.find((g) => g.id === selectedGroupId);
+		const group = data.groups.find((group) => group.id === selectedGroupId);
 		return group?.qrCodeStyle?.imageKey || null;
 	});
 

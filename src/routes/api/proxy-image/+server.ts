@@ -1,5 +1,9 @@
 import { error } from '@sveltejs/kit';
 
+/**
+ * Bypasses CORS by displaying images from external domains. Fetches the image from the url
+ * using a remote api and proxies the image back to the client.
+ */
 export const GET = async ({ url }: { url: URL }) => {
 	const imageUrl = url.searchParams.get('url');
 	if (!imageUrl) throw error(400, 'Missing image URL');
