@@ -117,6 +117,7 @@ a.button {
 	cursor: pointer;
 	transition: all 0.1s;
 	text-wrap: nowrap;
+	border: 1px solid transparent;
 }
 
 button:not(:disabled):hover,
@@ -419,13 +420,11 @@ dialog button {
 .modal button {
 	background-color: var(--blue);
 	color: var(--accent);
-	border: 1px solid var(--accent);
 }
 
 .modal button:hover {
 	background-color: var(--blue);
 	color: var(--accent);
-	border: 1px solid var(--accent);
 }
 
 .label-and-button {
