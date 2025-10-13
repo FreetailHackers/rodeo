@@ -7,8 +7,8 @@
 	let { data } = $props();
 
 	let applicationOpenStatus = $state(data.settings.applicationOpen);
-
 	let selectedGroupId = $state(data.groups.length > 0 ? data.groups[0].id : '');
+	let hasFileSelected = $state(false); // Add this reactive variable
 
 	// Reactive values for colors based on selected group
 	let dotsColor = $derived(() => {
@@ -34,9 +34,12 @@
 	function handleFileChange(event: Event) {
 		const input = event.target as HTMLInputElement;
 		if (input.files && input.files.length > 0) {
+			hasFileSelected = true;
 			if (input.files[0].size > 1024 * 1024) {
 				toasts.notify('Error: File size must be under 1MB.');
 			}
+		} else {
+			hasFileSelected = false;
 		}
 	}
 </script>
@@ -202,7 +205,7 @@
 			{#if backgroundImage() == null}
 				<label for="qr-image">QR Code Image (leave empty for no image)</label>
 			{:else}
-				<label for="qr-image">Replace QR Code Image (leave empty for keep current image)</label>
+				<label for="qr-image">Replace QR Code Image (leave empty to keep current image)</label>
 			{/if}
 			<input
 				type="file"
@@ -211,6 +214,18 @@
 				accept=".jpg, .jpeg, .png, .webp"
 				onchange={handleFileChange}
 			/>
+			{#if backgroundImage() != null}
+				<div class="checkbox-container">
+					<input
+						type="checkbox"
+						id="deleteImage"
+						name="deleteImage"
+						value="true"
+						disabled={hasFileSelected}
+					/>
+					<label for="deleteImage">Delete image</label>
+				</div>
+			{/if}
 		</div>
 
 		<div class="qr-field">
@@ -342,6 +357,38 @@
 		border: 1px solid #ccc;
 		border-radius: 4px;
 		font-size: 14px;
+	}
+
+	.checkbox-container {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		gap: 6px;
+		margin-top: 8px;
+		cursor: pointer;
+		width: fit-content;
+	}
+	.checkbox-container label {
+		margin: 0;
+		cursor: pointer;
+		font-size: 14px;
+		font-weight: 500;
+		white-space: nowrap; /* Prevents text wrapping */
+		margin-bottom: 1px;
+	}
+
+	.checkbox-container input[type='checkbox'] {
+		width: auto;
+		max-width: none;
+		padding: 0;
+		margin: 0;
+		transform: scale(1.5);
+		flex-shrink: 0;
+	}
+
+	.checkbox-container input[type='checkbox']:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
 	}
 
 	.qr-field input[type='color'] {

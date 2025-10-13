@@ -47,23 +47,8 @@
 				},
 			});
 		} catch (error) {
-			qrCode = new QRCodeStyling({
-				width: 1000,
-				height: 1000,
-				data: data.user.id,
-				imageOptions: {
-					imageSize: 0.4,
-				},
-				dotsOptions: {
-					color: userQrStyle.dotsOptions?.color || '#000000',
-					type: (userQrStyle.dotsOptions?.type as any) || 'square',
-				},
-				backgroundOptions: {
-					color: userQrStyle.backgroundOptions?.color || '#ffffff',
-				},
-			});
+			throw error;
 		}
-
 		qrCode.append(qrCodeContainer);
 
 		//Force the QR code to scale after it's been appended

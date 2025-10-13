@@ -130,7 +130,12 @@ export const actions = {
 			const currentGroup = groups.find(
 				(group) => group.id === (formData.get('group') as string),
 			) as GroupWithQRCode;
-			const existingImageKey = currentGroup?.qrCodeStyle?.imageKey;
+			let existingImageKey = currentGroup?.qrCodeStyle?.imageKey;
+
+			if (formData.get('deleteImage')) {
+				s3Delete(existingImageKey);
+				existingImageKey = undefined;
+			}
 
 			const qrConfig = {
 				group: formData.get('group') as string,
