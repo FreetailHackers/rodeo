@@ -73,7 +73,7 @@
 		<div class="left-section">
 			<h3>My Details</h3>
 			{#if data.group}
-				<p><b>Group</b>: {data.group}</p>
+				<p><b>Lunch Group</b>: {data.group}</p>
 			{/if}
 			<p><b>Email</b>: {data.user.email}</p>
 			<hr />
