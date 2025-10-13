@@ -128,7 +128,7 @@ export const actions = {
 		} else {
 			const groups = await trpc(event).group.getGroups();
 			const currentGroup = groups.find(
-				(g) => g.id === (formData.get('group') as string),
+				(group) => group.id === (formData.get('group') as string),
 			) as GroupWithQRCode;
 			const existingImageKey = currentGroup?.qrCodeStyle?.imageKey;
 
