@@ -399,7 +399,7 @@ dialog button {
 
 .modal {
 	border-radius: 1em;
-	background-color: white;
+	background-color: var(--accent);
 	padding: 2rem;
 	user-select: none;
 }
@@ -409,6 +409,23 @@ dialog button {
 	justify-content: space-between;
 	margin-top: unset;
 	user-select: text;
+	color: var(--dark-blue);
+}
+
+.modal p {
+	color: var(--dark-blue);
+}
+
+.modal button {
+	background-color: var(--blue);
+	color: var(--accent);
+	border: 1px solid var(--accent);
+}
+
+.modal button:hover {
+	background-color: var(--blue);
+	color: var(--accent);
+	border: 1px solid var(--accent);
 }
 
 .label-and-button {
@@ -416,6 +433,10 @@ dialog button {
 	justify-content: space-between;
 	align-items: center;
 	user-select: none;
+}
+
+.label-and-button img {
+	filter: invert(1) brightness(2);
 }
 
 .close-button {
