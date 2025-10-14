@@ -14,7 +14,7 @@ export const normalizeName = (input?: string) =>
 		.trim()
 		.replace(/\s+/g, ' ');
 
-const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+//const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 export const blacklistRouter = t.router({
 	/**
@@ -140,11 +140,11 @@ export const blacklistRouter = t.router({
  * Check whether a user is blacklisted by email or name,
  * including scanning their application answers (like the old settings-based version).
  */
-export async function checkIfBlacklisted(email?: string, answersJoined?: string): Promise<boolean> {
+// Keep the export name the same for callers
+export async function checkIfBlacklisted(email?: string, fullNameRaw?: string): Promise<boolean> {
 	const normalizedEmail = normalizeEmail(email || '');
-	const normalizedAnswers = normalizeName(answersJoined || '');
 
-	// Exact email in DB
+	//  Check email directly
 	if (normalizedEmail) {
 		const emailRow = await prisma.blacklist.findUnique({
 			where: { type_value: { type: 'email', value: normalizedEmail } },
@@ -153,26 +153,14 @@ export async function checkIfBlacklisted(email?: string, answersJoined?: string)
 		if (emailRow) return true;
 	}
 
-	// Email string mentioned inside answers blob
-	if (normalizedEmail && normalizedAnswers.includes(normalizedEmail)) {
-		return true;
-	}
-
-	// Any blacklisted name token present in answers (word-boundary, normalized)
-	if (normalizedAnswers) {
-		const nameRows = await prisma.blacklist.findMany({
-			where: { type: 'name' },
-			select: { value: true },
+	// check email
+	const normalizedName = normalizeName(fullNameRaw || '');
+	if (normalizedName) {
+		const nameRow = await prisma.blacklist.findUnique({
+			where: { type_value: { type: 'name', value: normalizedName } },
+			select: { id: true },
 		});
-
-		const hasNameHit = nameRows.some(({ value }) => {
-			const token = normalizeName(value);
-			if (!token) return false;
-			const re = new RegExp(`\\b${escapeRegExp(token)}\\b`);
-			return re.test(normalizedAnswers);
-		});
-
-		if (hasNameHit) return true;
+		if (nameRow) return true;
 	}
 
 	return false;
