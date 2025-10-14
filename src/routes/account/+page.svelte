@@ -265,7 +265,7 @@
 		position: absolute;
 		object-fit: contain;
 		margin: 18%;
-		margin-top: 55%;
+		margin-top: 30%;
 		border-radius: 10%;
 	}
 
