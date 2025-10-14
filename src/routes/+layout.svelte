@@ -170,11 +170,13 @@
 	.navbar form button:hover {
 		background-color: var(--blue);
 		font-weight: normal;
+		border: none;
 	}
 
-	.navbar a:active {
+	.navbar a.active {
 		background-color: var(--blue);
 		font-weight: bold;
+		border: 1px solid var(--accent);
 	}
 	@media (max-width: 780px) {
 		.container {
