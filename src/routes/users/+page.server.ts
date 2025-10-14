@@ -20,7 +20,7 @@ export const load = async (event) => {
 	const users = await Promise.all(
 		results.users.map(async (hacker) => {
 			const app = hacker.application as any;
-			const fullName = nameQuestion ? (app?.[nameQuestion.id] ?? '') : '';
+			const fullName = nameQuestion ? String(app?.[nameQuestion.id] ?? '').trim() : '';
 
 			const isBlacklisted = await checkIfBlacklisted(hacker.authUser?.email, fullName);
 

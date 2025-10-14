@@ -107,7 +107,7 @@ export const admissionsRouter = t.router({
 				if (!record) continue;
 
 				const app = record.application as any;
-				const fullName = nameQuestion ? (app?.[nameQuestion.id] ?? '') : '';
+				const fullName = nameQuestion ? String(app?.[nameQuestion.id] ?? '').trim() : '';
 
 				const isBlacklisted = await checkIfBlacklisted(record.authUser?.email, fullName);
 
@@ -217,7 +217,7 @@ export const admissionsRouter = t.router({
 
 				const nameQuestion = (await getQuestions()).find((q) => /name/i.test(q.label));
 				const app = user.application as any;
-				const fullName = nameQuestion ? (app?.[nameQuestion.id] ?? '') : '';
+				const fullName = nameQuestion ? String(app?.[nameQuestion.id] ?? '').trim() : '';
 
 				const isBlacklisted = await checkIfBlacklisted(user.authUser?.email, fullName);
 				return { ...user, isBlacklisted };

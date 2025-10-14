@@ -6,16 +6,6 @@ import { t } from '../t';
 //normalization helper
 export const normalizeEmail = (input?: string) => (input ?? '').toLowerCase().trim();
 
-export const normalizeName = (input?: string) =>
-	(input ?? '')
-		.normalize('NFKD')
-		.replace(/[\u0300-\u036f]/g, '')
-		.toLowerCase()
-		.trim()
-		.replace(/\s+/g, ' ');
-
-//const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
 export const blacklistRouter = t.router({
 	/**
 	 * Fetch all blacklist entries, split into emails and names.
@@ -30,10 +20,12 @@ export const blacklistRouter = t.router({
 
 	/**
 	 * Replace the entire blacklist with the provided arrays of emails and names.
-	 * - Normalizes values (emails → lowercase/trim, names → lower/trim/diacritics removed/space-collapsed).
+	 * - Emails are normalized (lowercase + trim).
+	 * - Names are kept exact (trim only).
 	 * - Deletes entries not in the new list.
 	 * - Inserts new entries, skipping duplicates.
 	 */
+
 	replace: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(
@@ -46,16 +38,17 @@ export const blacklistRouter = t.router({
 			const normalizedEmails = [...new Set(requestContext.input.emails.map(normalizeEmail))].filter(
 				Boolean,
 			);
-			const normalizedNames = [...new Set(requestContext.input.names.map(normalizeName))].filter(
-				Boolean,
-			);
+
+			const exactNames = [
+				...new Set(requestContext.input.names.map((name) => (name ?? '').trim())),
+			].filter(Boolean);
 
 			await prisma.$transaction(async (transaction) => {
 				await transaction.blacklist.deleteMany({
 					where: { type: 'email', NOT: { value: { in: normalizedEmails } } },
 				});
 				await transaction.blacklist.deleteMany({
-					where: { type: 'name', NOT: { value: { in: normalizedNames } } },
+					where: { type: 'name', NOT: { value: { in: exactNames } } },
 				});
 
 				if (normalizedEmails.length > 0) {
@@ -64,15 +57,15 @@ export const blacklistRouter = t.router({
 						skipDuplicates: true,
 					});
 				}
-				if (normalizedNames.length > 0) {
+				if (exactNames.length > 0) {
 					await transaction.blacklist.createMany({
-						data: normalizedNames.map((nameValue) => ({ type: 'name', value: nameValue })),
+						data: exactNames.map((nameValue) => ({ type: 'name', value: nameValue })),
 						skipDuplicates: true,
 					});
 				}
 			});
 
-			return { emails: normalizedEmails, names: normalizedNames };
+			return { emails: normalizedEmails, names: exactNames };
 		}),
 
 	/**
@@ -87,9 +80,9 @@ export const blacklistRouter = t.router({
 			const normalizedValue =
 				requestContext.input.kind === 'email'
 					? normalizeEmail(requestContext.input.value)
-					: normalizeName(requestContext.input.value);
+					: (requestContext.input.value ?? '').trim();
 
-			if (!normalizedValue) return 'Skipped (empty after normalization).';
+			if (!normalizedValue) return 'Skipped (empty value).';
 
 			await prisma.blacklist.createMany({
 				data: [{ type: requestContext.input.kind, value: normalizedValue }],
@@ -111,7 +104,7 @@ export const blacklistRouter = t.router({
 			const normalizedValue =
 				requestContext.input.kind === 'email'
 					? normalizeEmail(requestContext.input.value)
-					: normalizeName(requestContext.input.value);
+					: (requestContext.input.value ?? '').trim();
 
 			await prisma.blacklist.deleteMany({
 				where: {
@@ -124,7 +117,7 @@ export const blacklistRouter = t.router({
 		}),
 
 	check: t.procedure
-		.use(authenticate(['ADMIN'])) // pick the roles you want
+		.use(authenticate(['ADMIN']))
 		.input(
 			z.object({
 				email: z.string().optional(),
@@ -144,7 +137,7 @@ export const blacklistRouter = t.router({
 export async function checkIfBlacklisted(email?: string, fullNameRaw?: string): Promise<boolean> {
 	const normalizedEmail = normalizeEmail(email || '');
 
-	//  Check email directly
+	// email match
 	if (normalizedEmail) {
 		const emailRow = await prisma.blacklist.findUnique({
 			where: { type_value: { type: 'email', value: normalizedEmail } },
@@ -153,11 +146,11 @@ export async function checkIfBlacklisted(email?: string, fullNameRaw?: string): 
 		if (emailRow) return true;
 	}
 
-	// check email
-	const normalizedName = normalizeName(fullNameRaw || '');
-	if (normalizedName) {
+	//name match
+	const exactName = (fullNameRaw ?? '').trim();
+	if (exactName) {
 		const nameRow = await prisma.blacklist.findUnique({
-			where: { type_value: { type: 'name', value: normalizedName } },
+			where: { type_value: { type: 'name', value: exactName } },
 			select: { id: true },
 		});
 		if (nameRow) return true;
