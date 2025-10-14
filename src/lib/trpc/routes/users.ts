@@ -858,11 +858,15 @@ export const usersRouter = t.router({
 			});
 			if (req.input.status == 'CONFIRMED') {
 				const groups = await prisma.group.findMany();
-				const updateGroups = prisma.user.updateMany({
-					where: { authUserId: { in: req.input.ids } },
-					data: { groupId: groups[Math.floor(Math.random() * groups.length)].id },
-				});
-				await prisma.$transaction([updateStatuses, deleteDecisions, updateGroups]);
+				if (groups.length > 0) {
+					const updateGroups = prisma.user.updateMany({
+						where: { authUserId: { in: req.input.ids } },
+						data: { groupId: groups[Math.floor(Math.random() * groups.length)].id },
+					});
+					await prisma.$transaction([updateStatuses, deleteDecisions, updateGroups]);
+				}
+
+				await prisma.$transaction([updateStatuses, deleteDecisions]);
 			} else {
 				await prisma.$transaction([updateStatuses, deleteDecisions]);
 			}
