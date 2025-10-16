@@ -315,9 +315,11 @@
 		object-fit: contain;
 		margin: 18%;
 		margin-top: 30%;
-		border-radius: 10%;
+		border-radius: 16px;
 		opacity: 0;
 		transition: opacity 0.2s ease-in-out;
+		padding: 10px;
+		background-color: white;
 	}
 
 	.id-card #qrcode.loaded {
