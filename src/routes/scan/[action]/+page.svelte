@@ -16,6 +16,8 @@
 	let user = $state<Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }> | null>(
 		null,
 	);
+	let isLoading = $state(false);
+
 	let totalScans = $state(0);
 	let scanCount: Record<string, number> = $state({});
 
@@ -33,9 +35,16 @@
 		if (dialog?.open) {
 			return;
 		}
-		user = await trpc().users.get.query(decodedText);
-		totalScans = await trpc().users.getScanCount.query(page.params.action);
+		isLoading = true;
+		user = null;
 		dialog?.showModal();
+
+		try {
+			user = await trpc().users.get.query(decodedText);
+			totalScans = await trpc().users.getScanCount.query(page.params.action);
+		} finally {
+			isLoading = false;
+		}
 	}
 
 	onDestroy(() => {
@@ -121,7 +130,9 @@
 {/if}
 
 <dialog bind:this={dialog}>
-	{#if user === null}
+	{#if isLoading}
+		<p>Loading...</p>
+	{:else if user === null}
 		<p class="error">Could not find this user in the database.</p>
 		<button type="button" onclick={() => dialog.close()}>Close</button>
 	{:else if user.authUser.roles.includes('HACKER') && user.authUser.status !== 'CONFIRMED'}
