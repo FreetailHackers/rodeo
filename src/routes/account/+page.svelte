@@ -6,8 +6,27 @@
 
 	let { data } = $props();
 
+	function downloadPass(passData: any, filename: string) {
+		if (isButtonsDisabled || passData === undefined) return;
+		const blob = new Blob([new Uint8Array(passData.data)], {
+			type: passData.mimeType,
+		});
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = filename;
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+		URL.revokeObjectURL(url);
+	}
+
 	let qrCodeContainer = $state() as HTMLDivElement;
 	let closeModal = $state(false);
+
+	// button is disabled until hackathon start date (if set)
+	const startDate = data.settings?.hackathonStartDate;
+	const isButtonsDisabled = startDate ? new Date() < new Date(startDate) : false;
 
 	const userQrStyle =
 		(data.qrCodeStyle as {
@@ -186,6 +205,26 @@
 						<img src="hacker-id/background.png" alt="hacker id-card" />
 					</div>
 				</div>
+				<div class="wallet-download-buttons">
+					{#if data.applePass}
+						<button
+							class="wallet-download-button"
+							class:disabled={isButtonsDisabled}
+							onclick={() => downloadPass(data.applePass, 'hacktx-2025-apple.pkpass')}
+						>
+							<img src="apple-wallet-download.png" alt="apple wallet download" />
+						</button>
+					{/if}
+					{#if data.googlePass}
+						<button
+							class="wallet-download-button"
+							class:disabled={isButtonsDisabled}
+							onclick={() => downloadPass(data.googlePass, 'hacktx-2025-google.pkpass')}
+						>
+							<img src="google-wallet-download.png" alt="google wallet download" />
+						</button>
+					{/if}
+				</div>
 			{:else if data.user.status === 'ACCEPTED'}
 				<h3>RSVP Required</h3>
 				<p>Click here to RSVP for the event!</p>
@@ -211,6 +250,26 @@
 		margin-bottom: 0.5em;
 	}
 
+	.wallet-download-button {
+		border: none;
+		padding: 0 0;
+		text-decoration: none;
+		cursor: pointer;
+		transition: all 0.1s;
+		background-color: var(--blue);
+		margin-top: 1.5rem;
+		margin-right: 1rem;
+	}
+	.wallet-download-button img {
+		width: 10rem;
+	}
+	.wallet-download-button.disabled {
+		opacity: 0.75;
+		cursor: not-allowed;
+	}
+	.wallet-download-button.disabled img {
+		filter: grayscale(100%);
+	}
 	.container {
 		display: flex;
 		justify-content: space-between;
@@ -248,14 +307,14 @@
 		top: 0;
 		left: 0;
 		object-fit: cover;
-		width: 100%;
+		max-width: 350px;
 	}
 
 	.id-card #qrcode {
 		position: absolute;
 		object-fit: contain;
 		margin: 18%;
-		margin-top: 55%;
+		margin-top: 30%;
 		border-radius: 10%;
 		opacity: 0;
 		transition: opacity 0.2s ease-in-out;

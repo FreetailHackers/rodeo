@@ -3,7 +3,6 @@ import { trpc } from '$lib/trpc/router';
 
 export const load = async (event) => {
 	const user = await authenticate(event.locals.session, []);
-
 	if (user.roles.includes('HACKER')) {
 		const groupName = await trpc(event).users.getGroup();
 		let qrCodeStyle = null;
@@ -31,6 +30,16 @@ export const load = async (event) => {
 			team: await trpc(event).team.getTeam(),
 			invitations: await trpc(event).team.getTeamInvitations(),
 			group: await trpc(event).users.getGroup(),
+			applePass: await trpc(event).pass.getPass({
+				uid: user.id,
+				group: groupName || 'N/A',
+			}),
+			googlePass: await trpc(event).pass.getPass({
+				uid: user.id,
+				group: groupName || 'N/A',
+				prefix: 'google-ticket.pass/',
+			}),
+			settings: await trpc(event).settings.getPublic(),
 			qrCodeStyle: qrCodeStyle,
 			imageUrl: imageUrl,
 		};
@@ -50,6 +59,7 @@ export const load = async (event) => {
 	return {
 		user: user,
 		qrCodeStyle: qrCodeStyle,
+		settings: await trpc(event).settings.getPublic(),
 	};
 };
 
