@@ -14,6 +14,7 @@ import { createContext, createContextTest, t, tTest } from './t';
 import type { RequestEvent } from '@sveltejs/kit';
 import type { AuthUser } from '@prisma/client';
 import { blacklistRouter } from './routes/blacklist';
+import { groupRouter } from './routes/group';
 
 const routes = {
 	admissions: admissionsRouter,
@@ -27,6 +28,7 @@ const routes = {
 	users: usersRouter,
 	team: teamRouter,
 	blacklist: blacklistRouter,
+	group: groupRouter,
 	pass: passRouter,
 };
 
