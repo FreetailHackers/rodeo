@@ -11,10 +11,27 @@ const s3Client = new S3Client({ region: process.env.AWS_REGION });
  * @returns the signer certificates and the passphrase
  */
 const getCertificates = async () => {
+	// Helper function to properly format certificate strings
+	const formatCert = (cert: string) => {
+		if (!cert) return '';
+		// Handle both literal \n in strings and actual newlines
+		// Also fix em dashes that sometimes get copied instead of regular dashes
+		let formatted = cert
+			.replace(/\\n/g, '\n')
+			.replace(/_/g, ' ')
+			.replace(/—/g, '-') // Replace em dashes with regular dashes
+			.trim();
+
+		formatted = formatted.replace(/-+BEGIN ([A-Z ]+)-+/g, '-----BEGIN $1-----');
+		formatted = formatted.replace(/-+END ([A-Z ]+)-+/g, '-----END $1-----');
+
+		return formatted;
+	};
+
 	const certificates = {
-		signerCert: (process.env.SIGNER_CERT || '').replace(/\\n/g, '\n').replace(/_/g, ' '),
-		signerKey: (process.env.SIGNER_KEY || '').replace(/\\n/g, '\n').replace(/_/g, ' '),
-		wwdr: (process.env.WWDR || '').replace(/\\n/g, '\n').replace(/_/g, ' '),
+		signerCert: formatCert(process.env.SIGNER_CERT || ''),
+		signerKey: formatCert(process.env.SIGNER_KEY || ''),
+		wwdr: formatCert(process.env.WWDR || ''),
 		signerKeyPassphrase: (process.env.SIGNER_KEY_PASSPHRASE || '').replace(/\\n/g, '\n'),
 	};
 
