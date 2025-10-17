@@ -319,7 +319,7 @@
 		opacity: 0;
 		transition: opacity 0.2s ease-in-out;
 		padding: 10px;
-		background-color: white;
+		background-color: var(--other-blue);
 	}
 
 	.id-card #qrcode.loaded {
