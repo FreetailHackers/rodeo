@@ -3,9 +3,19 @@ import { trpc } from '$lib/trpc/router';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import { s3Delete, s3Upload } from '$lib/s3Handler';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+
+interface GroupWithQRCode {
+	id: string;
+	qrCodeStyle: {
+		dotsOptions?: { color?: string; type?: string };
+		backgroundOptions?: { color?: string };
+		imageKey?: string;
+	} | null;
+}
 
 export const load = async (event) => {
 	await authenticate(event.locals.session, ['ADMIN']);
@@ -13,6 +23,7 @@ export const load = async (event) => {
 		decisions: await trpc(event).admissions.getDecisions(),
 		settings: await trpc(event).settings.getAll(),
 		graph: await trpc(event).users.getStatusChanges(),
+		groups: (await trpc(event).group.getGroups()) as GroupWithQRCode[],
 	};
 };
 
@@ -80,7 +91,66 @@ export const actions = {
 			return 'Please enter valid group names separated by commas.';
 		}
 
+		await trpc(event).group.createGroups(groupNames);
 		await trpc(event).users.splitGroups(groupNames);
 		return 'Groups successfully split and updated!';
+	},
+
+	qrCodeSettings: async (event) => {
+		const formData = await event.request.formData();
+
+		const qrImage = formData.get('qr-image') as File;
+		const key = `qr-code/qr-image-${formData.get('group') as string}`;
+
+		if (qrImage.size != 0) {
+			if (qrImage.size <= 1024 * 1024) {
+				//delete any existing images
+				s3Delete(key);
+				//upload new image
+				s3Upload(key, qrImage);
+
+				const qrConfig = {
+					group: formData.get('group') as string,
+					imageKey: key,
+					dotsOptions: {
+						color: formData.get('dotsColor') as string,
+						type: formData.get('dotsType') as string,
+					},
+					backgroundOptions: {
+						color: formData.get('backgroundColor') as string,
+					},
+				};
+				await trpc(event).group.updateQRCode(qrConfig);
+				return 'QR Code successfully changed!';
+			} else {
+				return 'Error in updating sponsor! Check your file!';
+			}
+		} else {
+			const groups = await trpc(event).group.getGroups();
+			const currentGroup = groups.find(
+				(group) => group.id === (formData.get('group') as string),
+			) as GroupWithQRCode;
+			let existingImageKey = currentGroup?.qrCodeStyle?.imageKey;
+
+			if (formData.get('deleteImage')) {
+				s3Delete(existingImageKey);
+				existingImageKey = undefined;
+			}
+
+			const qrConfig = {
+				group: formData.get('group') as string,
+				imageKey: existingImageKey || undefined,
+				dotsOptions: {
+					color: formData.get('dotsColor') as string,
+					type: formData.get('dotsType') as string,
+				},
+				backgroundOptions: {
+					color: formData.get('backgroundColor') as string,
+				},
+			};
+
+			await trpc(event).group.updateQRCode(qrConfig);
+			return 'QR Code successfully changed!';
+		}
 	},
 };

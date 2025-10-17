@@ -1,8 +1,8 @@
 <script lang="ts">
-	import QRCode from 'qrcode';
 	import { onMount } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { Modal, Content, Trigger } from 'sv-popup';
+	import QRCodeStyling from 'qr-code-styling';
 
 	let { data } = $props();
 
@@ -21,22 +21,64 @@
 		URL.revokeObjectURL(url);
 	}
 
-	let canvas = $state() as HTMLCanvasElement;
+	let qrCodeContainer = $state() as HTMLDivElement;
 	let closeModal = $state(false);
 
 	// button is disabled until hackathon start date (if set)
 	const startDate = data.settings?.hackathonStartDate;
 	const isButtonsDisabled = startDate ? new Date() < new Date(startDate) : false;
 
-	onMount(() => {
-		QRCode.toCanvas(canvas, data.user.id, {
-			scale: 10,
-		});
+	const userQrStyle =
+		(data.qrCodeStyle as {
+			image?: string;
+			dotsOptions?: {
+				color: string;
+				type: string;
+			};
+			backgroundOptions?: {
+				color: string;
+			};
+		}) || {};
 
-		if (data.user !== undefined && data.user.status === 'CONFIRMED') {
-			canvas.style.width = '64%';
-			canvas.style.height = 'auto';
+	let qrCode: QRCodeStyling;
+	let qrCodeLoaded = $state(false);
+
+	const proxiedImageUrl = data.imageUrl
+		? `/api/proxy-image?url=${encodeURIComponent(data.imageUrl)}`
+		: undefined;
+
+	onMount(() => {
+		try {
+			qrCode = new QRCodeStyling({
+				width: 1000,
+				height: 1000,
+				data: data.user.id,
+				image: proxiedImageUrl || undefined,
+				imageOptions: {
+					imageSize: 0.4,
+				},
+				dotsOptions: {
+					color: userQrStyle.dotsOptions?.color || '#ffffff',
+					type: (userQrStyle.dotsOptions?.type as any) || 'square',
+				},
+				backgroundOptions: {
+					color: userQrStyle.backgroundOptions?.color || '#000000',
+				},
+			});
+		} catch (error) {
+			throw error;
 		}
+		qrCode.append(qrCodeContainer);
+
+		//Force the QR code to scale after it's been appended
+		setTimeout(() => {
+			const qrElement = qrCodeContainer.querySelector('svg, canvas') as HTMLElement;
+			if (qrElement) {
+				qrElement.style.width = '100%';
+				qrElement.style.height = 'auto';
+				qrCodeLoaded = true;
+			}
+		}, 100);
 	});
 </script>
 
@@ -50,7 +92,7 @@
 		<div class="left-section">
 			<h3>My Details</h3>
 			{#if data.group}
-				<p><b>Group</b>: {data.group}</p>
+				<p><b>Lunch Group</b>: {data.group}</p>
 			{/if}
 			<p><b>Email</b>: {data.user.email}</p>
 			<hr />
@@ -155,11 +197,13 @@
 		<!-- Right Section with Hacker ID -->
 		<div class="right-section">
 			{#if data.user.status === 'CONFIRMED'}
-				<h3>My Hacker ID</h3>
+				<div class="right-section">
+					<h3>My Hacker ID</h3>
 
-				<div class="id-card">
-					<canvas bind:this={canvas} id="qrcode"></canvas>
-					<img src="hacker-id/background.png" alt="hacker id-card" />
+					<div class="id-card">
+						<div bind:this={qrCodeContainer} id="qrcode" class:loaded={qrCodeLoaded}></div>
+						<img src="hacker-id/background.png" alt="hacker id-card" />
+					</div>
 				</div>
 				<div class="wallet-download-buttons">
 					{#if data.applePass}
@@ -181,16 +225,21 @@
 						</button>
 					{/if}
 				</div>
-			{/if}
-			{#if data.user.status === 'ACCEPTED'}
+			{:else if data.user.status === 'ACCEPTED'}
 				<h3>RSVP Required</h3>
 				<p>Click here to RSVP for the event!</p>
 				<a href="/apply" class="user-button">RSVP Now</a>
 			{:else if data.user.status === 'DECLINED'}
 				<h3>Invitation Declined</h3>
 				<p>You have declined your invitation.</p>
-			{:else if data.user.status !== 'CONFIRMED'}
+			{:else}
 				<p>Your application is still being processed.</p>
+			{/if}
+			{#if data.user.roles.includes('ADMIN')}
+				<div class="id-card">
+					<div bind:this={qrCodeContainer} id="qrcode" class:loaded={qrCodeLoaded}></div>
+					<img src="hacker-id/background.png" alt="hacker id-card" />
+				</div>
 			{/if}
 		</div>
 	{/if}
@@ -266,7 +315,15 @@
 		object-fit: contain;
 		margin: 18%;
 		margin-top: 30%;
-		border-radius: 10%;
+		border-radius: 16px;
+		opacity: 0;
+		transition: opacity 0.2s ease-in-out;
+		padding: 10px;
+		background-color: white;
+	}
+
+	.id-card #qrcode.loaded {
+		opacity: 1;
 	}
 
 	form {
