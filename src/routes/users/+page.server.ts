@@ -15,13 +15,14 @@ export const load = async (event) => {
 	});
 
 	const questions = await trpc(event).questions.get();
+	const nameQuestion = questions.find((q) => /name/i.test(q.label));
 
 	const users = await Promise.all(
 		results.users.map(async (hacker) => {
 			const app = hacker.application as any;
-			const answersJoined = typeof app === 'object' ? JSON.stringify(app) : String(app ?? '');
+			const fullName = nameQuestion ? String(app?.[nameQuestion.id] ?? '').trim() : '';
 
-			const isBlacklisted = await checkIfBlacklisted(hacker.authUser?.email, answersJoined);
+			const isBlacklisted = await checkIfBlacklisted(hacker.authUser?.email, fullName);
 
 			return {
 				...hacker,

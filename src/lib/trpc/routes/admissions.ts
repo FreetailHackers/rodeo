@@ -7,6 +7,7 @@ import { t } from '../t';
 import { getSettings } from './settings';
 import { Role, Status } from '@prisma/client';
 import { checkIfBlacklisted } from './blacklist';
+import { getQuestions } from './questions';
 
 /**
  * Considers applicationOpen, applicationDeadline, and applicationLimit
@@ -89,6 +90,8 @@ export const admissionsRouter = t.router({
 			}),
 		)
 		.mutation(async (req): Promise<void> => {
+			const nameQuestion = (await getQuestions()).find((q) => /name/i.test(q.label));
+
 			for (const id of req.input.ids) {
 				const user = await prisma.authUser.findUniqueOrThrow({
 					where: {
@@ -104,9 +107,10 @@ export const admissionsRouter = t.router({
 				if (!record) continue;
 
 				const app = record.application as any;
-				const answersJoined = typeof app === 'object' ? JSON.stringify(app) : String(app ?? '');
+				const fullName = nameQuestion ? String(app?.[nameQuestion.id] ?? '').trim() : '';
 
-				const isBlacklisted = await checkIfBlacklisted(record.authUser?.email, answersJoined);
+				const isBlacklisted = await checkIfBlacklisted(record.authUser?.email, fullName);
+
 				// block Accept and Waitlist if blacklisted
 				if (
 					(req.input.decision === 'ACCEPTED' || req.input.decision === 'WAITLISTED') &&
@@ -211,10 +215,11 @@ export const admissionsRouter = t.router({
 
 				if (!user) return null;
 
+				const nameQuestion = (await getQuestions()).find((q) => /name/i.test(q.label));
 				const app = user.application as any;
-				const answersJoined = typeof app === 'object' ? JSON.stringify(app) : String(app ?? '');
+				const fullName = nameQuestion ? String(app?.[nameQuestion.id] ?? '').trim() : '';
 
-				const isBlacklisted = await checkIfBlacklisted(user.authUser?.email, answersJoined);
+				const isBlacklisted = await checkIfBlacklisted(user.authUser?.email, fullName);
 				return { ...user, isBlacklisted };
 			},
 		),
