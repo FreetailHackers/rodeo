@@ -7,7 +7,13 @@ import { t } from '../t';
 import { getQuestions } from './questions';
 import { getSettings } from './settings';
 import type { AuthSession, User, AuthUser, StatusChange } from '@prisma/client';
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import {
+	DeleteObjectCommand,
+	PutObjectCommand,
+	S3Client,
+	GetObjectCommand,
+} from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { removeInvalidTeamMembers } from './team';
 import natural from 'natural';
@@ -850,7 +856,20 @@ export const usersRouter = t.router({
 			const deleteDecisions = prisma.decision.deleteMany({
 				where: { userId: { in: req.input.ids } },
 			});
-			await prisma.$transaction([updateStatuses, deleteDecisions]);
+			if (req.input.status == 'CONFIRMED') {
+				const groups = await prisma.group.findMany();
+				if (groups.length > 0) {
+					const updateGroups = prisma.user.updateMany({
+						where: { authUserId: { in: req.input.ids } },
+						data: { groupId: groups[Math.floor(Math.random() * groups.length)].id },
+					});
+					await prisma.$transaction([updateStatuses, deleteDecisions, updateGroups]);
+				}
+
+				await prisma.$transaction([updateStatuses, deleteDecisions]);
+			} else {
+				await prisma.$transaction([updateStatuses, deleteDecisions]);
+			}
 		}),
 
 	/**
@@ -1016,7 +1035,7 @@ export const usersRouter = t.router({
 				groups.map((group, index) =>
 					prisma.user.updateMany({
 						where: { authUserId: { in: group.map((user) => user.authUserId) } },
-						data: { mealGroup: input[index] },
+						data: { groupId: input[index] },
 					}),
 				),
 			);
@@ -1024,55 +1043,15 @@ export const usersRouter = t.router({
 			return groups;
 		}),
 
-	getAllGroups: t.procedure.use(authenticate(['ADMIN'])).query(async () => {
-		const groupsWithMembers = await prisma.user.groupBy({
-			by: ['mealGroup'],
-			where: {
-				mealGroup: { not: null },
-				authUser: { status: 'CONFIRMED' },
-			},
-			_count: true,
-			orderBy: { mealGroup: 'asc' },
-		});
-
-		const groupDetails = await Promise.all(
-			groupsWithMembers.map(async (lunchGroup) => {
-				const members = await prisma.user.findMany({
-					where: {
-						mealGroup: lunchGroup.mealGroup,
-						authUser: { status: 'CONFIRMED' },
-					},
-					select: {
-						teamId: true,
-						team: true,
-						authUser: {
-							select: {
-								email: true,
-							},
-						},
-					},
-				});
-
-				return {
-					mealGroup: lunchGroup.mealGroup,
-					memberCount: lunchGroup._count,
-					members: members,
-				};
-			}),
-		);
-
-		return groupDetails;
-	}),
-
 	// Returns the group of the user
 	getGroup: t.procedure.use(authenticate(['HACKER'])).query(async (req): Promise<string | null> => {
 		return (
 			(
 				await prisma.user.findUnique({
 					where: { authUserId: req.ctx.user.id },
-					select: { mealGroup: true },
+					select: { groupId: true },
 				})
-			)?.mealGroup ?? null
+			)?.groupId ?? null
 		);
 	}),
 

@@ -2,10 +2,46 @@
 	import { enhance } from '$app/forms';
 	import { confirmationDialog } from '$lib/actions';
 	import Toggle from '$lib/components/toggle.svelte';
+	import { toasts } from '$lib/stores';
 	import Graph from './line-graph.svelte';
 	let { data } = $props();
 
 	let applicationOpenStatus = $state(data.settings.applicationOpen);
+	let selectedGroupId = $state(data.groups.length > 0 ? data.groups[0].id : '');
+	let hasFileSelected = $state(false); // Add this reactive variable
+
+	// Reactive values for colors based on selected group
+	let dotsColor = $derived(() => {
+		const group = data.groups.find((group) => group.id === selectedGroupId);
+		return group?.qrCodeStyle?.dotsOptions?.color || '#000000';
+	});
+
+	let backgroundColor = $derived(() => {
+		const group = data.groups.find((group) => group.id === selectedGroupId);
+		return group?.qrCodeStyle?.backgroundOptions?.color || '#ffffff';
+	});
+
+	let dotsType = $derived(() => {
+		const group = data.groups.find((group) => group.id === selectedGroupId);
+		return group?.qrCodeStyle?.dotsOptions?.type || 'rounded';
+	});
+
+	let backgroundImage = $derived(() => {
+		const group = data.groups.find((group) => group.id === selectedGroupId);
+		return group?.qrCodeStyle?.imageKey || null;
+	});
+
+	function handleFileChange(event: Event) {
+		const input = event.target as HTMLInputElement;
+		if (input.files && input.files.length > 0) {
+			hasFileSelected = true;
+			if (input.files[0].size > 1024 * 1024) {
+				toasts.notify('Error: File size must be under 1MB.');
+			}
+		} else {
+			hasFileSelected = false;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -112,7 +148,21 @@
 
 <h2>Split Hackers Into Lunch Groups</h2>
 
-<form method="POST" action="?/splitGroups" use:enhance>
+<form
+	method="POST"
+	action="?/splitGroups"
+	use:enhance={() => {
+		return async ({ result, update }) => {
+			// Always update the page data to refresh the derived values
+			await update();
+
+			// Optionally show a success message
+			if (result.type === 'success') {
+				toasts.notify('QR Code settings updated successfully!');
+			}
+		};
+	}}
+>
 	<input
 		type="text"
 		id="splitGroups"
@@ -123,6 +173,85 @@
 		required
 	/>
 	<button type="submit">Split Groups</button>
+</form>
+
+<h2>Customize QR Codes</h2>
+
+<form
+	method="POST"
+	action="?/qrCodeSettings"
+	class="qr-form"
+	enctype="multipart/form-data"
+	use:enhance={() => {
+		return async ({ update }) => {
+			await update({ reset: false });
+		};
+	}}
+>
+	<h3>QR Code Styling</h3>
+
+	{#if data.groups.length >= 1}
+		<div class="flex-row-left">
+			<select id="group" name="group" class="group-dropdown" bind:value={selectedGroupId}>
+				{#each data.groups as group}
+					<option value={group.id}>{group.id}</option>
+				{/each}
+			</select>
+		</div>
+	{/if}
+
+	<div class="qr-grid">
+		<div class="qr-field">
+			{#if backgroundImage() == null}
+				<label for="qr-image">QR Code Image (leave empty for no image)</label>
+			{:else}
+				<label for="qr-image">Replace QR Code Image (leave empty to keep current image)</label>
+			{/if}
+			<input
+				type="file"
+				id="qr-image"
+				name="qr-image"
+				accept=".jpg, .jpeg, .png, .webp"
+				onchange={handleFileChange}
+			/>
+			{#if backgroundImage() != null}
+				<div class="checkbox-container">
+					<input
+						type="checkbox"
+						id="deleteImage"
+						name="deleteImage"
+						value="true"
+						disabled={hasFileSelected}
+					/>
+					<label for="deleteImage">Delete image</label>
+				</div>
+			{/if}
+		</div>
+
+		<div class="qr-field">
+			<label for="dotsType">Dots Style</label>
+			<select id="dotsType" name="dotsType" value={dotsType()}>
+				<option value="rounded">Rounded</option>
+				<option value="dots">Dots</option>
+				<option value="classy">Classy</option>
+				<option value="classy-rounded">Classy Rounded</option>
+				<option value="square">Square</option>
+				<option value="extra-rounded">Extra Rounded</option>
+			</select>
+		</div>
+
+		<div class="qr-field">
+			<label for="dotsColor">Dots Color</label>
+			<input type="color" id="dotsColor" name="dotsColor" value={dotsColor()} />
+		</div>
+
+		<div class="qr-field">
+			<label for="backgroundColor">Background Color</label>
+			<input type="color" id="backgroundColor" name="backgroundColor" value={backgroundColor()} />
+		</div>
+	</div>
+
+	<button type="submit"> Update QR Code Style </button>
 </form>
 
 <h2>Pending Decisions</h2>
@@ -147,6 +276,13 @@
 	.flex-row {
 		display: flex;
 		justify-content: flex-end;
+		align-items: center;
+		gap: 1em;
+	}
+
+	.flex-row-left {
+		display: flex;
+		justify-content: flex-start;
 		align-items: center;
 		gap: 1em;
 	}
@@ -187,8 +323,100 @@
 	status-container {
 		margin-top: 1rem;
 	}
+	.qr-form {
+		margin: 20px 0;
+		padding: 20px;
+		border: 1px solid #e5e5e5;
+		border-radius: 6px;
+	}
+
+	.qr-form h3 {
+		margin: 0 0 16px 0;
+		font-size: 18px;
+		font-weight: 600;
+	}
+
+	.qr-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 16px;
+		margin-bottom: 16px;
+	}
+
+	.qr-field label {
+		display: block;
+		font-size: 14px;
+		font-weight: 500;
+		margin-bottom: 4px;
+	}
+
+	.qr-field input,
+	.qr-field select {
+		width: 100%;
+		padding: 8px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		font-size: 14px;
+	}
+
+	.checkbox-container {
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		gap: 6px;
+		margin-top: 8px;
+		cursor: pointer;
+		width: fit-content;
+	}
+	.checkbox-container label {
+		margin: 0;
+		cursor: pointer;
+		font-size: 14px;
+		font-weight: 500;
+		white-space: nowrap; /* Prevents text wrapping */
+		margin-bottom: 1px;
+	}
+
+	.checkbox-container input[type='checkbox'] {
+		width: auto;
+		max-width: none;
+		padding: 0;
+		margin: 0;
+		transform: scale(1.5);
+		flex-shrink: 0;
+	}
+
+	.checkbox-container input[type='checkbox']:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
+	.qr-field input[type='color'] {
+		height: 40px;
+		cursor: pointer;
+		max-width: 25%;
+	}
+
+	@media (max-width: 768px) {
+		.qr-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
 	select {
 		width: 100%;
+	}
+
+	.group-dropdown {
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		font-size: 14px;
+		padding: 8px 12px;
+		background-color: white;
+		cursor: pointer;
+		width: 25%;
+		font-weight: bold;
+		color: black;
 	}
 
 	input[readonly] {
