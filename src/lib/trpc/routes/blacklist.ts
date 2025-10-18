@@ -135,25 +135,41 @@ export const blacklistRouter = t.router({
  */
 // Keep the export name the same for callers
 export async function checkIfBlacklisted(email?: string, fullNameRaw?: string): Promise<boolean> {
-	const normalizedEmail = normalizeEmail(email || '');
+	const normalizedEmail = normalizeEmail(email ?? '');
+	const exactName = (fullNameRaw ?? '').trim();
 
-	// email match
+	// Early return if no blacklist entries at all
+	const count = await prisma.blacklist.count();
+	if (count === 0) {
+		console.log('No blacklist entries found. Skipping check.');
+		return false;
+	}
+
+	// Avoid empty or suspicious values that might cause false positives
+	if (!normalizedEmail && !exactName) {
+		return false;
+	}
+
+	// Email match
 	if (normalizedEmail) {
 		const emailRow = await prisma.blacklist.findUnique({
 			where: { type_value: { type: 'email', value: normalizedEmail } },
 			select: { id: true },
 		});
-		if (emailRow) return true;
+		if (emailRow) {
+			return true;
+		}
 	}
 
-	//name match
-	const exactName = (fullNameRaw ?? '').trim();
+	// Name match
 	if (exactName) {
 		const nameRow = await prisma.blacklist.findUnique({
 			where: { type_value: { type: 'name', value: exactName } },
 			select: { id: true },
 		});
-		if (nameRow) return true;
+		if (nameRow) {
+			return true;
+		}
 	}
 
 	return false;
