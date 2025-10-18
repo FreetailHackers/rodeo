@@ -860,13 +860,16 @@ export const usersRouter = t.router({
 				const groups = await prisma.group.findMany();
 				if (groups.length > 0) {
 					const updateGroups = prisma.user.updateMany({
-						where: { authUserId: { in: req.input.ids } },
+						where: {
+							authUserId: { in: req.input.ids },
+							groupId: null,
+						},
 						data: { groupId: groups[Math.floor(Math.random() * groups.length)].id },
 					});
 					await prisma.$transaction([updateStatuses, deleteDecisions, updateGroups]);
+				} else {
+					await prisma.$transaction([updateStatuses, deleteDecisions]);
 				}
-
-				await prisma.$transaction([updateStatuses, deleteDecisions]);
 			} else {
 				await prisma.$transaction([updateStatuses, deleteDecisions]);
 			}

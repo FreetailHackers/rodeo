@@ -141,7 +141,6 @@ export async function checkIfBlacklisted(email?: string, fullNameRaw?: string): 
 	// Early return if no blacklist entries at all
 	const count = await prisma.blacklist.count();
 	if (count === 0) {
-		console.log('No blacklist entries found. Skipping check.');
 		return false;
 	}
 
