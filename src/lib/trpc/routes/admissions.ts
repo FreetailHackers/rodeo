@@ -90,7 +90,9 @@ export const admissionsRouter = t.router({
 			}),
 		)
 		.mutation(async (req): Promise<void> => {
-			const nameQuestion = (await getQuestions()).find((q) => /name/i.test(q.label));
+			const questions = await getQuestions();
+			const firstNameQuestion = questions.find((q) => /^first\s+name$/i.test(q.label));
+			const lastNameQuestion = questions.find((q) => /^last\s+name$/i.test(q.label));
 
 			for (const id of req.input.ids) {
 				const user = await prisma.authUser.findUniqueOrThrow({
@@ -107,7 +109,9 @@ export const admissionsRouter = t.router({
 				if (!record) continue;
 
 				const app = record.application as any;
-				const fullName = nameQuestion ? String(app?.[nameQuestion.id] ?? '').trim() : '';
+				const firstName = firstNameQuestion ? String(app?.[firstNameQuestion.id] ?? '').trim() : '';
+				const lastName = lastNameQuestion ? String(app?.[lastNameQuestion.id] ?? '').trim() : '';
+				const fullName = [firstName, lastName].filter(Boolean).join(' ');
 
 				const isBlacklisted = await checkIfBlacklisted(record.authUser?.email, fullName);
 
@@ -215,9 +219,13 @@ export const admissionsRouter = t.router({
 
 				if (!user) return null;
 
-				const nameQuestion = (await getQuestions()).find((q) => /name/i.test(q.label));
+				const questions = await getQuestions();
+				const firstNameQuestion = questions.find((q) => /^first\s+name$/i.test(q.label));
+				const lastNameQuestion = questions.find((q) => /^last\s+name$/i.test(q.label));
 				const app = user.application as any;
-				const fullName = nameQuestion ? String(app?.[nameQuestion.id] ?? '').trim() : '';
+				const firstName = firstNameQuestion ? String(app?.[firstNameQuestion.id] ?? '').trim() : '';
+				const lastName = lastNameQuestion ? String(app?.[lastNameQuestion.id] ?? '').trim() : '';
+				const fullName = [firstName, lastName].filter(Boolean).join(' ');
 
 				const isBlacklisted = await checkIfBlacklisted(user.authUser?.email, fullName);
 				return { ...user, isBlacklisted };
