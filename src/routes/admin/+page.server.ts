@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import { s3Delete, s3Upload } from '$lib/s3Handler';
+import type { RequestEvent } from '@sveltejs/kit';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -17,7 +18,7 @@ interface GroupWithQRCode {
 	} | null;
 }
 
-export const load = async (event) => {
+export const load = async (event: RequestEvent) => {
 	await authenticate(event.locals.session, ['ADMIN']);
 	return {
 		decisions: await trpc(event).admissions.getDecisions(),
@@ -37,7 +38,7 @@ const parseDateWithTimezone = (dateString: string | null, timezone: string): Dat
 };
 
 export const actions = {
-	settings: async (event) => {
+	settings: async (event: RequestEvent) => {
 		const formData = await event.request.formData();
 		const timezone = formData.get('timezone') as string;
 
@@ -55,6 +56,7 @@ export const actions = {
 		if (isNaN(applicationLimit)) {
 			applicationLimit = null;
 		}
+		const spongebobCase = formData.get('spongebobCase') === 'on';
 		const applicationOpen = formData.get('applicationOpen') === 'on';
 		const parsedDaysToRSVP = parseInt(formData.get('daysToRSVP') as string, 10);
 		const daysToRSVP: number | null = isNaN(parsedDaysToRSVP) ? null : parsedDaysToRSVP;
@@ -64,6 +66,7 @@ export const actions = {
 			.map((option: string) => option.trim())
 			.filter(Boolean);
 		await trpc(event).settings.update({
+			spongebobCase,
 			applicationOpen,
 			daysToRSVP,
 			scanActions,
@@ -75,12 +78,12 @@ export const actions = {
 		return 'Saved settings!';
 	},
 
-	release: async (event) => {
+	release: async (event: RequestEvent) => {
 		await trpc(event).admissions.releaseAllDecisions();
 		return 'Released all decisions!';
 	},
 
-	splitGroups: async (event) => {
+	splitGroups: async (event: RequestEvent) => {
 		const formData = await event.request.formData();
 		const groups = formData.get('splitGroups') as string;
 		const groupNames = groups.split(',').map((name) => name.trim());
@@ -96,7 +99,7 @@ export const actions = {
 		return 'Groups successfully split and updated!';
 	},
 
-	qrCodeSettings: async (event) => {
+	qrCodeSettings: async (event: RequestEvent) => {
 		const formData = await event.request.formData();
 
 		const qrImage = formData.get('qr-image') as File;

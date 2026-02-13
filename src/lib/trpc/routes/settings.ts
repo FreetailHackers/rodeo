@@ -6,6 +6,7 @@ import { t } from '../t';
 
 const settingsSchema = z
 	.object({
+		spongebobCase: z.boolean().optional(),
 		applicationOpen: z.boolean().optional(),
 		daysToRSVP: z.number().nullable().optional(),
 		homepageText: z.string().optional(),
@@ -49,6 +50,7 @@ export const settingsRouter = t.router({
 	 */
 	getPublic: t.procedure.query(
 		async (): Promise<{
+			spongebobCase: boolean;
 			homepageText: string;
 			applicationOpen: boolean;
 			daysToRSVP: number | null;
@@ -72,6 +74,7 @@ export const settingsRouter = t.router({
 		}> => {
 			const settings = await getSettings();
 			return {
+				spongebobCase: settings.spongebobCase,
 				homepageText: settings.homepageText,
 				applicationOpen: settings.applicationOpen,
 				daysToRSVP: settings.daysToRSVP,

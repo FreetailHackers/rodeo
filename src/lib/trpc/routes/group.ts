@@ -51,7 +51,7 @@ export const groupRouter = t.router({
 		)
 		.mutation(async ({ input }): Promise<void> => {
 			try {
-				const group = await prisma.group.upsert({
+				await prisma.group.upsert({
 					where: {
 						id: input.group,
 					},

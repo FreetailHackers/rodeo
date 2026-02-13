@@ -68,6 +68,15 @@
 		/>
 	</div>
 
+	<div class="flex-row">
+		<Toggle
+			name="spongebobCase"
+			label="SpongeBob Case"
+			checked={data.settings.spongebobCase}
+			isLeft={true}
+		/>
+	</div>
+
 	<status-container>
 		<label for="hackathonStartDate">Hackathon Start Date:</label>
 		<input

@@ -10,6 +10,14 @@
 
 	let { data } = $props();
 
+	// SpongeBob case
+	if (data.settings.spongebobCase) {
+		data.settings.homepageText = data.settings.homepageText
+			.split('')
+			.map((char, i) => (i % 2 === 0 ? char.toLowerCase() : char.toUpperCase()))
+			.join('');
+	}
+
 	// Some helpful error messages triggered in /src/lib/authenticate.ts
 	onMount(() => {
 		if (location.search === '?unauthenticated') {

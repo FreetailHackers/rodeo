@@ -90,6 +90,7 @@ model Decision {
 }
 
 model Settings {
+  spongebobCase             Boolean   @default(false)
   id                        Int       @id @default(0)
   applicationOpen           Boolean   @default(true)
   rollingAdmissions         Boolean   @default(false)
