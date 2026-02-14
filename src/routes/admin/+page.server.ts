@@ -58,6 +58,7 @@ export const actions = {
 		const applicationOpen = formData.get('applicationOpen') === 'on';
 		const parsedDaysToRSVP = parseInt(formData.get('daysToRSVP') as string, 10);
 		const daysToRSVP: number | null = isNaN(parsedDaysToRSVP) ? null : parsedDaysToRSVP;
+		const spongeBobCase = formData.get('spongeBobCase') === 'on';
 
 		const scanActions = (formData.get('scanActions') as string)
 			.split('\r\n')
@@ -71,6 +72,7 @@ export const actions = {
 			applicationDeadline,
 			applicationLimit,
 			hackathonStartDate,
+			spongeBobCase,
 		});
 		return 'Saved settings!';
 	},

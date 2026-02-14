@@ -7,6 +7,7 @@
 	let { data } = $props();
 
 	let applicationOpenStatus = $state(data.settings.applicationOpen);
+	let spongeBobCase = $state(data.settings.spongeBobCase);
 	let selectedGroupId = $state(data.groups.length > 0 ? data.groups[0].id : '');
 	let hasFileSelected = $state(false); // Add this reactive variable
 
@@ -66,6 +67,7 @@
 			bind:checked={applicationOpenStatus}
 			isLeft={true}
 		/>
+		<Toggle name="spongeBobCase" label="Accept new applications" bind:checked={spongeBobCase} />
 	</div>
 
 	<status-container>

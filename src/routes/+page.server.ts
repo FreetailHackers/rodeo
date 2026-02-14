@@ -3,7 +3,9 @@ import * as auth from '$lib/authenticate';
 
 export const load = async (event) => {
 	await auth.authenticate(event.locals.session, []);
+	const settings = await trpc(event).settings.getPublic();
 
+	// console.log(settings.spongeBobCase);
 	return {
 		user: await event.locals.user,
 		announcements: await trpc(event).announcements.getAll(),
