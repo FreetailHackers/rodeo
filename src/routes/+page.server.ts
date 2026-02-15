@@ -1,7 +1,8 @@
 import { trpc } from '$lib/trpc/router';
 import * as auth from '$lib/authenticate';
+import type { RequestEvent } from './$types';
 
-export const load = async (event) => {
+export const load = async (event: RequestEvent) => {
 	await auth.authenticate(event.locals.session, []);
 
 	return {
@@ -17,19 +18,19 @@ export const load = async (event) => {
 };
 
 export const actions = {
-	announce: async (event) => {
+	announce: async (event: RequestEvent) => {
 		const formData = await event.request.formData();
 		const body = formData.get('announcement') as string;
 		await trpc(event).announcements.create(body);
 	},
 
-	unannounce: async (event) => {
+	unannounce: async (event: RequestEvent) => {
 		const formData = await event.request.formData();
 		const id = formData.get('id') as string;
 		await trpc(event).announcements.delete(Number(id));
 	},
 
-	clearAnnouncements: async (event) => {
+	clearAnnouncements: async (event: RequestEvent) => {
 		await trpc(event).announcements.deleteAll();
 	},
 };

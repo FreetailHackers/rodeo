@@ -9,6 +9,7 @@
 	let applicationOpenStatus = $state(data.settings.applicationOpen);
 	let selectedGroupId = $state(data.groups.length > 0 ? data.groups[0].id : '');
 	let hasFileSelected = $state(false); // Add this reactive variable
+	let spongebobCaseStatus = $state(data.settings.spongebobCase);
 
 	// Reactive values for colors based on selected group
 	let dotsColor = $derived(() => {
@@ -64,6 +65,16 @@
 			name="applicationOpen"
 			label="Accept new applications"
 			bind:checked={applicationOpenStatus}
+			isLeft={true}
+		/>
+	</div>
+
+	<!-- creates toggle to set spongebobcase  -->
+	<div class="flex-row">
+		<Toggle
+			name="spongebobCase"
+			label="🤫"
+			bind:checked={data.settings.spongebobCase}
 			isLeft={true}
 		/>
 	</div>
