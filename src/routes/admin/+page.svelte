@@ -42,6 +42,13 @@
 			hasFileSelected = false;
 		}
 	}
+
+	if (data.settings.spongebobCase) {
+		data.settings.homepageText = data.settings.homepageText
+			.split('')
+			.map((char, i) => (i % 2 === 0 ? char.toLowerCase() : char.toUpperCase()))
+			.join('');
+	}
 </script>
 
 <svelte:head>
@@ -110,6 +117,12 @@
 			min="0"
 		/>
 	</status-container>
+	<Toggle
+		name="spongebobCase"
+		label="Enable SpongeBob Case on homepage"
+		checked={data.settings.spongebobCase}
+		isLeft={true}
+	/>
 
 	<label for="statusChangeText"><h2>User Status Over Time</h2></label>
 	<Graph statusChanges={data.graph} />

@@ -27,8 +27,8 @@
 		</div>
 
 		<p>
-			<b>Note:</b> You cannot accept the invite if you're already on a team, the team has 4 members,
-			or the link has expired.
+			<b>Note:</b> You cannot accept the invite if you're already on a team, the team has 4 members, or
+			the link has expired.
 		</p>
 	</form>
 </div>

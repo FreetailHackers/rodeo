@@ -11,8 +11,8 @@
 	<div class="auth-content">
 		<p>
 			You must verify your email address <strong>{data.email}</strong> before accessing this page. Please
-			check your inbox for a verification link. If you did not get one (remember to check spam), you
-			can request a new one below.
+			check your inbox for a verification link. If you did not get one (remember to check spam), you can
+			request a new one below.
 		</p>
 
 		{#if form}

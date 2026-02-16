@@ -46,7 +46,7 @@ export const sponsorsRouter = t.router({
 		}),
 
 	/**
-	 * Updates a record in the table by ID. User must be an admin.
+	 * s a record in the table by ID. User must be an admin.
 	 */
 	update: t.procedure
 		.use(authenticate(['ADMIN']))

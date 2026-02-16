@@ -120,6 +120,7 @@ model Settings {
   waitlistIsHTML            Boolean   @default(false)
   withdrawIsHTML            Boolean   @default(false)
   hackathonStartDate        DateTime?
+  spongebobCase             Boolean   @default(false) 
 }
 
 model Blacklist {

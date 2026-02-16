@@ -36,6 +36,7 @@ const settingsSchema = z
 		withdrawIsHTML: z.boolean().optional(),
 		byStatusIsHTML: z.boolean().optional(),
 		showGroups: z.boolean().optional(),
+		spongebobCase: z.boolean().optional(),
 	})
 	.strict();
 
@@ -50,6 +51,7 @@ export const settingsRouter = t.router({
 	getPublic: t.procedure.query(
 		async (): Promise<{
 			homepageText: string;
+			spongebobCase: boolean;
 			applicationOpen: boolean;
 			daysToRSVP: number | null;
 			scanActions: string[];
@@ -92,6 +94,7 @@ export const settingsRouter = t.router({
 				declineIsHTML: settings.declineIsHTML,
 				withdrawIsHTML: settings.withdrawIsHTML,
 				byStatusIsHTML: settings.byStatusIsHTML,
+				spongebobCase: settings.spongebobCase,
 			};
 		},
 	),
