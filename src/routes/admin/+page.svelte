@@ -31,6 +31,14 @@
 		return group?.qrCodeStyle?.imageKey || null;
 	});
 
+	if (data.settings.spongebobCase) {
+	data.settings.homepageText = data.settings.homepageText
+		.split('')
+		.map((char, i) => (i % 2 === 0 ? char.toLowerCase() : char.toUpperCase()))
+		.join('');
+	}
+
+
 	function handleFileChange(event: Event) {
 		const input = event.target as HTMLInputElement;
 		if (input.files && input.files.length > 0) {
@@ -66,6 +74,14 @@
 			bind:checked={applicationOpenStatus}
 			isLeft={true}
 		/>
+
+		<Toggle 
+			name="spongebobCase" 
+			label="SpongeBob Case"
+			checked={data.settings.spongebobCase}
+			isLeft={true} 
+		/>
+	
 	</div>
 
 	<status-container>

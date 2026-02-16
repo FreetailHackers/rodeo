@@ -119,6 +119,7 @@ model Settings {
   submitIsHTML              Boolean   @default(false)
   waitlistIsHTML            Boolean   @default(false)
   withdrawIsHTML            Boolean   @default(false)
+  spongebobCase             Boolean   @default(false)
   hackathonStartDate        DateTime?
 }
 

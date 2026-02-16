@@ -35,6 +35,7 @@ const settingsSchema = z
 		declineIsHTML: z.boolean().optional(),
 		withdrawIsHTML: z.boolean().optional(),
 		byStatusIsHTML: z.boolean().optional(),
+		spongebobCase: z.boolean().optional(), //getpublic
 		showGroups: z.boolean().optional(),
 	})
 	.strict();
@@ -69,6 +70,7 @@ export const settingsRouter = t.router({
 			declineIsHTML: boolean;
 			withdrawIsHTML: boolean;
 			byStatusIsHTML: boolean;
+			spongebobCase: boolean;
 		}> => {
 			const settings = await getSettings();
 			return {
@@ -92,6 +94,7 @@ export const settingsRouter = t.router({
 				declineIsHTML: settings.declineIsHTML,
 				withdrawIsHTML: settings.withdrawIsHTML,
 				byStatusIsHTML: settings.byStatusIsHTML,
+				spongebobCase: settings.spongebobCase,
 			};
 		},
 	),
@@ -110,6 +113,7 @@ export const settingsRouter = t.router({
 	update: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(settingsSchema)
+		//no spongebob changes here need as its covered in settingsSchema!
 		.mutation(async (req): Promise<void> => {
 			await prisma.settings.upsert({
 				where: { id: 0 },
