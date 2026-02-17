@@ -10,6 +10,7 @@
 	<h1>Scan</h1>
 	<hr />
 	<section>
+		<p class="permission-info">If you are having trouble with camera permissions, please configure them in the <a href="/admin">admin tab</a>.</p>
 		{#if data.scanActions.length === 0}
 			<i>No scan actions are configured. Add some in the <a href="/admin">admin panel</a>.</i>
 		{/if}
