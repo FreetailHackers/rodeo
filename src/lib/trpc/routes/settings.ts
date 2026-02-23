@@ -37,6 +37,14 @@ const settingsSchema = z
 		withdrawIsHTML: z.boolean().optional(),
 		byStatusIsHTML: z.boolean().optional(),
 		showGroups: z.boolean().optional(),
+		emailFromName: z.string().optional(),
+		emailFromAddress: z.string().email().optional(),
+		submitSubject: z.string().optional(),
+		acceptSubject: z.string().optional(),
+		confirmSubject: z.string().optional(),
+		declineSubject: z.string().optional(),
+		rejectSubject: z.string().optional(),
+		waitlistSubject: z.string().optional(),
 	})
 	.strict();
 

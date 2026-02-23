@@ -58,7 +58,30 @@
 	}}
 >
 	<label for="applicationStatus"><h2>Application Status</h2></label>
-
+	<label for="emailSender"><h2>Email Sender Settings</h2></label>
+	<div class="qr-grid">
+		<status-container>
+			<label for="emailFromName">Sender Display Name</label>
+			<input 
+				type="text" 
+				name="emailFromName" 
+				id="emailFromName"
+				value={data.settings.emailFromName} 
+				placeholder="e.g., Rodeo Team"
+			/>
+		</status-container>
+		<status-container>
+			<label for="emailFromAddress">Sender Email Address</label>
+			<input 
+				type="email" 
+				name="emailFromAddress" 
+				id="emailFromAddress"
+				value={data.settings.emailFromAddress} 
+				placeholder="hello@hackathon.com"
+			/>
+		</status-container>
+	</div>
+	<hr style="margin-top: 2rem; opacity: 0.2;" />
 	<div class="flex-row">
 		<Toggle
 			name="applicationOpen"
@@ -152,6 +175,37 @@
 		placeholder="Write one option per line, like this:&#13;OPTION 1&#13;OPTION 2&#13;OPTION 3"
 	></textarea>
 
+	<label for="emailSubjects"><h2>Email Subject Lines</h2></label>
+
+	<status-container>
+		<label for="submitSubject">Application Received Subject</label>
+		<input type="text" name="submitSubject" value={data.settings.submitSubject} />
+	</status-container>
+
+	<status-container>
+		<label for="acceptSubject">Acceptance Subject</label>
+		<input type="text" name="acceptSubject" value={data.settings.acceptSubject} />
+	</status-container>
+
+	<status-container>
+		<label for="confirmSubject">Confirmation Subject</label>
+		<input type="text" name="confirmSubject" value={data.settings.confirmSubject} />
+	</status-container>
+
+	<status-container>
+		<label for="waitlistSubject">Waitlist Subject</label>
+		<input type="text" name="waitlistSubject" value={data.settings.waitlistSubject} />
+	</status-container>
+
+	<status-container>
+		<label for="rejectSubject">Rejection Subject</label>
+		<input type="text" name="rejectSubject" value={data.settings.rejectSubject} />
+	</status-container>
+
+	<status-container>
+		<label for="declineSubject">Declined Subject</label>
+		<input type="text" name="declineSubject" value={data.settings.declineSubject} />
+	</status-container>
 	<button type="submit">Save</button>
 </form>
 

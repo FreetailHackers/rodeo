@@ -17,6 +17,14 @@ export const load = async (event) => {
 export const actions = {
 	settings: async (event) => {
 		const formData = await event.request.formData();
+		const emailFromName = formData.get('emailFromName') as string;
+        const emailFromAddress = formData.get('emailFromAddress') as string;
+        const submitSubject = formData.get('submitSubject') as string;
+        const acceptSubject = formData.get('acceptSubject') as string;
+        const rejectSubject = formData.get('rejectSubject') as string;
+        const waitlistSubject = formData.get('waitlistSubject') as string;
+        const confirmSubject = formData.get('confirmSubject') as string;
+        const declineSubject = formData.get('declineSubject') as string;
 		const submitTemplate = formData.get('submitTemplate') as string;
 		const acceptTemplate = formData.get('acceptTemplate') as string;
 		const rejectTemplate = formData.get('rejectTemplate') as string;

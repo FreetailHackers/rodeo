@@ -1,6 +1,12 @@
 import { Resend } from 'resend';
 import nodemailer from 'nodemailer';
 import { marked } from 'marked';
+import { prisma } from './db';
+
+function personalize(template: string, name: string): string {
+    // replaces all instances of "name" with the hacker's actual name
+    return template.replace(/{name}/g, name);
+}
 
 function getResend() {
 	if (!process.env.RESEND_API_KEY) {
@@ -24,13 +30,17 @@ export const sendEmail = async (
 	subject: string,
 	message: string,
 	isHTML: boolean,
+	recipientName?: string,
 ): Promise<number> => {
 	// Preface with warning if not in production
+	const settings = await prisma.settings.findUnique({ where: { id: 0 } });
+    // set up sender fallbacks
+	const fromName = settings?.emailFromName || 'Freetail Hackers';
+    const fromAddress = settings?.emailFromAddress || 'hello@freetailhackers.com';
+
 	let warning = '';
-	message = isHTML ? message : await marked.parse(message);
 	if (process.env.VERCEL_ENV !== 'production') {
-		if (process.env.VERCEL_ENV === 'preview' && recipient.endsWith('@yopmail.com')) {
-			// Only allow emails to YOPmail on staging
+		if (process.env.VERCEL_ENV === 'preview' && !recipient.endsWith('@yopmail.com')) {
 			console.log('Only @yopmail.com addresses are allowed on staging.');
 			return 0;
 		}
@@ -41,15 +51,18 @@ export const sendEmail = async (
 				</h1>`;
 	}
 
+	let finalContent = isHTML ? message : await marked.parse(message);
+    if (recipientName) {
+        finalContent = personalize(finalContent, recipientName);
+    }
+
 	try {
 		// Send emails to each recipient
 		const email = {
 			to: recipient,
-			from: 'hello@freetailhackers.com',
-			subject: subject,
-			html: `
-				${warning}
-				${message}`,
+            from: `${fromName} <${fromAddress}>`,
+            subject: subject,
+            html: `${warning}${finalContent}`,
 		};
 
 		if (process.env.RESEND_API_KEY) {

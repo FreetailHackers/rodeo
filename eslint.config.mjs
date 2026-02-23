@@ -26,11 +26,9 @@ export default [
 		files: ['*.ts', '*.tsx'],
 		languageOptions: {
 			parser: tsParser,
-			parserOptions: {
-				ecmaVersion: 2020,
-				sourceType: 'module',
-				project: './tsconfig.json',
-				tsconfigRootDir: new URL('.', import.meta.url).pathname,
+			"parserOptions": {
+				"projectService": true,
+				"tsconfigRootDir": "."
 			},
 		},
 		plugins: {

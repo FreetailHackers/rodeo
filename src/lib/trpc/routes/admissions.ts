@@ -29,6 +29,7 @@ export const canApply = async (): Promise<boolean> => {
 };
 
 async function releaseDecisions(ids?: string[]): Promise<void> {
+	const settings = await getSettings();
 	const hackers = await prisma.user.findMany({
 		include: { authUser: true, decision: true },
 		where: ids === undefined ? {} : { authUserId: { in: ids } },
@@ -50,30 +51,48 @@ async function releaseDecisions(ids?: string[]): Promise<void> {
 		});
 		await prisma.$transaction([updateStatus, deleteDecision]);
 
-		let template = '';
-		let isHTML: boolean = false;
-		const settings = await getSettings();
-		if (decision === 'ACCEPTED') {
-			template = settings.acceptTemplate;
-			isHTML = settings.acceptIsHTML;
-		} else if (decision === 'REJECTED') {
-			template = settings.rejectTemplate;
-			isHTML = settings.rejectIsHTML;
-		} else if (decision === 'WAITLISTED') {
-			template = settings.waitlistTemplate;
-			isHTML = settings.waitlistIsHTML;
-		}
+        let template = '';
+        let subject = ''; // initialize subject
+        let isHTML: boolean = false;
+
+        if (decision === 'ACCEPTED') {
+            template = settings.acceptTemplate;
+            subject = settings.acceptSubject || 'Freetail Hackers status update';
+            isHTML = settings.acceptIsHTML;
+        } else if (decision === 'REJECTED') {
+            template = settings.rejectTemplate;
+            subject = settings.rejectSubject || 'Freetail Hackers status update';
+            isHTML = settings.rejectIsHTML;
+        } else if (decision === 'WAITLISTED') {
+            template = settings.waitlistTemplate;
+            subject = settings.waitlistSubject || 'Freetail Hackers status update';
+            isHTML = settings.waitlistIsHTML;
+        }
+		const questions = await getQuestions();
+		const firstNameQuestion = questions.find((q) => /^first\s+name$/i.test(q.label));
 
 		for (let i = 0; i < decisions.length; i += 100) {
 			await Promise.all(
 				decisions
 					.slice(i, i + 100)
-					.map((hacker) =>
-						sendEmail(hacker.authUser.email, 'Freetail Hackers status update', template, isHTML),
-					),
-			);
-		}
-	}
+					.map((hacker) => {
+						// extract the name for personalization
+						const app = hacker.application as any;
+						const firstName = firstNameQuestion 
+							? String(app?.[firstNameQuestion.id] ?? '').trim() 
+							: '';
+						// pass firstName to sendEmail
+						return sendEmail(
+							hacker.authUser.email, 
+							subject, 
+							template, 
+							isHTML, 
+							firstName
+						);
+                    }),
+            );
+        }
+    }
 }
 
 export const admissionsRouter = t.router({

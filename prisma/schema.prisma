@@ -119,6 +119,16 @@ model Settings {
   submitIsHTML              Boolean   @default(false)
   waitlistIsHTML            Boolean   @default(false)
   withdrawIsHTML            Boolean   @default(false)
+  // sender info
+  emailFromName      String   @default("Rodeo") 
+  emailFromAddress   String   @default("hello@freetailhackers.com")
+  // customizable subject lines
+  submitSubject      String   @default("Application Received")
+  acceptSubject      String   @default("You've been accepted!")
+  confirmSubject     String   @default("Attendance Confirmed")
+  declineSubject     String   @default("Sorry you can't make it")
+  rejectSubject      String   @default("Update on your application")
+  waitlistSubject    String   @default("Update on your application")
   hackathonStartDate        DateTime?
   spongebobCase Boolean @default(false)
 }
