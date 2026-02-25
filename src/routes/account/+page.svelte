@@ -256,7 +256,7 @@
 		text-decoration: none;
 		cursor: pointer;
 		transition: all 0.1s;
-		background-color: var(--blue);
+		background-color: var(--white);
 		margin-top: 1.5rem;
 		margin-right: 1rem;
 	}

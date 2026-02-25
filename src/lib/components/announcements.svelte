@@ -106,14 +106,15 @@
 	}
 
 	.card {
-		background-color: var(--light-grey);
+		background-color: var(--white);
+		border: 1px solid var(--accent);
 		border-radius: 50px;
 		position: relative;
 		padding: 1rem 1.5em;
 	}
 
 	.card :global(p) {
-		color: var(--blue); /* changed for dark mode */
+		color: var(--accent);
 	}
 
 	.delete-message {
@@ -146,7 +147,7 @@
 		top: -1em;
 		left: 1rem;
 		background-color: var(--accent);
-		color: var(--blue);
+		color: var(--white);
 		border-radius: var(--border-radius);
 		display: flex;
 		align-items: center;
@@ -159,7 +160,7 @@
 		display: flex;
 		align-items: center;
 		white-space: nowrap;
-		color: var(--blue);
+		color: var(--white) !important;
 	}
 
 	.time {
