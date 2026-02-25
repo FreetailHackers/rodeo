@@ -24,6 +24,10 @@ model AuthUser {
   authSession    AuthSession[]
   singleUseKey   SingleUseKey[]
   user           User?
+  applicationCount Int @default(0)
+  acceptedCount  Int @default(0)
+  rejectedCount  Int @default(0)
+  waitlistedCount Int @default(0)
 }
 
 model AuthSession {

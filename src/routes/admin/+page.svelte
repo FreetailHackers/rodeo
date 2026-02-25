@@ -9,6 +9,20 @@
 	let applicationOpenStatus = $state(data.settings.applicationOpen);
 	let selectedGroupId = $state(data.groups.length > 0 ? data.groups[0].id : '');
 	let hasFileSelected = $state(false); // Add this reactive variable
+	let applicationCount = $state(data.applicationCount);
+
+	let totalAccepted = $derived(
+		applicationCount.reduce((sum, admin) => sum + admin.authUser.acceptedCount, 0),
+	);
+	let totalRejected = $derived(
+		applicationCount.reduce((sum, admin) => sum + admin.authUser.rejectedCount, 0),
+	);
+	let totalWaitlisted = $derived(
+		applicationCount.reduce((sum, admin) => sum + admin.authUser.waitlistedCount, 0),
+	);
+	let totalOverall = $derived(
+		applicationCount.reduce((sum, admin) => sum + admin.authUser.applicationCount, 0),
+	);
 
 	// Reactive values for colors based on selected group
 	let dotsColor = $derived(() => {
@@ -110,6 +124,42 @@
 			min="0"
 		/>
 	</status-container>
+	<label for="statusChangeText"><h2>Admission Statistics</h2></label>
+	{#if applicationCount.length === 0}
+		<p>No admissions sent out</p>
+	{:else}
+		<div class="admin-table-container">
+			<table class="admin-table">
+				<thead>
+					<tr>
+						<th>Email</th>
+						<th class="accepted-col">Accepted</th>
+						<th class="rejected-col">Rejected</th>
+						<th class="waitlisted-col">Waitlisted</th>
+						<th>Total</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each applicationCount as admin}
+						<tr>
+							<td>{admin.authUser.email}</td>
+							<td class="accepted-col">{admin.authUser.acceptedCount}</td>
+							<td class="rejected-col">{admin.authUser.rejectedCount}</td>
+							<td class="waitlisted-col">{admin.authUser.waitlistedCount}</td>
+							<td>{admin.authUser.applicationCount}</td>
+						</tr>
+					{/each}
+					<tr>
+						<td><strong>Total</strong></td>
+						<td class="accepted-col"><strong>{totalAccepted}</strong></td>
+						<td class="rejected-col"><strong>{totalRejected}</strong></td>
+						<td class="waitlisted-col"><strong>{totalWaitlisted}</strong></td>
+						<td><strong>{totalOverall}</strong></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	{/if}
 
 	<label for="statusChangeText"><h2>User Status Over Time</h2></label>
 	<Graph statusChanges={data.graph} />
@@ -421,5 +471,95 @@
 
 	input[readonly] {
 		background-color: var(--light-grey);
+	}
+
+	.admin-table-container {
+		max-height: 300px;
+		overflow-y: auto;
+		border: 1px solid #e5e5e5;
+		margin-bottom: 1rem;
+		width: fit-content;
+		max-width: 500px;
+	}
+
+	.admin-table {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 14px;
+	}
+
+	.admin-table thead {
+		position: sticky;
+		top: 0;
+		background-color: white;
+		z-index: 1;
+	}
+
+	.admin-table th {
+		padding: 10px 12px;
+		text-align: left;
+		font-weight: bold;
+		border-bottom: 2px solid var(--accent);
+		border-right: 1px solid var(--accent);
+		background-color: white;
+		color: black;
+	}
+
+	.admin-table th:last-child {
+		border-right: none;
+	}
+
+	.admin-table td {
+		padding: 8px 12px;
+		border-bottom: 1px solid var(--accent);
+		border-right: 1px solid var(--accent);
+		background-color: white;
+	}
+
+	.admin-table td:last-child {
+		border-right: none;
+	}
+
+	.admin-table tbody tr:last-child td {
+		border-bottom: none;
+	}
+
+	.admin-table tbody tr:hover {
+		background-color: rgba(0, 0, 0, 0.02);
+	}
+
+	/* Header styles - lighter backgrounds with black text */
+	.admin-table th.accepted-col {
+		background-color: rgba(34, 197, 94, 0.2);
+		color: black;
+	}
+
+	.admin-table th.rejected-col {
+		background-color: rgba(239, 68, 68, 0.2);
+		color: black;
+	}
+
+	.admin-table th.waitlisted-col {
+		background-color: rgba(234, 179, 8, 0.2);
+		color: black;
+	}
+
+	/* Data cell styles - darker backgrounds with white text for better contrast */
+	.admin-table td.accepted-col {
+		background-color: rgb(34, 197, 94);
+		color: white;
+		font-weight: 500;
+	}
+
+	.admin-table td.rejected-col {
+		background-color: #ef4444;
+		color: white;
+		font-weight: 500;
+	}
+
+	.admin-table td.waitlisted-col {
+		background-color: #eab308;
+		color: white;
+		font-weight: 500;
 	}
 </style>
