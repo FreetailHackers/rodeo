@@ -23,18 +23,18 @@ html {
 	--font-standard: 'Harmattan', 'Helvetica Neue', sans-serif;
 
 	/* Colors */
-	--white: #FFFDF6;
+	--white: #fffdf6;
 	--black: #000;
-	--accent: #3F2006;
+	--accent: #3f2006;
 	--other-accent: #01051a;
 	--dark-grey: #757575;
 	--grey: #bbbbbb;
 	--light-grey: #ebebeb;
 	--blue: #000c44;
-	--red: #FF796E;
+	--red: #ff796e;
 	--other-blue: #17203c;
-	--sky-blue: #6AC6FF;
-	--green: #69A541;
+	--sky-blue: #6ac6ff;
+	--green: #69a541;
 
 	--border-radius: 15px;
 

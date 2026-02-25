@@ -43,12 +43,7 @@
 {#if !noLayoutRoutes.some((route) => page.url.pathname.startsWith(route))}
 	<div class="navbar">
 		<label for="hamburgerCheckbox"
-			><img
-				draggable="false"
-				src="/auth-assets/logo.png"
-				alt="burger-menu"
-				id="hamburger-logo"
-			/>
+			><img draggable="false" src="/auth-assets/logo.png" alt="burger-menu" id="hamburger-logo" />
 			<img draggable="false" src="/burger_Menu.png" alt="burger-menu" id="hamburger-logo" /></label
 		>
 		<input

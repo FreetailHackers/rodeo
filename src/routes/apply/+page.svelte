@@ -311,7 +311,7 @@
 
 				<div id="actions-container">
 					<div id="actions">
-						<button  bind:this={saveButton}>Save and finish later</button>
+						<button bind:this={saveButton}>Save and finish later</button>
 						<button
 							formaction="?/finish"
 							onclick={() => {

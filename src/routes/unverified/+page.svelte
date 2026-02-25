@@ -27,9 +27,7 @@
 
 		<div class="button-wrapper">
 			<form method="POST" action="?/logout" use:enhance>
-				<button type="submit" class="secondary-button">
-					Back to Login
-				</button>
+				<button type="submit" class="secondary-button"> Back to Login </button>
 			</form>
 		</div>
 	</div>

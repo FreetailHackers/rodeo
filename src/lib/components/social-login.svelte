@@ -56,11 +56,10 @@
 		vertical-align: middle;
 	}
 
-	.social img[alt="GitHub Logo"] {
+	.social img[alt='GitHub Logo'] {
 		filter: invert(1); /* invert the color of the GitHub logo to white (1 = white, 0 = black)*/
 		height: 1.75em;
 		width: 1.75em;
 		padding-right: 0.25rem; /*github logo is larger than google logo, so we need to pad it*/
-		
 	}
 </style>
