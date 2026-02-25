@@ -311,7 +311,7 @@
 
 				<div id="actions-container">
 					<div id="actions">
-						<button class="negative-button" bind:this={saveButton}>Save and finish later</button>
+						<button bind:this={saveButton}>Save and finish later</button>
 						<button
 							formaction="?/finish"
 							onclick={() => {
@@ -378,7 +378,7 @@
 	}
 
 	.rsvp-deadline h5 {
-		color: red;
+		color: var(--red);
 	}
 
 	.status-message {
@@ -461,7 +461,6 @@
 	#actions-container {
 		position: sticky;
 		bottom: 0;
-		background: linear-gradient(transparent, var(--blue));
 	}
 
 	#actions {
@@ -471,7 +470,6 @@
 		gap: 0.5rem;
 		position: sticky;
 		padding-bottom: 1rem;
-		background: var(--blue);
 	}
 
 	#actions > * {
@@ -480,7 +478,7 @@
 
 	.negative-button {
 		background-color: var(--accent);
-		color: var(--dark-blue);
+		color: var(--accent);
 	}
 
 	/* #status button {
