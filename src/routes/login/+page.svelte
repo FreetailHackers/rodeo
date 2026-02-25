@@ -22,7 +22,7 @@
 </svelte:head>
 <main class="vert-center">
 	<div class="auth-content">
-		<img class="mascot" src="/auth-assets/hacktxlogo.png" alt="RecordHacks Mascot" />
+		<img class="mascot" src="/auth-assets/logo.png" alt="RecordHacks Mascot" />
 		<h1>Login</h1>
 		<div class="socials">
 			<SocialLogin providers={data.providers} />
@@ -61,8 +61,14 @@
 </main>
 
 <style>
+	main {
+		background: linear-gradient(to bottom, var(--sky-blue), var(--white));
+		min-height: 100vh;
+	}
+
 	h1 {
 		text-align: center;
+		color: var(--accent);
 	}
 
 	.forgot-password {
@@ -70,18 +76,59 @@
 		text-align: right;
 	}
 
+	.forgot-password a {
+		color: var(--accent);
+		text-decoration: underline;
+	}
+
 	p {
 		margin: 0;
 	}
 
-	label,
-	.register {
-		color: var(--white); /* changed for dark mode */
+	label {
+		color: var(--accent);
 		margin-top: 0.5em;
 	}
 
 	.register {
 		text-align: center;
 		color: var(--accent);
+	}
+
+	.register a {
+		color: var(--accent);
+		text-decoration: underline;
+	}
+
+	input {
+		background-color: var(--white);
+		border: 1px solid var(--accent);
+		border-radius: 25px;
+		color: var(--accent);
+	}
+
+	input::placeholder {
+		color: var(--grey);
+	}
+
+	.button-wrapper {
+		display: flex;
+		justify-content: center;
+		margin-bottom: 1em;
+	}
+
+	.user-button {
+		background-color: var(--accent);
+		color: var(--white);
+		border-radius: 25px;
+		width: auto;
+		min-width: 100px;
+		padding: 0.75em 2em;
+	}
+
+	.user-button:hover {
+		background-color: var(--accent);
+		color: var(--white);
+		opacity: 0.9;
 	}
 </style>

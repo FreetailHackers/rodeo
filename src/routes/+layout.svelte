@@ -45,7 +45,7 @@
 		<label for="hamburgerCheckbox"
 			><img
 				draggable="false"
-				src="/auth-assets/hacktxlogo.png"
+				src="/auth-assets/logo.png"
 				alt="burger-menu"
 				id="hamburger-logo"
 			/>
@@ -119,7 +119,7 @@
 		height: 100vh;
 		backdrop-filter: blur(2px) brightness(0.9);
 		z-index: 200;
-		background-color: var(--dark-blue); /* changed for dark mode */
+		background-color: var(--white);
 	}
 
 	.container {
@@ -132,7 +132,7 @@
 		position: fixed;
 		top: 0;
 		margin: 0;
-		background-color: var(--dark-blue); /* changed for dark mode */
+		background-color: var(--accent); /* changed for dark mode */
 		z-index: 10;
 	}
 
@@ -168,13 +168,15 @@
 
 	.navbar a:hover,
 	.navbar form button:hover {
-		background-color: var(--blue);
+		background-color: var(--white);
+		color: var(--accent);
 		font-weight: normal;
 		border: none;
 	}
 
 	.navbar a.active {
-		background-color: var(--blue);
+		background-color: var(--white);
+		color: var(--accent);
 		font-weight: bold;
 		border: 1px solid var(--accent);
 	}

@@ -10,7 +10,7 @@
 </svelte:head>
 <main class="vert-center">
 	<div class="auth-content">
-		<img class="mascot" src="/auth-assets/hacktxlogo.png" alt="RecordHacks Mascot" />
+		<img class="mascot" src="/auth-assets/logo.png" alt="RecordHacks Mascot" />
 		{#if page.url.search === ''}
 			<h1>Reset Password</h1>
 			<form method="POST" action="?/email" use:enhance>
@@ -48,7 +48,7 @@
 					autocomplete="new-password"
 				/>
 				<input type="hidden" name="token" value={page.url.searchParams.get('token')} />
-				<button type="submit">Reset</button>
+				<button class="submit-button" type="submit">Reset</button>
 			</form>
 		{:else if page.url.search === '?invalid'}
 			<p class="verify">
@@ -67,6 +67,7 @@
 
 	h1 {
 		text-align: center;
+		color: var(--accent);
 		margin: 15px 0px;
 	}
 
