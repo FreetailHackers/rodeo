@@ -298,7 +298,7 @@
 
 	.id-card {
 		position: relative;
-		box-shadow: 4px 4px 16px 0px #00000040;
+		box-shadow: 4px 4px 16px 0px var(--red);
 		border-radius: var(--border-radius);
 	}
 
@@ -314,12 +314,12 @@
 		position: absolute;
 		object-fit: contain;
 		margin: 18%;
-		margin-top: 30%;
-		border-radius: 16px;
+		margin-top: 22%;
+		border-radius: 5px;
 		opacity: 0;
 		transition: opacity 0.2s ease-in-out;
 		padding: 10px;
-		background-color: var(--other-blue);
+		/* background-color: var(--red); */
 	}
 
 	.id-card #qrcode.loaded {
