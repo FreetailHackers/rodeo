@@ -27,10 +27,8 @@ export default [
 		languageOptions: {
 			parser: tsParser,
 			parserOptions: {
-				ecmaVersion: 2020,
-				sourceType: 'module',
-				project: './tsconfig.json',
-				tsconfigRootDir: new URL('.', import.meta.url).pathname,
+				projectService: true,
+				tsconfigRootDir: import.meta.dirname,
 			},
 		},
 		plugins: {

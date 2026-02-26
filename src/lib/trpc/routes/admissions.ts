@@ -191,6 +191,8 @@ export const admissionsRouter = t.router({
 			z.object({
 				role: z.nativeEnum(Role),
 				status: z.nativeEnum(Status).optional(),
+				oos: z.boolean().optional(),
+				nonUT: z.boolean().optional(),
 			}),
 		)
 		.query(
@@ -212,6 +214,22 @@ export const admissionsRouter = t.router({
 							status: { in: statusFilter },
 						},
 						decision: null,
+						...(req.input.oos
+							? {
+									application: {
+										path: ['oos'],
+										equals: true,
+									},
+								}
+							: {}),
+						...(req.input.nonUT
+							? {
+									application: {
+										path: ['nonUT'],
+										equals: true,
+									},
+								}
+							: {}),
 					},
 					include: { authUser: true, decision: true },
 					orderBy: [{ teamId: 'asc' }],

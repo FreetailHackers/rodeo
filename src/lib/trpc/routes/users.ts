@@ -25,6 +25,7 @@ import timezone from 'dayjs/plugin/timezone';
 import { hash } from '@node-rs/argon2';
 import * as auth from '$lib/authenticate';
 import { canApply } from './admissions';
+import path from 'path';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -643,6 +644,9 @@ export const usersRouter = t.router({
 				searchFilter: z.string(),
 				limit: z.number().transform((limit) => (limit === 0 ? Number.MAX_SAFE_INTEGER : limit)),
 				page: z.number().transform((page) => page - 1),
+				//raf filter proposals
+				oos: z.boolean().optional(),
+				nonUT: z.boolean().optional(),
 			}),
 		)
 		.query(
@@ -1130,6 +1134,23 @@ async function getWhereConditionHelper(
 		return { authUser: { status: search as Status } };
 	} else if (key === 'role' && roles.includes('ADMIN')) {
 		return { authUser: { roles: { has: search as Role } } };
+	} else if (key === 'oos') {
+		//raf adding new filter logic
+		return {
+			application: {
+				path: ['question_ID_filler'], //RAF TODO: wtv question ID goes here
+				not: 'TX',
+			},
+		};
+	} else if (key === 'nonUT') {
+		return {
+			application: {
+				path: ['school_questionID'], //RAF TODO: wtv question ID goes here
+				not: {
+					string_contains: 'University of Texas at Austin',
+				},
+			},
+		};
 	} else if (key === 'decision' && roles.includes('ADMIN')) {
 		return {
 			decision: { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },
