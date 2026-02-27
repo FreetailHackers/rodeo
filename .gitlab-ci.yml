@@ -147,6 +147,6 @@ deploy-production-job:
     - npx vercel@latest pull --yes --environment=production --token=$VERCEL_TOKEN
     - mv .vercel/.env.production.local .env
     - "export $(grep -v '^#' .env | xargs)"
-    - npx prisma migrate deploy
+    - npx prisma@6 migrate deploy
     - npx vercel@latest deploy --prod --token=$VERCEL_TOKEN > domain.txt
     - npx vercel@latest alias --token=$VERCEL_TOKEN set $(cat domain.txt) $(echo $DOMAIN_NAME | awk -F// '{print $NF}')
