@@ -57,7 +57,12 @@ async function fetchModelFilesFromS3(prefix?: string): Promise<Record<string, Bu
 	const listResponse = await s3Client.send(listCommand);
 
 	if (!listResponse.Contents) {
-		throw new Error('No files found in ticket.pass folder in S3');
+		console.warn(
+			'Pass feature disabled: no files found in ticket.pass folder in S3, bucket:',
+			process.env.S3_BUCKET,
+		);
+		// Return an empty record to signal that the pass feature is effectively disabled
+		return {};
 	}
 
 	const modelRecords: Record<string, Buffer> = {};
@@ -100,6 +105,12 @@ const createPass = async (uid: string, group: string, prefix?: string) => {
 		getCertificates(),
 	]);
 
+	// If no model files are available, disable the feature gracefully
+	if (Object.keys(modelRecords).length === 0) {
+		console.warn('Pass feature is disabled because no model files were loaded from S3.');
+		return null;
+	}
+
 	const pass = new PKPass(modelRecords, {
 		wwdr: certificates.wwdr,
 		signerCert: certificates.signerCert,
@@ -138,6 +149,15 @@ export const passRouter = t.router({
 		)
 		.mutation(async ({ input }) => {
 			const pass = await createPass(input.uid, input.group, input.prefix);
+
+			// If the feature is disabled, return a null payload instead of throwing
+			if (!pass) {
+				return {
+					data: null,
+					mimeType: null,
+				};
+			}
+
 			const buffer = pass.getAsBuffer();
 			return {
 				data: Array.from(buffer),

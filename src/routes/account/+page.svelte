@@ -7,7 +7,7 @@
 	let { data } = $props();
 
 	function downloadPass(passData: any, filename: string) {
-		if (isButtonsDisabled || passData === undefined) return;
+		if (isButtonsDisabled || !passData || !passData.data) return;
 		const blob = new Blob([new Uint8Array(passData.data)], {
 			type: passData.mimeType,
 		});
@@ -26,7 +26,13 @@
 
 	// button is disabled until hackathon start date (if set)
 	const startDate = data.settings?.hackathonStartDate;
-	const isButtonsDisabled = startDate ? new Date() < new Date(startDate) : false;
+	let isButtonsDisabled = false;
+
+	if (!data.applePass && !data.googlePass) {
+		isButtonsDisabled = true;
+	} else if (startDate) {
+		isButtonsDisabled = new Date() < new Date(startDate);
+	}
 
 	const userQrStyle =
 		(data.qrCodeStyle as {
