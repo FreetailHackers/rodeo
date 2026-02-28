@@ -84,6 +84,9 @@
 			}
 			return `${selected.filter(Boolean).length} selected users will have the chosen role removed.`;
 		}
+		if (action === 'set-tags') {
+			return `${selected.filter(Boolean).length} selected users will have their OOS/Non-UT tags updated.`;
+		}
 		if (action === 'release') {
 			if (selectedUsers.filter((user) => user.decision === null).length > 0) {
 				throw 'You can only release decisions for users with a pending decision.';
@@ -173,6 +176,8 @@
 							<option value="SPONSOR">Sponsor</option>
 							<option value="MENTOR">Mentor</option>
 							<option value="UNDECLARED">Undeclared</option>
+							<option value="OOS">Out of State</option>
+							<option value="NON_UT">Non-UT</option>
 						</select>
 					</div>
 					<div class="flex-align-center">
@@ -195,6 +200,8 @@
 							<option value="SPONSOR">Sponsor</option>
 							<option value="MENTOR">Mentor</option>
 							<option value="UNDECLARED">Undeclared</option>
+							<option value="OOS">Out of State</option>
+							<option value="NON_UT">Non-UT</option>
 						</select>
 					</div>
 					<div class="flex-align-center">
@@ -256,6 +263,12 @@
 						{/if}
 
 						<span class="grow"></span>
+						{#if user.isOOS}
+							<Badge color="indigo" variant="filled">OOS</Badge>
+						{/if}
+						{#if user.isnonUT}
+							<Badge color="purple" variant="filled">Non-UT</Badge>
+						{/if}
 						<Badge
 							color={STATUS_COLOR_MAP[user.authUser.status] ?? 'gray'}
 							variant="filled"

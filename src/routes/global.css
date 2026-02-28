@@ -548,3 +548,13 @@ footer {
 	background: #be185d; /* pink/magenta */
 	color: #fff;
 }
+
+.badge.filled.indigo {
+	background: #4f46e5; /* indigo */
+	color: #fff;
+}
+
+.badge.filled.purple {
+	background: #7c3aed; /* purple */
+	color: #fff;
+}

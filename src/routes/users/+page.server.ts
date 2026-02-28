@@ -70,12 +70,30 @@ export const actions = {
 			await trpc(event).users.setStatuses({ status, ids });
 			return 'Saved statuses!';
 		} else if (action === 'add-role') {
-			const role = formData.get('role-to-add') as Role;
-			await trpc(event).users.addRole({ role, ids });
+			const role = formData.get('role-to-add') as string;
+			if (role === 'OOS') {
+				for (const id of ids)
+					await trpc(event).users.updateAdminTags({ userId: id, tag: 'isOOS', value: true });
+				return 'Tagged as Out of State!';
+			} else if (role === 'NON_UT') {
+				for (const id of ids)
+					await trpc(event).users.updateAdminTags({ userId: id, tag: 'isnonUT', value: true });
+				return 'Tagged as Non-UT!';
+			}
+			await trpc(event).users.addRole({ role: role as Role, ids });
 			return 'Added roles!';
 		} else if (action === 'remove-role') {
-			const role = formData.get('role-to-remove') as Role;
-			await trpc(event).users.removeRole({ role, ids });
+			const role = formData.get('role-to-remove') as string;
+			if (role === 'OOS') {
+				for (const id of ids)
+					await trpc(event).users.updateAdminTags({ userId: id, tag: 'isOOS', value: false });
+				return 'Removed Out of State tag!';
+			} else if (role === 'NON_UT') {
+				for (const id of ids)
+					await trpc(event).users.updateAdminTags({ userId: id, tag: 'isnonUT', value: false });
+				return 'Removed Non-UT tag!';
+			}
+			await trpc(event).users.removeRole({ role: role as Role, ids });
 			return 'Removed roles!';
 		} else if (action === 'release') {
 			await trpc(event).admissions.releaseDecisions(ids);
