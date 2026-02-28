@@ -2,6 +2,8 @@
 	import { page } from '$app/state';
 	import type { Prisma, Question } from '@prisma/client';
 	import SvelteMarkdown from '@humanspeak/svelte-markdown';
+	import { trpc } from '$lib/trpc/client';
+	import { invalidateAll } from '$app/navigation';
 
 	interface Props {
 		user: Partial<Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }>>;
@@ -12,6 +14,21 @@
 	let { user, questions, teammates = [] }: Props = $props();
 
 	let application = $derived(user.application as Record<string, any>);
+
+	async function toggleTag(tag: 'isOOS' | 'isnonUT') {
+		const newValue = !user[tag];
+		try {
+			await trpc(page).users.updateAdminTags.mutate({
+				userId: user.authUserId!,
+				tag: tag,
+				value: newValue,
+			});
+			// Update local state so UI reflects the change
+			user[tag] = newValue;
+		} catch (e) {
+			console.error(`Failed to toggle ${tag}:`, e);
+		}
+	}
 </script>
 
 <!-- Ensures the teammate list is only displayed if the user is not the only person on the team -->
@@ -28,6 +45,19 @@
 		{/each}
 	</ul>
 {/if}
+
+<div class="admin-tags">
+	<label>
+		<input type="checkbox" checked={user.isOOS} onchange={() => toggleTag('isOOS')} />
+		<b>Out of State</b>
+	</label>
+	<label>
+		<input type="checkbox" checked={user.isnonUT} onchange={() => toggleTag('isnonUT')} />
+		<b>Non-UT</b>
+	</label>
+</div>
+
+<hr />
 
 <p><b>Verified Email</b> {user.authUser?.verifiedEmail}</p>
 <p><b>Role</b> {user.authUser?.roles.join(', ')}</p>

@@ -664,6 +664,8 @@ export const usersRouter = t.router({
 					req.input.searchFilter,
 					req.input.search,
 					req.ctx.user.roles,
+					req.input.oos,
+					req.input.nonUT,
 				);
 				const count = await prisma.user.count({ where });
 				const users = await prisma.user.findMany({
@@ -975,6 +977,8 @@ export const usersRouter = t.router({
 				key: z.string(),
 				search: z.string(),
 				searchFilter: z.string(),
+				oos: z.boolean().optional(),
+				nonUT: z.boolean().optional(),
 			}),
 		)
 		.query(async (req): Promise<string[]> => {
@@ -983,6 +987,8 @@ export const usersRouter = t.router({
 				req.input.searchFilter,
 				req.input.search,
 				req.ctx.user.roles,
+				req.input.oos,
+				req.input.nonUT,
 			);
 			return await prisma.user
 				.findMany({
@@ -1100,6 +1106,22 @@ export const usersRouter = t.router({
 				return false;
 			}
 		}),
+
+	updateAdminTags: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(
+			z.object({
+				userId: z.string(),
+				tag: z.enum(['isOOS', 'isnonUT']),
+				value: z.boolean(),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			return await prisma.user.update({
+				where: { authUserId: input.userId },
+				data: { [input.tag]: input.value },
+			});
+		}),
 });
 
 async function getWhereCondition(
@@ -1107,16 +1129,18 @@ async function getWhereCondition(
 	searchFilter: string,
 	search: string,
 	roles: Role[],
+	oos?: boolean,
+	nonUT?: boolean,
 ): Promise<Prisma.UserWhereInput> {
 	if (!roles.includes('ADMIN')) {
 		return {
 			AND: [
 				{ authUser: { roles: { has: 'HACKER' } } },
-				await getWhereConditionHelper(key, searchFilter, search, roles),
+				await getWhereConditionHelper(key, searchFilter, search, roles, oos, nonUT),
 			],
 		};
 	}
-	return await getWhereConditionHelper(key, searchFilter, search, roles);
+	return await getWhereConditionHelper(key, searchFilter, search, roles, oos, nonUT);
 }
 
 // Converts key to Prisma where filter
@@ -1125,32 +1149,34 @@ async function getWhereConditionHelper(
 	searchFilter: string,
 	search: string,
 	roles: Role[],
+	oos?: boolean,
+	nonUT?: boolean,
 ): Promise<Prisma.UserWhereInput> {
 	const questions = await getQuestions();
 	const scanActions = (await getSettings()).scanActions;
+
+	const globalFilters: Prisma.UserWhereInput[] = [];
+
+	const manualFilters: Prisma.UserWhereInput[] = [];
+	if (oos) manualFilters.push({ isOOS: true });
+	if (nonUT) manualFilters.push({ isnonUT: true });
+
+	if (manualFilters.length > 0 && (oos !== undefined || nonUT !== undefined)) {
+		return {
+			AND: [
+				...manualFilters,
+				//wanna pass undef if we already processed these fields
+				await getWhereConditionHelper(key, searchFilter, search, roles, undefined, undefined),
+			],
+		};
+	}
+
 	if (key === 'email') {
 		return { authUser: { email: { contains: search, mode: 'insensitive' } } };
 	} else if (key === 'status' && roles.includes('ADMIN')) {
 		return { authUser: { status: search as Status } };
 	} else if (key === 'role' && roles.includes('ADMIN')) {
 		return { authUser: { roles: { has: search as Role } } };
-	} else if (key === 'oos') {
-		//raf adding new filter logic
-		return {
-			application: {
-				path: ['question_ID_filler'], //RAF TODO: wtv question ID goes here
-				not: 'TX',
-			},
-		};
-	} else if (key === 'nonUT') {
-		return {
-			application: {
-				path: ['school_questionID'], //RAF TODO: wtv question ID goes here
-				not: {
-					string_contains: 'University of Texas at Austin',
-				},
-			},
-		};
 	} else if (key === 'decision' && roles.includes('ADMIN')) {
 		return {
 			decision: { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },

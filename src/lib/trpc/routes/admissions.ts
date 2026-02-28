@@ -214,22 +214,8 @@ export const admissionsRouter = t.router({
 							status: { in: statusFilter },
 						},
 						decision: null,
-						...(req.input.oos
-							? {
-									application: {
-										path: ['oos'],
-										equals: true,
-									},
-								}
-							: {}),
-						...(req.input.nonUT
-							? {
-									application: {
-										path: ['nonUT'],
-										equals: true,
-									},
-								}
-							: {}),
+						...(req.input.oos ? { isOOS: true } : {}),
+						...(req.input.nonUT ? { isnonUT: true } : {}),
 					},
 					include: { authUser: true, decision: true },
 					orderBy: [{ teamId: 'asc' }],

@@ -67,6 +67,8 @@ model User {
   authUser      AuthUser       @relation(fields: [authUserId], references: [id], onDelete: Cascade)
   team          Team?          @relation(fields: [teamId], references: [id])
   group         Group?         @relation(fields: [groupId], references: [id])
+  isOOS         Boolean       @default(false)
+  isnonUT       Boolean       @default(false)
 }
 
 
