@@ -10,7 +10,7 @@ export const load = async (event) => {
 	const statusParam = event.url.searchParams.get('status');
 	const selectedRole = (roleParam as Role) || Role.HACKER;
 	const selectedStatus = statusParam ? (statusParam as Status) : undefined;
-	//raf added, when it calls load itll update the value after we click our new button (or not)
+	//when it calls load itll update the value after we click our new button
 	const oos = event.url.searchParams.get('oos') === 'true';
 	const nonUT = event.url.searchParams.get('nonUT') === 'true';
 
@@ -25,8 +25,7 @@ export const load = async (event) => {
 	const user = await trpc(event).admissions.getAppliedUser({
 		role: selectedRole,
 		status: selectedStatus,
-		//raf passing new values here!
-		oos, //hm... check getAppliedUser()?
+		oos,
 		nonUT,
 	});
 

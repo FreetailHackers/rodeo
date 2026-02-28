@@ -644,7 +644,6 @@ export const usersRouter = t.router({
 				searchFilter: z.string(),
 				limit: z.number().transform((limit) => (limit === 0 ? Number.MAX_SAFE_INTEGER : limit)),
 				page: z.number().transform((page) => page - 1),
-				//raf filter proposals
 				oos: z.boolean().optional(),
 				nonUT: z.boolean().optional(),
 			}),
