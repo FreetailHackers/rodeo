@@ -68,13 +68,9 @@
 
 	//raf adding buttons
 	<div class="filter-buttons">
-		<button class:active={isOOS} onclick={() => toggleBooleanFilter('oos')}>
-			{isOOS ? '✓ Out of State' : 'Out of State'}
-		</button>
+		<button class:active={isOOS} onclick={() => toggleBooleanFilter('oos')}> Out of State </button>
 
-		<button class:active={isnonUT} onclick={() => toggleBooleanFilter('nonUT')}>
-			{isnonUT ? '✓ Non-UT' : 'Non-UT'}
-		</button>
+		<button class:active={isnonUT} onclick={() => toggleBooleanFilter('nonUT')}> Non-UT </button>
 	</div>
 
 	{#if data.user === null}
