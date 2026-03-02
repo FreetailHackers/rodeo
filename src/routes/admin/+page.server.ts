@@ -42,15 +42,15 @@ export const actions = {
 		const timezone = formData.get('timezone') as string;
 
 		const emailFromName = formData.get('emailFromName') as string;
-        const emailFromAddress = formData.get('emailFromAddress') as string;
+		const emailFromAddress = formData.get('emailFromAddress') as string;
 
-        // get subjects
-        const submitSubject = formData.get('submitSubject') as string;
-        const acceptSubject = formData.get('acceptSubject') as string;
-        const confirmSubject = formData.get('confirmSubject') as string;
-        const declineSubject = formData.get('declineSubject') as string;
-        const rejectSubject = formData.get('rejectSubject') as string;
-        const waitlistSubject = formData.get('waitlistSubject') as string;
+		// get subjects
+		const submitSubject = formData.get('submitSubject') as string;
+		const acceptSubject = formData.get('acceptSubject') as string;
+		const confirmSubject = formData.get('confirmSubject') as string;
+		const declineSubject = formData.get('declineSubject') as string;
+		const rejectSubject = formData.get('rejectSubject') as string;
+		const waitlistSubject = formData.get('waitlistSubject') as string;
 
 		const applicationDeadline = parseDateWithTimezone(
 			formData.get('applicationDeadline') as string,
@@ -76,26 +76,26 @@ export const actions = {
 			.map((option: string) => option.trim())
 			.filter(Boolean);
 		await trpc(event).settings.update({
-            applicationOpen,
-            spongebobCase,
-            daysToRSVP,
-            scanActions,
-            timezone,
-            applicationDeadline,
-            applicationLimit,
-            hackathonStartDate,
-            // customizable email fields
-            emailFromName,
-            emailFromAddress,
-            submitSubject,
-            acceptSubject,
-            confirmSubject,
-            declineSubject,
-            rejectSubject,
-            waitlistSubject
-        });
-        return 'Saved settings!';
-    },
+			applicationOpen,
+			spongebobCase,
+			daysToRSVP,
+			scanActions,
+			timezone,
+			applicationDeadline,
+			applicationLimit,
+			hackathonStartDate,
+			// customizable email fields
+			emailFromName,
+			emailFromAddress,
+			submitSubject,
+			acceptSubject,
+			confirmSubject,
+			declineSubject,
+			rejectSubject,
+			waitlistSubject,
+		});
+		return 'Saved settings!';
+	},
 
 	release: async (event) => {
 		await trpc(event).admissions.releaseAllDecisions();

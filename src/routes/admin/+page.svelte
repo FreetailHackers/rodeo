@@ -58,44 +58,12 @@
 	}}
 >
 	<label for="applicationStatus"><h2>Application Status</h2></label>
-	<label for="emailSender"><h2>Email Sender Settings</h2></label>
-	<div class="qr-grid">
-		<status-container>
-			<label for="emailFromName">Sender Display Name</label>
-			<input 
-				type="text" 
-				name="emailFromName" 
-				id="emailFromName"
-				value={data.settings.emailFromName} 
-				placeholder="e.g., Rodeo Team"
-			/>
-		</status-container>
-		<status-container>
-			<label for="emailFromAddress">Sender Email Address</label>
-			<input 
-				type="email" 
-				name="emailFromAddress" 
-				id="emailFromAddress"
-				value={data.settings.emailFromAddress} 
-				placeholder="hello@hackathon.com"
-			/>
-		</status-container>
-	</div>
 	<hr style="margin-top: 2rem; opacity: 0.2;" />
 	<div class="flex-row">
 		<Toggle
 			name="applicationOpen"
 			label="Accept new applications"
 			bind:checked={applicationOpenStatus}
-			isLeft={true}
-		/>
-	</div>
-
-	<div class="flex-row">
-		<Toggle
-			name="spongebobCase"
-			label="sPoNgEbOb cAsE"
-			checked={data.settings.spongebobCase}
 			isLeft={true}
 		/>
 	</div>

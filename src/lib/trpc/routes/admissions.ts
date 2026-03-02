@@ -10,6 +10,14 @@ import { checkIfBlacklisted } from './blacklist';
 import { getQuestions } from './questions';
 
 /**
+ * Helper to safely extract a response based on a case-insensitive label match.
+ */
+const getAppResponse = (app: any, questions: any[], labelRegex: RegExp): string => {
+	const question = questions.find((q) => labelRegex.test(q.label));
+	return question ? String(app?.[question.id] ?? '').trim() : '';
+};
+
+/**
  * Considers applicationOpen, applicationDeadline, and applicationLimit
  * to determine whether or not new users can apply.
  * User must be an admin.
@@ -30,69 +38,50 @@ export const canApply = async (): Promise<boolean> => {
 
 async function releaseDecisions(ids?: string[]): Promise<void> {
 	const settings = await getSettings();
+	const questions = await getQuestions();
+	const decisionConfigs = {
+		ACCEPTED: {
+			template: settings.acceptTemplate,
+			subject: settings.acceptSubject,
+			isHTML: settings.acceptIsHTML,
+		},
+		REJECTED: {
+			template: settings.rejectTemplate,
+			subject: settings.rejectSubject,
+			isHTML: settings.rejectIsHTML,
+		},
+		WAITLISTED: {
+			template: settings.waitlistTemplate,
+			subject: settings.waitlistSubject,
+			isHTML: settings.waitlistIsHTML,
+		},
+	} as const;
+
 	const hackers = await prisma.user.findMany({
 		include: { authUser: true, decision: true },
 		where: ids === undefined ? {} : { authUserId: { in: ids } },
 	});
-	// The codebase should already enforce that decisions can only exist
-	// for users with status APPLIED or WAITLISTED, but check for safety
-	const invalid = hackers
-		.filter((hacker) => !['APPLIED', 'WAITLISTED'].includes(hacker.authUser.status))
-		.map((hacker) => hacker.authUserId);
-	await prisma.decision.deleteMany({ where: { userId: { in: invalid } } });
-	for (const decision of ['ACCEPTED', 'REJECTED', 'WAITLISTED']) {
-		const decisions = hackers.filter((hacker) => hacker.decision?.status === decision);
-		const updateStatus = prisma.authUser.updateMany({
-			where: { id: { in: decisions.map((decision) => decision.authUserId) } },
-			data: { status: decision as Status },
-		});
-		const deleteDecision = prisma.decision.deleteMany({
-			where: { userId: { in: decisions.map((decision) => decision.authUserId) } },
-		});
-		await prisma.$transaction([updateStatus, deleteDecision]);
 
-        let template = '';
-        let subject = ''; // initialize subject
-        let isHTML: boolean = false;
-
-        if (decision === 'ACCEPTED') {
-            template = settings.acceptTemplate;
-            subject = settings.acceptSubject || 'Freetail Hackers status update';
-            isHTML = settings.acceptIsHTML;
-        } else if (decision === 'REJECTED') {
-            template = settings.rejectTemplate;
-            subject = settings.rejectSubject || 'Freetail Hackers status update';
-            isHTML = settings.rejectIsHTML;
-        } else if (decision === 'WAITLISTED') {
-            template = settings.waitlistTemplate;
-            subject = settings.waitlistSubject || 'Freetail Hackers status update';
-            isHTML = settings.waitlistIsHTML;
-        }
-		const questions = await getQuestions();
-		const firstNameQuestion = questions.find((q) => /^first\s+name$/i.test(q.label));
-
+	for (const status of ['ACCEPTED', 'REJECTED', 'WAITLISTED'] as const) {
+		const decisions = hackers.filter((hacker) => hacker.decision?.status === status);
+		if (decisions.length === 0) continue;
+		const config = decisionConfigs[status];
 		for (let i = 0; i < decisions.length; i += 100) {
 			await Promise.all(
-				decisions
-					.slice(i, i + 100)
-					.map((hacker) => {
-						// extract the name for personalization
-						const app = hacker.application as any;
-						const firstName = firstNameQuestion 
-							? String(app?.[firstNameQuestion.id] ?? '').trim() 
-							: '';
-						// pass firstName to sendEmail
-						return sendEmail(
-							hacker.authUser.email, 
-							subject, 
-							template, 
-							isHTML, 
-							firstName
-						);
-                    }),
-            );
-        }
-    }
+				decisions.slice(i, i + 100).map((hacker) => {
+					const firstName =
+						getAppResponse(hacker.application, questions, /^first\s+name$/i) || 'Hacker';
+					return sendEmail(
+						hacker.authUser.email,
+						config.subject,
+						config.template,
+						config.isHTML,
+						firstName,
+					);
+				}),
+			);
+		}
+	}
 }
 
 export const admissionsRouter = t.router({
@@ -127,9 +116,8 @@ export const admissionsRouter = t.router({
 				});
 				if (!record) continue;
 
-				const app = record.application as any;
-				const firstName = firstNameQuestion ? String(app?.[firstNameQuestion.id] ?? '').trim() : '';
-				const lastName = lastNameQuestion ? String(app?.[lastNameQuestion.id] ?? '').trim() : '';
+				const firstName = getAppResponse(record.application, questions, /^first\s+name$/i);
+				const lastName = getAppResponse(record.application, questions, /^last\s+name$/i);
 				const fullName = [firstName, lastName].filter(Boolean).join(' ');
 
 				const isBlacklisted = await checkIfBlacklisted(record.authUser?.email, fullName);

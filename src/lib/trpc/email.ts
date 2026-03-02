@@ -4,8 +4,8 @@ import { marked } from 'marked';
 import { prisma } from './db';
 
 function personalize(template: string, name: string): string {
-    // replaces all instances of "name" with the hacker's actual name
-    return template.replace(/{name}/g, name);
+	// replaces all instances of "name" with the hacker's actual name
+	return template.replace(/{name}/g, name);
 }
 
 function getResend() {
@@ -34,9 +34,13 @@ export const sendEmail = async (
 ): Promise<number> => {
 	// Preface with warning if not in production
 	const settings = await prisma.settings.findUnique({ where: { id: 0 } });
-    // set up sender fallbacks
-	const fromName = settings?.emailFromName || 'Freetail Hackers';
-    const fromAddress = settings?.emailFromAddress || 'hello@freetailhackers.com';
+	if (!settings) {
+		console.error('ERROR: Settings row (id: 0) missing. Cannot determine sender address.');
+		return 0;
+	}
+	// set up sender fallbacks
+	const fromName = settings?.emailFromName;
+	const fromAddress = settings?.emailFromAddress;
 
 	let warning = '';
 	if (process.env.VERCEL_ENV !== 'production') {
@@ -52,17 +56,17 @@ export const sendEmail = async (
 	}
 
 	let finalContent = isHTML ? message : await marked.parse(message);
-    if (recipientName) {
-        finalContent = personalize(finalContent, recipientName);
-    }
+	if (recipientName) {
+		finalContent = personalize(finalContent, recipientName);
+	}
 
 	try {
 		// Send emails to each recipient
 		const email = {
 			to: recipient,
-            from: `${fromName} <${fromAddress}>`,
-            subject: subject,
-            html: `${warning}${finalContent}`,
+			from: `${fromName} <${fromAddress}>`,
+			subject: subject,
+			html: `${warning}${finalContent}`,
 		};
 
 		if (process.env.RESEND_API_KEY) {

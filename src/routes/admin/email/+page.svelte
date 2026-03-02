@@ -82,6 +82,36 @@
 		};
 	}}
 >
+	<h2>Email Sender Settings</h2>
+	<p>These settings apply to all automated emails.</p>
+
+	<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 2rem;">
+		<div>
+			<label for="emailFromName"><h3>Sender Display Name</h3></label>
+			<input
+				type="text"
+				name="emailFromName"
+				id="emailFromName"
+				bind:value={data.settings.emailFromName}
+				placeholder="Freetail Hackers"
+				style="width: 100%;"
+			/>
+		</div>
+		<div>
+			<label for="emailFromAddress"><h3>Sender Email Address</h3></label>
+			<input
+				type="email"
+				name="emailFromAddress"
+				id="emailFromAddress"
+				bind:value={data.settings.emailFromAddress}
+				placeholder=""
+				style="width: 100%;"
+			/>
+		</div>
+	</div>
+
+	<hr />
+
 	<label for="submitTemplate"><h2>Submit Application Email Template</h2></label>
 	<div class="toggle-container">
 		<Toggle
