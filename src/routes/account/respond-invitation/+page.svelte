@@ -22,8 +22,9 @@
 
 		<div>
 			<button type="submit" onclick={() => setAction(true)}>Accept</button>
-			<button class="negative-button" type="submit" onclick={() => setAction(false)}>Decline</button
-			>
+			<button class="negative-button" type="submit" onclick={() => setAction(false)}>
+				Decline
+			</button>
 		</div>
 
 		<p>
