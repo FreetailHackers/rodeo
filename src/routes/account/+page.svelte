@@ -7,7 +7,7 @@
 	let { data } = $props();
 
 	function downloadPass(passData: any, filename: string) {
-		if (isButtonsDisabled || passData === undefined) return;
+		if (isButtonsDisabled || !passData || !passData.data) return;
 		const blob = new Blob([new Uint8Array(passData.data)], {
 			type: passData.mimeType,
 		});
@@ -26,7 +26,13 @@
 
 	// button is disabled until hackathon start date (if set)
 	const startDate = data.settings?.hackathonStartDate;
-	const isButtonsDisabled = startDate ? new Date() < new Date(startDate) : false;
+	let isButtonsDisabled = false;
+
+	if (!data.applePass && !data.googlePass) {
+		isButtonsDisabled = true;
+	} else if (startDate) {
+		isButtonsDisabled = new Date() < new Date(startDate);
+	}
 
 	const userQrStyle =
 		(data.qrCodeStyle as {
@@ -256,7 +262,7 @@
 		text-decoration: none;
 		cursor: pointer;
 		transition: all 0.1s;
-		background-color: var(--blue);
+		background-color: var(--white);
 		margin-top: 1.5rem;
 		margin-right: 1rem;
 	}
@@ -298,7 +304,7 @@
 
 	.id-card {
 		position: relative;
-		box-shadow: 4px 4px 16px 0px #00000040;
+		box-shadow: 4px 4px 16px 0px var(--red);
 		border-radius: var(--border-radius);
 	}
 
@@ -314,12 +320,12 @@
 		position: absolute;
 		object-fit: contain;
 		margin: 18%;
-		margin-top: 30%;
-		border-radius: 16px;
+		margin-top: 22%;
+		border-radius: 5px;
 		opacity: 0;
 		transition: opacity 0.2s ease-in-out;
 		padding: 10px;
-		background-color: var(--other-blue);
+		/* background-color: var(--red); */
 	}
 
 	.id-card #qrcode.loaded {

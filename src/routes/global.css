@@ -1,14 +1,14 @@
 /* Import local fonts */
 @font-face {
-	font-family: 'RELIGATH';
-	src: url('/fonts/RELIGATH-Regular.ttf') format('truetype');
+	font-family: 'Slackey';
+	src: url('/fonts/Slackey-Regular.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }
 
 @font-face {
-	font-family: 'Satoshi';
-	src: url('/fonts/Satoshi-Regular.otf') format('opentype');
+	font-family: 'Harmattan';
+	src: url('/fonts/Harmattan-Regular.ttf') format('truetype');
 	font-weight: lighter;
 	font-style: normal;
 }
@@ -19,21 +19,22 @@ html {
 
 :root {
 	/* Fonts */
-	--font-titles: 'RELIGATH', 'Inter', serif;
-	--font-standard: 'Satoshi', 'Helvetica Neue', sans-serif;
+	--font-titles: 'Slackey', 'Inter', serif;
+	--font-standard: 'Harmattan', 'Helvetica Neue', sans-serif;
 
 	/* Colors */
-	--white: #f5f0e9;
+	--white: #fffdf6;
 	--black: #000;
-	--accent: #e8d8a1;
+	--accent: #3f2006;
 	--other-accent: #01051a;
 	--dark-grey: #757575;
 	--grey: #bbbbbb;
 	--light-grey: #ebebeb;
-	--dark-blue: #01051a;
 	--blue: #000c44;
-	--red: #e53c09;
+	--red: #ff796e;
 	--other-blue: #17203c;
+	--sky-blue: #6ac6ff;
+	--green: #69a541;
 
 	--border-radius: 15px;
 
@@ -54,7 +55,7 @@ p {
 h1,
 h3 {
 	font-family: var(--font-titles);
-	color: var(--accent);
+	color: var(--red);
 }
 
 h1 {
@@ -67,7 +68,7 @@ h1 {
 h2 {
 	font-size: 2.22rem; /* 40pt */
 	font-family: var(--font-titles);
-	color: var(--accent);
+	color: var(--red);
 }
 h3 {
 	font-size: 1.56rem; /* 28pt */
@@ -97,7 +98,7 @@ html {
 body {
 	margin: 0 auto;
 	overflow-wrap: anywhere;
-	background-color: var(--blue); /* TODO: CHANGE BACKGROUND HERE */
+	background-color: var(--white);
 }
 
 section {
@@ -111,7 +112,7 @@ nav {
 button,
 a.button {
 	background-color: var(--accent);
-	color: var(--blue);
+	color: var(--white);
 	border: none;
 	padding: 0.5em 1.5em;
 	text-decoration: none;
@@ -124,9 +125,10 @@ a.button {
 button:not(:disabled):hover,
 a.button:not(:disabled):hover {
 	cursor: pointer;
-	background-color: var(--other-accent);
-	color: var(--accent);
-	border: 1px solid var(--accent);
+	background-color: var(--accent);
+	color: var(--white);
+	border: 1px solid transparent;
+	opacity: 0.9;
 }
 
 button:not(:disabled):active,
@@ -140,6 +142,20 @@ a.button[disabled] {
 	cursor: not-allowed;
 }
 
+/* Primary/important buttons with red accent */
+button.primary,
+a.button.primary {
+	background-color: var(--red);
+	color: var(--white);
+}
+
+button.primary:not(:disabled):hover,
+a.button.primary:not(:disabled):hover {
+	background-color: var(--red);
+	color: var(--white);
+	opacity: 0.9;
+}
+
 .negative-button {
 	background-color: var(--white);
 	color: var(--accent);
@@ -147,7 +163,7 @@ a.button[disabled] {
 }
 
 .negative-button:not(:disabled):hover {
-	background-color: var(--dark-blue);
+	background-color: var(--accent);
 	color: var(--accent);
 	border: 1px solid var(--accent);
 }
@@ -169,8 +185,8 @@ input {
 	padding: 1rem;
 	border: 1px solid var(--accent);
 	border-radius: var(--border-radius);
-	background-color: var(--blue);
-	color: var(--grey);
+	background-color: var(--white);
+	color: var(--accent);
 }
 
 input[type='checkbox'],
@@ -181,13 +197,13 @@ input[type='radio'] {
 }
 
 textarea {
-	border: 1px solid var(--grey);
+	border: 1px solid var(--accent);
 	border-radius: var(--border-radius);
 	padding: 1rem;
 	resize: vertical;
 	height: 10rem;
-	background-color: var(--blue);
-	color: var(--grey);
+	background-color: var(--white);
+	color: var(--accent);
 }
 
 form {
@@ -200,8 +216,8 @@ a {
 }
 
 ::selection {
-	background: var(--accent);
-	color: var(--dark-blue);
+	background: var(--sky-blue);
+	color: var(--accent);
 }
 
 ::placeholder {
@@ -215,8 +231,9 @@ fieldset {
 select {
 	padding: 1rem;
 	border-radius: var(--border-radius);
-	border: 1px solid var(--grey);
-	color: var(--grey);
+	border: 1px solid var(--accent);
+	color: var(--accent);
+	background-color: var(--white);
 
 	appearance: none;
 
@@ -236,8 +253,8 @@ select {
 	/* Use important to overwrite svelte's default css */
 	border-radius: var(--border-radius) !important;
 	border: 1px solid var(--accent) !important;
-	background-color: var(--blue) !important;
-	color: var(--grey) !important;
+	background-color: var(--white) !important;
+	color: var(--accent) !important;
 	height: 3.5rem !important;
 }
 
@@ -246,33 +263,33 @@ select {
 }
 
 .svelte-select .item {
-	color: var(--grey) !important;
-	background-color: var(--dark-blue) !important;
+	color: var(--accent) !important;
+	background-color: var(--white) !important;
 }
 
 .svelte-select .item:hover {
 	background-color: var(--accent) !important;
-	color: var(--dark-blue) !important;
+	color: var(--accent) !important;
 }
 
 .svelte-select .item.highlighted {
 	background-color: var(--accent) !important;
-	color: var(--dark-blue) !important;
+	color: var(--accent) !important;
 }
 
 .svelte-select .selected-item {
 	font-size: 1rem !important;
-	color: var(--grey) !important;
+	color: var(--accent) !important;
 }
 
 .svelte-select .multi-item {
 	background-color: var(--accent) !important;
-	color: var(--dark-blue) !important;
+	color: var(--accent) !important;
 }
 
 .svelte-select .clear-select {
 	background-color: transparent !important;
-	color: var(--grey) !important;
+	color: var(--accent) !important;
 }
 
 input[type='file'] {
@@ -411,20 +428,20 @@ dialog button {
 	justify-content: space-between;
 	margin-top: unset;
 	user-select: text;
-	color: var(--dark-blue);
+	color: var(--accent);
 }
 
 .modal p {
-	color: var(--dark-blue);
+	color: var(--accent);
 }
 
 .modal button {
-	background-color: var(--blue);
+	background-color: var(--white);
 	color: var(--accent);
 }
 
 .modal button:hover {
-	background-color: var(--blue);
+	background-color: var(--white);
 	color: var(--accent);
 }
 

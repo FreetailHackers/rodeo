@@ -178,6 +178,12 @@ model Challenge {
   description String
 }
 
+model HonkCounter {
+  id    Int @id @default(1)
+  count Int @default(0)
+}
+
+
 model Sponsor {
   id       Int     @id @default(autoincrement())
   name     String

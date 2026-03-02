@@ -130,7 +130,7 @@
 	.pill {
 		padding: 0.2rem 0.6rem;
 		border-radius: 999px;
-		background: var(--dark-blue);
+		background: var(--accent);
 		color: var(--white);
 	}
 	.muted {
@@ -145,7 +145,7 @@
 		border: 1px solid var(--accent);
 		border-radius: 4px;
 		background: var(--accent);
-		color: var(--dark-blue);
+		color: var(--accent);
 		cursor: pointer;
 	}
 

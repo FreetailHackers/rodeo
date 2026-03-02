@@ -43,12 +43,7 @@
 {#if !noLayoutRoutes.some((route) => page.url.pathname.startsWith(route))}
 	<div class="navbar">
 		<label for="hamburgerCheckbox"
-			><img
-				draggable="false"
-				src="/auth-assets/hacktxlogo.png"
-				alt="burger-menu"
-				id="hamburger-logo"
-			/>
+			><img draggable="false" src="/auth-assets/logo.png" alt="burger-menu" id="hamburger-logo" />
 			<img draggable="false" src="/burger_Menu.png" alt="burger-menu" id="hamburger-logo" /></label
 		>
 		<input
@@ -58,7 +53,7 @@
 			style="display: none"
 		/>
 		<menu id="menu" bind:this={menu}>
-			<li><a href="https://hacktx.com">Homepage</a></li>
+			<li><a href="https://hhg.freetailhackers.com/">Homepage</a></li>
 			<li><a href="/">Announcements</a></li>
 			{#if !data.user?.roles.includes('ADMIN')}
 				<li>
@@ -119,7 +114,7 @@
 		height: 100vh;
 		backdrop-filter: blur(2px) brightness(0.9);
 		z-index: 200;
-		background-color: var(--dark-blue); /* changed for dark mode */
+		background-color: var(--white);
 	}
 
 	.container {
@@ -132,7 +127,7 @@
 		position: fixed;
 		top: 0;
 		margin: 0;
-		background-color: var(--dark-blue); /* changed for dark mode */
+		background-color: var(--accent); /* changed for dark mode */
 		z-index: 10;
 	}
 
@@ -168,13 +163,15 @@
 
 	.navbar a:hover,
 	.navbar form button:hover {
-		background-color: var(--blue);
+		background-color: var(--white);
+		color: var(--accent);
 		font-weight: normal;
 		border: none;
 	}
 
 	.navbar a.active {
-		background-color: var(--blue);
+		background-color: var(--white);
+		color: var(--accent);
 		font-weight: bold;
 		border: 1px solid var(--accent);
 	}

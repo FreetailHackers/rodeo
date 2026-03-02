@@ -118,7 +118,6 @@
 	}
 	#padding {
 		height: 1rem;
-		background: linear-gradient(transparent, var(--blue));
 	}
 	.status-buttons {
 		margin-top: 2rem;
@@ -134,7 +133,6 @@
 		flex-direction: row;
 		justify-content: space-between;
 		gap: 1rem;
-		background: var(--blue);
 		padding-bottom: 1rem;
 	}
 	button {

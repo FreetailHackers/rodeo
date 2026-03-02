@@ -25,20 +25,24 @@ export const load = async (event) => {
 			}
 		}
 
+		const applePass = await trpc(event).pass.getPass({
+			uid: user.id,
+			group: groupName || 'N/A',
+		});
+
+		const googlePass = await trpc(event).pass.getPass({
+			uid: user.id,
+			group: groupName || 'N/A',
+			prefix: 'google-ticket.pass/',
+		});
+
 		return {
 			user: user,
 			team: await trpc(event).team.getTeam(),
 			invitations: await trpc(event).team.getTeamInvitations(),
 			group: await trpc(event).users.getGroup(),
-			applePass: await trpc(event).pass.getPass({
-				uid: user.id,
-				group: groupName || 'N/A',
-			}),
-			googlePass: await trpc(event).pass.getPass({
-				uid: user.id,
-				group: groupName || 'N/A',
-				prefix: 'google-ticket.pass/',
-			}),
+			applePass: applePass && applePass.data ? applePass : null,
+			googlePass: googlePass && googlePass.data ? googlePass : null,
 			settings: await trpc(event).settings.getPublic(),
 			qrCodeStyle: qrCodeStyle,
 			imageUrl: imageUrl,
