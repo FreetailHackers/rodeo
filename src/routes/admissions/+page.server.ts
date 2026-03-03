@@ -12,7 +12,8 @@ export const load = async (event) => {
 	const selectedStatus = statusParam ? (statusParam as Status) : undefined;
 	//when it calls load itll update the value after we click our new button
 	const oos = event.url.searchParams.get('oos') === 'true';
-	const nonUT = event.url.searchParams.get('nonUT') === 'true';
+	const texas = event.url.searchParams.get('texas') === 'true';
+	const ut = event.url.searchParams.get('ut') === 'true';
 
 	const admissionRelevantQuestions = questions.filter((question) => {
 		if (question.hideAdmission) return false;
@@ -26,7 +27,8 @@ export const load = async (event) => {
 		role: selectedRole,
 		status: selectedStatus,
 		oos,
-		nonUT,
+		texas,
+		ut,
 	});
 
 	return {

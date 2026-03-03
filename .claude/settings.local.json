@@ -1,0 +1,8 @@
+{
+	"permissions": {
+		"allow": [
+			"Bash(grep -n \"targetGroup\\\\|hideAdmission\" /c/Users/ryher/Documents/rodeo/prisma/*.ts)",
+			"Bash(node -e \":*)"
+		]
+	}
+}

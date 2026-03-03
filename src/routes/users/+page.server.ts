@@ -77,8 +77,12 @@ export const actions = {
 				return 'Tagged as Out of State!';
 			} else if (role === 'NON_UT') {
 				for (const id of ids)
-					await trpc(event).users.updateAdminTags({ userId: id, tag: 'isnonUT', value: true });
-				return 'Tagged as Non-UT!';
+					await trpc(event).users.updateAdminTags({ userId: id, tag: 'isTexas', value: true });
+				return 'Tagged as Texas!';
+			} else if (role === 'UT') {
+				for (const id of ids)
+					await trpc(event).users.updateAdminTags({ userId: id, tag: 'isUT', value: true });
+				return 'Tagged as UT!';
 			}
 			await trpc(event).users.addRole({ role: role as Role, ids });
 			return 'Added roles!';
@@ -90,8 +94,12 @@ export const actions = {
 				return 'Removed Out of State tag!';
 			} else if (role === 'NON_UT') {
 				for (const id of ids)
-					await trpc(event).users.updateAdminTags({ userId: id, tag: 'isnonUT', value: false });
-				return 'Removed Non-UT tag!';
+					await trpc(event).users.updateAdminTags({ userId: id, tag: 'isTexas', value: false });
+				return 'Removed Texas tag!';
+			} else if (role === 'UT') {
+				for (const id of ids)
+					await trpc(event).users.updateAdminTags({ userId: id, tag: 'isUT', value: false });
+				return 'Removed UT tag!';
 			}
 			await trpc(event).users.removeRole({ role: role as Role, ids });
 			return 'Removed roles!';

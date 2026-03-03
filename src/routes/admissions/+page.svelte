@@ -8,11 +8,11 @@
 	let { data } = $props();
 	let selectedRole = $state(data.selectedRole) as Role;
 	let selectedStatus = $state(data.selectedStatus) as 'APPLIED' | 'WAITLISTED' | undefined;
-	// raf frontend changes
 	let isOOS = $state(page.url.searchParams.get('oos') === 'true');
-	let isnonUT = $state(page.url.searchParams.get('nonUT') === 'true');
+	let isTexas = $state(page.url.searchParams.get('texas') === 'true');
+	let isUT = $state(page.url.searchParams.get('ut') === 'true');
 
-	function toggleBooleanFilter(key: 'oos' | 'nonUT') {
+	function toggleBooleanFilter(key: 'oos' | 'texas' | 'ut') {
 		const url = new URL(page.url);
 		const currentValue = url.searchParams.get(key) === 'true';
 
@@ -24,7 +24,8 @@
 
 		// Update the local $state so the UI buttons change color immediately
 		if (key === 'oos') isOOS = !currentValue;
-		if (key === 'nonUT') isnonUT = !currentValue;
+		if (key === 'texas') isTexas = !currentValue;
+		if (key === 'ut') isUT = !currentValue;
 
 		goto(url.toString(), { replaceState: true, noScroll: true });
 	}
@@ -66,11 +67,11 @@
 		<button onclick={() => filterByStatus('WAITLISTED')}> Waitlisted </button>
 	</div>
 
-	//raf adding buttons
 	<div class="filter-buttons">
 		<button class:active={isOOS} onclick={() => toggleBooleanFilter('oos')}> Out of State </button>
 
-		<button class:active={isnonUT} onclick={() => toggleBooleanFilter('nonUT')}> Non-UT </button>
+		<button class:active={isTexas} onclick={() => toggleBooleanFilter('texas')}> Texas </button>
+		<button class:active={isUT} onclick={() => toggleBooleanFilter('ut')}> UT </button>
 	</div>
 
 	{#if data.user === null}
@@ -147,12 +148,14 @@
 		height: 1rem;
 		background: linear-gradient(transparent, var(--blue));
 	}
-	.status-buttons {
+	.status-buttons,
+	.filter-buttons {
 		margin-top: 2rem;
 	}
 
 	.role-buttons,
-	.status-buttons {
+	.status-buttons,
+	.filter-buttons {
 		display: flex;
 		justify-content: space-between;
 		gap: 1rem;

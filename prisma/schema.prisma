@@ -68,7 +68,8 @@ model User {
   team          Team?          @relation(fields: [teamId], references: [id])
   group         Group?         @relation(fields: [groupId], references: [id])
   isOOS         Boolean       @default(false)
-  isnonUT       Boolean       @default(false)
+  isTexas       Boolean       @default(false)
+  isUT          Boolean       @default(false)
 }
 
 

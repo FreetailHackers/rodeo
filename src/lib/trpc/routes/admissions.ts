@@ -192,7 +192,8 @@ export const admissionsRouter = t.router({
 				role: z.nativeEnum(Role),
 				status: z.nativeEnum(Status).optional(),
 				oos: z.boolean().optional(),
-				nonUT: z.boolean().optional(),
+				texas: z.boolean().optional(),
+				ut: z.boolean().optional(),
 			}),
 		)
 		.query(
@@ -204,6 +205,7 @@ export const admissionsRouter = t.router({
 				  })
 				| null
 			> => {
+				const tagFilterActive = !!(req.input.oos || req.input.texas || req.input.ut);
 				const statusFilter = req.input.status
 					? [req.input.status]
 					: [Status.APPLIED, Status.WAITLISTED];
@@ -213,9 +215,10 @@ export const admissionsRouter = t.router({
 							roles: { has: req.input.role },
 							status: { in: statusFilter },
 						},
-						decision: null,
+						...(tagFilterActive ? {} : { decision: null }),
 						...(req.input.oos ? { isOOS: true } : {}),
-						...(req.input.nonUT ? { isnonUT: true } : {}),
+						...(req.input.texas ? { isTexas: true } : {}),
+						...(req.input.ut ? { isUT: true } : {}),
 					},
 					include: { authUser: true, decision: true },
 					orderBy: [{ teamId: 'asc' }],

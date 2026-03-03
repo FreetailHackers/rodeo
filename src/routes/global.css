@@ -555,6 +555,11 @@ footer {
 }
 
 .badge.filled.purple {
-	background: #7c3aed; /* purple */
+	background: #1d4ed8; /* Texas blue */
+	color: #fff;
+}
+
+.badge.filled.burnt-orange {
+	background: #bf5700; /* UT burnt orange */
 	color: #fff;
 }

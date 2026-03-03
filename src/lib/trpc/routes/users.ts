@@ -249,6 +249,23 @@ export const usersRouter = t.router({
 					where: { id: req.ctx.user.id },
 					data: { status: 'APPLIED', roles: [req.input] },
 				});
+				// Auto-tag based on student identity question
+				const identityQuestion = questions.find((q) =>
+					q.label.toLowerCase().includes('identifies with you'),
+				);
+				if (identityQuestion) {
+					const answer = application[identityQuestion.id];
+					const tagMap: Record<string, { isOOS?: boolean; isTexas?: boolean; isUT?: boolean }> = {
+						'UT Student': { isUT: true },
+						'In-State Texas Student': { isTexas: true },
+						'OOS Student': { isOOS: true },
+					};
+					const tags = tagMap[answer] ?? {};
+					await prisma.user.update({
+						where: { authUserId: req.ctx.user.id },
+						data: { isOOS: false, isTexas: false, isUT: false, ...tags },
+					});
+				}
 				// notify user through their email on successful application submission
 				const subject = 'Thanks for submitting!';
 				const settings = await getSettings();
@@ -645,7 +662,8 @@ export const usersRouter = t.router({
 				limit: z.number().transform((limit) => (limit === 0 ? Number.MAX_SAFE_INTEGER : limit)),
 				page: z.number().transform((page) => page - 1),
 				oos: z.boolean().optional(),
-				nonUT: z.boolean().optional(),
+				texas: z.boolean().optional(),
+				ut: z.boolean().optional(),
 			}),
 		)
 		.query(
@@ -664,7 +682,8 @@ export const usersRouter = t.router({
 					req.input.search,
 					req.ctx.user.roles,
 					req.input.oos,
-					req.input.nonUT,
+					req.input.texas,
+					req.input.ut,
 				);
 				const count = await prisma.user.count({ where });
 				const users = await prisma.user.findMany({
@@ -977,7 +996,8 @@ export const usersRouter = t.router({
 				search: z.string(),
 				searchFilter: z.string(),
 				oos: z.boolean().optional(),
-				nonUT: z.boolean().optional(),
+				texas: z.boolean().optional(),
+				ut: z.boolean().optional(),
 			}),
 		)
 		.query(async (req): Promise<string[]> => {
@@ -987,7 +1007,8 @@ export const usersRouter = t.router({
 				req.input.search,
 				req.ctx.user.roles,
 				req.input.oos,
-				req.input.nonUT,
+				req.input.texas,
+				req.input.ut,
 			);
 			return await prisma.user
 				.findMany({
@@ -1111,7 +1132,7 @@ export const usersRouter = t.router({
 		.input(
 			z.object({
 				userId: z.string(),
-				tag: z.enum(['isOOS', 'isnonUT']),
+				tag: z.enum(['isOOS', 'isTexas', 'isUT']),
 				value: z.boolean(),
 			}),
 		)
@@ -1129,219 +1150,197 @@ async function getWhereCondition(
 	search: string,
 	roles: Role[],
 	oos?: boolean,
-	nonUT?: boolean,
+	texas?: boolean,
+	ut?: boolean,
 ): Promise<Prisma.UserWhereInput> {
 	if (!roles.includes('ADMIN')) {
 		return {
 			AND: [
 				{ authUser: { roles: { has: 'HACKER' } } },
-				await getWhereConditionHelper(key, searchFilter, search, roles, oos, nonUT),
+				await getWhereConditionHelper(key, searchFilter, search, roles, oos, texas, ut),
 			],
 		};
 	}
-	return await getWhereConditionHelper(key, searchFilter, search, roles, oos, nonUT);
+	return await getWhereConditionHelper(key, searchFilter, search, roles, oos, texas, ut);
 }
 
-// Converts key to Prisma where filter
+function buildScanFilter(key: string, searchFilter: string, search: string): Prisma.UserWhereInput {
+	const n = Number(search);
+	const nullOrBelow = (op: object) => ({
+		OR: [{ scanCount: op }, { scanCount: { path: [key], equals: Prisma.DbNull } }],
+	});
+	switch (searchFilter) {
+		case 'greater':
+			return { scanCount: { path: [key], gt: n } };
+		case 'greater_equal':
+			return n === 0
+				? nullOrBelow({ path: [key], gte: n })
+				: { scanCount: { path: [key], gte: n } };
+		case 'less':
+			return n !== 0 ? nullOrBelow({ path: [key], lt: n }) : { scanCount: { path: [key], lt: n } };
+		case 'less_equal':
+			return nullOrBelow({ path: [key], lte: n });
+		case 'equal':
+			return n === 0
+				? nullOrBelow({ path: [key], equals: n })
+				: { scanCount: { path: [key], equals: n } };
+		case 'not_equal':
+			return nullOrBelow({ path: [key], not: n });
+		default:
+			return {};
+	}
+}
+
+function buildQuestionFilter(
+	question: { id: string; type: string; multiple?: boolean | null },
+	searchFilter: string,
+	search: string,
+): Prisma.UserWhereInput {
+	const path = [question.id];
+	switch (question.type) {
+		case 'SENTENCE':
+		case 'PARAGRAPH':
+			switch (searchFilter) {
+				case 'exact':
+					return { application: { path, equals: search } };
+				case 'contains':
+					return { application: { path, string_contains: search } };
+				case 'unanswered':
+					return {
+						OR: [
+							{ application: { path, equals: '' } },
+							{ application: { path, equals: Prisma.DbNull } },
+						],
+					};
+				default:
+					return {};
+			}
+		case 'NUMBER': {
+			const n = Number(search);
+			switch (searchFilter) {
+				case 'greater':
+					return { application: { path, gt: n } };
+				case 'greater_equal':
+					return { application: { path, gte: n } };
+				case 'less':
+					return { application: { path, lt: n } };
+				case 'less_equal':
+					return { application: { path, lte: n } };
+				case 'equal':
+					return { application: { path, equals: n } };
+				case 'not_equal':
+					return { application: { path, not: n } };
+				default:
+					return {};
+			}
+		}
+		case 'DROPDOWN': {
+			if (searchFilter === 'unanswered') return { application: { path, equals: Prisma.DbNull } };
+			try {
+				const parsed = JSON.parse(search);
+				if (parsed === '') return {};
+				if (question.multiple) {
+					switch (searchFilter) {
+						case 'contains':
+							return { application: { path, array_contains: parsed } };
+						case 'exactly':
+							return { application: { path, equals: parsed } };
+						default:
+							return {};
+					}
+				} else {
+					switch (searchFilter) {
+						case 'is':
+							return { application: { path, equals: parsed } };
+						case 'is_not':
+							return { application: { path, not: parsed } };
+						default:
+							return {};
+					}
+				}
+			} catch {
+				return {};
+			}
+		}
+		case 'CHECKBOX':
+			switch (searchFilter) {
+				case 'true':
+					return { application: { path, equals: true } };
+				case 'false':
+					return {
+						OR: [
+							{ application: { path, equals: false } },
+							{ application: { path, equals: Prisma.DbNull } },
+						],
+					};
+				default:
+					return {};
+			}
+		case 'RADIO':
+			switch (searchFilter) {
+				case 'is':
+					return { application: { path, equals: search } };
+				case 'is_not':
+					return { application: { path, not: search } };
+				case 'unanswered':
+					return { application: { path, equals: Prisma.DbNull } };
+				default:
+					return {};
+			}
+		case 'FILE':
+			switch (searchFilter) {
+				case 'uploaded':
+					return { application: { path, not: Prisma.DbNull } };
+				case 'not_uploaded':
+					return { application: { path, equals: Prisma.DbNull } };
+				default:
+					return {};
+			}
+		default:
+			return {};
+	}
+}
+
 async function getWhereConditionHelper(
 	key: string,
 	searchFilter: string,
 	search: string,
 	roles: Role[],
 	oos?: boolean,
-	nonUT?: boolean,
+	texas?: boolean,
+	ut?: boolean,
 ): Promise<Prisma.UserWhereInput> {
 	const questions = await getQuestions();
 	const scanActions = (await getSettings()).scanActions;
 
-	const globalFilters: Prisma.UserWhereInput[] = [];
+	const tagFilters: Prisma.UserWhereInput[] = [
+		...(oos ? [{ isOOS: true }] : []),
+		...(texas ? [{ isTexas: true }] : []),
+		...(ut ? [{ isUT: true }] : []),
+	];
 
-	const manualFilters: Prisma.UserWhereInput[] = [];
-	if (oos) manualFilters.push({ isOOS: true });
-	if (nonUT) manualFilters.push({ isnonUT: true });
-
-	if (manualFilters.length > 0 && (oos !== undefined || nonUT !== undefined)) {
-		return {
-			AND: [
-				...manualFilters,
-				//wanna pass undef if we already processed these fields
-				await getWhereConditionHelper(key, searchFilter, search, roles, undefined, undefined),
-			],
-		};
-	}
-
+	let keyFilter: Prisma.UserWhereInput = {};
 	if (key === 'email') {
-		return { authUser: { email: { contains: search, mode: 'insensitive' } } };
+		keyFilter = { authUser: { email: { contains: search, mode: 'insensitive' } } };
 	} else if (key === 'status' && roles.includes('ADMIN')) {
-		return { authUser: { status: search as Status } };
+		keyFilter = { authUser: { status: search as Status } };
 	} else if (key === 'role' && roles.includes('ADMIN')) {
-		return { authUser: { roles: { has: search as Role } } };
+		keyFilter = { authUser: { roles: { has: search as Role } } };
 	} else if (key === 'decision' && roles.includes('ADMIN')) {
-		return {
-			decision: { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },
-		};
+		keyFilter = { decision: { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' } };
 	} else if (scanActions.includes(key) && roles.includes('ADMIN')) {
-		if (searchFilter === 'greater') {
-			return { scanCount: { path: [key], gt: Number(search) } };
-		} else if (searchFilter === 'greater_equal') {
-			if (Number(search) === 0) {
-				return {
-					OR: [
-						{ scanCount: { path: [key], gte: Number(search) } },
-						{ scanCount: { path: [key], equals: Prisma.DbNull } },
-					],
-				};
-			}
-			return { scanCount: { path: [key], gte: Number(search) } };
-		} else if (searchFilter === 'less') {
-			if (Number(search) !== 0) {
-				return {
-					OR: [
-						{ scanCount: { path: [key], lt: Number(search) } },
-						{ scanCount: { path: [key], equals: Prisma.DbNull } },
-					],
-				};
-			}
-			return { scanCount: { path: [key], lt: Number(search) } };
-		} else if (searchFilter === 'less_equal') {
-			return {
-				OR: [
-					{ scanCount: { path: [key], lte: Number(search) } },
-					{ scanCount: { path: [key], equals: Prisma.DbNull } },
-				],
-			};
-		} else if (searchFilter === 'equal') {
-			if (Number(search) === 0) {
-				return {
-					OR: [
-						{ scanCount: { path: [key], equals: Number(search) } },
-						{ scanCount: { path: [key], equals: Prisma.DbNull } },
-					],
-				};
-			}
-			return { scanCount: { path: [key], equals: Number(search) } };
-		} else if (searchFilter === 'not_equal') {
-			if (Number(search) === 0) {
-				return {
-					OR: [
-						{ scanCount: { path: [key], not: Number(search) } },
-						{ scanCount: { path: [key], not: Prisma.DbNull } },
-					],
-				};
-			}
-			return {
-				OR: [
-					{ scanCount: { path: [key], not: Number(search) } },
-					{ scanCount: { path: [key], equals: Prisma.DbNull } },
-				],
-			};
-		}
+		keyFilter = buildScanFilter(key, searchFilter, search);
 	} else {
-		for (const question of questions) {
-			if (key === question.id) {
-				if (!roles.includes('ADMIN') && !question.sponsorView) {
-					return {};
-				}
-				if (question.type === 'SENTENCE' || question.type === 'PARAGRAPH') {
-					if (searchFilter === 'exact') {
-						return { application: { path: [question.id], equals: search } };
-					} else if (searchFilter === 'contains') {
-						return { application: { path: [question.id], string_contains: search } };
-					} else if (searchFilter === 'unanswered') {
-						return {
-							OR: [
-								{
-									application: { path: [question.id], equals: '' },
-								},
-								{
-									application: { path: [question.id], equals: Prisma.DbNull },
-								},
-							],
-						};
-					}
-				} else if (question.type === 'NUMBER') {
-					if (searchFilter === 'greater') {
-						return { application: { path: [key], gt: Number(search) } };
-					} else if (searchFilter === 'greater_equal') {
-						return { application: { path: [key], gte: Number(search) } };
-					} else if (searchFilter === 'less') {
-						return { application: { path: [key], lt: Number(search) } };
-					} else if (searchFilter === 'less_equal') {
-						return { application: { path: [key], lte: Number(search) } };
-					} else if (searchFilter === 'equal') {
-						return { application: { path: [key], equals: Number(search) } };
-					} else if (searchFilter === 'not_equal') {
-						return { application: { path: [key], not: Number(search) } };
-					}
-				} else if (question.type === 'DROPDOWN') {
-					// look to see if searchFilter is unanswered
-					if (searchFilter !== 'unanswered') {
-						try {
-							const parsed = JSON.parse(search);
-							// Special case: if the user is searching for an empty array, treat that as "return all"
-							// (since all responses vacuously contain the empty array)
-							if (parsed === '') {
-								return {};
-							}
-
-							// check if question allows multiple responses
-							if (question.multiple) {
-								if (searchFilter === 'contains') {
-									return { application: { path: [question.id], array_contains: parsed } };
-								} else if (searchFilter === 'exactly') {
-									return { application: { path: [question.id], equals: parsed } };
-								}
-							} else {
-								// searchDictArray is a string
-								if (searchFilter === 'is') {
-									return { application: { path: [question.id], equals: parsed } };
-								} else if (searchFilter === 'is_not') {
-									return { application: { path: [question.id], not: parsed } };
-								} else if (searchFilter === 'unanswered') {
-									return { application: { path: [question.id], equals: Prisma.DbNull } };
-								}
-							}
-						} catch (e) {
-							// In case of malformed JSON, just return all users
-							return {};
-						}
-					} else {
-						return { application: { path: [question.id], equals: Prisma.DbNull } };
-					}
-				} else if (question.type === 'CHECKBOX') {
-					if (searchFilter === 'true') {
-						return { application: { path: [question.id], equals: true } };
-					} else if (searchFilter === 'false') {
-						return {
-							OR: [
-								{
-									application: { path: [question.id], equals: false },
-								},
-								{
-									application: { path: [question.id], equals: Prisma.DbNull },
-								},
-							],
-						};
-					}
-				} else if (question.type === 'RADIO') {
-					if (searchFilter === 'is') {
-						return { application: { path: [question.id], equals: search } };
-					} else if (searchFilter === 'is_not') {
-						return { application: { path: [question.id], not: search } };
-					} else if (searchFilter === 'unanswered') {
-						return { application: { path: [question.id], equals: Prisma.DbNull } };
-					}
-				} else if (question.type === 'FILE') {
-					if (searchFilter === 'uploaded') {
-						return { application: { path: [question.id], not: Prisma.DbNull } };
-					} else if (searchFilter === 'not_uploaded') {
-						return { application: { path: [question.id], equals: Prisma.DbNull } };
-					}
-				}
-			}
+		const question = questions.find((q) => q.id === key);
+		if (question && (roles.includes('ADMIN') || question.sponsorView)) {
+			keyFilter = buildQuestionFilter(question, searchFilter, search);
 		}
 	}
-	return {};
+
+	const allFilters = [...tagFilters, ...(Object.keys(keyFilter).length > 0 ? [keyFilter] : [])];
+	if (allFilters.length === 0) return {};
+	if (allFilters.length === 1) return allFilters[0];
+	return { AND: allFilters };
 }
 
 async function getRSVPDeadline(user: AuthUser): Promise<Date | null> {
