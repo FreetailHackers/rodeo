@@ -98,15 +98,25 @@
 	}
 </script>
 
-<div style="margin-bottom: 1rem; color: white;">
+<div
+	style="margin-bottom: 1rem; color: white; display: grid; grid-template-columns: auto 1fr; gap: 0.25rem 0.5rem; align-items: center;"
+>
 	<strong>Status Legend:</strong>
-	<Badge color="gray" variant="filled">Created</Badge>
-	<Badge color="dark" variant="filled">Applied</Badge>
-	<Badge color="green" variant="filled">Accepted</Badge>
-	<Badge color="red" variant="filled">Rejected</Badge>
-	<Badge color="orange" variant="filled">Waitlisted</Badge>
-	<Badge color="teal" variant="filled">Confirmed</Badge>
-	<Badge color="pink" variant="filled">Declined</Badge>
+	<div>
+		<Badge color="gray" variant="filled">Created</Badge>
+		<Badge color="dark" variant="filled">Applied</Badge>
+		<Badge color="green" variant="filled">Accepted</Badge>
+		<Badge color="red" variant="filled">Rejected</Badge>
+		<Badge color="orange" variant="filled">Waitlisted</Badge>
+		<Badge color="teal" variant="filled">Confirmed</Badge>
+		<Badge color="pink" variant="filled">Declined</Badge>
+	</div>
+	<div></div>
+	<div>
+		<Badge color="burnt-orange" variant="filled">UT</Badge>
+		<Badge color="purple" variant="filled">Texas</Badge>
+		<Badge color="indigo" variant="filled">OOS</Badge>
+	</div>
 </div>
 
 <form

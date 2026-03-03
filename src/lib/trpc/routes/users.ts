@@ -255,15 +255,15 @@ export const usersRouter = t.router({
 				);
 				if (identityQuestion) {
 					const answer = application[identityQuestion.id];
-					const tagMap: Record<string, { isOOS?: boolean; isTexas?: boolean; isUT?: boolean }> = {
-						'UT Student': { isUT: true },
-						'In-State Texas Student': { isTexas: true },
-						'OOS Student': { isOOS: true },
+					const tagMap: Record<string, { isOOS: boolean; isTexas: boolean; isUT: boolean }> = {
+						'UT Student': { isUT: true, isOOS: false, isTexas: false },
+						'In-State Texas Student': { isTexas: true, isOOS: false, isUT: false },
+						'OOS Student': { isOOS: true, isTexas: false, isUT: false },
 					};
-					const tags = tagMap[answer] ?? {};
+					const tags = tagMap[answer] ?? { isOOS: false, isTexas: false, isUT: false };
 					await prisma.user.update({
 						where: { authUserId: req.ctx.user.id },
-						data: { isOOS: false, isTexas: false, isUT: false, ...tags },
+						data: tags,
 					});
 				}
 				// notify user through their email on successful application submission
@@ -1149,9 +1149,9 @@ async function getWhereCondition(
 	searchFilter: string,
 	search: string,
 	roles: Role[],
-	oos?: boolean,
-	texas?: boolean,
-	ut?: boolean,
+	oos: boolean = false,
+	texas: boolean = false,
+	ut: boolean = false,
 ): Promise<Prisma.UserWhereInput> {
 	if (!roles.includes('ADMIN')) {
 		return {
@@ -1162,6 +1162,45 @@ async function getWhereCondition(
 		};
 	}
 	return await getWhereConditionHelper(key, searchFilter, search, roles, oos, texas, ut);
+}
+
+async function getWhereConditionHelper(
+	key: string,
+	searchFilter: string,
+	search: string,
+	roles: Role[],
+	oos: boolean = false,
+	texas: boolean = false,
+	ut: boolean = false,
+): Promise<Prisma.UserWhereInput> {
+	const questions = await getQuestions();
+	const scanActions = (await getSettings()).scanActions;
+
+	const manualFilters: Prisma.UserWhereInput[] = [];
+	if (oos) manualFilters.push({ isOOS: true });
+	if (texas) manualFilters.push({ isTexas: true });
+	if (ut) manualFilters.push({ isUT: true });
+
+	let keyFilter: Prisma.UserWhereInput = {};
+	if (key === 'email') {
+		keyFilter = { authUser: { email: { contains: search, mode: 'insensitive' } } };
+	} else if (key === 'status' && roles.includes('ADMIN')) {
+		keyFilter = { authUser: { status: search as Status } };
+	} else if (key === 'role' && roles.includes('ADMIN')) {
+		keyFilter = { authUser: { roles: { has: search as Role } } };
+	} else if (key === 'decision' && roles.includes('ADMIN')) {
+		keyFilter = { decision: { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' } };
+	} else if (scanActions.includes(key) && roles.includes('ADMIN')) {
+		keyFilter = buildScanFilter(key, searchFilter, search);
+	} else {
+		const question = questions.find((q) => q.id === key);
+		if (question && (roles.includes('ADMIN') || question.sponsorView)) {
+			keyFilter = buildQuestionFilter(question, searchFilter, search);
+		}
+	}
+
+	if (manualFilters.length === 0) return keyFilter;
+	return { AND: [...manualFilters, keyFilter] };
 }
 
 function buildScanFilter(key: string, searchFilter: string, search: string): Prisma.UserWhereInput {
@@ -1299,48 +1338,6 @@ function buildQuestionFilter(
 		default:
 			return {};
 	}
-}
-
-async function getWhereConditionHelper(
-	key: string,
-	searchFilter: string,
-	search: string,
-	roles: Role[],
-	oos?: boolean,
-	texas?: boolean,
-	ut?: boolean,
-): Promise<Prisma.UserWhereInput> {
-	const questions = await getQuestions();
-	const scanActions = (await getSettings()).scanActions;
-
-	const tagFilters: Prisma.UserWhereInput[] = [
-		...(oos ? [{ isOOS: true }] : []),
-		...(texas ? [{ isTexas: true }] : []),
-		...(ut ? [{ isUT: true }] : []),
-	];
-
-	let keyFilter: Prisma.UserWhereInput = {};
-	if (key === 'email') {
-		keyFilter = { authUser: { email: { contains: search, mode: 'insensitive' } } };
-	} else if (key === 'status' && roles.includes('ADMIN')) {
-		keyFilter = { authUser: { status: search as Status } };
-	} else if (key === 'role' && roles.includes('ADMIN')) {
-		keyFilter = { authUser: { roles: { has: search as Role } } };
-	} else if (key === 'decision' && roles.includes('ADMIN')) {
-		keyFilter = { decision: { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' } };
-	} else if (scanActions.includes(key) && roles.includes('ADMIN')) {
-		keyFilter = buildScanFilter(key, searchFilter, search);
-	} else {
-		const question = questions.find((q) => q.id === key);
-		if (question && (roles.includes('ADMIN') || question.sponsorView)) {
-			keyFilter = buildQuestionFilter(question, searchFilter, search);
-		}
-	}
-
-	const allFilters = [...tagFilters, ...(Object.keys(keyFilter).length > 0 ? [keyFilter] : [])];
-	if (allFilters.length === 0) return {};
-	if (allFilters.length === 1) return allFilters[0];
-	return { AND: allFilters };
 }
 
 async function getRSVPDeadline(user: AuthUser): Promise<Date | null> {
