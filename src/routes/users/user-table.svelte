@@ -187,7 +187,7 @@
 							<option value="MENTOR">Mentor</option>
 							<option value="UNDECLARED">Undeclared</option>
 							<option value="OOS">Out of State</option>
-							<option value="NON_UT">Texas</option>
+							<option value="TEXAS">Texas</option>
 							<option value="UT">UT</option>
 						</select>
 					</div>
@@ -212,7 +212,7 @@
 							<option value="MENTOR">Mentor</option>
 							<option value="UNDECLARED">Undeclared</option>
 							<option value="OOS">Out of State</option>
-							<option value="NON_UT">Texas</option>
+							<option value="TEXAS">Texas</option>
 							<option value="UT">UT</option>
 						</select>
 					</div>

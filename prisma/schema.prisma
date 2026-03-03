@@ -235,6 +235,9 @@ enum Role {
   SPONSOR // Should have access to resumes
   MENTOR
   UNDECLARED
+  OOS
+  TEXAS
+  UT
 }
 
 enum Status {

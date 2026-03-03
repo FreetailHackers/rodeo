@@ -2,7 +2,8 @@
 	"permissions": {
 		"allow": [
 			"Bash(grep -n \"targetGroup\\\\|hideAdmission\" /c/Users/ryher/Documents/rodeo/prisma/*.ts)",
-			"Bash(node -e \":*)"
+			"Bash(node -e \":*)",
+			"Bash(npx prisma migrate dev --name add_oos_texas_ut_roles)"
 		]
 	}
 }
