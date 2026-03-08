@@ -10,7 +10,6 @@ export const load = async (event) => {
 	const statusParam = event.url.searchParams.get('status');
 	const selectedRole = (roleParam as Role) || Role.HACKER;
 	const selectedStatus = statusParam ? (statusParam as Status) : undefined;
-	//when it calls load itll update the value after we click our new button
 	const oos = event.url.searchParams.get('oos') === 'true';
 	const texas = event.url.searchParams.get('texas') === 'true';
 	const ut = event.url.searchParams.get('ut') === 'true';

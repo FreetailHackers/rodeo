@@ -24,6 +24,7 @@ import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import { hash } from '@node-rs/argon2';
 import * as auth from '$lib/authenticate';
+import { IDENTITY_QUESTION } from '$lib/constants';
 import { canApply } from './admissions';
 import path from 'path';
 
@@ -249,23 +250,21 @@ export const usersRouter = t.router({
 					where: { id: req.ctx.user.id },
 					data: { status: 'APPLIED', roles: [req.input] },
 				});
-				// Auto-tag based on student identity question
-				const identityQuestion = questions.find((q) =>
-					q.label.toLowerCase().includes('identifies with you'),
-				);
-				if (identityQuestion) {
-					const answer = application[identityQuestion.id];
-					const tagMap: Record<string, { isOOS: boolean; isTexas: boolean; isUT: boolean }> = {
-						'UT Student': { isUT: true, isOOS: false, isTexas: false },
-						'In-State Texas Student': { isTexas: true, isOOS: false, isUT: false },
-						'OOS Student': { isOOS: true, isTexas: false, isUT: false },
-					};
-					const tags = tagMap[answer] ?? { isOOS: false, isTexas: false, isUT: false };
-					await prisma.user.update({
-						where: { authUserId: req.ctx.user.id },
-						data: tags,
-					});
-				}
+				// Auto-tag based on hard-coded student identity question
+				const tagMap: Record<string, { isOOS: boolean; isTexas: boolean; isUT: boolean }> = {
+					'UT Student': { isUT: true, isOOS: false, isTexas: false },
+					'In-State Texas Student': { isTexas: true, isOOS: false, isUT: false },
+					'OOS Student': { isOOS: true, isTexas: false, isUT: false },
+				};
+				const tags = tagMap[application[IDENTITY_QUESTION.id]] ?? {
+					isOOS: false,
+					isTexas: false,
+					isUT: false,
+				};
+				await prisma.user.update({
+					where: { authUserId: req.ctx.user.id },
+					data: tags,
+				});
 				// notify user through their email on successful application submission
 				const subject = 'Thanks for submitting!';
 				const settings = await getSettings();
@@ -1137,9 +1136,24 @@ export const usersRouter = t.router({
 			}),
 		)
 		.mutation(async ({ input }) => {
+			const data: Record<string, boolean> = { [input.tag]: input.value };
+			if (input.value) {
+				if (input.tag === 'isOOS') {
+					data.isTexas = false;
+					data.isUT = false;
+				}
+				if (input.tag === 'isTexas') {
+					data.isOOS = false;
+					data.isUT = false;
+				}
+				if (input.tag === 'isUT') {
+					data.isOOS = false;
+					data.isTexas = false;
+				}
+			}
 			return await prisma.user.update({
 				where: { authUserId: input.userId },
-				data: { [input.tag]: input.value },
+				data,
 			});
 		}),
 });
@@ -1176,31 +1190,31 @@ async function getWhereConditionHelper(
 	const questions = await getQuestions();
 	const scanActions = (await getSettings()).scanActions;
 
-	const manualFilters: Prisma.UserWhereInput[] = [];
-	if (oos) manualFilters.push({ isOOS: true });
-	if (texas) manualFilters.push({ isTexas: true });
-	if (ut) manualFilters.push({ isUT: true });
+	const filters: Prisma.UserWhereInput[] = [];
 
-	let keyFilter: Prisma.UserWhereInput = {};
+	if (oos) filters.push({ isOOS: true });
+	if (texas) filters.push({ isTexas: true });
+	if (ut) filters.push({ isUT: true });
+
 	if (key === 'email') {
-		keyFilter = { authUser: { email: { contains: search, mode: 'insensitive' } } };
+		filters.push({ authUser: { email: { contains: search, mode: 'insensitive' } } });
 	} else if (key === 'status' && roles.includes('ADMIN')) {
-		keyFilter = { authUser: { status: search as Status } };
+		filters.push({ authUser: { status: search as Status } });
 	} else if (key === 'role' && roles.includes('ADMIN')) {
-		keyFilter = { authUser: { roles: { has: search as Role } } };
+		filters.push({ authUser: { roles: { has: search as Role } } });
 	} else if (key === 'decision' && roles.includes('ADMIN')) {
-		keyFilter = { decision: { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' } };
+		filters.push({ decision: { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' } });
 	} else if (scanActions.includes(key) && roles.includes('ADMIN')) {
-		keyFilter = buildScanFilter(key, searchFilter, search);
+		filters.push(buildScanFilter(key, searchFilter, search));
 	} else {
 		const question = questions.find((q) => q.id === key);
 		if (question && (roles.includes('ADMIN') || question.sponsorView)) {
-			keyFilter = buildQuestionFilter(question, searchFilter, search);
+			filters.push(buildQuestionFilter(question, searchFilter, search));
 		}
 	}
 
-	if (manualFilters.length === 0) return keyFilter;
-	return { AND: [...manualFilters, keyFilter] };
+	if (filters.length === 1) return filters[0];
+	return { AND: filters };
 }
 
 function buildScanFilter(key: string, searchFilter: string, search: string): Prisma.UserWhereInput {

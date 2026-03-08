@@ -1,4 +1,5 @@
 import { authenticate } from '$lib/authenticate';
+import { IDENTITY_QUESTION } from '$lib/constants';
 import { trpc } from '$lib/trpc/router';
 import type { Question, Role } from '@prisma/client';
 import { redirect } from '@sveltejs/kit';
@@ -51,6 +52,7 @@ function formToApplication(questions: Question[], formData: FormData) {
 			}
 		}
 	}
+	application[IDENTITY_QUESTION.id] = formData.get(IDENTITY_QUESTION.id);
 	application['selectedRole'] = formData.get('group_applied');
 	if (application['selectedRole'] === null) {
 		application['selectedRole'] = 'UNDECLARED';

@@ -4,6 +4,7 @@
 	import FileInput from '$lib/components/file-input.svelte';
 	import { confirmationDialog } from '$lib/actions.js';
 	import Dropdown from '$lib/components/dropdown.svelte';
+	import { IDENTITY_QUESTION } from '$lib/constants';
 	import { toasts } from '$lib/stores';
 
 	let { data, form } = $props();
@@ -308,6 +309,26 @@
 						</div>
 					{/if}
 				{/each}
+
+				{#if selectedRole !== 'UNDECLARED'}
+					<div class="question radio">
+						<label for={IDENTITY_QUESTION.id}>
+							{IDENTITY_QUESTION.label}*
+						</label>
+						{#each IDENTITY_QUESTION.options as option}
+							<div class="radio-buttons">
+								<input
+									type="radio"
+									name={IDENTITY_QUESTION.id}
+									id={IDENTITY_QUESTION.id + option}
+									value={option}
+									bind:group={application[IDENTITY_QUESTION.id]}
+								/>
+								<label for={IDENTITY_QUESTION.id + option}>{option}</label>
+							</div>
+						{/each}
+					</div>
+				{/if}
 
 				<div id="actions-container">
 					<div id="actions">
