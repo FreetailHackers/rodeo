@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "AuthUser" ADD COLUMN IF NOT EXISTS "applicationCount" INTEGER NOT NULL DEFAULT 0;
