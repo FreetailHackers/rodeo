@@ -75,7 +75,7 @@
 	})()}
 	{multiple}
 	closeListOnChange={!multiple}
-	containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem; min-width: 60%"
+	containerStyles="border: 2px solid gray; border-radius: 0; margin-top: 0px; min-height: 2.5rem; min-width: 60% color: var(--white);"
 	inputStyles="margin: 0;"
 >
 	<!-- Horrible hack to make svelte-select submit just the values without the container object -->
