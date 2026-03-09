@@ -23,7 +23,7 @@ export const blacklistRouter = t.router({
 	 * - Emails are normalized (lowercase + trim).
 	 * - Names are kept exact (trim only).
 	 * - Deletes entries not in the new list.
-	 * - Inserts new entries, skipping duplicates.
+	 * - Inserts new entries, skipping duplicates
 	 */
 
 	replace: t.procedure
