@@ -205,7 +205,7 @@ export const admissionsRouter = t.router({
 
 	/**
 	 * Gets all admins with application that have reviewed at least one application. User must be
-	 * an admin
+	 * an admin.
 	 */
 	getApplicationCount: t.procedure
 		.use(authenticate(['ADMIN']))
