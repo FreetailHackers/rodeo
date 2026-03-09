@@ -24,6 +24,8 @@ export const load = async (event) => {
 		settings: await trpc(event).settings.getAll(),
 		graph: await trpc(event).users.getStatusChanges(),
 		groups: (await trpc(event).group.getGroups()) as GroupWithQRCode[],
+		applicationCount: await trpc(event).admissions.getApplicationCount(),
+		questions: await trpc(event).questions.get(),
 	};
 };
 

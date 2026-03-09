@@ -78,6 +78,28 @@ async function releaseDecisions(ids?: string[]): Promise<void> {
 
 export const admissionsRouter = t.router({
 	/**
+	 * Increments the application count for a user. User must be an admin.
+	 */
+	incrementApplicationCount: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(
+			z.object({
+				userId: z.string(),
+				decision: z.enum(['ACCEPTED', 'REJECTED', 'WAITLISTED']),
+			}),
+		)
+		.mutation(async (req): Promise<void> => {
+			const updateData: any = { applicationCount: { increment: 1 } };
+			if (req.input.decision === 'ACCEPTED') {
+				updateData.acceptedCount = { increment: 1 };
+			} else if (req.input.decision === 'REJECTED') {
+				updateData.rejectedCount = { increment: 1 };
+			} else if (req.input.decision === 'WAITLISTED') {
+				updateData.waitlistedCount = { increment: 1 };
+			}
+			await prisma.authUser.update({ where: { id: req.input.userId }, data: updateData });
+		}),
+	/**
 	 * Bulk accepts, rejects, or waitlists a list of IDs of users with
 	 * submitted applications. User must be an admin.
 	 */
@@ -179,6 +201,29 @@ export const admissionsRouter = t.router({
 		.input(z.array(z.string()))
 		.mutation(async (req): Promise<void> => {
 			await releaseDecisions(req.input);
+		}),
+
+	/**
+	 * Gets all admins with application that have reviewed at least one application. User must be
+	 * an admin
+	 */
+	getApplicationCount: t.procedure
+		.use(authenticate(['ADMIN']))
+		.query(async (): Promise<Prisma.UserGetPayload<{ include: { authUser: true } }>[]> => {
+			const users = await prisma.user.findMany({
+				where: {
+					authUser: {
+						roles: { has: Role.ADMIN },
+						OR: [
+							{ acceptedCount: { gt: 0 } },
+							{ rejectedCount: { gt: 0 } },
+							{ waitlistedCount: { gt: 0 } },
+						],
+					},
+				},
+				include: { authUser: true },
+			});
+			return users;
 		}),
 
 	/**
