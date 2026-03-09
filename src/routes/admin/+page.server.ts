@@ -77,7 +77,6 @@ export const actions = {
 			.filter(Boolean);
 		await trpc(event).settings.update({
 			applicationOpen,
-			spongebobCase,
 			daysToRSVP,
 			scanActions,
 			timezone,
