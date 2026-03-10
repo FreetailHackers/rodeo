@@ -8,6 +8,7 @@
 	let { data } = $props();
 	let selectedRole = $state(data.selectedRole) as Role;
 	let selectedStatus = $state(data.selectedStatus) as 'APPLIED' | 'WAITLISTED' | undefined;
+	let applicant_index = $state(0);
 
 	function lookingAt(role: Role) {
 		selectedRole = role;
@@ -25,6 +26,20 @@
 			url.searchParams.delete('status');
 		}
 		goto(url.toString(), { replaceState: true });
+	}
+
+	function gotoPrevUser() {
+		if (applicant_index <= 0) {
+			return;
+		}
+		applicant_index--;
+	}
+
+	function gotoNextUser(maxLength: number) {
+		if (applicant_index >= maxLength - 1) {
+			return;
+		}
+		applicant_index++;
 	}
 </script>
 
@@ -63,18 +78,32 @@
 			</p>
 		{/if}
 
-		{#if data.user.authUser.roles?.includes(selectedRole)}
-			{#if data.blacklistHit}
+		{#if data.users[applicant_index].authUser.roles?.includes(selectedRole)}
+			{#if data.users[applicant_index].isBlacklisted}
 				<div class="bl-warning" role="alert" aria-live="polite">
 					⚠️ <strong>Warning:</strong> This person is blacklisted
 				</div>
 			{/if}
 
+			<!-- Navigation info above UserCard -->
+			<div style="margin-bottom: 0.5rem;">
+				Applicant {applicant_index + 1} / {data.users.length}
+			</div>
+			<!-- Navigation buttons above UserCard -->
+			<div class="nav-buttons" style="margin-bottom: 1rem; display: flex; gap: 1rem;">
+				<button type="button" onclick={() => gotoPrevUser()}>Prev</button>
+				<button type="button" onclick={() => gotoNextUser(data.users.length)}>Next</button>
+			</div>
+
 			<h1>
-				{data.user.authUser.email}
+				{data.users[applicant_index].authUser.email}
 			</h1>
 
-			<UserCard user={data.user} questions={data.questions} teammates={data.teammates} />
+			<UserCard
+				user={data.users[applicant_index]}
+				questions={data.questions}
+				teammates={data.users[applicant_index].teammates}
+			/>
 
 			<div id="form">
 				<div id="padding"></div>
@@ -85,8 +114,10 @@
 					<button
 						type="submit"
 						formaction="?/accept"
-						disabled={data.blacklistHit}
-						title={data.blacklistHit ? 'Blacklisted — action disabled' : 'Accept'}
+						disabled={data.users[applicant_index].isBlacklisted}
+						title={data.users[applicant_index].isBlacklisted
+							? 'Blacklisted — action disabled'
+							: 'Accept'}
 					>
 						Accept
 					</button>
@@ -98,8 +129,10 @@
 					<button
 						type="submit"
 						formaction="?/waitlist"
-						disabled={data.blacklistHit}
-						title={data.blacklistHit ? 'Blacklisted — action disabled' : 'Waitlist'}
+						disabled={data.users[applicant_index].isBlacklisted}
+						title={data.users[applicant_index].isBlacklisted
+							? 'Blacklisted — action disabled'
+							: 'Waitlist'}
 					>
 						Waitlist
 					</button>

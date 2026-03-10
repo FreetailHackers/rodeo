@@ -36,6 +36,10 @@ export const load = async (event) => {
 			prefix: 'google-ticket.pass/',
 		});
 
+		const team = await trpc(event).team.getTeam();
+
+		console.log(team?.members.length);
+
 		return {
 			user: user,
 			team: await trpc(event).team.getTeam(),
