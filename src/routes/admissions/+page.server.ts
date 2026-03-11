@@ -48,9 +48,6 @@ export const actions = {
 			decision: 'ACCEPTED',
 		});
 
-		// Dummy timeout of 5 seconds
-		await new Promise((resolve) => setTimeout(resolve, 5000));
-
 		return 'ACCEPTED';
 	},
 
