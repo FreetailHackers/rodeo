@@ -4,16 +4,21 @@
 	import { page } from '$app/state';
 	import UserCard from '$lib/components/user-card.svelte';
 	import { Role } from '@prisma/client';
+	import Spinner from '$lib/components/spinner.svelte';
+	import { toasts } from '$lib/stores';
 
 	let { data } = $props();
 	let selectedRole = $state(data.selectedRole) as Role;
 	let selectedStatus = $state(data.selectedStatus) as 'APPLIED' | 'WAITLISTED' | undefined;
+	let applicant_index = $state(0);
+	let loading = $state(false);
 
 	function lookingAt(role: Role) {
 		selectedRole = role;
 		const url = new URL(page.url);
 		url.searchParams.set('role', role);
 		goto(url.toString(), { replaceState: true });
+		applicant_index = 0;
 	}
 
 	function filterByStatus(status?: 'APPLIED' | 'WAITLISTED') {
@@ -25,6 +30,21 @@
 			url.searchParams.delete('status');
 		}
 		goto(url.toString(), { replaceState: true });
+		applicant_index = 0;
+	}
+
+	function gotoPrevUser() {
+		if (applicant_index <= 0) {
+			return;
+		}
+		applicant_index--;
+	}
+
+	function gotoNextUser(maxLength: number) {
+		if (applicant_index >= maxLength - 1) {
+			return;
+		}
+		applicant_index++;
 	}
 </script>
 
@@ -46,7 +66,7 @@
 		<button onclick={() => filterByStatus('WAITLISTED')}> Waitlisted </button>
 	</div>
 
-	{#if data.user === null}
+	{#if data.users === null || data.users.length === 0}
 		<p>
 			No more unread <strong>{data.selectedStatus?.toLowerCase()}</strong>
 			<strong>{data.selectedRole.toLowerCase()}</strong> applications found.
@@ -63,45 +83,98 @@
 			</p>
 		{/if}
 
-		{#if data.user.authUser.roles?.includes(selectedRole)}
-			{#if data.blacklistHit}
+		{#if data.users[applicant_index].authUser.roles?.includes(selectedRole)}
+			{#if data.users[applicant_index].isBlacklisted}
 				<div class="bl-warning" role="alert" aria-live="polite">
 					⚠️ <strong>Warning:</strong> This person is blacklisted
 				</div>
 			{/if}
 
+			<!-- Navigation info above UserCard -->
+			<div style="margin-bottom: 0.5rem;">
+				Applicant {applicant_index + 1} / {data.users.length}
+			</div>
+			<!-- Navigation buttons above UserCard -->
+			<div class="nav-buttons" style="margin-bottom: 1rem; display: flex; gap: 1rem;">
+				<button type="button" onclick={() => gotoPrevUser()}>Prev</button>
+				<button type="button" onclick={() => gotoNextUser(data.users.length)}>Next</button>
+			</div>
+
 			<h1>
-				{data.user.authUser.email}
+				{data.users[applicant_index].authUser.email}
 			</h1>
 
-			<UserCard user={data.user} questions={data.questions} teammates={data.teammates} />
+			<UserCard
+				user={data.users[applicant_index]}
+				questions={data.questions}
+				teammates={data.users[applicant_index].teammates}
+			/>
 
 			<div id="form">
 				<div id="padding"></div>
-				<form method="POST" use:enhance>
-					<input type="hidden" name="id" value={data.user.authUserId} />
+				<form
+					method="POST"
+					use:enhance={() => {
+						loading = true;
+						return async ({ result, update }) => {
+							await update();
+
+							if (result.type === 'success') {
+								loading = false;
+							} else {
+								loading = false;
+								toasts.notify('Could not save decision!');
+							}
+
+							if (data.users && applicant_index >= data.users.length) {
+								applicant_index = Math.max(0, data.users.length - 1);
+							}
+						};
+					}}
+				>
+					<input type="hidden" name="id" value={data.users[applicant_index].authUserId} />
 
 					<!-- Accept -->
 					<button
+						id="form-buttom"
 						type="submit"
 						formaction="?/accept"
-						disabled={data.blacklistHit}
-						title={data.blacklistHit ? 'Blacklisted — action disabled' : 'Accept'}
+						disabled={data.users[applicant_index].isBlacklisted || loading}
+						title={data.users[applicant_index].isBlacklisted
+							? 'Blacklisted — action disabled'
+							: 'Accept'}
 					>
-						Accept
+						{#if loading}
+							<Spinner size={18} />
+						{:else}
+							Accept
+						{/if}
 					</button>
 
 					<!-- Reject -->
-					<button type="submit" formaction="?/reject">Reject</button>
+					<button id="form-buttom" type="submit" formaction="?/reject" disabled={loading}>
+						{#if loading}
+							<Spinner size={18} />
+						{:else}
+							Reject
+						{/if}</button
+					>
 
 					<!-- Waitlist -->
 					<button
+						id="form-buttom"
 						type="submit"
 						formaction="?/waitlist"
-						disabled={data.blacklistHit}
-						title={data.blacklistHit ? 'Blacklisted — action disabled' : 'Waitlist'}
+						disabled={data.users[applicant_index].isBlacklisted || loading}
+						title={data.users[applicant_index].isBlacklisted
+							? 'Blacklisted — action disabled'
+							: 'Waitlist'}
 					>
-						Waitlist
+						{#if loading}
+							<Spinner size={18} />
+						{:else}
+							Waitlist
+						{/if}
 					</button>
 				</form>
 			</div>
@@ -144,6 +217,13 @@
 		cursor: not-allowed;
 	}
 
+	#form-button {
+		flex-grow: 1;
+		white-space: nowrap;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 	.bl-warning {
 		margin: 0.75rem 0 1rem;
 		padding: 0.75rem 1rem;
