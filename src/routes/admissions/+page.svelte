@@ -4,6 +4,8 @@
 	import { page } from '$app/state';
 	import UserCard from '$lib/components/user-card.svelte';
 	import { Role } from '@prisma/client';
+	import Spinner from '$lib/components/spinner.svelte';
+	import { toasts } from '$lib/stores';
 
 	let { data } = $props();
 	let selectedRole = $state(data.selectedRole) as Role;
@@ -108,11 +110,27 @@
 
 			<div id="form">
 				<div id="padding"></div>
-				<form method="POST" use:enhance>
+				<form
+					method="POST"
+					use:enhance={() => {
+						loading = true;
+						return async ({ result, update }) => {
+							await update();
+
+							if (result.type === 'success') {
+								loading = false;
+							} else {
+								loading = false;
+								toasts.notify('Could not save decision!');
+							}
+						};
+					}}
+				>
 					<input type="hidden" name="id" value={data.users[applicant_index].authUserId} />
 
 					<!-- Accept -->
 					<button
+						id="form-buttom"
 						type="submit"
 						formaction="?/accept"
 						disabled={data.users[applicant_index].isBlacklisted || loading}
@@ -120,14 +138,25 @@
 							? 'Blacklisted — action disabled'
 							: 'Accept'}
 					>
-						Accept
+						{#if loading}
+							<Spinner size={18} />
+						{:else}
+							Accept
+						{/if}
 					</button>
 
 					<!-- Reject -->
-					<button type="submit" formaction="?/reject" disabled={loading}>Reject</button>
+					<button id="form-buttom" type="submit" formaction="?/reject" disabled={loading}>
+						{#if loading}
+							<Spinner size={18} />
+						{:else}
+							Reject
+						{/if}</button
+					>
 
 					<!-- Waitlist -->
 					<button
+						id="form-buttom"
 						type="submit"
 						formaction="?/waitlist"
 						disabled={data.users[applicant_index].isBlacklisted || loading}
@@ -135,7 +164,11 @@
 							? 'Blacklisted — action disabled'
 							: 'Waitlist'}
 					>
-						Waitlist
+						{#if loading}
+							<Spinner size={18} />
+						{:else}
+							Waitlist
+						{/if}
 					</button>
 				</form>
 			</div>
@@ -144,33 +177,6 @@
 		{/if}
 	{/if}
 </div>
-
-{#if loading}
-	<div class="loading-spinner">Loading...</div>
-{/if}
-
-<!-- Accept -->
-<button
-	type="submit"
-	formaction="?/accept"
-	disabled={data.users[applicant_index].isBlacklisted || loading}
-	title={data.users[applicant_index].isBlacklisted ? 'Blacklisted — action disabled' : 'Accept'}
->
-	Accept
-</button>
-
-<!-- Reject -->
-<button type="submit" formaction="?/reject" disabled={loading}>Reject</button>
-
-<!-- Waitlist -->
-<button
-	type="submit"
-	formaction="?/waitlist"
-	disabled={data.users[applicant_index].isBlacklisted || loading}
-	title={data.users[applicant_index].isBlacklisted ? 'Blacklisted — action disabled' : 'Waitlist'}
->
-	Waitlist
-</button>
 
 <style>
 	#form {
@@ -205,6 +211,13 @@
 		cursor: not-allowed;
 	}
 
+	#form-button {
+		flex-grow: 1;
+		white-space: nowrap;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
 	.bl-warning {
 		margin: 0.75rem 0 1rem;
 		padding: 0.75rem 1rem;
