@@ -123,6 +123,10 @@
 								loading = false;
 								toasts.notify('Could not save decision!');
 							}
+
+							if (data.users && applicant_index >= data.users.length) {
+								applicant_index = Math.max(0, data.users.length - 1);
+							}
 						};
 					}}
 				>
