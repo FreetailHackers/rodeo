@@ -7,7 +7,6 @@ import { t } from '../t';
 import { getSettings } from './settings';
 import { Role, Status } from '@prisma/client';
 import { checkIfBlacklisted } from './blacklist';
-import { teamRouter } from './team';
 import { getQuestions } from './questions';
 
 /**
