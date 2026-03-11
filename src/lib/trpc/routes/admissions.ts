@@ -277,6 +277,63 @@ export const admissionsRouter = t.router({
 			},
 		),
 
+	getAllAppliedUsers: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(
+			z.object({
+				role: z.nativeEnum(Role),
+				status: z.nativeEnum(Status).optional(),
+			}),
+		)
+		.query(
+			async (
+				req,
+			): Promise<
+				Array<
+					Prisma.UserGetPayload<{ include: { authUser: true; decision: true } }> & {
+						isBlacklisted: boolean;
+					}
+				>
+			> => {
+				const statusFilter = req.input.status
+					? [req.input.status]
+					: [Status.APPLIED, Status.WAITLISTED];
+				const users = await prisma.user.findMany({
+					where: {
+						authUser: {
+							roles: { has: req.input.role },
+							status: { in: statusFilter },
+						},
+						decision: null,
+					},
+					include: { authUser: true, decision: true },
+					orderBy: [{ teamId: 'asc' }],
+				});
+
+				if (!users.length) return [];
+
+				const questions = await getQuestions();
+				const firstNameQuestion = questions.find((q) => /^first\s+name$/i.test(q.label));
+				const lastNameQuestion = questions.find((q) => /^last\s+name$/i.test(q.label));
+
+				// Map users to include isBlacklisted
+				return await Promise.all(
+					users.map(async (user) => {
+						const app = user.application as any;
+						const firstName = firstNameQuestion
+							? String(app?.[firstNameQuestion.id] ?? '').trim()
+							: '';
+						const lastName = lastNameQuestion
+							? String(app?.[lastNameQuestion.id] ?? '').trim()
+							: '';
+						const fullName = [firstName, lastName].filter(Boolean).join(' ');
+						const isBlacklisted = await checkIfBlacklisted(user.authUser?.email, fullName);
+						return { ...user, isBlacklisted };
+					}),
+				);
+			},
+		),
+
 	canApply: t.procedure.query(async (): Promise<boolean> => {
 		return await canApply();
 	}),
