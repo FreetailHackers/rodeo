@@ -9,6 +9,7 @@
 	let selectedRole = $state(data.selectedRole) as Role;
 	let selectedStatus = $state(data.selectedStatus) as 'APPLIED' | 'WAITLISTED' | undefined;
 	let applicant_index = $state(0);
+	let loading = $state(false);
 
 	function lookingAt(role: Role) {
 		selectedRole = role;
@@ -114,7 +115,7 @@
 					<button
 						type="submit"
 						formaction="?/accept"
-						disabled={data.users[applicant_index].isBlacklisted}
+						disabled={data.users[applicant_index].isBlacklisted || loading}
 						title={data.users[applicant_index].isBlacklisted
 							? 'Blacklisted — action disabled'
 							: 'Accept'}
@@ -123,13 +124,13 @@
 					</button>
 
 					<!-- Reject -->
-					<button type="submit" formaction="?/reject">Reject</button>
+					<button type="submit" formaction="?/reject" disabled={loading}>Reject</button>
 
 					<!-- Waitlist -->
 					<button
 						type="submit"
 						formaction="?/waitlist"
-						disabled={data.users[applicant_index].isBlacklisted}
+						disabled={data.users[applicant_index].isBlacklisted || loading}
 						title={data.users[applicant_index].isBlacklisted
 							? 'Blacklisted — action disabled'
 							: 'Waitlist'}
@@ -143,6 +144,33 @@
 		{/if}
 	{/if}
 </div>
+
+{#if loading}
+	<div class="loading-spinner">Loading...</div>
+{/if}
+
+<!-- Accept -->
+<button
+	type="submit"
+	formaction="?/accept"
+	disabled={data.users[applicant_index].isBlacklisted || loading}
+	title={data.users[applicant_index].isBlacklisted ? 'Blacklisted — action disabled' : 'Accept'}
+>
+	Accept
+</button>
+
+<!-- Reject -->
+<button type="submit" formaction="?/reject" disabled={loading}>Reject</button>
+
+<!-- Waitlist -->
+<button
+	type="submit"
+	formaction="?/waitlist"
+	disabled={data.users[applicant_index].isBlacklisted || loading}
+	title={data.users[applicant_index].isBlacklisted ? 'Blacklisted — action disabled' : 'Waitlist'}
+>
+	Waitlist
+</button>
 
 <style>
 	#form {

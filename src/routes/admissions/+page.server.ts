@@ -47,6 +47,8 @@ export const actions = {
 			userId: event.locals.user.id,
 			decision: 'ACCEPTED',
 		});
+
+		return 'ACCEPTED';
 	},
 
 	reject: async (event) => {
@@ -56,6 +58,8 @@ export const actions = {
 			userId: event.locals.user.id,
 			decision: 'REJECTED',
 		});
+
+		return 'REJECTED';
 	},
 
 	waitlist: async (event) => {
@@ -65,5 +69,7 @@ export const actions = {
 			userId: event.locals.user.id,
 			decision: 'WAITLISTED',
 		});
+
+		return 'WAITLISTED';
 	},
 };
