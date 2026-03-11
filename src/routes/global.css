@@ -386,6 +386,7 @@ dialog button {
 	margin-left: auto;
 	margin-right: auto;
 	width: 4rem;
+	margin-top: 3rem;
 }
 
 .auth-content input {
@@ -504,6 +505,10 @@ dialog button {
 	dialog div {
 		flex-direction: column-reverse;
 		gap: 0;
+	}
+
+	.auth-content {
+		max-width: 20rem;
 	}
 }
 
