@@ -146,7 +146,8 @@
 		list-style: none;
 		padding: 0;
 		margin: 0;
-		overflow: clip;
+		overflow-y: auto;
+		max-height: 90vh;
 		transition: max-height 0.4s ease-in-out;
 	}
 
