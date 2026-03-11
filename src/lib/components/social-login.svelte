@@ -51,7 +51,6 @@
 	}
 
 	.social:hover button {
-		background-color: var(--accent);
 		color: var(--accent);
 	}
 

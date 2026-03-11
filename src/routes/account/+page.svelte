@@ -26,7 +26,7 @@
 
 	// button is disabled until hackathon start date (if set)
 	const startDate = data.settings?.hackathonStartDate;
-	let isButtonsDisabled = false;
+	let isButtonsDisabled = $state(false);
 
 	if (!data.applePass && !data.googlePass) {
 		isButtonsDisabled = true;
