@@ -18,6 +18,7 @@
 		const url = new URL(page.url);
 		url.searchParams.set('role', role);
 		goto(url.toString(), { replaceState: true });
+		applicant_index = 0;
 	}
 
 	function filterByStatus(status?: 'APPLIED' | 'WAITLISTED') {
@@ -29,6 +30,7 @@
 			url.searchParams.delete('status');
 		}
 		goto(url.toString(), { replaceState: true });
+		applicant_index = 0;
 	}
 
 	function gotoPrevUser() {
