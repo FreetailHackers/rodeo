@@ -283,7 +283,6 @@ select {
 }
 
 .svelte-select .multi-item {
-	background-color: var(--accent) !important;
 	color: var(--accent) !important;
 }
 
