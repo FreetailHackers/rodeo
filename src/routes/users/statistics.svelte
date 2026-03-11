@@ -3,7 +3,13 @@
 	import { page } from '$app/state';
 	import { trpc } from '$lib/trpc/client';
 	import type { Question } from '@prisma/client';
-	import Plot from 'svelte-plotly.js';
+	import { onMount } from 'svelte';
+
+	let Plot: any = $state(null);
+
+	onMount(async () => {
+		Plot = (await import('svelte-plotly.js')).default;
+	});
 
 	let stats: Record<string, Record<string, number | [number, number]>> | null = $state(null);
 	interface Props {
