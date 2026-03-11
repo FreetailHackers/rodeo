@@ -38,8 +38,6 @@ export const load = async (event) => {
 
 		const team = await trpc(event).team.getTeam();
 
-		console.log(team?.members.length);
-
 		return {
 			user: user,
 			team: await trpc(event).team.getTeam(),

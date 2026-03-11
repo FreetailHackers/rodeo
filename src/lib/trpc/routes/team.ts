@@ -138,6 +138,8 @@ export const teamRouter = t.router({
 				<a href="${inviteLink}" target="_blank">Join Team</a>
 			`;
 
+			console.log(emailBody);
+
 			return (await sendEmail(email, 'You have been invited to a team', emailBody, true))
 				? 'Invited user!'
 				: 'Failed to send invitation email. Please try again later.';

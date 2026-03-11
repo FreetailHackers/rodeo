@@ -61,7 +61,7 @@
 		<button onclick={() => filterByStatus('WAITLISTED')}> Waitlisted </button>
 	</div>
 
-	{#if data.user === null}
+	{#if data.users === null || data.users.length === 0}
 		<p>
 			No more unread <strong>{data.selectedStatus?.toLowerCase()}</strong>
 			<strong>{data.selectedRole.toLowerCase()}</strong> applications found.
@@ -108,7 +108,7 @@
 			<div id="form">
 				<div id="padding"></div>
 				<form method="POST" use:enhance>
-					<input type="hidden" name="id" value={data.user.authUserId} />
+					<input type="hidden" name="id" value={data.users[applicant_index].authUserId} />
 
 					<!-- Accept -->
 					<button
