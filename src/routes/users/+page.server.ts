@@ -2,6 +2,8 @@ import { authenticate } from '$lib/authenticate';
 import { trpc } from '$lib/trpc/router';
 import type { Role, Status } from '@prisma/client';
 import { checkIfBlacklisted } from '$lib/trpc/routes/blacklist';
+import { DecisionStatus, ApplicationStatus } from '@prisma/client';
+
 
 export const load = async (event) => {
 	const user = await authenticate(event.locals.session, ['ADMIN', 'SPONSOR']);
@@ -12,6 +14,11 @@ export const load = async (event) => {
 		search: event.url.searchParams.get('search') ?? '',
 		limit: Number(event.url.searchParams.get('limit') ?? 10),
 		searchFilter: event.url.searchParams.get('searchFilter') ?? '',
+	});
+
+	const filteredUsers = await trpc(event).users.filter({
+		decisionStatus: event.url.searchParams.get('decisionStatus') as DecisionStatus ?? undefined,
+		applicationStatus: event.url.searchParams.get('applicationStatus') as ApplicationStatus ?? undefined,
 	});
 
 	const questions = await trpc(event).questions.get();

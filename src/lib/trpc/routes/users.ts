@@ -25,6 +25,7 @@ import timezone from 'dayjs/plugin/timezone';
 import { hash } from '@node-rs/argon2';
 import * as auth from '$lib/authenticate';
 import { canApply } from './admissions';
+import { DecisionStatus, ApplicationStatus } from '@prisma/client';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -1096,6 +1097,21 @@ export const usersRouter = t.router({
 				return false;
 			}
 		}),
+
+	
+	filter: t.procedure
+	.input(z.object({
+		decisionStatus: z.nativeEnum(DecisionStatus).optional(),
+		applicationStatus: z.nativeEnum(ApplicationStatus).optional(),
+	}))
+	.query(async ({ input }) => {
+		return await prisma.user.findMany({
+		where: {
+			...(input.decisionStatus && { decisionStatus: input.decisionStatus }),
+			...(input.applicationStatus && { applicationStatus: input.applicationStatus }),
+		}
+		});
+	})
 });
 
 async function getWhereCondition(
@@ -1331,3 +1347,17 @@ async function getRSVPDeadline(user: AuthUser): Promise<Date | null> {
 
 	return null;
 }
+
+
+// export async function filterUsers(filters: {
+//   decisionStatus?: DecisionStatus;
+//   applicationStatus?: ApplicationStatus;
+// }) {
+//   return await prisma.user.findMany({
+//     where: {
+//       ...(filters.decisionStatus && { decisionStatus: filters.decisionStatus }),
+//       ...(filters.applicationStatus && { applicationStatus: filters.applicationStatus }),
+//     }
+//   });
+// }
+

@@ -71,7 +71,13 @@ model User {
   authUser      AuthUser       @relation(fields: [authUserId], references: [id], onDelete: Cascade)
   team          Team?          @relation(fields: [teamId], references: [id])
   group         Group?         @relation(fields: [groupId], references: [id])
+
+  decisionStatus DecisionStatus  @default(PENDING)
+  applicationStatus ApplicationStatus @default(CREATED)
 }
+
+
+
 
 
 model Group{ 
@@ -268,4 +274,22 @@ enum CategoryType {
   FAQ
   CHALLENGE
   SPONSOR
+}
+
+enum DecisionStatus {
+  ACCEPTED
+  WAITLISTED
+  REJECTED
+  PENDING
+}
+
+enum ApplicationStatus {
+  CREATED
+  APPLIED
+  ACCEPTED
+  WAITLISTED
+  REJECTED
+  PENDING
+  CONFIRMED
+  DECLINED
 }
