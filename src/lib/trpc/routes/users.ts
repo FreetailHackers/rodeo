@@ -1152,14 +1152,12 @@ async function getWhereConditionHelper(
 		return {
 			decision: { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },
 		};
-		// added decisonStatus and applicatoinStatus 
+		// added decisonStatus and applicatoinStatus
 	} else if (key === 'decisionStatus' && roles.includes('ADMIN')) {
-    	return { decisionStatus: search as DecisionStatus };
+		return { decisionStatus: search as DecisionStatus };
 	} else if (key === 'applicationStatus' && roles.includes('ADMIN')) {
 		return { applicationStatus: search as ApplicationStatus };
-	}
-
-	else if (scanActions.includes(key) && roles.includes('ADMIN')) {
+	} else if (scanActions.includes(key) && roles.includes('ADMIN')) {
 		if (searchFilter === 'greater') {
 			return { scanCount: { path: [key], gt: Number(search) } };
 		} else if (searchFilter === 'greater_equal') {

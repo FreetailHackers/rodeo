@@ -126,7 +126,6 @@ async function main() {
 			roles: [role],
 			verifiedEmail: true,
 			status: statusFlow[statusFlow.length - 1].newStatus,
-
 		});
 		const finalStatus = statusFlow[statusFlow.length - 1].newStatus;
 
