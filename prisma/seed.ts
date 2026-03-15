@@ -13,6 +13,7 @@
 import { MY_TIMEZONE, events, questions, faq, challenges } from './data.ts';
 import { PrismaClient, Status, Prisma } from '@prisma/client';
 import argon2 from 'argon2';
+import { DecisionStatus, ApplicationStatus } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -125,8 +126,21 @@ async function main() {
 			roles: [role],
 			verifiedEmail: true,
 			status: statusFlow[statusFlow.length - 1].newStatus,
+
 		});
-		users.push({ authUserId: id, application });
+		const finalStatus = statusFlow[statusFlow.length - 1].newStatus;
+
+		users.push({
+			authUserId: id,
+			application,
+			applicationStatus: finalStatus as ApplicationStatus,
+			decisionStatus: (() => {
+				if (finalStatus === 'ACCEPTED') return 'ACCEPTED';
+				if (finalStatus === 'REJECTED') return 'REJECTED';
+				if (finalStatus === 'WAITLISTED') return 'WAITLISTED';
+				return 'PENDING';
+			})(),
+		});
 		statusChanges.push(...statusFlow);
 	}
 

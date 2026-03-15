@@ -1098,20 +1098,22 @@ export const usersRouter = t.router({
 			}
 		}),
 
-	
 	filter: t.procedure
-	.input(z.object({
-		decisionStatus: z.nativeEnum(DecisionStatus).optional(),
-		applicationStatus: z.nativeEnum(ApplicationStatus).optional(),
-	}))
-	.query(async ({ input }) => {
-		return await prisma.user.findMany({
-		where: {
-			...(input.decisionStatus && { decisionStatus: input.decisionStatus }),
-			...(input.applicationStatus && { applicationStatus: input.applicationStatus }),
-		}
-		});
-	})
+		.use(authenticate(['ADMIN']))
+		.input(
+			z.object({
+				decisionStatus: z.nativeEnum(DecisionStatus).optional(),
+				applicationStatus: z.nativeEnum(ApplicationStatus).optional(),
+			}),
+		)
+		.query(async ({ input }) => {
+			return await prisma.user.findMany({
+				where: {
+					...(input.decisionStatus && { decisionStatus: input.decisionStatus }),
+					...(input.applicationStatus && { applicationStatus: input.applicationStatus }),
+				},
+			});
+		}),
 });
 
 async function getWhereCondition(
@@ -1150,7 +1152,14 @@ async function getWhereConditionHelper(
 		return {
 			decision: { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },
 		};
-	} else if (scanActions.includes(key) && roles.includes('ADMIN')) {
+		// added decisonStatus and applicatoinStatus 
+	} else if (key === 'decisionStatus' && roles.includes('ADMIN')) {
+    	return { decisionStatus: search as DecisionStatus };
+	} else if (key === 'applicationStatus' && roles.includes('ADMIN')) {
+		return { applicationStatus: search as ApplicationStatus };
+	}
+
+	else if (scanActions.includes(key) && roles.includes('ADMIN')) {
 		if (searchFilter === 'greater') {
 			return { scanCount: { path: [key], gt: Number(search) } };
 		} else if (searchFilter === 'greater_equal') {
@@ -1348,7 +1357,6 @@ async function getRSVPDeadline(user: AuthUser): Promise<Date | null> {
 	return null;
 }
 
-
 // export async function filterUsers(filters: {
 //   decisionStatus?: DecisionStatus;
 //   applicationStatus?: ApplicationStatus;
@@ -1360,4 +1368,3 @@ async function getRSVPDeadline(user: AuthUser): Promise<Date | null> {
 //     }
 //   });
 // }
-

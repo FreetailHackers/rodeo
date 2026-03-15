@@ -133,6 +133,9 @@
 					if (key === 'role') search = 'HACKER';
 					else if (key === 'status') search = 'CREATED';
 					else if (key === 'decision') search = 'ACCEPTED';
+					//new
+					else if (key === 'decisionStatus') search = 'PENDING';        
+					else if (key === 'applicationStatus') search = 'CREATED';     
 					else if (Array.from(data.questions, (x) => x.id).includes(key)) {
 						search = '';
 						for (const question of data.questions) {
@@ -168,6 +171,8 @@
 					<option value="role">Role</option>
 					<option value="status">Status</option>
 					<option value="decision">Decision</option>
+					<option value="decisionStatus">Decision Status</option>  
+   					<option value="applicationStatus">Application Status</option>  
 				{/if}
 
 				<optgroup label="Questions">
@@ -221,6 +226,26 @@
 					<option value="WAITLISTED">WAITLISTED</option>
 					<option value="REJECTED">REJECTED</option>
 				</select>
+
+		<!-- new -->
+		{:else if key === 'decisionStatus'}         
+			<select name="search" bind:value={search} class="search">
+				<option value="PENDING">PENDING</option>
+				<option value="ACCEPTED">ACCEPTED</option>
+				<option value="WAITLISTED">WAITLISTED</option>
+				<option value="REJECTED">REJECTED</option>
+			</select>
+		{:else if key === 'applicationStatus'}      
+			<select name="search" bind:value={search} class="search">
+				<option value="CREATED">CREATED</option>
+				<option value="APPLIED">APPLIED</option>
+				<option value="CONFIRMED">CONFIRMED</option>
+				<option value="DECLINED">DECLINED</option>
+				<option value="ACCEPTED">ACCEPTED</option>
+				<option value="WAITLISTED">WAITLISTED</option>
+				<option value="REJECTED">REJECTED</option>
+				<option value="PENDING">PENDING</option>
+			</select>
 			{:else if data.settings.scanActions.includes(key)}
 				<select name="searchFilter" class="search" bind:value={searchFilter}>
 					<option value="greater">greater than</option>
