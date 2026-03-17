@@ -15,7 +15,7 @@ export const load = async (event) => {
 		searchFilter: event.url.searchParams.get('searchFilter') ?? '',
 	});
 
-	const filteredUsers = await trpc(event).users.filter({
+	const filteredUsers = await trpc(event).users.filterByStatus({
 		decisionStatus: (event.url.searchParams.get('decisionStatus') as DecisionStatus) ?? undefined,
 		applicationStatus:
 			(event.url.searchParams.get('applicationStatus') as ApplicationStatus) ?? undefined,

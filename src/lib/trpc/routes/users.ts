@@ -249,6 +249,14 @@ export const usersRouter = t.router({
 					where: { id: req.ctx.user.id },
 					data: { status: 'APPLIED', roles: [req.input] },
 				});
+				// Set applicationStatus to APPLIED and decisionStatus to PENDING
+				await prisma.user.update({
+					where: { authUserId: req.ctx.user.id },
+					data: {
+						applicationStatus: 'APPLIED',
+						decisionStatus: 'PENDING',
+					},
+				});
 				// notify user through their email on successful application submission
 				const subject = 'Thanks for submitting!';
 				const settings = await getSettings();
@@ -276,6 +284,14 @@ export const usersRouter = t.router({
 				where: { id: req.ctx.user.id },
 				data: { status: 'CREATED' },
 			});
+			// Reset both statuses — user is back to a fresh state
+			await prisma.user.update({
+				where: { authUserId: req.ctx.user.id },
+				data: {
+					applicationStatus: 'CREATED',
+					decisionStatus: null,
+				},
+			});
 			const subject = 'Application Withdrawal Warning';
 			const settings = await getSettings();
 			await sendEmail(
@@ -298,6 +314,8 @@ export const usersRouter = t.router({
 
 	/**
 	 * Confirms or declines the logged in user's acceptance.
+	 * applicationStatus reflects the user's RSVP choice (CONFIRMED or DECLINED).
+	 * decisionStatus remains ACCEPTED throughout — it records what the admin decided.
 	 */
 	rsvp: t.procedure
 		.use(authenticate(['HACKER', 'UNDECLARED', 'MENTOR', 'JUDGE', 'VOLUNTEER']))
@@ -311,6 +329,11 @@ export const usersRouter = t.router({
 					await prisma.authUser.update({
 						where: { id: req.ctx.user.id },
 						data: { status: 'CONFIRMED' },
+					});
+					// applicationStatus moves to CONFIRMED; decisionStatus stays ACCEPTED
+					await prisma.user.update({
+						where: { authUserId: req.ctx.user.id },
+						data: { applicationStatus: 'CONFIRMED' },
 					});
 					await sendEmail(
 						req.ctx.user.email,
@@ -326,6 +349,11 @@ export const usersRouter = t.router({
 					await prisma.authUser.update({
 						where: { id: req.ctx.user.id },
 						data: { status: 'DECLINED' },
+					});
+					// applicationStatus moves to DECLINED; decisionStatus stays ACCEPTED
+					await prisma.user.update({
+						where: { authUserId: req.ctx.user.id },
+						data: { applicationStatus: 'DECLINED' },
 					});
 					await sendEmail(
 						req.ctx.user.email,
@@ -906,6 +934,13 @@ export const usersRouter = t.router({
 					});
 				}
 			}
+			// Admins should not have a decisionStatus — clear it if promoting to ADMIN
+			if (req.input.role === 'ADMIN') {
+				await prisma.user.updateMany({
+					where: { authUserId: { in: req.input.ids } },
+					data: { decisionStatus: null },
+				});
+			}
 		}),
 
 	/**
@@ -1098,7 +1133,11 @@ export const usersRouter = t.router({
 			}
 		}),
 
-	filter: t.procedure
+	/**
+	 * Filters users by decisionStatus and/or applicationStatus.
+	 * User must be an admin.
+	 */
+	filterByStatus: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(
 			z.object({
@@ -1152,7 +1191,6 @@ async function getWhereConditionHelper(
 		return {
 			decision: { status: search as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED' },
 		};
-		// added decisonStatus and applicatoinStatus
 	} else if (key === 'decisionStatus' && roles.includes('ADMIN')) {
 		return { decisionStatus: search as DecisionStatus };
 	} else if (key === 'applicationStatus' && roles.includes('ADMIN')) {
@@ -1251,17 +1289,12 @@ async function getWhereConditionHelper(
 						return { application: { path: [key], not: Number(search) } };
 					}
 				} else if (question.type === 'DROPDOWN') {
-					// look to see if searchFilter is unanswered
 					if (searchFilter !== 'unanswered') {
 						try {
 							const parsed = JSON.parse(search);
-							// Special case: if the user is searching for an empty array, treat that as "return all"
-							// (since all responses vacuously contain the empty array)
 							if (parsed === '') {
 								return {};
 							}
-
-							// check if question allows multiple responses
 							if (question.multiple) {
 								if (searchFilter === 'contains') {
 									return { application: { path: [question.id], array_contains: parsed } };
@@ -1269,7 +1302,6 @@ async function getWhereConditionHelper(
 									return { application: { path: [question.id], equals: parsed } };
 								}
 							} else {
-								// searchDictArray is a string
 								if (searchFilter === 'is') {
 									return { application: { path: [question.id], equals: parsed } };
 								} else if (searchFilter === 'is_not') {
@@ -1279,7 +1311,6 @@ async function getWhereConditionHelper(
 								}
 							}
 						} catch (e) {
-							// In case of malformed JSON, just return all users
 							return {};
 						}
 					} else {
@@ -1354,15 +1385,3 @@ async function getRSVPDeadline(user: AuthUser): Promise<Date | null> {
 
 	return null;
 }
-
-// export async function filterUsers(filters: {
-//   decisionStatus?: DecisionStatus;
-//   applicationStatus?: ApplicationStatus;
-// }) {
-//   return await prisma.user.findMany({
-//     where: {
-//       ...(filters.decisionStatus && { decisionStatus: filters.decisionStatus }),
-//       ...(filters.applicationStatus && { applicationStatus: filters.applicationStatus }),
-//     }
-//   });
-// }

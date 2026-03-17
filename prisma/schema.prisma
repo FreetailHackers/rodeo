@@ -72,7 +72,7 @@ model User {
   team          Team?          @relation(fields: [teamId], references: [id])
   group         Group?         @relation(fields: [groupId], references: [id])
 
-  decisionStatus DecisionStatus  @default(PENDING)
+  decisionStatus DecisionStatus? 
   applicationStatus ApplicationStatus @default(CREATED)
 }
 
@@ -289,7 +289,6 @@ enum ApplicationStatus {
   ACCEPTED
   WAITLISTED
   REJECTED
-  PENDING
   CONFIRMED
   DECLINED
 }
