@@ -216,7 +216,7 @@
 						<button
 							class="wallet-download-button"
 							class:disabled={isButtonsDisabled}
-							onclick={() => downloadPass(data.applePass, 'hacktx-2025-apple.pkpass')}
+							onclick={() => downloadPass(data.applePass, 'hhg-apple.pkpass')}
 						>
 							<img src="apple-wallet-download.png" alt="apple wallet download" />
 						</button>
@@ -225,7 +225,7 @@
 						<button
 							class="wallet-download-button"
 							class:disabled={isButtonsDisabled}
-							onclick={() => downloadPass(data.googlePass, 'hacktx-2025-google.pkpass')}
+							onclick={() => downloadPass(data.googlePass, 'hhg-google.pkpass')}
 						>
 							<img src="google-wallet-download.png" alt="google wallet download" />
 						</button>
