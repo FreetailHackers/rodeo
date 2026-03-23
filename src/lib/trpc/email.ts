@@ -23,7 +23,7 @@ export const sendEmail = async (
 	recipient: string,
 	subject: string,
 	message: string,
-	isHTML: boolean,
+	isHTML: boolean = false,
 ): Promise<number> => {
 	// Preface with warning if not in production
 	let warning = '';
