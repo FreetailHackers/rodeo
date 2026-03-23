@@ -266,8 +266,14 @@
 		margin-top: 1.5rem;
 		margin-right: 1rem;
 	}
+	.wallet-download-button:hover {
+		background-color: transparent;
+		border: none;
+		opacity: 0.9;
+	}
 	.wallet-download-button img {
 		width: 10rem;
+		display: block;
 	}
 	.wallet-download-button.disabled {
 		opacity: 0.75;
