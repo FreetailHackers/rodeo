@@ -3,7 +3,6 @@
 	import Toasts from '$lib/components/toasts.svelte';
 	import { toasts } from '$lib/stores';
 	import './global.css';
-	import { invalidateAll } from '$app/navigation';
 	import { fade } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import Loader from '$lib/components/loader.svelte';
@@ -65,7 +64,9 @@
 					<a href="/users" class:active={page.url.pathname.startsWith('/users')}>Users</a>
 				</li>
 				{#if data.user?.roles.includes('ADMIN')}
-					<li><a href="/admin" class:active={page.url.pathname.startsWith('/admin')}>Admin</a></li>
+					<li>
+						<a href="/admin" class:active={page.url.pathname.startsWith('/admin')}>Admin</a>
+					</li>
 					<li>
 						<a href="/admissions" class:active={page.url.pathname.startsWith('/admissions')}
 							>Admissions</a
@@ -146,7 +147,8 @@
 		list-style: none;
 		padding: 0;
 		margin: 0;
-		overflow: clip;
+		overflow-y: auto;
+		max-height: 90vh;
 		transition: max-height 0.4s ease-in-out;
 	}
 
@@ -194,14 +196,9 @@
 			/* filter: brightness(0); */ /* changed for dark mode */
 		}
 
-		/* Close hamburger menu */
-		menu {
-			max-height: 0;
-		}
-
 		/* Opens hamburger menu when clicked */
 		#hamburgerCheckbox:checked + menu {
-			max-height: 100vh;
+			max-height: 0;
 		}
 
 		.navbar a,

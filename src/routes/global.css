@@ -164,7 +164,7 @@ a.button.primary:not(:disabled):hover {
 
 .negative-button:not(:disabled):hover {
 	background-color: var(--accent);
-	color: var(--accent);
+	color: var(--white);
 	border: 1px solid var(--accent);
 }
 
@@ -283,7 +283,6 @@ select {
 }
 
 .svelte-select .multi-item {
-	background-color: var(--accent) !important;
 	color: var(--accent) !important;
 }
 
@@ -305,7 +304,7 @@ input[type='datetime-local']::-webkit-calendar-picker-indicator {
 	padding: 0 1rem;
 	margin-right: 1rem;
 	height: 100%;
-	color: white;
+	color: var(--white);
 	background-color: var(--accent);
 	border: none;
 }
@@ -387,6 +386,7 @@ dialog button {
 	margin-left: auto;
 	margin-right: auto;
 	width: 4rem;
+	margin-top: 3rem;
 }
 
 .auth-content input {
@@ -419,6 +419,7 @@ dialog button {
 .modal {
 	border-radius: 1em;
 	background-color: var(--accent);
+	color: var(--white);
 	padding: 2rem;
 	user-select: none;
 }
@@ -505,6 +506,10 @@ dialog button {
 	dialog div {
 		flex-direction: column-reverse;
 		gap: 0;
+	}
+
+	.auth-content {
+		max-width: 20rem;
 	}
 }
 

@@ -44,8 +44,13 @@
 		transition: background-color 0.2s ease;
 	}
 
+	@media (max-width: 450px) {
+		.social button {
+			min-width: 200px;
+		}
+	}
+
 	.social:hover button {
-		background-color: var(--accent);
 		color: var(--accent);
 	}
 

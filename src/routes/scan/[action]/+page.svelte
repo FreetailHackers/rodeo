@@ -6,7 +6,12 @@
 	import type { Prisma } from '@prisma/client';
 	import { Html5Qrcode, Html5QrcodeScannerState } from 'html5-qrcode';
 	import { onDestroy, onMount } from 'svelte';
-	import Plot from 'svelte-plotly.js';
+
+	let Plot: any = $state(null);
+
+	onMount(async () => {
+		Plot = (await import('svelte-plotly.js')).default;
+	});
 
 	let { data } = $props();
 
