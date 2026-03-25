@@ -38,7 +38,7 @@ export const actions = {
 	accept: async (event) => {
 		const id = (await event.request.formData()).get('id') as string;
 		await trpc(event).admissions.decide({ decision: 'ACCEPTED', ids: [id] });
-		await trpc(event).admissions.incrementApplicationCount({
+		await trpc(event).admissions.updateApplicationCount({
 			userId: event.locals.user.id,
 			decision: 'ACCEPTED',
 		});
@@ -47,7 +47,7 @@ export const actions = {
 	reject: async (event) => {
 		const id = (await event.request.formData()).get('id') as string;
 		await trpc(event).admissions.decide({ decision: 'REJECTED', ids: [id] });
-		await trpc(event).admissions.incrementApplicationCount({
+		await trpc(event).admissions.updateApplicationCount({
 			userId: event.locals.user.id,
 			decision: 'REJECTED',
 		});
@@ -56,7 +56,7 @@ export const actions = {
 	waitlist: async (event) => {
 		const id = (await event.request.formData()).get('id') as string;
 		await trpc(event).admissions.decide({ decision: 'WAITLISTED', ids: [id] });
-		await trpc(event).admissions.incrementApplicationCount({
+		await trpc(event).admissions.updateApplicationCount({
 			userId: event.locals.user.id,
 			decision: 'WAITLISTED',
 		});
