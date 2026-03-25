@@ -3,6 +3,48 @@ import { S3Client, GetObjectCommand, ListObjectsV2Command } from '@aws-sdk/clien
 import { t } from '../t';
 import { z } from 'zod';
 
+/**
+ * APPLE & GOOGLE WALLET PASS GENERATION DOCUMENTATION
+ *
+ * library used: https://github.com/alexandercerutti/passkit-generator
+ * apple wallet pass docs: https://developer.apple.com/library/archive/documentation/UserExperience/Conceptual/PassKit_PG/Creating.html#//apple_ref/doc/uid/TP40012195-CH4-SW5
+ *
+ * how this works:
+ * 	pkpass
+ * 		- the pkpass is a zip file that contains all of our pass data (logo, background, etc.)
+ * 			we use the pkpass library to create the zip file
+ *  aws
+ *     - we use aws s3 to store all the pkpass files. we store it in the "ticket.pass" folder.
+ *     - these files must be stored in a seperate enviornment (ie: supabase or aws)
+ * 	   - here's a quick overview of the files in this folder:
+ *       - pass.json: this holds the main metadata for the pass (ie. event name, bg color, etc)
+ * 	       the current pass.json file is pretty straight forward, but for more info look at the apple docs.
+ *       - icon.png/icon@2x.png (deprecated in our usecase)
+ *       - logo.png: the image in the top left
+ *       - strip.png: the image in the center
+ *     - you can either update these files manually or use a script to update them.
+ *
+ * 	certificates (DO NOT LEAK THESE)
+ * 		- for apple wallet we're required to use a certificate to sign the pass.
+ *         this is done by being apart of the apple developer program & creating a certificate
+ *         which we then use to sign the pass. we currently use Ali Vayani's apple developer account
+ *         so if any future issues occur hit him up.
+ *     - the certificates are SIGNER_CERT, SIGNER_KEY, WWDR, SIGNER_KEY_PASSPHRASE. DO NOT LEAK THESE.
+ *
+ *  google vs apple wallet
+ * 		- google wallet is a lot nicer to work with than apple wallet. pkpass is backwards compatible
+ *        with android so we just use the same pass for both. android can't take full advantage of
+ *        the pkpass though so it's more bear bones. potentially look into googles wallet docs for future
+ *        improvements.
+ *      - apple wallet is a lot more finnicky and requires a lot more work to get it to work. certificates are
+ *        a must & there are limitations to design. currently we are using an "event" pass type.
+ *
+ *  overall
+ * 		- there are a lot of cool things we can do with pass integration, but this is the current
+ *        implementation
+ *
+ */
+
 const s3Client = new S3Client({ region: process.env.AWS_REGION });
 
 /**

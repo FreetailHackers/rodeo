@@ -213,7 +213,7 @@
 						<button
 							class="wallet-download-button"
 							class:disabled={isButtonsDisabled}
-							onclick={() => downloadPass(data.applePass, 'hacktx-2025-apple.pkpass')}
+							onclick={() => downloadPass(data.applePass, 'hhg-apple.pkpass')}
 						>
 							<img src="apple-wallet-download.png" alt="apple wallet download" />
 						</button>
@@ -222,7 +222,7 @@
 						<button
 							class="wallet-download-button"
 							class:disabled={isButtonsDisabled}
-							onclick={() => downloadPass(data.googlePass, 'hacktx-2025-google.pkpass')}
+							onclick={() => downloadPass(data.googlePass, 'hhg-google.pkpass')}
 						>
 							<img src="google-wallet-download.png" alt="google wallet download" />
 						</button>
@@ -263,8 +263,14 @@
 		margin-top: 1.5rem;
 		margin-right: 1rem;
 	}
+	.wallet-download-button:hover {
+		background-color: transparent;
+		border: none;
+		opacity: 0.9;
+	}
 	.wallet-download-button img {
 		width: 10rem;
+		display: block;
 	}
 	.wallet-download-button.disabled {
 		opacity: 0.75;
