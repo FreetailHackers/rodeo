@@ -19,17 +19,22 @@ export const load = async (event) => {
 		);
 	});
 
-	const user = await trpc(event).admissions.getAppliedUser({
+	const users = await trpc(event).admissions.getAllAppliedUsers({
 		role: selectedRole,
 		status: selectedStatus,
 	});
 
+	const usersWithTeammates = await Promise.all(
+		users.map(async (u) => ({
+			...u,
+			teammates: u !== null ? await trpc(event).team.getTeammates(u.authUserId) : [],
+		})),
+	);
+
 	return {
-		user,
+		users: usersWithTeammates,
 		questions: admissionRelevantQuestions,
-		teammates: user !== null ? await trpc(event).team.getTeammates(user.authUserId) : [],
 		selectedRole,
-		blacklistHit: !!user?.isBlacklisted,
 		selectedStatus: selectedStatus,
 	};
 };
@@ -38,27 +43,33 @@ export const actions = {
 	accept: async (event) => {
 		const id = (await event.request.formData()).get('id') as string;
 		await trpc(event).admissions.decide({ decision: 'ACCEPTED', ids: [id] });
-		await trpc(event).admissions.incrementApplicationCount({
+		await trpc(event).admissions.updateApplicationCount({
 			userId: event.locals.user.id,
 			decision: 'ACCEPTED',
 		});
+
+		return 'ACCEPTED';
 	},
 
 	reject: async (event) => {
 		const id = (await event.request.formData()).get('id') as string;
 		await trpc(event).admissions.decide({ decision: 'REJECTED', ids: [id] });
-		await trpc(event).admissions.incrementApplicationCount({
+		await trpc(event).admissions.updateApplicationCount({
 			userId: event.locals.user.id,
 			decision: 'REJECTED',
 		});
+
+		return 'REJECTED';
 	},
 
 	waitlist: async (event) => {
 		const id = (await event.request.formData()).get('id') as string;
 		await trpc(event).admissions.decide({ decision: 'WAITLISTED', ids: [id] });
-		await trpc(event).admissions.incrementApplicationCount({
+		await trpc(event).admissions.updateApplicationCount({
 			userId: event.locals.user.id,
 			decision: 'WAITLISTED',
 		});
+
+		return 'WAITLISTED';
 	},
 };

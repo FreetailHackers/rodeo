@@ -1,10 +1,16 @@
 <script lang="ts">
 	import type { StatusChange } from '@prisma/client';
 	import { Status } from '@prisma/client';
-	import Plot from 'svelte-plotly.js';
+	import { onMount } from 'svelte';
 	interface Props {
 		statusChanges: StatusChange[];
 	}
+
+	let Plot: any = $state(null);
+
+	onMount(async () => {
+		Plot = (await import('svelte-plotly.js')).default;
+	});
 
 	let { statusChanges }: Props = $props();
 	const statuses: Status[] = Object.keys(Status) as Status[];

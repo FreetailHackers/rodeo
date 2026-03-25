@@ -26,7 +26,7 @@
 
 	// button is disabled until hackathon start date (if set)
 	const startDate = data.settings?.hackathonStartDate;
-	let isButtonsDisabled = false;
+	let isButtonsDisabled = $state(false);
 
 	if (!data.applePass && !data.googlePass) {
 		isButtonsDisabled = true;
@@ -120,52 +120,6 @@
 			{:else}
 				<h3 class="label-and-button">
 					Team: {data.team.name}
-					{#if data.team.members.length < 4}
-						<Modal button={false} close={closeModal}>
-							<Content>
-								<div class="modal">
-									<form method="POST" action="?/inviteUser">
-										<h3 class="modal-header">
-											Invite a new member
-											<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-											<img
-												class="close-button"
-												src="/close-button.png"
-												alt="close add team member"
-												draggable="false"
-												onclick={() => (closeModal = true)}
-												onkeypress={() => (closeModal = true)}
-											/>
-										</h3>
-										<input
-											type="email"
-											id="inviteEmail"
-											name="inviteEmail"
-											placeholder="Enter email"
-											required
-										/>
-										<p>
-											You can only invite users who have a Rodeo account and are not already part of
-											a team.
-										</p>
-										<button id="modalSubmit" class="user-button" type="submit"
-											>Send Invitation</button
-										>
-									</form>
-								</div>
-							</Content>
-							<Trigger>
-								<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-								<img
-									src="/add-button.png"
-									alt="add team member"
-									draggable="false"
-									onclick={() => (closeModal = false)}
-									onkeypress={() => (closeModal = false)}
-								/>
-							</Trigger>
-						</Modal>
-					{/if}
 				</h3>
 				{#each data.team.members as member}
 					<form method="POST" action="?/removeTeammate">
@@ -196,9 +150,52 @@
 				<form method="POST" action="?/leaveTeam">
 					<button class="user-button" type="submit">Leave Team</button>
 				</form>
+
+				<Modal button={false} close={closeModal}>
+					<Content>
+						<div class="modal">
+							<form method="POST" action="?/inviteUser">
+								<h3 class="modal-header">
+									Invite a new member
+									<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+									<img
+										class="close-button"
+										src="/close-button.png"
+										alt="close add team member"
+										draggable="false"
+										onclick={() => (closeModal = true)}
+										onkeypress={() => (closeModal = true)}
+									/>
+								</h3>
+								<input
+									type="email"
+									id="inviteEmail"
+									name="inviteEmail"
+									placeholder="Enter email"
+									required
+								/>
+								<p>
+									You can only invite users who have a Rodeo account and are not already part of a
+									team.
+								</p>
+								<button id="modalSubmit" class="user-button" type="submit">Send Invitation</button>
+							</form>
+						</div>
+					</Content>
+					<Trigger>
+						<button
+							class="user-button invite-btn"
+							onclick={() => (closeModal = false)}
+							disabled={data.invitations.length + data.team.members.length >= 4}
+						>
+							Invite Teammate
+						</button>
+					</Trigger>
+				</Modal>
 			{/if}
 		</div>
 	{/if}
+
 	{#if data.user !== undefined && (!data.user.roles.includes('HACKER') || data.user.roles.length > 1 || data.user.status === 'CONFIRMED' || data.user.status === 'ACCEPTED' || data.user.status === 'DECLINED')}
 		<!-- Right Section with Hacker ID -->
 		<div class="right-section">
@@ -367,6 +364,10 @@
 		height: 1px;
 		background: var(--grey);
 		position: absolute;
+	}
+
+	.invite-btn {
+		margin-top: 2em;
 	}
 
 	/* Mobile Devices */
