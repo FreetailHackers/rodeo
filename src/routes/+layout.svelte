@@ -20,7 +20,9 @@
 	let menu = $state() as HTMLMenuElement;
 	let hamburgerCheckbox = $state() as HTMLInputElement;
 	let isLoading = $state(false);
-	beforeNavigate(() => (isLoading = true));
+	beforeNavigate((nav) => {
+		if (nav.to) isLoading = true;
+	});
 	afterNavigate(() => (isLoading = false));
 
 	const noLayoutRoutes = ['/login', '/register', '/unverified']; // Routes that shouldn't have layout

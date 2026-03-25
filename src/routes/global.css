@@ -269,7 +269,7 @@ select {
 
 .svelte-select .item:hover {
 	background-color: var(--accent) !important;
-	color: var(--accent) !important;
+	color: var(--white) !important;
 }
 
 .svelte-select .item.highlighted {
@@ -283,6 +283,7 @@ select {
 }
 
 .svelte-select .multi-item {
+	background-color: var(--white) !important;
 	color: var(--accent) !important;
 }
 

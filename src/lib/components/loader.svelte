@@ -23,6 +23,7 @@
 		justify-content: center;
 		align-items: center;
 		height: 100%;
+		background-color: var(--accent);
 	}
 
 	.loader::after {
@@ -31,7 +32,7 @@
 		width: var(--loader-size, 8rem);
 		height: var(--loader-size, 8rem);
 		border-radius: 50%;
-		border: 0.75rem solid var(--accent);
+		border: 0.75rem solid white;
 		border-top-color: transparent;
 		animation: loader-spin 0.8s linear infinite;
 	}
