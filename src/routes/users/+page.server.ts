@@ -63,7 +63,30 @@ export const actions = {
 		}
 		if (action === 'admissions') {
 			const decision = formData.get('user-admissions') as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED';
+
+			// goes through all the previous decisions and decrements the application count for that user & decision
+			for (const email of ids) {
+				const user = await trpc(event).users.getUserFromEmail(email);
+				const prevDecision = user?.user?.decision?.status as 'ACCEPTED' | 'REJECTED' | 'WAITLISTED';
+				if (prevDecision) {
+					await trpc(event).admissions.updateApplicationCount({
+						userId: event.locals.user.id,
+						decision: prevDecision,
+						amount: -1,
+					});
+				}
+			}
+
+			// updates the decisions for the selected users
 			await trpc(event).admissions.decide({ decision, ids });
+
+			// updates the application count for the selcted deicsion & current user
+			await trpc(event).admissions.updateApplicationCount({
+				userId: event.locals.user.id,
+				decision: decision,
+				amount: ids.length,
+			});
+
 			return 'Saved decisions!';
 		} else if (action === 'status') {
 			const status = formData.get('user-status') as Status;

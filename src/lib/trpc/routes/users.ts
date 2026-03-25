@@ -1060,13 +1060,27 @@ export const usersRouter = t.router({
 
 	/**
 	 * Gets the user from their email address. User must be an admin, hacker, or undeclared.
+	 * Includes optional `User` row and pending `Decision` (same `userId` as `authUserId`).
 	 * Returns null if the user does not exist.
 	 */
-	getUserFromEmail: t.procedure.input(z.string()).query(async (req): Promise<AuthUser | null> => {
-		return await prisma.authUser.findUnique({
-			where: { email: req.input },
-		});
-	}),
+	getUserFromEmail: t.procedure.input(z.string()).query(
+		async (
+			req,
+		): Promise<Prisma.AuthUserGetPayload<{
+			include: { user: { include: { decision: true } } };
+		}> | null> => {
+			return await prisma.authUser.findUnique({
+				where: { email: req.input },
+				include: {
+					user: {
+						include: {
+							decision: true,
+						},
+					},
+				},
+			});
+		},
+	),
 
 	/**
 	 * Logs in a user with the given email and password. If the credentials are valid,
