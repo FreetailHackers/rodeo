@@ -80,22 +80,23 @@ export const admissionsRouter = t.router({
 	/**
 	 * Increments the application count for a user. User must be an admin.
 	 */
-	incrementApplicationCount: t.procedure
+	updateApplicationCount: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(
 			z.object({
 				userId: z.string(),
 				decision: z.enum(['ACCEPTED', 'REJECTED', 'WAITLISTED']),
+				amount: z.number().optional(),
 			}),
 		)
 		.mutation(async (req): Promise<void> => {
-			const updateData: any = { applicationCount: { increment: 1 } };
+			const updateData: any = { applicationCount: { increment: req.input.amount ?? 1 } };
 			if (req.input.decision === 'ACCEPTED') {
-				updateData.acceptedCount = { increment: 1 };
+				updateData.acceptedCount = { increment: req.input.amount ?? 1 };
 			} else if (req.input.decision === 'REJECTED') {
-				updateData.rejectedCount = { increment: 1 };
+				updateData.rejectedCount = { increment: req.input.amount ?? 1 };
 			} else if (req.input.decision === 'WAITLISTED') {
-				updateData.waitlistedCount = { increment: 1 };
+				updateData.waitlistedCount = { increment: req.input.amount ?? 1 };
 			}
 			await prisma.authUser.update({ where: { id: req.input.userId }, data: updateData });
 		}),
