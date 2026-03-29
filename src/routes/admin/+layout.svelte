@@ -12,9 +12,7 @@
 
 	<ul>
 		<li>
-			<a href="/admin" class:active={page.url.pathname === '/admin'}>
-				Admissions
-			</a>
+			<a href="/admin" class:active={page.url.pathname === '/admin'}> Admissions </a>
 		</li>
 
 		<li>
@@ -41,10 +39,8 @@
 			</a>
 		</li>
 
-		<li> 
-			<a href="/admin/wallet" class:active={page.url.pathname === '/admin/wallet'}> 
-				Wallet Pass 
-			</a>
+		<li>
+			<a href="/admin/wallet" class:active={page.url.pathname === '/admin/wallet'}> Wallet Pass </a>
 		</li>
 	</ul>
 
