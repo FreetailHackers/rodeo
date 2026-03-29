@@ -1,6 +1,6 @@
 <script lang="ts">
-  export let form;
-  let clientError: string | null = null;
+	export let form;
+	let clientError: string | null = null;
 	let stripFile: File | null = null;
 	let passFile: File | null = null;
 	let dragging = false;
@@ -31,10 +31,35 @@
 			handleFiles(input.files);
 		}
 	}
+
+	async function downloadPass() {
+		try {
+			const res = await fetch('/admin/wallet/download');
+
+			if (!res.ok) throw new Error();
+
+			const blob = await res.blob();
+			const url = URL.createObjectURL(blob);
+
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = 'pass.json';
+			a.click();
+
+			URL.revokeObjectURL(url);
+		} catch (err) {
+			console.error(err);
+			clientError = 'Failed to download pass.json';
+		}
+	}
 </script>
 
 <div class="main-content">
-	<h2>Wallet Pass Upload</h2>
+	<div class="header-row">
+		<h2>Wallet Pass Upload</h2>
+
+		<button class="small-btn" type="button" on:click={downloadPass}> Download Pass </button>
+	</div>
 
 	<!-- FORM START -->
 	<form method="POST" enctype="multipart/form-data">
@@ -65,23 +90,23 @@
 				on:change={handleFileInput}
 			/>
 		</div>
-	{#if form?.success === false}
-		<div class="error-msg">
-			{form.message}
-		</div>
-	{/if}
+		{#if form?.success === false}
+			<div class="error-msg">
+				{form.message}
+			</div>
+		{/if}
 
-	{#if form?.success === true}
-	<div class="success-msg">
-		{form.message}
-	</div>
-	{/if}
+		{#if form?.success === true}
+			<div class="success-msg">
+				{form.message}
+			</div>
+		{/if}
 
-	{#if clientError}
-	<div class="error-msg">
-		{clientError}
-	</div>
-	{/if}
+		{#if clientError}
+			<div class="error-msg">
+				{clientError}
+			</div>
+		{/if}
 
 		<!-- FILE STATUS -->
 		<div class="grid">
@@ -91,7 +116,7 @@
 				</div>
 				{#if stripFile}
 					<div class="row">
-						<span class="pill">PNG</span>
+						<span class="pill"></span>
 						<span>{stripFile.name}</span>
 					</div>
 				{:else}
@@ -105,7 +130,7 @@
 				</div>
 				{#if passFile}
 					<div class="row">
-						<span class="pill">JSON</span>
+						<span class="pill"></span>
 						<span>{passFile.name}</span>
 					</div>
 				{:else}
@@ -136,14 +161,21 @@
 		background: rgba(0, 128, 128, 0.08);
 	}
 	.error-msg {
-    margin-top: 0.5rem;
-    color: red;
-    font-size: 0.85rem;
-  }
+		margin-top: 0.5rem;
+		color: red;
+		font-size: 0.85rem;
+	}
 
-  .success-msg {
-    margin-top: 0.5rem;
-    color: var(--accent);
-    font-size: 0.85rem;
-  }
+	.success-msg {
+		margin-top: 0.5rem;
+		color: var(--accent);
+		font-size: 0.85rem;
+	}
+
+	.header-row {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-bottom: 0.75rem;
+	}
 </style>

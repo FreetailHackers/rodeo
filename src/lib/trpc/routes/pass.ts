@@ -338,3 +338,47 @@ export async function uploadWalletPassFiles({
 		throw new Error(err instanceof Error ? err.message : 'Upload failed');
 	}
 }
+
+/**
+ * Uploads wallet pass asset files (strip.png and/or pass.json) to S3.
+ *
+ * Validates provided files and overwrites existing assets in the configured S3 bucket.
+ * Supports partial updates (image only, JSON only, or both).
+ *
+ * @param stripFile - Optional PNG image for the wallet pass strip (must be named 'strip.png', <=5MB, ~3.83:1 aspect ratio)
+ * @param passFile - Optional JSON file defining the wallet pass structure (must be named 'pass.json' and contain required fields)
+ * @returns Promise<{ success: boolean; message: string }>
+ */
+
+export async function getCurrentPass() {
+	try {
+		const response = await s3Client.send(
+			new GetObjectCommand({
+				Bucket: process.env.S3_BUCKET,
+				Key: 'pass.json',
+			}),
+		);
+
+		if (!response.Body) {
+			throw new Error('No pass.json found');
+		}
+
+		// Convert stream → buffer
+		const stream = response.Body as any;
+		const chunks: Uint8Array[] = [];
+
+		for await (const chunk of stream) {
+			chunks.push(chunk);
+		}
+
+		const buffer = Buffer.concat(chunks);
+
+		return {
+			success: true,
+			file: buffer,
+		};
+	} catch (err) {
+		console.error('getCurrentPass error:', err);
+		throw new Error(err instanceof Error ? err.message : 'Failed to download pass.json');
+	}
+}
