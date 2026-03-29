@@ -1,8 +1,8 @@
 import { PKPass } from 'passkit-generator';
-import { S3Client, GetObjectCommand, ListObjectsV2Command } from '@aws-sdk/client-s3';
+import { S3Client, GetObjectCommand, ListObjectsV2Command, PutObjectCommand } from '@aws-sdk/client-s3';
 import { t } from '../t';
 import { z } from 'zod';
-
+import sharp from "sharp";
 /**
  * APPLE & GOOGLE WALLET PASS GENERATION DOCUMENTATION
  *
@@ -207,3 +207,124 @@ export const passRouter = t.router({
 			};
 		}),
 });
+
+
+
+const BUCKET = process.env.S3_BUCKET!;
+
+export async function uploadWalletPassFiles({
+  stripFile,
+  passFile,
+}: {
+  stripFile?: File | null;
+  passFile?: File | null;
+}) {
+  try {
+    //ensure at least one file is provided
+    if (!stripFile && !passFile) {
+      throw new Error("At least one file must be uploaded");
+    }
+
+    const uploads: Promise<any>[] = [];
+
+    // -----------------------------
+    // HANDLE strip.png (optional)
+    // -----------------------------
+    if (stripFile) {
+      if (stripFile.name !== "strip.png") {
+        throw new Error("Image must be named strip.png");
+      }
+
+      const stripBuffer = Buffer.from(await stripFile.arrayBuffer());
+
+      const meta = await sharp(stripBuffer).metadata();
+
+      if (meta.format !== "png") {
+        throw new Error("strip.png must be a PNG");
+      }
+
+      if (!meta.width || !meta.height) {
+        throw new Error("Invalid image dimensions");
+      }
+
+      const ratio = meta.width / meta.height;
+
+      if (Math.abs(ratio - 3.83) > 0.05) {
+        throw new Error("Aspect ratio must be ~3.83:1 (e.g., 375x98)");
+      }
+
+      if (stripBuffer.length > 5 * 1024 * 1024) {
+        throw new Error("Image exceeds 5MB limit");
+      }
+
+      uploads.push(
+        s3Client.send(
+          new PutObjectCommand({
+            Bucket: BUCKET,
+            Key: "strip.png",
+            Body: stripBuffer,
+            ContentType: "image/png",
+          })
+        )
+      );
+    }
+
+    // -----------------------------
+    // HANDLE pass.json (optional)
+    // -----------------------------
+    if (passFile) {
+      if (passFile.name !== "pass.json") {
+        throw new Error("JSON must be named pass.json");
+      }
+
+      const passBuffer = Buffer.from(await passFile.arrayBuffer());
+
+      let parsedJson: any;
+
+      try {
+        parsedJson = JSON.parse(passBuffer.toString());
+      } catch {
+        throw new Error("Invalid JSON format");
+      }
+
+      if (!parsedJson.formatVersion) {
+        throw new Error("pass.json missing formatVersion");
+      }
+
+      if (!parsedJson.passTypeIdentifier) {
+        throw new Error("pass.json missing passTypeIdentifier");
+      }
+
+      if (!parsedJson.teamIdentifier) {
+        throw new Error("pass.json missing teamIdentifier");
+      }
+
+      uploads.push(
+        s3Client.send(
+          new PutObjectCommand({
+            Bucket: process.env.S3_BUCKET,
+            Key: "pass.json",
+            Body: passBuffer,
+            ContentType: "application/json",
+          })
+        )
+      );
+    }
+
+    // -----------------------------
+    // Execute uploads
+    // -----------------------------
+    await Promise.all(uploads);
+
+    return {
+      success: true,
+      message: "Wallet pass files updated successfully",
+    };
+  } catch (err) {
+    console.error("uploadWalletPassFiles error:", err);
+
+    throw new Error(
+      err instanceof Error ? err.message : "Upload failed"
+    );
+  }
+}

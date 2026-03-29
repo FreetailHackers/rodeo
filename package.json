@@ -89,6 +89,7 @@
 		"passkit-generator": "^3.4.0",
 		"qr-code-styling": "^1.9.2",
 		"resend": "^6.0.1",
+		"sharp": "^0.34.5",
 		"stopword": "^3.0.1",
 		"superjson": "^1.12.2",
 		"svelte-floating-ui": "^1.5.8",

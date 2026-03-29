@@ -11,22 +11,40 @@
 	<h1>Admin Panel</h1>
 
 	<ul>
-		<li><a href="/admin" class:active={page.url.pathname === '/admin'}>Admissions</a></li>
 		<li>
-			<a href="/admin/email" class:active={page.url.pathname === '/admin/email'}>Email Templates</a>
+			<a href="/admin" class:active={page.url.pathname === '/admin'}>
+				Admissions
+			</a>
 		</li>
+
 		<li>
-			<a href="/admin/questions" class:active={page.url.pathname === '/admin/questions'}
-				>Registration Questions</a
-			>
+			<a href="/admin/email" class:active={page.url.pathname === '/admin/email'}>
+				Email Templates
+			</a>
 		</li>
+
 		<li>
-			<a href="/admin/homepage" class:active={page.url.pathname === '/admin/homepage'}>Homepage</a>
+			<a href="/admin/questions" class:active={page.url.pathname === '/admin/questions'}>
+				Registration Questions
+			</a>
 		</li>
+
 		<li>
-			<a href="/admin/blacklist" class:active={page.url.pathname === '/admin/blacklist'}
-				>Blacklist</a
-			>
+			<a href="/admin/homepage" class:active={page.url.pathname === '/admin/homepage'}>
+				Homepage
+			</a>
+		</li>
+
+		<li>
+			<a href="/admin/blacklist" class:active={page.url.pathname === '/admin/blacklist'}>
+				Blacklist
+			</a>
+		</li>
+
+		<li> 
+			<a href="/admin/wallet" class:active={page.url.pathname === '/admin/wallet'}> 
+				Wallet Pass 
+			</a>
 		</li>
 	</ul>
 
