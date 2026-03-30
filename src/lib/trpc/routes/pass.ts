@@ -273,7 +273,7 @@ export async function uploadWalletPassFiles({
 				s3Client.send(
 					new PutObjectCommand({
 						Bucket: process.env.S3_BUCKET,
-						Key: 'strip.png',
+						Key: 'rodeo-staging/strip.png',
 						Body: stripBuffer,
 						ContentType: 'image/png',
 					}),
@@ -315,7 +315,7 @@ export async function uploadWalletPassFiles({
 				s3Client.send(
 					new PutObjectCommand({
 						Bucket: process.env.S3_BUCKET,
-						Key: 'pass.json',
+						Key: 'rodeo-staging/pass.json',
 						Body: passBuffer,
 						ContentType: 'application/json',
 					}),
@@ -355,7 +355,7 @@ export async function getCurrentPass() {
 		const response = await s3Client.send(
 			new GetObjectCommand({
 				Bucket: process.env.S3_BUCKET,
-				Key: 'pass.json',
+				Key: 'rodeo-staging/pass.json',
 			}),
 		);
 
