@@ -62,7 +62,7 @@ export const actions = {
 		const daysToRSVP: number | null = isNaN(parsedDaysToRSVP) ? null : parsedDaysToRSVP;
 
 		const scanActions = (formData.get('scanActions') as string)
-			.split('\r\n')
+			.split('\n')
 			.map((option: string) => option.trim())
 			.filter(Boolean);
 		await trpc(event).settings.update({
