@@ -1,5 +1,5 @@
 import type { Actions } from './$types';
-import { uploadWalletPassFiles } from '$lib/trpc/routes/pass';
+import { uploadWalletPassFiles, getCurrentPass } from '$lib/trpc/routes/pass';
 
 export const actions: Actions = {
 	upload: async ({ request }) => {

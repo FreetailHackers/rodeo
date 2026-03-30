@@ -4,8 +4,11 @@
 	let stripFile: File | null = null;
 	let passFile: File | null = null;
 	let dragging = false;
+	let fileInput: HTMLInputElement;
 
 	function handleFiles(files: FileList) {
+		clientError = null;
+
 		for (const file of files) {
 			if (file.name === 'strip.png') {
 				stripFile = file;
@@ -14,6 +17,16 @@
 			} else {
 				clientError = `Invalid file: ${file.name}`;
 			}
+		}
+
+		// 👇 CRITICAL: sync files to input so form submits them
+		if (fileInput) {
+			const dataTransfer = new DataTransfer();
+
+			if (stripFile) dataTransfer.items.add(stripFile);
+			if (passFile) dataTransfer.items.add(passFile);
+
+			fileInput.files = dataTransfer.files;
 		}
 	}
 
@@ -34,7 +47,7 @@
 
 	async function downloadPass() {
 		try {
-			const res = await fetch('/admin/wallet/download');
+			const res = await fetch('/admin/wallet');
 
 			if (!res.ok) throw new Error();
 
@@ -62,7 +75,7 @@
 	</div>
 
 	<!-- FORM START -->
-	<form method="POST" enctype="multipart/form-data">
+	<form method="POST" action="?/upload" enctype="multipart/form-data">
 		<!-- DROP ZONE -->
 		<div
 			class="dropzone {dragging ? 'dragging' : ''}"
@@ -88,6 +101,7 @@
 				multiple
 				style="display: none"
 				on:change={handleFileInput}
+				bind:this={fileInput}
 			/>
 		</div>
 		{#if form?.success === false}
