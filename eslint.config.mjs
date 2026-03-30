@@ -30,7 +30,7 @@ export default [
 				ecmaVersion: 2020,
 				sourceType: 'module',
 				project: './tsconfig.json',
-				tsconfigRootDir: new URL('.', import.meta.url).pathname,
+				tsconfigRootDir: import.meta.dirname,
 			},
 		},
 		plugins: {

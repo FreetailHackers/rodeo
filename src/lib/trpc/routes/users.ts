@@ -988,6 +988,42 @@ export const usersRouter = t.router({
 				.then((users) => users.map((user) => user.authUser.email));
 		}),
 
+	emailsByFilters: t.procedure
+		.use(authenticate(['ADMIN']))
+		.input(
+			z.object({
+				filters: z.array(
+					z.object({
+						role: z.nativeEnum(Role).optional(),
+						status: z.nativeEnum(Status).optional(),
+					}),
+				),
+			}),
+		)
+		.query(async (req): Promise<string[]> => {
+			const { filters } = req.input;
+			const activeFilters = filters.filter((f) => f.role || f.status);
+
+			const where: Prisma.UserWhereInput =
+				activeFilters.length === 0
+					? {}
+					: {
+							OR: activeFilters.map((f) => {
+								const conditions: Prisma.UserWhereInput[] = [];
+								if (f.role) conditions.push({ authUser: { roles: { has: f.role } } });
+								if (f.status) conditions.push({ authUser: { status: f.status } });
+								return { AND: conditions };
+							}),
+						};
+
+			return await prisma.user
+				.findMany({
+					select: { authUser: { select: { email: true } } },
+					where,
+				})
+				.then((users) => users.map((u) => u.authUser.email));
+		}),
+
 	splitGroups: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(z.array(z.string()))
