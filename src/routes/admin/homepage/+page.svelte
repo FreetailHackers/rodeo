@@ -7,7 +7,19 @@
 	import EventManager from './event-manager.svelte';
 	import FAQManager from './faq-manager.svelte';
 	import ChallengeManager from './challenge-manager.svelte';
+	import dayjs from 'dayjs';
+	import utc from 'dayjs/plugin/utc';
+	import tz from 'dayjs/plugin/timezone';
+
+	dayjs.extend(utc);
+	dayjs.extend(tz);
+
 	let { data = $bindable() } = $props();
+
+	function formatEventTime(date: Date | null | undefined): string {
+		if (!date) return 'N/A';
+		return dayjs(date).tz(data.settings.timezone).format('MMM D, YYYY h:mm A');
+	}
 
 	function handleFileChange(event: Event) {
 		const input = event.target as HTMLInputElement;
@@ -103,7 +115,7 @@
 				</div>
 			</div>
 
-			<p>{event.start} - {event.end} | {event.location}</p>
+			<p>{formatEventTime(event.start)} - {formatEventTime(event.end)} | {event.location}</p>
 			<p>Type: {event.type}</p>
 			<p>{event.description}</p>
 			<hr />
