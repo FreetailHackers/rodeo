@@ -3,7 +3,7 @@
 	import { confirmationDialog } from '$lib/actions';
 	import Toggle from '$lib/components/toggle.svelte';
 	import { toasts } from '$lib/stores';
-	import Graph from './line-graph.svelte';
+	import StatusChart from './status-chart.svelte';
 	let { data } = $props();
 
 	let applicationOpenStatus = $state(data.settings.applicationOpen);
@@ -161,8 +161,8 @@
 		</div>
 	{/if}
 
-	<label for="statusChangeText"><h2>User Status Over Time</h2></label>
-	<Graph statusChanges={data.graph} />
+	<label for="statusChangeText"><h2>Current User Status</h2></label>
+	<StatusChart statusCounts={data.statusCounts} />
 
 	<status-container>
 		<label for="daysToRSVP"> Hackers must RSVP within this many days after acceptance </label>

@@ -22,7 +22,7 @@ export const load = async (event) => {
 	return {
 		decisions: await trpc(event).admissions.getDecisions(),
 		settings: await trpc(event).settings.getAll(),
-		graph: await trpc(event).users.getStatusChanges(),
+		statusCounts: await trpc(event).users.getStatusCounts(),
 		groups: (await trpc(event).group.getGroups()) as GroupWithQRCode[],
 		applicationCount: await trpc(event).admissions.getApplicationCount(),
 		questions: await trpc(event).questions.get(),

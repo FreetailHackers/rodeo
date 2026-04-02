@@ -959,6 +959,17 @@ export const usersRouter = t.router({
 			});
 		}),
 
+	getStatusCounts: t.procedure.use(authenticate(['ADMIN'])).query(async () => {
+		const counts = await prisma.authUser.groupBy({
+			by: ['status'],
+			_count: { status: true },
+		});
+		return counts.map((c) => ({
+			status: c.status,
+			count: c._count.status,
+		}));
+	}),
+
 	sendEmailHelper: t.procedure
 		.use(authenticate(['ADMIN']))
 		.input(
