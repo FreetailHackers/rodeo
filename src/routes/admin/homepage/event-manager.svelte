@@ -58,9 +58,7 @@
 			/>
 
 			<label for="description">Description</label>
-			<textarea id="description" name="description" required
-				>{scheduleEvent?.description || ''}</textarea
-			>
+			<textarea id="description" name="description">{scheduleEvent?.description || ''}</textarea>
 
 			<label for="start">Start Time</label>
 			<input
