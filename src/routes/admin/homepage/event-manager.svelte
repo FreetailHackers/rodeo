@@ -81,10 +81,9 @@
 
 			<label for="type">Event Type</label>
 			<select name="type" value={scheduleEvent?.type || ''} required>
-				<option value="Regular-Event">Regular Event</option>
-				<option value="Key-Event">Key Event</option>
-				<option value="Speaker-Event">Speaker Event</option>
-				<option value="Fun-Event">Fun Event</option>
+				<option value="Required">Required</option>
+				<option value="Meal">Meal</option>
+				<option value="Socials">Socials</option>
 				<option value="Workshop">Workshop</option>
 			</select>
 
