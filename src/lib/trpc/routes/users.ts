@@ -632,6 +632,20 @@ export const usersRouter = t.router({
 		}),
 
 	/**
+	 * Returns a map of action -> scan count for all scan actions.
+	 * User must be an admin or organizer.
+	 */
+	getScanCounts: t.procedure
+		.use(authenticate(['ORGANIZER', 'ADMIN']))
+		.query(async (): Promise<Record<string, number>> => {
+			const counts = await prisma.scan.groupBy({
+				by: ['action'],
+				_count: { action: true },
+			});
+			return Object.fromEntries(counts.map((c) => [c.action, c._count.action]));
+		}),
+
+	/**
 	 * Searches all users by email. User must be an admin or sponsor.
 	 */
 	search: t.procedure
