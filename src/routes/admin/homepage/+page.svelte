@@ -85,7 +85,7 @@
 <section>
 	<div class="flex-row">
 		<h2>Schedule</h2>
-		<EventManager scheduleEvent={null} />
+		<EventManager scheduleEvent={null} timezone={data.settings.timezone} />
 	</div>
 	<details>
 		<summary>View Event Info</summary>
@@ -95,7 +95,7 @@
 			<div class="flex-row">
 				<h3>{event.name}</h3>
 				<div class="flex-row">
-					<EventManager scheduleEvent={event} />
+					<EventManager scheduleEvent={event} timezone={data.settings.timezone} />
 					<form method="POST" action="?/deleteEvent" use:enhance>
 						<input type="hidden" name="id" value={event.id} />
 						<button type="submit">Delete</button>

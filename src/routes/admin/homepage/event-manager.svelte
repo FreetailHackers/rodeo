@@ -1,6 +1,12 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { Modal, Content, Trigger } from 'sv-popup';
+	import dayjs from 'dayjs';
+	import utc from 'dayjs/plugin/utc';
+	import tz from 'dayjs/plugin/timezone';
+
+	dayjs.extend(utc);
+	dayjs.extend(tz);
 
 	type ScheduleEvent = {
 		id: number;
@@ -14,31 +20,33 @@
 
 	interface Props {
 		scheduleEvent?: ScheduleEvent | null;
+		timezone: string;
 	}
 
-	let { scheduleEvent = null }: Props = $props();
+	let { scheduleEvent = null, timezone }: Props = $props();
+
+	function formatForInput(date: Date | null | undefined): string {
+		if (!date) return '';
+		return dayjs(date).tz(timezone).format('YYYY-MM-DDTHH:mm');
+	}
 
 	let closeModal = $state(false);
-
-	async function handleSubmit(e: Event) {
-		e.preventDefault();
-		const form = e.target as HTMLFormElement;
-		const formData = new FormData(form);
-
-		await fetch(form.action, {
-			method: form.method,
-			body: formData,
-		});
-
-		closeModal = true;
-	}
 </script>
 
 <Modal basic bind:close={closeModal}>
 	<Content>
 		<h2>{scheduleEvent ? 'Edit Event' : 'Create Event'}</h2>
 
-		<form method="POST" action="?/handleEvent" onsubmit={handleSubmit} use:enhance>
+		<form
+			method="POST"
+			action="?/handleEvent"
+			use:enhance={() => {
+				return async ({ update }) => {
+					await update();
+					closeModal = true;
+				};
+			}}
+		>
 			<input type="hidden" name="id" value={scheduleEvent?.id || ''} />
 			<label for="name">Name</label>
 			<input
@@ -59,7 +67,7 @@
 				type="datetime-local"
 				id="start"
 				name="start"
-				{...scheduleEvent?.start ? { value: scheduleEvent.start.toISOString().slice(0, 16) } : {}}
+				{...scheduleEvent?.start ? { value: formatForInput(scheduleEvent.start) } : {}}
 			/>
 
 			<label for="end">End Time</label>
@@ -67,7 +75,7 @@
 				type="datetime-local"
 				id="end"
 				name="end"
-				{...scheduleEvent?.end ? { value: scheduleEvent.end.toISOString().slice(0, 16) } : {}}
+				{...scheduleEvent?.end ? { value: formatForInput(scheduleEvent.end) } : {}}
 			/>
 
 			<label for="location">Location</label>
@@ -81,10 +89,10 @@
 
 			<label for="type">Event Type</label>
 			<select name="type" value={scheduleEvent?.type || ''} required>
-				<option value="Required">Required</option>
-				<option value="Meal">Meal</option>
-				<option value="Socials">Socials</option>
-				<option value="Workshop">Workshop</option>
+				<option value="required">Required</option>
+				<option value="meal">Meal</option>
+				<option value="socials">Socials</option>
+				<option value="workshop">Workshop</option>
 			</select>
 
 			<button type="submit">{scheduleEvent ? 'Save Changes' : 'Create Event'}</button>
