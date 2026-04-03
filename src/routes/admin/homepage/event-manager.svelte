@@ -88,9 +88,9 @@
 			<label for="type">Event Type</label>
 			<select name="type" value={scheduleEvent?.type || ''} required>
 				<option value="required">Required</option>
-				<option value="meal">Meal</option>
+				<option value="meals">Meal</option>
 				<option value="socials">Socials</option>
-				<option value="workshop">Workshop</option>
+				<option value="workshops">Workshop</option>
 			</select>
 
 			<button type="submit">{scheduleEvent ? 'Save Changes' : 'Create Event'}</button>
